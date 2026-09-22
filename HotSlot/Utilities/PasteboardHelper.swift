@@ -7,6 +7,21 @@ enum PasteboardHelper {
     private static let concealedType = NSPasteboard.PasteboardType("org.nspasteboard.ConcealedType")
     private static let transientType = NSPasteboard.PasteboardType("org.nspasteboard.TransientType")
 
+    private static let textTypes: [NSPasteboard.PasteboardType] = [
+        .string,
+        .rtf,
+        .html,
+        NSPasteboard.PasteboardType("public.utf8-plain-text"),
+        NSPasteboard.PasteboardType("NSStringPboardType"),
+    ]
+
+    private static let imageTypes: [NSPasteboard.PasteboardType] = [
+        .png,
+        .tiff,
+        NSPasteboard.PasteboardType("public.png"),
+        NSPasteboard.PasteboardType("public.tiff"),
+    ]
+
     static func shouldIgnore(pasteboard: NSPasteboard = .general) -> Bool {
         let types = pasteboard.types ?? []
         if types.contains(concealedType) { return true }
@@ -18,18 +33,18 @@ enum PasteboardHelper {
     static func readContent(from pasteboard: NSPasteboard = .general) -> ClipContent? {
         if shouldIgnore(pasteboard: pasteboard) { return nil }
 
-        if let string = pasteboard.string(forType: .string), !string.isEmpty {
-            return .text(string)
+        let declaredTypes = Set(pasteboard.types ?? [])
+
+        // Si hay tipos de texto declarados, nunca leer imagen (evita datos viejos de TIFF)
+        if declaredTypes.contains(where: { textTypes.contains($0) }) {
+            if let text = readText(from: pasteboard, declaredTypes: declaredTypes) {
+                return .text(text)
+            }
+            return nil
         }
 
-        if let tiff = pasteboard.data(forType: .tiff) {
-            let fileName = saveImageData(tiff, extension: "tiff")
-            return .image(fileName: fileName)
-        }
-
-        if let png = pasteboard.data(forType: .png) {
-            let fileName = saveImageData(png, extension: "png")
-            return .image(fileName: fileName)
+        if declaredTypes.contains(where: { imageTypes.contains($0) }) {
+            return readImage(from: pasteboard)
         }
 
         return nil
@@ -61,9 +76,54 @@ enum PasteboardHelper {
         return NSImage(contentsOf: url)
     }
 
+    @discardableResult
+    static func copyContentToPasteboard(_ content: ClipContent) -> Int {
+        write(content: content)
+    }
+
+    // MARK: - Lectura privada
+
+    private static func readText(
+        from pasteboard: NSPasteboard,
+        declaredTypes: Set<NSPasteboard.PasteboardType>
+    ) -> String? {
+        if let string = pasteboard.string(forType: .string) {
+            let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmed.isEmpty { return string }
+        }
+
+        if declaredTypes.contains(.rtf),
+           let data = pasteboard.data(forType: .rtf),
+           let attributed = NSAttributedString(rtf: data, documentAttributes: nil) {
+            let plain = attributed.string.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !plain.isEmpty { return attributed.string }
+        }
+
+        if declaredTypes.contains(.html),
+           let data = pasteboard.data(forType: .html),
+           let attributed = NSAttributedString(html: data, documentAttributes: nil) {
+            let plain = attributed.string.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !plain.isEmpty { return attributed.string }
+        }
+
+        return nil
+    }
+
+    /// Normaliza a PNG para hash estable y evitar duplicados por distinto encoding TIFF.
+    private static func readImage(from pasteboard: NSPasteboard) -> ClipContent? {
+        guard let image = NSImage(pasteboard: pasteboard),
+              let tiff = image.tiffRepresentation,
+              let bitmap = NSBitmapImageRep(data: tiff),
+              let png = bitmap.representation(using: .png, properties: [:]) else {
+            return nil
+        }
+        let fileName = saveImageData(png, extension: "png")
+        return .image(fileName: fileName)
+    }
+
     private static func saveImageData(_ data: Data, extension ext: String) -> String {
         let hash = SHA256.hash(data: data)
-            .prefix(8)
+            .prefix(12)
             .map { String(format: "%02x", $0) }
             .joined()
         let fileName = "\(hash).\(ext)"
@@ -72,10 +132,5 @@ enum PasteboardHelper {
             try? data.write(to: url)
         }
         return fileName
-    }
-
-    /// Copia un ClipContent al pasteboard reutilizando archivos de imagen existentes.
-    static func copyContentToPasteboard(_ content: ClipContent) -> Int {
-        write(content: content)
     }
 }

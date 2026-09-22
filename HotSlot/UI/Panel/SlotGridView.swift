@@ -85,6 +85,6 @@ private struct SlotCardView: View {
                 Button("Limpiar", role: .destructive) { onClear() }
             }
         }
-        .help("⌘⇧\(slot.index) para pegar")
+        .help("⌘⌃\(slot.index) para pegar")
     }
 }

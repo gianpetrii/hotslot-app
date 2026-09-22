@@ -2,8 +2,16 @@ import KeyboardShortcuts
 import SwiftUI
 
 struct HotkeysSettingsView: View {
+    @State private var showResetConfirmation = false
+
     var body: some View {
         Form {
+            Section {
+                Text("Si un atajo no responde, otra app puede estar usándolo. Grabá uno nuevo o restaurá los valores por defecto.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
+
             Section("Panel") {
                 LabeledContent("Abrir / cerrar panel") {
                     KeyboardShortcuts.Recorder(for: .togglePanel)
@@ -25,9 +33,27 @@ struct HotkeysSettingsView: View {
                     }
                 }
             }
+
+            Section {
+                Button("Restaurar atajos por defecto", role: .destructive) {
+                    showResetConfirmation = true
+                }
+            }
         }
         .formStyle(.grouped)
         .padding()
+        .confirmationDialog(
+            "¿Restaurar todos los atajos?",
+            isPresented: $showResetConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Restaurar", role: .destructive) {
+                KeyboardShortcuts.Name.resetAllToDefaults()
+            }
+            Button("Cancelar", role: .cancel) {}
+        } message: {
+            Text("Se aplicarán los atajos por defecto (⌘⌃V, ⌘⌃1–5, etc.).")
+        }
     }
 
     private func pasteSlotName(_ index: Int) -> KeyboardShortcuts.Name {

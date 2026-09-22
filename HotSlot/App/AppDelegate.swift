@@ -1,4 +1,5 @@
 import AppKit
+import KeyboardShortcuts
 import ServiceManagement
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -20,8 +21,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self.panelController = panel
         self.statusBarController = statusBar
 
+        migrateHotkeysIfNeeded()
         state.bootstrap(panelController: panel)
         applyLaunchAtLoginSetting()
+    }
+
+    /// Una sola vez: aplica atajos nuevos (⌘⌃) para evitar conflicto con otras apps.
+    private func migrateHotkeysIfNeeded() {
+        let key = "hotslot.hotkeys.migrated.v2"
+        guard !UserDefaults.standard.bool(forKey: key) else { return }
+        KeyboardShortcuts.Name.resetAllToDefaults()
+        UserDefaults.standard.set(true, forKey: key)
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {

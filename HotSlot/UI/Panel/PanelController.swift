@@ -3,7 +3,7 @@ import SwiftUI
 
 /// Panel flotante NSPanel con contenido SwiftUI.
 @MainActor
-final class PanelController: NSWindowController {
+final class PanelController: NSWindowController, NSWindowDelegate {
     private let appState: AppState
     private var keyMonitor: Any?
 
@@ -33,7 +33,8 @@ final class PanelController: NSWindowController {
         panel.isMovableByWindowBackground = true
         panel.backgroundColor = .clear
         panel.isReleasedWhenClosed = false
-        panel.hidesOnDeactivate = false
+        panel.hidesOnDeactivate = true
+        panel.delegate = self
 
         setupKeyMonitor()
     }
@@ -51,10 +52,17 @@ final class PanelController: NSWindowController {
 
     func hide() {
         window?.orderOut(nil)
+        appState.isPanelVisible = false
     }
 
     func toggle() {
         if isVisible { hide() } else { show() }
+    }
+
+    // MARK: - NSWindowDelegate
+
+    func windowDidResignKey(_ notification: Notification) {
+        hide()
     }
 
     private func positionNearCursor() {
@@ -76,7 +84,6 @@ final class PanelController: NSWindowController {
             guard let self, self.isVisible else { return event }
             if event.keyCode == 53 { // Esc
                 self.hide()
-                self.appState.isPanelVisible = false
                 return nil
             }
             return event

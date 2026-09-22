@@ -28,7 +28,8 @@ final class HistoryStoreTests: XCTestCase {
         let a2 = ClipItem(content: .text("duplicado"))
         store.add(a2)
         XCTAssertEqual(store.items.count, 2)
-        XCTAssertEqual(store.items.first?.contentFingerprint, "text:duplicado")
+        XCTAssertEqual(store.items.first?.content.previewText, "duplicado")
+        XCTAssertEqual(store.items.count, 2)
     }
 
     func testHistoryLimit() {

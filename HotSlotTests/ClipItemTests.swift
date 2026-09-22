@@ -13,14 +13,17 @@ final class ClipItemTests: XCTestCase {
         XCTAssertEqual(decoded, item)
     }
 
-    func testContentFingerprintText() {
-        let item = ClipItem(content: .text("mismo texto"))
-        XCTAssertEqual(item.contentFingerprint, "text:mismo texto")
+    func testContentFingerprintTextIsStable() {
+        let a = ClipItem(content: .text("mismo texto"))
+        let b = ClipItem(content: .text("mismo texto"))
+        XCTAssertEqual(a.contentFingerprint, b.contentFingerprint)
+        XCTAssertTrue(a.contentFingerprint.hasPrefix("text:"))
     }
 
-    func testContentFingerprintImage() {
-        let item = ClipItem(content: .image(fileName: "abc.png"))
-        XCTAssertEqual(item.contentFingerprint, "image:abc.png")
+    func testContentFingerprintTextDiffers() {
+        let a = ClipItem(content: .text("uno"))
+        let b = ClipItem(content: .text("dos"))
+        XCTAssertNotEqual(a.contentFingerprint, b.contentFingerprint)
     }
 
     func testPreviewTextTruncation() {

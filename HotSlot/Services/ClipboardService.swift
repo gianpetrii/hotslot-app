@@ -43,7 +43,10 @@ final class ClipboardService {
         lastChangeCount = current
 
         guard !isPaused else { return }
-        if current == suppressUntilChangeCount { return }
+        if current == suppressUntilChangeCount {
+            suppressUntilChangeCount = -1
+            return
+        }
         guard let content = PasteboardHelper.readContent() else { return }
 
         let sourceApp = NSWorkspace.shared.frontmostApplication
