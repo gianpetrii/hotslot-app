@@ -49,8 +49,11 @@ private struct SlotCardView: View {
                 Text("\(slot.index)")
                     .font(.caption2.weight(.bold))
                     .foregroundStyle(.secondary)
-                    .frame(width: 18, height: 18)
-                    .background(Circle().fill(.quaternary.opacity(0.6)))
+                    .frame(width: 20, height: 20)
+                    .background {
+                        Circle()
+                            .fill(.ultraThinMaterial)
+                    }
                 Spacer()
                 Image(systemName: hasContent ? "checkmark.circle.fill" : "circle.dashed")
                     .font(.caption)
@@ -58,27 +61,27 @@ private struct SlotCardView: View {
             }
 
             Text(slot.label)
-                .font(.caption.weight(.medium))
+                .font(HotSlotTypography.slotLabel)
                 .lineLimit(1)
 
             if let content = slot.content {
                 Text(content.previewText)
-                    .font(.caption2)
+                    .font(HotSlotTypography.slotPreview)
                     .foregroundStyle(.secondary)
                     .lineLimit(2)
             } else {
                 Text("Vacío")
-                    .font(.caption2)
+                    .font(HotSlotTypography.slotPreview)
                     .foregroundStyle(.tertiary)
             }
         }
-        .padding(10)
-        .frame(maxWidth: .infinity, minHeight: 78, alignment: .topLeading)
+        .padding(11)
+        .frame(maxWidth: .infinity, minHeight: 82, alignment: .topLeading)
         .background {
             GlassCardBackground(isHighlighted: hasContent || isHovering)
         }
-        .scaleEffect(isHovering ? 1.02 : 1)
-        .animation(.easeOut(duration: 0.15), value: isHovering)
+        .scaleEffect(isHovering ? 1.03 : 1)
+        .animation(.spring(response: 0.28, dampingFraction: 0.78), value: isHovering)
         .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
         .onTapGesture { onPaste() }
         .onHover { isHovering = $0 }

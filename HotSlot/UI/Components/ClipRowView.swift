@@ -10,35 +10,38 @@ struct ClipRowView: View {
             Image(systemName: iconName)
                 .font(.body)
                 .foregroundStyle(.secondary)
-                .frame(width: 28, height: 28)
+                .frame(width: 30, height: 30)
                 .background {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(.quaternary.opacity(0.5))
+                    RoundedRectangle(cornerRadius: 9, style: .continuous)
+                        .fill(.ultraThinMaterial)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 9, style: .continuous)
+                                .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5)
+                        }
                 }
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(item.content.previewText)
                     .lineLimit(2)
-                    .font(.callout)
+                    .font(HotSlotTypography.rowPrimary)
                     .foregroundStyle(.primary)
 
                 HStack(spacing: 6) {
                     if let app = item.sourceAppName {
-                        Label(app, systemImage: "app")
-                            .labelStyle(.titleOnly)
-                            .font(.caption2)
+                        Text(app)
+                            .font(HotSlotTypography.rowSecondary)
                             .foregroundStyle(.tertiary)
                     }
                     Text(item.createdAt, style: .relative)
-                        .font(.caption2)
+                        .font(HotSlotTypography.rowSecondary)
                         .foregroundStyle(.tertiary)
                 }
             }
 
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 9)
+        .padding(.horizontal, 11)
+        .padding(.vertical, 10)
         .background {
             RoundedRectangle(cornerRadius: HotSlotDesign.rowCornerRadius, style: .continuous)
                 .fill(backgroundFill)
@@ -49,21 +52,23 @@ struct ClipRowView: View {
         }
         .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.rowCornerRadius, style: .continuous))
         .onHover { isHovering = $0 }
+        .animation(.easeOut(duration: 0.15), value: isHovering)
+        .animation(.easeOut(duration: 0.15), value: isSelected)
     }
 
     private var backgroundFill: AnyShapeStyle {
         if isSelected {
-            return AnyShapeStyle(Color.accentColor.opacity(0.18))
+            return AnyShapeStyle(Color.accentColor.opacity(0.2))
         }
         if isHovering {
-            return AnyShapeStyle(Color.primary.opacity(0.06))
+            return AnyShapeStyle(Color.primary.opacity(0.07))
         }
         return AnyShapeStyle(Color.clear)
     }
 
     private var borderColor: Color {
-        if isSelected { return Color.accentColor.opacity(0.35) }
-        if isHovering { return Color.white.opacity(0.12) }
+        if isSelected { return Color.accentColor.opacity(0.4) }
+        if isHovering { return Color.white.opacity(0.14) }
         return Color.clear
     }
 

@@ -10,10 +10,10 @@ struct PanelView: View {
             PanelChrome {
                 VStack(spacing: 0) {
                     header
-                    Divider().opacity(0.35)
+                    Divider().opacity(0.25)
                     SlotGridView(appState: appState, panelController: panelController)
                         .padding(.vertical, HotSlotDesign.sectionSpacing)
-                    Divider().opacity(0.35)
+                    Divider().opacity(0.25)
                     HistoryListView(
                         historyStore: appState.historyStore,
                         panelController: panelController,
@@ -27,11 +27,14 @@ struct PanelView: View {
 
             if let toast = appState.toastMessage {
                 ToastView(message: toast)
-                    .padding(.bottom, 20)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .padding(.bottom, 22)
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .bottom).combined(with: .opacity).combined(with: .scale(scale: 0.9)),
+                        removal: .opacity
+                    ))
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: appState.toastMessage)
+        .animation(.spring(response: 0.32, dampingFraction: 0.86), value: appState.toastMessage)
         .onKeyPress(.upArrow) {
             moveSelection(delta: -1)
             return .handled
@@ -66,42 +69,55 @@ struct PanelView: View {
     }
 
     private var header: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 12) {
             Image(systemName: "doc.on.clipboard.fill")
-                .font(.title3)
+                .font(.title2)
                 .foregroundStyle(Color.accentColor)
                 .symbolRenderingMode(.hierarchical)
 
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text("HotSlot")
-                    .font(.headline)
+                    .font(HotSlotTypography.panelTitle)
                 Text("Portapapeles inteligente")
-                    .font(.caption2)
+                    .font(HotSlotTypography.panelSubtitle)
                     .foregroundStyle(.tertiary)
             }
 
             Spacer()
 
             Text("⌘⇧V")
-                .font(.caption.weight(.medium))
+                .font(HotSlotTypography.badge)
                 .foregroundStyle(.secondary)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Capsule().fill(.quaternary.opacity(0.6)))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background {
+                    Capsule(style: .continuous)
+                        .fill(.ultraThinMaterial)
+                        .overlay {
+                            Capsule(style: .continuous)
+                                .strokeBorder(Color.white.opacity(0.15), lineWidth: 0.5)
+                        }
+                }
 
             Button {
-                panelController.hide()
+                panelController.hide(animated: true)
             } label: {
                 Image(systemName: "xmark")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
-                    .frame(width: 24, height: 24)
-                    .background(Circle().fill(.quaternary.opacity(0.7)))
+                    .frame(width: 26, height: 26)
+                    .background {
+                        Circle()
+                            .fill(.ultraThinMaterial)
+                            .overlay {
+                                Circle().strokeBorder(Color.white.opacity(0.12), lineWidth: 0.5)
+                            }
+                    }
             }
             .buttonStyle(.plain)
             .help("Cerrar (Esc)")
         }
         .padding(.horizontal, HotSlotDesign.horizontalPadding)
-        .padding(.vertical, 14)
+        .padding(.vertical, 16)
     }
 }

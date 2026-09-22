@@ -11,6 +11,7 @@
 		0C1B4C7C4F79CBF6E95CDA42 /* ClipContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41FC0ED81ECB6C60BC9AA3FF /* ClipContent.swift */; };
 		12C677E12D06E670A5FA29DA /* ClipboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB823AC3606502B337159418 /* ClipboardService.swift */; };
 		15E13B782F856BE19618FD98 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858AB04884B62F4C91EF2DF9 /* AppState.swift */; };
+		1BEBD40631434B777BF77F74 /* BackdropController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8108F534EC224E3BA83D449B /* BackdropController.swift */; };
 		2666AEEE1C23121AC660B2AC /* PanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A911DBA98261441FF883EE51 /* PanelView.swift */; };
 		2C243CEF754FA0B312FCF6AD /* SlotStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099675B8BFE15486169F4C0B /* SlotStoreTests.swift */; };
 		2C38077E80456117487988E8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B7E7A2B2C7D507EFD132F1 /* SettingsView.swift */; };
@@ -67,6 +68,7 @@
 		5705E3CE6DEACE6C0251D749 /* HistoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryListView.swift; sourceTree = "<group>"; };
 		5BD5D3779C3ADA48B9820C77 /* HistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStore.swift; sourceTree = "<group>"; };
 		7716292477212411D84E93C5 /* HotSlot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HotSlot.entitlements; sourceTree = "<group>"; };
+		8108F534EC224E3BA83D449B /* BackdropController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackdropController.swift; sourceTree = "<group>"; };
 		841CFFDFFFAA50088B8764E1 /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
 		8525EE734D2017094138ADBD /* FocusTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusTracker.swift; sourceTree = "<group>"; };
 		858AB04884B62F4C91EF2DF9 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -201,6 +203,7 @@
 		ABF0EEB6DF5AA46AB5719AD2 /* Panel */ = {
 			isa = PBXGroup;
 			children = (
+				8108F534EC224E3BA83D449B /* BackdropController.swift */,
 				E49192713FE49EA8C0DC9E8D /* EmptyStateView.swift */,
 				5705E3CE6DEACE6C0251D749 /* HistoryListView.swift */,
 				EBD50D3AD7653F5FCEE0C092 /* PanelController.swift */,
@@ -357,6 +360,7 @@
 				E4EF388A93D722D36DE2BA7F /* AppSettings.swift in Sources */,
 				15E13B782F856BE19618FD98 /* AppState.swift in Sources */,
 				6EDC9EDB77022AEF8951BC41 /* AppSupportDirectory.swift in Sources */,
+				1BEBD40631434B777BF77F74 /* BackdropController.swift in Sources */,
 				0C1B4C7C4F79CBF6E95CDA42 /* ClipContent.swift in Sources */,
 				98F6E095AE516BDCB9DEB19E /* ClipItem.swift in Sources */,
 				EC2FD2696FBFC7620CC1C497 /* ClipRowView.swift in Sources */,
