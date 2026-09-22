@@ -48,6 +48,8 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         positionNearCursor()
         window?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
+        appState.isPanelVisible = true
+        appState.clipboardService.pollNow()
     }
 
     func hide() {

@@ -1,8 +1,9 @@
 import SwiftUI
 
 struct HistoryListView: View {
-    @Bindable var appState: AppState
+    @Bindable var historyStore: HistoryStore
     let panelController: PanelController
+    let onPaste: (ClipItem) -> Void
     @Binding var selectedIndex: Int?
 
     var body: some View {
@@ -12,29 +13,27 @@ struct HistoryListView: View {
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 12)
 
-            if appState.historyStore.items.isEmpty {
+            if historyStore.items.isEmpty {
                 EmptyStateView(
                     title: "Sin historial",
                     systemImage: "clock",
-                    subtitle: "Copia algo y aparecerá aquí"
+                    subtitle: "Copia algo en cualquier app y aparecerá aquí"
                 )
             } else {
                 ScrollViewReader { proxy in
                     ScrollView {
                         LazyVStack(spacing: 2) {
-                            ForEach(Array(appState.historyStore.items.enumerated()), id: \.element.id) { offset, item in
+                            ForEach(Array(historyStore.items.enumerated()), id: \.element.id) { offset, item in
                                 ClipRowView(item: item, isSelected: selectedIndex == offset)
-                                    .id(offset)
+                                    .id(item.id)
                                     .onTapGesture {
                                         selectedIndex = offset
-                                        appState.pasteItem(item, panelController: panelController)
+                                        onPaste(item)
                                     }
                                     .contextMenu {
-                                        Button("Pegar") {
-                                            appState.pasteItem(item, panelController: panelController)
-                                        }
+                                        Button("Pegar") { onPaste(item) }
                                         Button("Eliminar", role: .destructive) {
-                                            appState.historyStore.remove(id: item.id)
+                                            historyStore.remove(id: item.id)
                                         }
                                     }
                             }
@@ -42,12 +41,18 @@ struct HistoryListView: View {
                         .padding(.horizontal, 4)
                     }
                     .onChange(of: selectedIndex) { _, newValue in
-                        if let idx = newValue {
-                            withAnimation { proxy.scrollTo(idx, anchor: .center) }
+                        if let idx = newValue, let id = historyStore.items[safe: idx]?.id {
+                            withAnimation { proxy.scrollTo(id, anchor: .center) }
                         }
                     }
                 }
             }
         }
+    }
+}
+
+private extension Array {
+    subscript(safe index: Int) -> Element? {
+        indices.contains(index) ? self[index] : nil
     }
 }

@@ -7,6 +7,7 @@ struct SettingsView: View {
     @State private var launchAtLogin = AppSettings.load().launchAtLogin
     @State private var playSound = AppSettings.load().playSoundOnPaste
     @State private var historyLimit = AppSettings.load().historyLimit
+    @State private var debugClipboard = AppSettings.load().debugClipboard
 
     var body: some View {
         TabView {
@@ -55,6 +56,30 @@ struct SettingsView: View {
                         settings.playSoundOnPaste = newValue
                         settings.save()
                     }
+            }
+
+            Section("Depuración") {
+                Toggle("Modo depuración del portapapeles", isOn: $debugClipboard)
+                    .onChange(of: debugClipboard) { _, newValue in
+                        var settings = AppSettings.load()
+                        settings.debugClipboard = newValue
+                        settings.save()
+                    }
+
+                if debugClipboard {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(appState.clipboardService.debugStatus)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .textSelection(.enabled)
+                        Text("Ítems en historial: \(appState.historyStore.items.count)")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                        Button("Forzar lectura ahora") {
+                            appState.clipboardService.pollNow()
+                        }
+                    }
+                }
             }
         }
         .formStyle(.grouped)

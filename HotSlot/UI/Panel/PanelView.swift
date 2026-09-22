@@ -14,8 +14,11 @@ struct PanelView: View {
                     .padding(.vertical, 8)
                 Divider()
                 HistoryListView(
-                    appState: appState,
+                    historyStore: appState.historyStore,
                     panelController: panelController,
+                    onPaste: { item in
+                        appState.pasteItem(item, panelController: panelController)
+                    },
                     selectedIndex: $selectedHistoryIndex
                 )
             }
@@ -42,6 +45,7 @@ struct PanelView: View {
             return .handled
         }
         .onAppear {
+            appState.clipboardService.pollNow()
             if selectedHistoryIndex == nil, !appState.historyStore.items.isEmpty {
                 selectedHistoryIndex = 0
             }
@@ -74,7 +78,6 @@ struct PanelView: View {
                 .foregroundStyle(.tertiary)
             Button {
                 panelController.hide()
-                appState.isPanelVisible = false
             } label: {
                 Image(systemName: "xmark.circle.fill")
                     .foregroundStyle(.secondary)

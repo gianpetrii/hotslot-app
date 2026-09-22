@@ -24,14 +24,21 @@ enum PasteboardHelper {
 
     static func shouldIgnore(pasteboard: NSPasteboard = .general) -> Bool {
         let types = pasteboard.types ?? []
-        if types.contains(concealedType) { return true }
+        // Transient = copias temporales (arrastrar/soltar), ignorar.
         if types.contains(transientType) { return true }
+        // Concealed: lo usan gestores de contraseñas; intentamos leer igual por si hay texto legible.
         return false
     }
 
     /// Clasifica el contenido actual del pasteboard.
     static func readContent(from pasteboard: NSPasteboard = .general) -> ClipContent? {
         if shouldIgnore(pasteboard: pasteboard) { return nil }
+
+        // Ruta rápida: texto plano (la mayoría de apps)
+        if let string = pasteboard.string(forType: .string) {
+            let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmed.isEmpty { return .text(string) }
+        }
 
         // Preferir pasteboardItems (API recomendada por Apple)
         if let items = pasteboard.pasteboardItems, let first = items.first {
