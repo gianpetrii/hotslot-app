@@ -69,7 +69,7 @@ struct PanelView: View {
             Text("HotSlot")
                 .font(.headline)
             Spacer()
-            Text("⌘⌃V")
+            Text("⌘⇧V")
                 .font(.caption)
                 .foregroundStyle(.tertiary)
             Button {

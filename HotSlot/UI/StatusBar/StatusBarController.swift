@@ -23,7 +23,7 @@ final class StatusBarController {
             image.isTemplate = true
             button.image = image
         }
-        button.toolTip = "HotSlot — ⌘⌃V para abrir el panel"
+        button.toolTip = "HotSlot — ⌘⇧V para abrir el panel"
         button.action = #selector(statusBarClicked)
         button.target = self
         button.sendAction(on: [.leftMouseUp, .rightMouseUp])

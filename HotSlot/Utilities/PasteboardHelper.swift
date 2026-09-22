@@ -30,21 +30,27 @@ enum PasteboardHelper {
     }
 
     /// Clasifica el contenido actual del pasteboard.
+    /// Usa el orden de tipos declarados (el primero es la representación principal).
     static func readContent(from pasteboard: NSPasteboard = .general) -> ClipContent? {
         if shouldIgnore(pasteboard: pasteboard) { return nil }
 
-        let declaredTypes = Set(pasteboard.types ?? [])
+        let orderedTypes = pasteboard.types ?? []
 
-        // Si hay tipos de texto declarados, nunca leer imagen (evita datos viejos de TIFF)
-        if declaredTypes.contains(where: { textTypes.contains($0) }) {
-            if let text = readText(from: pasteboard, declaredTypes: declaredTypes) {
+        for type in orderedTypes {
+            if textTypes.contains(type), let text = readText(from: pasteboard, preferredType: type) {
                 return .text(text)
             }
-            return nil
+            if imageTypes.contains(type), let image = readImage(from: pasteboard) {
+                return image
+            }
         }
 
-        if declaredTypes.contains(where: { imageTypes.contains($0) }) {
-            return readImage(from: pasteboard)
+        // Fallback: intentar texto e imagen sin depender del orden
+        if let text = readText(from: pasteboard, preferredType: nil) {
+            return .text(text)
+        }
+        if let image = readImage(from: pasteboard) {
+            return image
         }
 
         return nil
@@ -85,25 +91,39 @@ enum PasteboardHelper {
 
     private static func readText(
         from pasteboard: NSPasteboard,
-        declaredTypes: Set<NSPasteboard.PasteboardType>
+        preferredType: NSPasteboard.PasteboardType?
     ) -> String? {
-        if let string = pasteboard.string(forType: .string) {
-            let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !trimmed.isEmpty { return string }
+        let candidates: [NSPasteboard.PasteboardType] = if let preferredType {
+            [preferredType]
+        } else {
+            textTypes
         }
 
-        if declaredTypes.contains(.rtf),
-           let data = pasteboard.data(forType: .rtf),
-           let attributed = NSAttributedString(rtf: data, documentAttributes: nil) {
-            let plain = attributed.string.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !plain.isEmpty { return attributed.string }
-        }
-
-        if declaredTypes.contains(.html),
-           let data = pasteboard.data(forType: .html),
-           let attributed = NSAttributedString(html: data, documentAttributes: nil) {
-            let plain = attributed.string.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !plain.isEmpty { return attributed.string }
+        for type in candidates {
+            switch type {
+            case .string, NSPasteboard.PasteboardType("public.utf8-plain-text"), NSPasteboard.PasteboardType("NSStringPboardType"):
+                if let string = pasteboard.string(forType: type) ?? pasteboard.string(forType: .string) {
+                    let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !trimmed.isEmpty { return string }
+                }
+            case .rtf:
+                if let data = pasteboard.data(forType: .rtf),
+                   let attributed = NSAttributedString(rtf: data, documentAttributes: nil) {
+                    let plain = attributed.string.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !plain.isEmpty { return attributed.string }
+                }
+            case .html:
+                if let data = pasteboard.data(forType: .html),
+                   let attributed = NSAttributedString(html: data, documentAttributes: nil) {
+                    let plain = attributed.string.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !plain.isEmpty { return attributed.string }
+                }
+            default:
+                if let string = pasteboard.string(forType: type) {
+                    let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !trimmed.isEmpty { return string }
+                }
+            }
         }
 
         return nil

@@ -26,13 +26,11 @@ open HotSlot.xcodeproj
 
 ## Atajos por defecto
 
-Usamos **⌘⌃** (Control) para evitar conflicto con otros clipboard managers.
-
 | Acción | Atajo |
 |--------|-------|
-| Abrir/cerrar panel | ⌘⌃V |
-| Pegar slot 1–5 | ⌘⌃1 … ⌘⌃5 |
-| Guardar en slot 1–5 | ⌘⌥⌃1 … ⌘⌥⌃5 |
+| Abrir/cerrar panel | ⌘⇧V |
+| Pegar slot 1–5 | ⌘⇧1 … ⌘⇧5 |
+| Guardar en slot 1–5 | ⌘⌥1 … ⌘⌥5 |
 
 Si un atajo no funciona: **Ajustes → Atajos → Restaurar atajos por defecto** o grabá uno nuevo.
 

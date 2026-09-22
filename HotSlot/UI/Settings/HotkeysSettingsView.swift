@@ -52,7 +52,7 @@ struct HotkeysSettingsView: View {
             }
             Button("Cancelar", role: .cancel) {}
         } message: {
-            Text("Se aplicarán los atajos por defecto (⌘⌃V, ⌘⌃1–5, etc.).")
+            Text("Se aplicarán los atajos por defecto (⌘⇧V, ⌘⇧1–5, ⌘⌥1–5).")
         }
     }
 

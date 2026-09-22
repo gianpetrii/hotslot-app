@@ -26,9 +26,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         applyLaunchAtLoginSetting()
     }
 
-    /// Una sola vez: aplica atajos nuevos (⌘⌃) para evitar conflicto con otras apps.
+    /// Una sola vez: restaura atajos por defecto (⌘⇧V, ⌘⇧1–5, ⌘⌥1–5).
     private func migrateHotkeysIfNeeded() {
-        let key = "hotslot.hotkeys.migrated.v2"
+        let key = "hotslot.hotkeys.migrated.v3"
         guard !UserDefaults.standard.bool(forKey: key) else { return }
         KeyboardShortcuts.Name.resetAllToDefaults()
         UserDefaults.standard.set(true, forKey: key)
