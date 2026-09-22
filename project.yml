@@ -1,0 +1,61 @@
+name: HotSlot
+options:
+  bundleIdPrefix: com.hotslot
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "15.0"
+  createIntermediateGroups: true
+
+packages:
+  KeyboardShortcuts:
+    url: https://github.com/sindresorhus/KeyboardShortcuts
+    from: 2.2.0
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+
+targets:
+  HotSlot:
+    type: application
+    platform: macOS
+    sources:
+      - path: HotSlot
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.hotslot.app
+        PRODUCT_NAME: HotSlot
+        INFOPLIST_FILE: HotSlot/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: HotSlot/Resources/HotSlot.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+        COMBINE_HIDPI_IMAGES: YES
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
+    dependencies:
+      - package: KeyboardShortcuts
+    entitlements:
+      path: HotSlot/Resources/HotSlot.entitlements
+
+  HotSlotTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: HotSlotTests
+    dependencies:
+      - target: HotSlot
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.hotslot.app.tests
+        GENERATE_INFOPLIST_FILE: YES
+
+schemes:
+  HotSlot:
+    build:
+      targets:
+        HotSlot: all
+        HotSlotTests: [test]
+    test:
+      targets:
+        - HotSlotTests

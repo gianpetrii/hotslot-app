@@ -1,0 +1,630 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		06F67C3631616988E770F6FB /* FocusTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8525EE734D2017094138ADBD /* FocusTracker.swift */; };
+		0C1B4C7C4F79CBF6E95CDA42 /* ClipContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41FC0ED81ECB6C60BC9AA3FF /* ClipContent.swift */; };
+		12C677E12D06E670A5FA29DA /* ClipboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB823AC3606502B337159418 /* ClipboardService.swift */; };
+		15E13B782F856BE19618FD98 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858AB04884B62F4C91EF2DF9 /* AppState.swift */; };
+		2666AEEE1C23121AC660B2AC /* PanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A911DBA98261441FF883EE51 /* PanelView.swift */; };
+		2C243CEF754FA0B312FCF6AD /* SlotStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099675B8BFE15486169F4C0B /* SlotStoreTests.swift */; };
+		2C38077E80456117487988E8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B7E7A2B2C7D507EFD132F1 /* SettingsView.swift */; };
+		3349436229CCD5233793196B /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446EF048FFED63B26C12887 /* HotkeyManager.swift */; };
+		5A7458632B0A0E2FB4810EAB /* HotkeyName.swift in Sources */ = {isa = PBXBuildFile; fileRef = F694AB71C18F22C86D117ACC /* HotkeyName.swift */; };
+		5AEB6A3416609666695B9C48 /* SlotsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A2713A93781D6CF0A531E1 /* SlotsSettingsView.swift */; };
+		5F03F3682880EE8CB86A7501 /* SlotStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F74883603B94FB2FCCA0073 /* SlotStore.swift */; };
+		626F2AD7F73EF8432A0D67D7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B880BD3AB5B57E6D542F8B5F /* Assets.xcassets */; };
+		6D6DA5397C868548D19A305D /* ClipItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E337777E4CDCB5C2D945FE7B /* ClipItemTests.swift */; };
+		6EDC9EDB77022AEF8951BC41 /* AppSupportDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEB4689A3F7F6A221FFD94DF /* AppSupportDirectory.swift */; };
+		709457F1F7152675FEE4A77B /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841CFFDFFFAA50088B8764E1 /* StatusBarController.swift */; };
+		7BF8D66985DA3B637EC97587 /* PasteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CF8C198E8B698B91A020C3 /* PasteService.swift */; };
+		8A1E4F5E452F9201228BA817 /* PanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD50D3AD7653F5FCEE0C092 /* PanelController.swift */; };
+		8AD33E79675CC9C6D12CAE99 /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3D4575494AD564C842B7E3 /* Slot.swift */; };
+		8FF03433C9CE0E0D64619F77 /* HistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5705E3CE6DEACE6C0251D749 /* HistoryListView.swift */; };
+		98F6E095AE516BDCB9DEB19E /* ClipItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9978112D3F44AE2BCE41F5E /* ClipItem.swift */; };
+		999AA44F8AF5D7EDD8CA8B74 /* HotSlotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51184CDE4DE57A7C42AA1D1 /* HotSlotApp.swift */; };
+		A4444F4B642C0155DD82A848 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89452FF5E5C474F90625C4C3 /* AppDelegate.swift */; };
+		B7A96F91F33FE780998A9FD9 /* HistoryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904BC54DEB4EA0FB71573C0A /* HistoryStoreTests.swift */; };
+		BE931C778F5553DF67F0481B /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49192713FE49EA8C0DC9E8D /* EmptyStateView.swift */; };
+		C4701F22F4DF19F9D5457B39 /* PasteboardHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00C6BACA1F9F56E6F6098EF7 /* PasteboardHelper.swift */; };
+		C892DEF7905F0C9D07D2EAB4 /* HotkeysSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C232CD058B6607F39574953 /* HotkeysSettingsView.swift */; };
+		CE22760276774C6B27A032C5 /* HistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD5D3779C3ADA48B9820C77 /* HistoryStore.swift */; };
+		E4EF388A93D722D36DE2BA7F /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD36EA0DCFD93B6DFACE95B8 /* AppSettings.swift */; };
+		E7ADCDF4133C8D6377C65B29 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = C4BD315A42A86DEEE9D248F0 /* KeyboardShortcuts */; };
+		EC2FD2696FBFC7620CC1C497 /* ClipRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3610897210D290C688FA1D3C /* ClipRowView.swift */; };
+		F3DF1B41ADC0380D87AF4D07 /* SlotGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F806ECE71FCC38E52033D0F /* SlotGridView.swift */; };
+		F5B44D9C82D3CB4398737ED5 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B4D0B6EDEEE5D11496E08B /* ToastView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5E029734373EB4EC83F64B1E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F41394C2295FC1022024C727 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 248EBB8D02FD34E70AE77CA1;
+			remoteInfo = HotSlot;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		00C6BACA1F9F56E6F6098EF7 /* PasteboardHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardHelper.swift; sourceTree = "<group>"; };
+		099675B8BFE15486169F4C0B /* SlotStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotStoreTests.swift; sourceTree = "<group>"; };
+		0F806ECE71FCC38E52033D0F /* SlotGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotGridView.swift; sourceTree = "<group>"; };
+		2F74883603B94FB2FCCA0073 /* SlotStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotStore.swift; sourceTree = "<group>"; };
+		3610897210D290C688FA1D3C /* ClipRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipRowView.swift; sourceTree = "<group>"; };
+		40B7E7A2B2C7D507EFD132F1 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		41FC0ED81ECB6C60BC9AA3FF /* ClipContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipContent.swift; sourceTree = "<group>"; };
+		4446EF048FFED63B26C12887 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
+		4D3D4575494AD564C842B7E3 /* Slot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
+		5705E3CE6DEACE6C0251D749 /* HistoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryListView.swift; sourceTree = "<group>"; };
+		5BD5D3779C3ADA48B9820C77 /* HistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStore.swift; sourceTree = "<group>"; };
+		7716292477212411D84E93C5 /* HotSlot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HotSlot.entitlements; sourceTree = "<group>"; };
+		841CFFDFFFAA50088B8764E1 /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
+		8525EE734D2017094138ADBD /* FocusTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusTracker.swift; sourceTree = "<group>"; };
+		858AB04884B62F4C91EF2DF9 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		89452FF5E5C474F90625C4C3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		904BC54DEB4EA0FB71573C0A /* HistoryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStoreTests.swift; sourceTree = "<group>"; };
+		9C232CD058B6607F39574953 /* HotkeysSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeysSettingsView.swift; sourceTree = "<group>"; };
+		A51184CDE4DE57A7C42AA1D1 /* HotSlotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotSlotApp.swift; sourceTree = "<group>"; };
+		A6CF8C198E8B698B91A020C3 /* PasteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteService.swift; sourceTree = "<group>"; };
+		A911DBA98261441FF883EE51 /* PanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelView.swift; sourceTree = "<group>"; };
+		B880BD3AB5B57E6D542F8B5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BD36EA0DCFD93B6DFACE95B8 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		C6A2713A93781D6CF0A531E1 /* SlotsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsSettingsView.swift; sourceTree = "<group>"; };
+		D1A146B669DE65CF68ECF5A0 /* HotSlot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HotSlot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D4B5F0EEAA83D6809073C8CE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		DA7465C8DDE3F479100918D6 /* HotSlotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HotSlotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E337777E4CDCB5C2D945FE7B /* ClipItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipItemTests.swift; sourceTree = "<group>"; };
+		E49192713FE49EA8C0DC9E8D /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
+		E9978112D3F44AE2BCE41F5E /* ClipItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipItem.swift; sourceTree = "<group>"; };
+		EBD50D3AD7653F5FCEE0C092 /* PanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelController.swift; sourceTree = "<group>"; };
+		F3B4D0B6EDEEE5D11496E08B /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
+		F694AB71C18F22C86D117ACC /* HotkeyName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyName.swift; sourceTree = "<group>"; };
+		FB823AC3606502B337159418 /* ClipboardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardService.swift; sourceTree = "<group>"; };
+		FEB4689A3F7F6A221FFD94DF /* AppSupportDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSupportDirectory.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		40C737A00FD8687CFE25D17E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E7ADCDF4133C8D6377C65B29 /* KeyboardShortcuts in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2A104B474347457D6B881CBD /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				2DED8D49FB1D37970A81C10A /* Components */,
+				ABF0EEB6DF5AA46AB5719AD2 /* Panel */,
+				5237D3CCB37678695A4BB924 /* Settings */,
+				821A95698B389315DDFCEE8C /* StatusBar */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		2DED8D49FB1D37970A81C10A /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				3610897210D290C688FA1D3C /* ClipRowView.swift */,
+				F3B4D0B6EDEEE5D11496E08B /* ToastView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		5054FA23AFDC791295B69AD6 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				FEB4689A3F7F6A221FFD94DF /* AppSupportDirectory.swift */,
+				F694AB71C18F22C86D117ACC /* HotkeyName.swift */,
+				00C6BACA1F9F56E6F6098EF7 /* PasteboardHelper.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		5237D3CCB37678695A4BB924 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				9C232CD058B6607F39574953 /* HotkeysSettingsView.swift */,
+				40B7E7A2B2C7D507EFD132F1 /* SettingsView.swift */,
+				C6A2713A93781D6CF0A531E1 /* SlotsSettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		67ADB4B16B3ADC1676D37015 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				89452FF5E5C474F90625C4C3 /* AppDelegate.swift */,
+				858AB04884B62F4C91EF2DF9 /* AppState.swift */,
+				A51184CDE4DE57A7C42AA1D1 /* HotSlotApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		821A95698B389315DDFCEE8C /* StatusBar */ = {
+			isa = PBXGroup;
+			children = (
+				841CFFDFFFAA50088B8764E1 /* StatusBarController.swift */,
+			);
+			path = StatusBar;
+			sourceTree = "<group>";
+		};
+		8FC6C55879F9CDFE22815A4F /* HotSlot */ = {
+			isa = PBXGroup;
+			children = (
+				67ADB4B16B3ADC1676D37015 /* App */,
+				DA4D9D603FB4B0BDDE4F747C /* Models */,
+				A397B00E18767437A6B1BB47 /* Resources */,
+				D5D765B896D121F867F67D97 /* Services */,
+				2A104B474347457D6B881CBD /* UI */,
+				5054FA23AFDC791295B69AD6 /* Utilities */,
+			);
+			path = HotSlot;
+			sourceTree = "<group>";
+		};
+		8FFF4A07E08798AB00DF2DCB /* HotSlotTests */ = {
+			isa = PBXGroup;
+			children = (
+				E337777E4CDCB5C2D945FE7B /* ClipItemTests.swift */,
+				904BC54DEB4EA0FB71573C0A /* HistoryStoreTests.swift */,
+				099675B8BFE15486169F4C0B /* SlotStoreTests.swift */,
+			);
+			path = HotSlotTests;
+			sourceTree = "<group>";
+		};
+		A397B00E18767437A6B1BB47 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B880BD3AB5B57E6D542F8B5F /* Assets.xcassets */,
+				7716292477212411D84E93C5 /* HotSlot.entitlements */,
+				D4B5F0EEAA83D6809073C8CE /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		ABF0EEB6DF5AA46AB5719AD2 /* Panel */ = {
+			isa = PBXGroup;
+			children = (
+				E49192713FE49EA8C0DC9E8D /* EmptyStateView.swift */,
+				5705E3CE6DEACE6C0251D749 /* HistoryListView.swift */,
+				EBD50D3AD7653F5FCEE0C092 /* PanelController.swift */,
+				A911DBA98261441FF883EE51 /* PanelView.swift */,
+				0F806ECE71FCC38E52033D0F /* SlotGridView.swift */,
+			);
+			path = Panel;
+			sourceTree = "<group>";
+		};
+		D5D765B896D121F867F67D97 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				FB823AC3606502B337159418 /* ClipboardService.swift */,
+				8525EE734D2017094138ADBD /* FocusTracker.swift */,
+				5BD5D3779C3ADA48B9820C77 /* HistoryStore.swift */,
+				4446EF048FFED63B26C12887 /* HotkeyManager.swift */,
+				A6CF8C198E8B698B91A020C3 /* PasteService.swift */,
+				2F74883603B94FB2FCCA0073 /* SlotStore.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		DA4D9D603FB4B0BDDE4F747C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				BD36EA0DCFD93B6DFACE95B8 /* AppSettings.swift */,
+				41FC0ED81ECB6C60BC9AA3FF /* ClipContent.swift */,
+				E9978112D3F44AE2BCE41F5E /* ClipItem.swift */,
+				4D3D4575494AD564C842B7E3 /* Slot.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		E3E062CD09FFA5DED1D88B6D = {
+			isa = PBXGroup;
+			children = (
+				8FC6C55879F9CDFE22815A4F /* HotSlot */,
+				8FFF4A07E08798AB00DF2DCB /* HotSlotTests */,
+				E5031C35BCD2C1773CCBABD3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E5031C35BCD2C1773CCBABD3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D1A146B669DE65CF68ECF5A0 /* HotSlot.app */,
+				DA7465C8DDE3F479100918D6 /* HotSlotTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		248EBB8D02FD34E70AE77CA1 /* HotSlot */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 75264FE679E091E2891EC367 /* Build configuration list for PBXNativeTarget "HotSlot" */;
+			buildPhases = (
+				BBBAAF84CD748055B3194B6C /* Sources */,
+				EB7366E1C45497CFEC2C7A59 /* Resources */,
+				40C737A00FD8687CFE25D17E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HotSlot;
+			packageProductDependencies = (
+				C4BD315A42A86DEEE9D248F0 /* KeyboardShortcuts */,
+			);
+			productName = HotSlot;
+			productReference = D1A146B669DE65CF68ECF5A0 /* HotSlot.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DCAFD1C1F50920E7DEEB036D /* HotSlotTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D15CFFC112FC1BE16321C5C /* Build configuration list for PBXNativeTarget "HotSlotTests" */;
+			buildPhases = (
+				88976BA868EBEC67452124B4 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6F9EB8E714A54F76EF37C6CA /* PBXTargetDependency */,
+			);
+			name = HotSlotTests;
+			packageProductDependencies = (
+			);
+			productName = HotSlotTests;
+			productReference = DA7465C8DDE3F479100918D6 /* HotSlotTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F41394C2295FC1022024C727 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = ED1CD970D01D813000053B99 /* Build configuration list for PBXProject "HotSlot" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = E3E062CD09FFA5DED1D88B6D;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				48823868B75029504C4CDEC3 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = E5031C35BCD2C1773CCBABD3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				248EBB8D02FD34E70AE77CA1 /* HotSlot */,
+				DCAFD1C1F50920E7DEEB036D /* HotSlotTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EB7366E1C45497CFEC2C7A59 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				626F2AD7F73EF8432A0D67D7 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		88976BA868EBEC67452124B4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D6DA5397C868548D19A305D /* ClipItemTests.swift in Sources */,
+				B7A96F91F33FE780998A9FD9 /* HistoryStoreTests.swift in Sources */,
+				2C243CEF754FA0B312FCF6AD /* SlotStoreTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BBBAAF84CD748055B3194B6C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A4444F4B642C0155DD82A848 /* AppDelegate.swift in Sources */,
+				E4EF388A93D722D36DE2BA7F /* AppSettings.swift in Sources */,
+				15E13B782F856BE19618FD98 /* AppState.swift in Sources */,
+				6EDC9EDB77022AEF8951BC41 /* AppSupportDirectory.swift in Sources */,
+				0C1B4C7C4F79CBF6E95CDA42 /* ClipContent.swift in Sources */,
+				98F6E095AE516BDCB9DEB19E /* ClipItem.swift in Sources */,
+				EC2FD2696FBFC7620CC1C497 /* ClipRowView.swift in Sources */,
+				12C677E12D06E670A5FA29DA /* ClipboardService.swift in Sources */,
+				BE931C778F5553DF67F0481B /* EmptyStateView.swift in Sources */,
+				06F67C3631616988E770F6FB /* FocusTracker.swift in Sources */,
+				8FF03433C9CE0E0D64619F77 /* HistoryListView.swift in Sources */,
+				CE22760276774C6B27A032C5 /* HistoryStore.swift in Sources */,
+				999AA44F8AF5D7EDD8CA8B74 /* HotSlotApp.swift in Sources */,
+				3349436229CCD5233793196B /* HotkeyManager.swift in Sources */,
+				5A7458632B0A0E2FB4810EAB /* HotkeyName.swift in Sources */,
+				C892DEF7905F0C9D07D2EAB4 /* HotkeysSettingsView.swift in Sources */,
+				8A1E4F5E452F9201228BA817 /* PanelController.swift in Sources */,
+				2666AEEE1C23121AC660B2AC /* PanelView.swift in Sources */,
+				7BF8D66985DA3B637EC97587 /* PasteService.swift in Sources */,
+				C4701F22F4DF19F9D5457B39 /* PasteboardHelper.swift in Sources */,
+				2C38077E80456117487988E8 /* SettingsView.swift in Sources */,
+				8AD33E79675CC9C6D12CAE99 /* Slot.swift in Sources */,
+				F3DF1B41ADC0380D87AF4D07 /* SlotGridView.swift in Sources */,
+				5F03F3682880EE8CB86A7501 /* SlotStore.swift in Sources */,
+				5AEB6A3416609666695B9C48 /* SlotsSettingsView.swift in Sources */,
+				709457F1F7152675FEE4A77B /* StatusBarController.swift in Sources */,
+				F5B44D9C82D3CB4398737ED5 /* ToastView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6F9EB8E714A54F76EF37C6CA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 248EBB8D02FD34E70AE77CA1 /* HotSlot */;
+			targetProxy = 5E029734373EB4EC83F64B1E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0026C7504C4D2984D1BAD568 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.hotslot.app.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HotSlot.app/Contents/MacOS/HotSlot";
+			};
+			name = Debug;
+		};
+		150DE10F96C21B24ADD7B07B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.hotslot.app.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HotSlot.app/Contents/MacOS/HotSlot";
+			};
+			name = Release;
+		};
+		2A8BFB1EA7317366EE601337 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		6C5859794EF505BC9C2C3188 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HotSlot/Resources/HotSlot.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = HotSlot/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hotslot.app;
+				PRODUCT_NAME = HotSlot;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		B789FFEA7C761A81AE7D87EF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HotSlot/Resources/HotSlot.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = HotSlot/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hotslot.app;
+				PRODUCT_NAME = HotSlot;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		CA6F3BEDED548E4B93E57D5D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2D15CFFC112FC1BE16321C5C /* Build configuration list for PBXNativeTarget "HotSlotTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0026C7504C4D2984D1BAD568 /* Debug */,
+				150DE10F96C21B24ADD7B07B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		75264FE679E091E2891EC367 /* Build configuration list for PBXNativeTarget "HotSlot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B789FFEA7C761A81AE7D87EF /* Debug */,
+				6C5859794EF505BC9C2C3188 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		ED1CD970D01D813000053B99 /* Build configuration list for PBXProject "HotSlot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CA6F3BEDED548E4B93E57D5D /* Debug */,
+				2A8BFB1EA7317366EE601337 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		48823868B75029504C4CDEC3 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C4BD315A42A86DEEE9D248F0 /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 48823868B75029504C4CDEC3 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = F41394C2295FC1022024C727 /* Project object */;
+}

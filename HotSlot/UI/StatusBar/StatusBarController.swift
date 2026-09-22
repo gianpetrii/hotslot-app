@@ -1,0 +1,89 @@
+import AppKit
+import SwiftUI
+
+/// Icono en menu bar con menú contextual.
+@MainActor
+final class StatusBarController {
+    private let statusItem: NSStatusItem
+    private let appState: AppState
+    private let panelController: PanelController
+
+    init(appState: AppState, panelController: PanelController) {
+        self.appState = appState
+        self.panelController = panelController
+        self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+
+        configureButton()
+    }
+
+    private func configureButton() {
+        guard let button = statusItem.button else { return }
+
+        if let image = NSImage(systemSymbolName: "doc.on.clipboard", accessibilityDescription: "HotSlot") {
+            image.isTemplate = true
+            button.image = image
+        }
+        button.toolTip = "HotSlot — ⌘⇧V"
+        button.action = #selector(statusBarClicked)
+        button.target = self
+        button.sendAction(on: [.leftMouseUp, .rightMouseUp])
+    }
+
+    private lazy var contextMenu: NSMenu = {
+        let menu = NSMenu()
+
+        let openItem = NSMenuItem(title: "Abrir panel", action: #selector(togglePanel), keyEquivalent: "")
+        openItem.target = self
+        menu.addItem(openItem)
+
+        menu.addItem(.separator())
+
+        let settingsItem = NSMenuItem(title: "Ajustes…", action: #selector(openSettings), keyEquivalent: ",")
+        settingsItem.target = self
+        menu.addItem(settingsItem)
+
+        menu.addItem(.separator())
+
+        let quitItem = NSMenuItem(title: "Salir de HotSlot", action: #selector(quit), keyEquivalent: "q")
+        quitItem.target = self
+        menu.addItem(quitItem)
+
+        return menu
+    }()
+
+    @objc private func statusBarClicked() {
+        guard let event = NSApp.currentEvent else {
+            togglePanel()
+            return
+        }
+        if event.type == .rightMouseUp {
+            if let button = statusItem.button {
+                contextMenu.popUp(positioning: nil, at: NSPoint(x: 0, y: button.bounds.height), in: button)
+            }
+        } else {
+            togglePanel()
+        }
+    }
+
+    @objc private func togglePanel() {
+        if panelController.isVisible {
+            panelController.hide()
+            appState.isPanelVisible = false
+        } else {
+            appState.focusTracker.capture()
+            panelController.show()
+            appState.isPanelVisible = true
+        }
+    }
+
+    @objc private func openSettings() {
+        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+        if #available(macOS 14, *) {
+            NSApp.activate(ignoringOtherApps: true)
+        }
+    }
+
+    @objc private func quit() {
+        NSApp.terminate(nil)
+    }
+}
