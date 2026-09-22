@@ -6,19 +6,21 @@ struct EmptyStateView: View {
     let subtitle: String
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 10) {
             Image(systemName: systemImage)
-                .font(.system(size: 28))
+                .font(.system(size: 32, weight: .light))
                 .foregroundStyle(.tertiary)
+                .symbolRenderingMode(.hierarchical)
             Text(title)
-                .font(.headline)
+                .font(.subheadline.weight(.medium))
                 .foregroundStyle(.secondary)
             Text(subtitle)
                 .font(.caption)
                 .foregroundStyle(.tertiary)
                 .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 24)
+        .padding(.vertical, 28)
     }
 }

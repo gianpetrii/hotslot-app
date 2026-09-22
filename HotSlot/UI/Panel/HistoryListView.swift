@@ -7,11 +7,8 @@ struct HistoryListView: View {
     @Binding var selectedIndex: Int?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Historial")
-                .font(.headline)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 12)
+        VStack(alignment: .leading, spacing: HotSlotDesign.sectionSpacing) {
+            SectionHeader(title: "Historial")
 
             if historyStore.items.isEmpty {
                 EmptyStateView(
@@ -22,7 +19,7 @@ struct HistoryListView: View {
             } else {
                 ScrollViewReader { proxy in
                     ScrollView {
-                        LazyVStack(spacing: 2) {
+                        LazyVStack(spacing: 4) {
                             ForEach(Array(historyStore.items.enumerated()), id: \.element.id) { offset, item in
                                 ClipRowView(item: item, isSelected: selectedIndex == offset)
                                     .id(item.id)
@@ -38,8 +35,10 @@ struct HistoryListView: View {
                                     }
                             }
                         }
-                        .padding(.horizontal, 4)
+                        .padding(.horizontal, HotSlotDesign.horizontalPadding - 4)
+                        .padding(.bottom, 8)
                     }
+                    .scrollIndicators(.hidden)
                     .onChange(of: selectedIndex) { _, newValue in
                         if let idx = newValue, let id = historyStore.items[safe: idx]?.id {
                             withAnimation { proxy.scrollTo(id, anchor: .center) }

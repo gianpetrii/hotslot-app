@@ -15,7 +15,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         self.appState = appState
 
         let panel = FloatingPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 420, height: 480),
+            contentRect: NSRect(x: 0, y: 0, width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight),
             styleMask: [.nonactivatingPanel, .fullSizeContentView, .hudWindow],
             backing: .buffered,
             defer: false
@@ -24,6 +24,8 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         super.init(window: panel)
 
         let hosting = NSHostingController(rootView: PanelView(appState: appState, panelController: self))
+        hosting.view.wantsLayer = true
+        hosting.view.layer?.backgroundColor = NSColor.clear.cgColor
         panel.contentViewController = hosting
         panel.isFloatingPanel = true
         panel.level = .floating
@@ -32,6 +34,8 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         panel.titlebarAppearsTransparent = true
         panel.isMovableByWindowBackground = true
         panel.backgroundColor = .clear
+        panel.isOpaque = false
+        panel.hasShadow = false
         panel.isReleasedWhenClosed = false
         panel.hidesOnDeactivate = true
         panel.delegate = self
@@ -70,7 +74,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
     private func positionNearCursor() {
         guard let screen = NSScreen.main else { return }
         let mouse = NSEvent.mouseLocation
-        let panelSize = window?.frame.size ?? NSSize(width: 420, height: 480)
+        let panelSize = window?.frame.size ?? NSSize(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight)
         var origin = NSPoint(
             x: mouse.x - panelSize.width / 2,
             y: mouse.y - panelSize.height - 20

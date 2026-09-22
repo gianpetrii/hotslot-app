@@ -7,9 +7,16 @@ struct ToastView: View {
     var body: some View {
         Text(message)
             .font(.callout)
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 18)
             .padding(.vertical, 10)
-            .background(.ultraThinMaterial, in: Capsule())
-            .shadow(color: .black.opacity(0.15), radius: 8, y: 4)
+            .background {
+                Capsule(style: .continuous)
+                    .fill(.ultraThinMaterial)
+                    .overlay {
+                        Capsule(style: .continuous)
+                            .strokeBorder(Color.white.opacity(0.2), lineWidth: 0.5)
+                    }
+            }
+            .shadow(color: .black.opacity(0.18), radius: 12, y: 6)
     }
 }

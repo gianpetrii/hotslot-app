@@ -7,6 +7,17 @@ Clipboard manager nativo para macOS con historial, slots fijos y atajos globales
 - macOS 14.0+
 - Xcode 15+
 
+## Versiones
+
+| Tag | Descripción |
+|-----|-------------|
+| `v0.1.0` | MVP funcional: clipboard, slots, hotkeys |
+| `v0.2.0` | UI estilo Control Center (vibrancy + glass) |
+
+## Nota sobre logs en Xcode
+
+Los mensajes `com.apple.linkd.autoShortcut` son **ruido del sistema** (Intents/Shortcuts). No afectan a HotSlot y se pueden ignorar.
+
 ## Desarrollo
 
 ```bash

@@ -4,16 +4,13 @@ struct SlotGridView: View {
     @Bindable var appState: AppState
     let panelController: PanelController
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 5)
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 5)
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Slots")
-                .font(.headline)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 12)
+        VStack(alignment: .leading, spacing: HotSlotDesign.sectionSpacing) {
+            SectionHeader(title: "Slots")
 
-            LazyVGrid(columns: columns, spacing: 8) {
+            LazyVGrid(columns: columns, spacing: 10) {
                 ForEach(appState.slotStore.slots) { slot in
                     SlotCardView(
                         slot: slot,
@@ -32,7 +29,7 @@ struct SlotGridView: View {
                     )
                 }
             }
-            .padding(.horizontal, 12)
+            .padding(.horizontal, HotSlotDesign.horizontalPadding)
         }
     }
 }
@@ -42,21 +39,26 @@ private struct SlotCardView: View {
     let onPaste: () -> Void
     let onSaveFromClipboard: () -> Void
     let onClear: () -> Void
+    @State private var isHovering = false
+
+    private var hasContent: Bool { slot.content != nil }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text("\(slot.index)")
-                    .font(.caption.bold())
+                    .font(.caption2.weight(.bold))
                     .foregroundStyle(.secondary)
+                    .frame(width: 18, height: 18)
+                    .background(Circle().fill(.quaternary.opacity(0.6)))
                 Spacer()
-                Image(systemName: slot.content == nil ? "square.dashed" : "square.fill")
-                    .font(.caption2)
-                    .foregroundStyle(slot.content == nil ? Color.secondary.opacity(0.5) : Color.accentColor)
+                Image(systemName: hasContent ? "checkmark.circle.fill" : "circle.dashed")
+                    .font(.caption)
+                    .foregroundStyle(hasContent ? Color.accentColor : Color.secondary.opacity(0.45))
             }
 
             Text(slot.label)
-                .font(.caption)
+                .font(.caption.weight(.medium))
                 .lineLimit(1)
 
             if let content = slot.content {
@@ -70,18 +72,20 @@ private struct SlotCardView: View {
                     .foregroundStyle(.tertiary)
             }
         }
-        .padding(8)
-        .frame(maxWidth: .infinity, minHeight: 72, alignment: .topLeading)
-        .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
-        .contentShape(Rectangle())
-        .onTapGesture(count: 2, perform: onPaste)
-        .onTapGesture(count: 1) {
-            onPaste()
+        .padding(10)
+        .frame(maxWidth: .infinity, minHeight: 78, alignment: .topLeading)
+        .background {
+            GlassCardBackground(isHighlighted: hasContent || isHovering)
         }
+        .scaleEffect(isHovering ? 1.02 : 1)
+        .animation(.easeOut(duration: 0.15), value: isHovering)
+        .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
+        .onTapGesture { onPaste() }
+        .onHover { isHovering = $0 }
         .contextMenu {
             Button("Pegar") { onPaste() }
             Button("Guardar clipboard") { onSaveFromClipboard() }
-            if slot.content != nil {
+            if hasContent {
                 Button("Limpiar", role: .destructive) { onClear() }
             }
         }
