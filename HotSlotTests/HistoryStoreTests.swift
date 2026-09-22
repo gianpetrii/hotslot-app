@@ -29,7 +29,6 @@ final class HistoryStoreTests: XCTestCase {
         store.add(a2)
         XCTAssertEqual(store.items.count, 2)
         XCTAssertEqual(store.items.first?.content.previewText, "duplicado")
-        XCTAssertEqual(store.items.count, 2)
     }
 
     func testHistoryLimit() {
