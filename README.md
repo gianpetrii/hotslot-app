@@ -16,7 +16,9 @@ Clipboard manager nativo para macOS con historial, slots fijos y atajos globales
 
 ## Nota sobre logs en Xcode
 
-Los mensajes `com.apple.linkd.autoShortcut` son **ruido del sistema** (Intents/Shortcuts). No afectan a HotSlot y se pueden ignorar.
+Los mensajes `com.apple.linkd.autoShortcut` son **ruido del sistema** (Intents/Shortcuts al registrar hotkeys). No afectan a HotSlot y se pueden ignorar.
+
+Si en depuración ves textos raros capturados "desde Xcode", es porque el portapapeles tenía texto de la consola de Xcode. Copiá en Notes, Cursor, Safari, etc. con esa app al frente.
 
 ## Desarrollo
 

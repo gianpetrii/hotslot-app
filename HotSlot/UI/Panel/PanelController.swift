@@ -49,7 +49,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
     }
 
     func show() {
-        positionNearCursor()
+        positionCenterOnScreen()
         window?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
         appState.isPanelVisible = true
@@ -71,17 +71,18 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         hide()
     }
 
-    private func positionNearCursor() {
-        guard let screen = NSScreen.main else { return }
+    /// Centra el panel en la pantalla donde está el cursor (o pantalla principal).
+    private func positionCenterOnScreen() {
         let mouse = NSEvent.mouseLocation
-        let panelSize = window?.frame.size ?? NSSize(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight)
-        var origin = NSPoint(
-            x: mouse.x - panelSize.width / 2,
-            y: mouse.y - panelSize.height - 20
-        )
+        let screen = NSScreen.screens.first { NSMouseInRect(mouse, $0.frame, false) } ?? NSScreen.main
+        guard let screen else { return }
+
         let visible = screen.visibleFrame
-        origin.x = max(visible.minX, min(origin.x, visible.maxX - panelSize.width))
-        origin.y = max(visible.minY, min(origin.y, visible.maxY - panelSize.height))
+        let panelSize = window?.frame.size ?? NSSize(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight)
+        let origin = NSPoint(
+            x: visible.midX - panelSize.width / 2,
+            y: visible.midY - panelSize.height / 2
+        )
         window?.setFrameOrigin(origin)
     }
 
