@@ -12,9 +12,19 @@ final class HistoryStore {
     }
 
     func add(_ item: ClipItem) {
-        // Deduplicar: quitar ítem previo con mismo fingerprint
+        var newItem = item
+        if let existing = items.first(where: { $0.contentFingerprint == item.contentFingerprint }) {
+            newItem.isPinned = existing.isPinned
+        }
+
         items.removeAll { $0.contentFingerprint == item.contentFingerprint }
-        items.insert(item, at: 0)
+
+        if newItem.isPinned {
+            items.insert(newItem, at: 0)
+        } else {
+            let insertIndex = items.firstIndex(where: { !$0.isPinned }) ?? items.count
+            items.insert(newItem, at: insertIndex)
+        }
 
         if items.count > historyLimit {
             items = Array(items.prefix(historyLimit))
@@ -24,6 +34,25 @@ final class HistoryStore {
 
     func remove(id: UUID) {
         items.removeAll { $0.id == id }
+        save()
+    }
+
+    func togglePin(id: UUID) {
+        guard let index = items.firstIndex(where: { $0.id == id }) else { return }
+        var item = items.remove(at: index)
+        item.isPinned.toggle()
+
+        if item.isPinned {
+            items.insert(item, at: 0)
+        } else {
+            let insertIndex = items.firstIndex(where: { !$0.isPinned }) ?? items.count
+            items.insert(item, at: insertIndex)
+        }
+        save()
+    }
+
+    func move(from source: IndexSet, to destination: Int) {
+        items.move(fromOffsets: source, toOffset: destination)
         save()
     }
 

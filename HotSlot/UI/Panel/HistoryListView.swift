@@ -2,51 +2,89 @@ import SwiftUI
 
 struct HistoryListView: View {
     @Bindable var historyStore: HistoryStore
-    let panelController: PanelController
+    let items: [ClipItem]
+    let isSearching: Bool
     let onPaste: (ClipItem) -> Void
-    @Binding var selectedIndex: Int?
+    @Binding var keyboardHighlightIndex: Int?
+
+    private let listAnimation = Animation.spring(response: 0.34, dampingFraction: 0.82)
 
     var body: some View {
-        VStack(alignment: .leading, spacing: HotSlotDesign.sectionSpacing) {
+        VStack(alignment: .leading, spacing: 8) {
             SectionHeader(title: "Historial")
 
-            if historyStore.items.isEmpty {
+            if items.isEmpty {
                 EmptyStateView(
-                    title: "Sin historial",
-                    systemImage: "clock",
-                    subtitle: "Copia algo en cualquier app y aparecerá aquí"
+                    title: isSearching ? "Sin resultados" : "Sin historial",
+                    systemImage: isSearching ? "magnifyingglass" : "clock",
+                    subtitle: isSearching
+                        ? "Probá con otro término de búsqueda"
+                        : "Copiá algo en cualquier app y aparecerá aquí"
                 )
+                .transition(.opacity.combined(with: .scale(scale: 0.98)))
             } else {
                 ScrollViewReader { proxy in
-                    ScrollView {
-                        LazyVStack(spacing: 4) {
-                            ForEach(Array(historyStore.items.enumerated()), id: \.element.id) { offset, item in
-                                ClipRowView(item: item, isSelected: selectedIndex == offset)
-                                    .id(item.id)
-                                    .onTapGesture {
-                                        selectedIndex = offset
-                                        onPaste(item)
+                    List {
+                        ForEach(items) { item in
+                            let offset = items.firstIndex(where: { $0.id == item.id }) ?? 0
+                            ClipRowView(
+                                item: item,
+                                isKeyboardHighlighted: keyboardHighlightIndex == offset,
+                                onPaste: { onPaste(item) },
+                                onTogglePin: {
+                                    withAnimation(listAnimation) {
+                                        historyStore.togglePin(id: item.id)
                                     }
-                                    .contextMenu {
-                                        Button("Pegar") { onPaste(item) }
-                                        Button("Eliminar", role: .destructive) {
-                                            historyStore.remove(id: item.id)
-                                        }
+                                }
+                            )
+                            .id(item.id)
+                            .listRowInsets(EdgeInsets(top: 1, leading: HotSlotDesign.horizontalPadding, bottom: 1, trailing: HotSlotDesign.horizontalPadding))
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
+                            .contextMenu {
+                                Button(item.isPinned ? "Desfijar" : "Fijar arriba") {
+                                    withAnimation(listAnimation) {
+                                        historyStore.togglePin(id: item.id)
                                     }
+                                }
+                                Button("Pegar") { onPaste(item) }
+                                Button("Eliminar", role: .destructive) {
+                                    withAnimation(listAnimation) {
+                                        historyStore.remove(id: item.id)
+                                    }
+                                }
+                            }
+                            .transition(
+                                .asymmetric(
+                                    insertion: .move(edge: .top).combined(with: .opacity),
+                                    removal: .scale(scale: 0.94, anchor: .top).combined(with: .opacity)
+                                )
+                            )
+                        }
+                        .onMove { source, destination in
+                            guard !isSearching else { return }
+                            withAnimation(listAnimation) {
+                                historyStore.move(from: source, to: destination)
                             }
                         }
-                        .padding(.horizontal, HotSlotDesign.horizontalPadding - 4)
-                        .padding(.bottom, 8)
+                        .moveDisabled(isSearching)
                     }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
                     .scrollIndicators(.hidden)
-                    .onChange(of: selectedIndex) { _, newValue in
-                        if let idx = newValue, let id = historyStore.items[safe: idx]?.id {
-                            withAnimation { proxy.scrollTo(id, anchor: .center) }
+                    .environment(\.defaultMinListRowHeight, HotSlotDesign.rowHeight)
+                    .animation(listAnimation, value: items.map(\.id))
+                    .onChange(of: keyboardHighlightIndex) { _, newValue in
+                        if let idx = newValue, let id = items[safe: idx]?.id {
+                            withAnimation(listAnimation) {
+                                proxy.scrollTo(id, anchor: .center)
+                            }
                         }
                     }
                 }
             }
         }
+        .animation(listAnimation, value: items.map(\.id))
     }
 }
 

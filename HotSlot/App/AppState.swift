@@ -14,6 +14,7 @@ final class AppState {
 
     var toastMessage: String?
     var isPanelVisible = false
+    var openSettings: (() -> Void)?
 
     var settings: AppSettings {
         get { AppSettings.load() }
@@ -63,15 +64,24 @@ final class AppState {
     }
 
     func pasteItem(_ item: ClipItem, panelController: PanelController) {
-        panelController.hide()
-        isPanelVisible = false
-        pasteService.pasteFromHistory(item: item, focusTracker: focusTracker)
+        let target = focusTracker.targetApp
+        let content = item.content
+        panelController.hide(animated: true) {
+            self.isPanelVisible = false
+            self.pasteService.paste(content: content, targetApp: target)
+        }
     }
 
     func pasteSlot(index: Int, panelController: PanelController) {
-        panelController.hide()
-        isPanelVisible = false
-        pasteService.pasteFromSlot(index: index, slotStore: slotStore, focusTracker: focusTracker)
+        guard let content = slotStore.content(at: index) else {
+            showToast("El slot \(index) está vacío")
+            return
+        }
+        let target = focusTracker.targetApp
+        panelController.hide(animated: true) {
+            self.isPanelVisible = false
+            self.pasteService.paste(content: content, targetApp: target)
+        }
     }
 
     func showToast(_ message: String) {

@@ -1,6 +1,6 @@
 import AppKit
 
-/// Capa de blur/dim a pantalla completa detrás del panel (estilo Spotlight).
+/// Dim sutil a pantalla completa detrás del panel (como Spotlight, sin blur pesado).
 @MainActor
 final class BackdropController {
     private var window: NSPanel?
@@ -53,7 +53,7 @@ final class BackdropController {
 
         NSAnimationContext.runAnimationGroup { context in
             context.duration = HotSlotDesign.closeDuration
-            context.timingFunction = HotSlotDesign.springTiming
+            context.timingFunction = HotSlotDesign.closeTiming
             window.animator().alphaValue = 0
         } completionHandler: {
             window.orderOut(nil)
@@ -62,26 +62,14 @@ final class BackdropController {
     }
 }
 
-/// Vista con vibrancy + dim y clic para cerrar.
+/// Capa de oscurecimiento ligero; clic para cerrar.
 private final class BackdropView: NSView {
     var onClick: (() -> Void)?
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         wantsLayer = true
-
-        let effect = NSVisualEffectView(frame: bounds)
-        effect.autoresizingMask = [.width, .height]
-        effect.material = .underWindowBackground
-        effect.blendingMode = .behindWindow
-        effect.state = .active
-        addSubview(effect)
-
-        let dim = NSView(frame: bounds)
-        dim.autoresizingMask = [.width, .height]
-        dim.wantsLayer = true
-        dim.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.18).cgColor
-        addSubview(dim)
+        layer?.backgroundColor = NSColor.black.withAlphaComponent(0.08).cgColor
     }
 
     @available(*, unavailable)

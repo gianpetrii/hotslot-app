@@ -2,80 +2,89 @@ import SwiftUI
 
 struct ClipRowView: View {
     let item: ClipItem
-    let isSelected: Bool
+    let isKeyboardHighlighted: Bool
+    let onPaste: () -> Void
+    let onTogglePin: () -> Void
     @State private var isHovering = false
 
     var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: iconName)
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .frame(width: 30, height: 30)
-                .background {
-                    RoundedRectangle(cornerRadius: 9, style: .continuous)
-                        .fill(.ultraThinMaterial)
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 9, style: .continuous)
-                                .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5)
-                        }
-                }
+        HStack(spacing: 8) {
+            Button(action: onPaste) {
+                HStack(spacing: 12) {
+                    leadingVisual
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text(item.content.previewText)
-                    .lineLimit(2)
-                    .font(HotSlotTypography.rowPrimary)
-                    .foregroundStyle(.primary)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(item.content.displayTitle)
+                            .lineLimit(item.content.isText ? 2 : 1)
+                            .font(HotSlotTypography.rowPrimary)
+                            .foregroundStyle(.primary)
 
-                HStack(spacing: 6) {
-                    if let app = item.sourceAppName {
-                        Text(app)
+                        Text(item.metadataLine())
+                            .lineLimit(1)
                             .font(HotSlotTypography.rowSecondary)
-                            .foregroundStyle(.tertiary)
+                            .foregroundStyle(.secondary)
                     }
-                    Text(item.createdAt, style: .relative)
-                        .font(HotSlotTypography.rowSecondary)
-                        .foregroundStyle(.tertiary)
-                }
-            }
 
-            Spacer(minLength: 0)
+                    Spacer(minLength: 0)
+                }
+                .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.rowCornerRadius, style: .continuous))
+            }
+            .buttonStyle(.plain)
+
+            if item.isPinned || isHovering {
+                PinButton(isPinned: item.isPinned, action: onTogglePin)
+                    .transition(.scale(scale: 0.8).combined(with: .opacity))
+            }
         }
-        .padding(.horizontal, 11)
-        .padding(.vertical, 10)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .frame(minHeight: HotSlotDesign.rowHeight)
         .background {
             RoundedRectangle(cornerRadius: HotSlotDesign.rowCornerRadius, style: .continuous)
                 .fill(backgroundFill)
-                .overlay {
-                    RoundedRectangle(cornerRadius: HotSlotDesign.rowCornerRadius, style: .continuous)
-                        .strokeBorder(borderColor, lineWidth: isSelected ? 1 : 0.5)
-                }
         }
-        .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.rowCornerRadius, style: .continuous))
         .onHover { isHovering = $0 }
-        .animation(.easeOut(duration: 0.15), value: isHovering)
-        .animation(.easeOut(duration: 0.15), value: isSelected)
+        .animation(.easeOut(duration: 0.12), value: isHovering)
+        .animation(.easeOut(duration: 0.12), value: isKeyboardHighlighted)
+        .animation(.easeOut(duration: 0.15), value: item.isPinned)
     }
 
-    private var backgroundFill: AnyShapeStyle {
-        if isSelected {
-            return AnyShapeStyle(Color.accentColor.opacity(0.2))
+    @ViewBuilder
+    private var leadingVisual: some View {
+        switch item.content {
+        case .image(let fileName):
+            ClipThumbnailView(fileName: fileName, style: .row)
+        case .text:
+            TextClipIcon()
         }
-        if isHovering {
-            return AnyShapeStyle(Color.primary.opacity(0.07))
-        }
-        return AnyShapeStyle(Color.clear)
     }
 
-    private var borderColor: Color {
-        if isSelected { return Color.accentColor.opacity(0.4) }
-        if isHovering { return Color.white.opacity(0.14) }
+    private var backgroundFill: Color {
+        if isKeyboardHighlighted { return Color.accentColor.opacity(0.12) }
+        if item.isPinned { return Color.accentColor.opacity(0.05) }
+        if isHovering { return Color.primary.opacity(0.05) }
         return Color.clear
     }
+}
 
-    private var iconName: String {
-        switch item.content {
-        case .text: return "doc.text"
-        case .image: return "photo"
+private struct PinButton: View {
+    let isPinned: Bool
+    let action: () -> Void
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: isPinned ? "pin.fill" : "pin")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(isPinned ? Color.accentColor : .secondary)
+                .frame(width: 28, height: 28)
+                .background {
+                    Circle()
+                        .fill(Color.primary.opacity(isHovering ? 0.1 : 0.06))
+                }
         }
+        .buttonStyle(.plain)
+        .help(isPinned ? "Desfijar" : "Fijar arriba")
+        .onHover { isHovering = $0 }
     }
 }

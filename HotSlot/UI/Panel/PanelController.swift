@@ -19,7 +19,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
 
         let panel = FloatingPanel(
             contentRect: NSRect(x: 0, y: 0, width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight),
-            styleMask: [.nonactivatingPanel, .fullSizeContentView, .hudWindow],
+            styleMask: [.nonactivatingPanel, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
@@ -63,7 +63,9 @@ final class PanelController: NSWindowController, NSWindowDelegate {
             self?.hide(animated: true)
         }
 
-        window.setFrame(targetFrame.insetBy(dx: HotSlotDesign.openScaleInset, dy: HotSlotDesign.openScaleInset), display: true)
+        var startFrame = targetFrame.insetBy(dx: HotSlotDesign.openScaleInset, dy: HotSlotDesign.openScaleInset)
+        startFrame.origin.y += HotSlotDesign.openSlideOffset
+        window.setFrame(startFrame, display: true)
         window.alphaValue = 0
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
@@ -72,6 +74,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         NSAnimationContext.runAnimationGroup { context in
             context.duration = HotSlotDesign.openDuration
             context.timingFunction = HotSlotDesign.springTiming
+            context.allowsImplicitAnimation = true
             window.animator().alphaValue = 1
             window.animator().setFrame(targetFrame, display: true)
         } completionHandler: { [weak self] in
@@ -82,31 +85,38 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         appState.clipboardService.pollNow()
     }
 
-    func hide(animated: Bool = true) {
-        guard let window, isVisible, !isAnimating else { return }
+    func hide(animated: Bool = true, completion: (() -> Void)? = nil) {
+        guard let window, isVisible else {
+            completion?()
+            return
+        }
 
         appState.isPanelVisible = false
 
         guard animated else {
             window.orderOut(nil)
             backdrop.hide()
+            completion?()
             return
         }
 
         isAnimating = true
-        let shrinkFrame = targetFrame.insetBy(dx: HotSlotDesign.closeScaleInset, dy: HotSlotDesign.closeScaleInset)
+        var shrinkFrame = targetFrame.insetBy(dx: HotSlotDesign.closeScaleInset, dy: HotSlotDesign.closeScaleInset)
+        shrinkFrame.origin.y += HotSlotDesign.closeSlideOffset
+
+        backdrop.hide()
 
         NSAnimationContext.runAnimationGroup { context in
             context.duration = HotSlotDesign.closeDuration
-            context.timingFunction = HotSlotDesign.springTiming
+            context.timingFunction = HotSlotDesign.closeTiming
+            context.allowsImplicitAnimation = true
             window.animator().alphaValue = 0
             window.animator().setFrame(shrinkFrame, display: true)
         } completionHandler: { [weak self] in
             guard let self else { return }
             window.orderOut(nil)
-            self.backdrop.hide {
-                self.isAnimating = false
-            }
+            self.isAnimating = false
+            completion?()
         }
     }
 

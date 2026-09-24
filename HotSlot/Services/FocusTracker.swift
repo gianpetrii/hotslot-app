@@ -14,13 +14,8 @@ final class FocusTracker {
     }
 
     var targetApp: NSRunningApplication? {
-        guard let app = lastFrontmostApp, !app.isTerminated else {
-            return NSWorkspace.shared.frontmostApplication
-        }
-        // No pegar en nosotros mismos
-        if app.bundleIdentifier == Bundle.main.bundleIdentifier {
-            return nil
-        }
+        guard let app = lastFrontmostApp, !app.isTerminated else { return nil }
+        if app.bundleIdentifier == Bundle.main.bundleIdentifier { return nil }
         return app
     }
 }

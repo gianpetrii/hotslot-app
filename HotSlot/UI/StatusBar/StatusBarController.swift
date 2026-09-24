@@ -77,10 +77,7 @@ final class StatusBarController {
     }
 
     @objc private func openSettings() {
-        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-        if #available(macOS 14, *) {
-            NSApp.activate(ignoringOtherApps: true)
-        }
+        appState.openSettings?()
     }
 
     @objc private func quit() {

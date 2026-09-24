@@ -6,6 +6,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     var statusBarController: StatusBarController?
     var panelController: PanelController?
     var appState: AppState?
+    let settingsWindowController = SettingsWindowController()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Evitar inicializar UI cuando XCTest inyecta el proceso
@@ -22,6 +23,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self.statusBarController = statusBar
 
         migrateHotkeysIfNeeded()
+        state.openSettings = { [weak self] in
+            guard let self, let state = self.appState else { return }
+            self.settingsWindowController.show(appState: state)
+        }
         state.bootstrap(panelController: panel)
         applyLaunchAtLoginSetting()
     }

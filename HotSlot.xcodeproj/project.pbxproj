@@ -16,10 +16,12 @@
 		2C243CEF754FA0B312FCF6AD /* SlotStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099675B8BFE15486169F4C0B /* SlotStoreTests.swift */; };
 		2C38077E80456117487988E8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B7E7A2B2C7D507EFD132F1 /* SettingsView.swift */; };
 		3349436229CCD5233793196B /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446EF048FFED63B26C12887 /* HotkeyManager.swift */; };
+		43D29E4D7E7FF8E4255EFFA2 /* ClipThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C245D2B39A6052D9B218842 /* ClipThumbnailView.swift */; };
 		5A7458632B0A0E2FB4810EAB /* HotkeyName.swift in Sources */ = {isa = PBXBuildFile; fileRef = F694AB71C18F22C86D117ACC /* HotkeyName.swift */; };
 		5AEB6A3416609666695B9C48 /* SlotsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A2713A93781D6CF0A531E1 /* SlotsSettingsView.swift */; };
 		5F03F3682880EE8CB86A7501 /* SlotStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F74883603B94FB2FCCA0073 /* SlotStore.swift */; };
 		626F2AD7F73EF8432A0D67D7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B880BD3AB5B57E6D542F8B5F /* Assets.xcassets */; };
+		666961C01803DCEA644EF356 /* ShortcutBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644A9655A112A4CEB512EA84 /* ShortcutBadge.swift */; };
 		6D6DA5397C868548D19A305D /* ClipItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E337777E4CDCB5C2D945FE7B /* ClipItemTests.swift */; };
 		6EDC9EDB77022AEF8951BC41 /* AppSupportDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEB4689A3F7F6A221FFD94DF /* AppSupportDirectory.swift */; };
 		709457F1F7152675FEE4A77B /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841CFFDFFFAA50088B8764E1 /* StatusBarController.swift */; };
@@ -28,9 +30,11 @@
 		8A1E4F5E452F9201228BA817 /* PanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD50D3AD7653F5FCEE0C092 /* PanelController.swift */; };
 		8AD33E79675CC9C6D12CAE99 /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3D4575494AD564C842B7E3 /* Slot.swift */; };
 		8FF03433C9CE0E0D64619F77 /* HistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5705E3CE6DEACE6C0251D749 /* HistoryListView.swift */; };
+		95DD54393C0079F7466465F7 /* PanelSearchHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D9721B8E7B78F14E68B6D5 /* PanelSearchHeader.swift */; };
 		98F6E095AE516BDCB9DEB19E /* ClipItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9978112D3F44AE2BCE41F5E /* ClipItem.swift */; };
 		999AA44F8AF5D7EDD8CA8B74 /* HotSlotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51184CDE4DE57A7C42AA1D1 /* HotSlotApp.swift */; };
 		A4444F4B642C0155DD82A848 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89452FF5E5C474F90625C4C3 /* AppDelegate.swift */; };
+		A52EB6844570257DB70152C2 /* AccessibilityPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4528F5EDD7002053F6D7D2AC /* AccessibilityPermission.swift */; };
 		B7A96F91F33FE780998A9FD9 /* HistoryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904BC54DEB4EA0FB71573C0A /* HistoryStoreTests.swift */; };
 		BE931C778F5553DF67F0481B /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49192713FE49EA8C0DC9E8D /* EmptyStateView.swift */; };
 		C4701F22F4DF19F9D5457B39 /* PasteboardHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00C6BACA1F9F56E6F6098EF7 /* PasteboardHelper.swift */; };
@@ -38,6 +42,7 @@
 		CE22760276774C6B27A032C5 /* HistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD5D3779C3ADA48B9820C77 /* HistoryStore.swift */; };
 		E4EF388A93D722D36DE2BA7F /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD36EA0DCFD93B6DFACE95B8 /* AppSettings.swift */; };
 		E7ADCDF4133C8D6377C65B29 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = C4BD315A42A86DEEE9D248F0 /* KeyboardShortcuts */; };
+		E908FB0191E4E88C5691B6EB /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D8A3FBDC8BD6954875D49B /* SettingsWindowController.swift */; };
 		EBA347C9D5C19D60C12938B7 /* HotSlotDesign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BB751CC74D313DB9ADAC577 /* HotSlotDesign.swift */; };
 		EC2FD2696FBFC7620CC1C497 /* ClipRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3610897210D290C688FA1D3C /* ClipRowView.swift */; };
 		F3DF1B41ADC0380D87AF4D07 /* SlotGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F806ECE71FCC38E52033D0F /* SlotGridView.swift */; };
@@ -64,9 +69,11 @@
 		40B7E7A2B2C7D507EFD132F1 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		41FC0ED81ECB6C60BC9AA3FF /* ClipContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipContent.swift; sourceTree = "<group>"; };
 		4446EF048FFED63B26C12887 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
+		4528F5EDD7002053F6D7D2AC /* AccessibilityPermission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPermission.swift; sourceTree = "<group>"; };
 		4D3D4575494AD564C842B7E3 /* Slot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
 		5705E3CE6DEACE6C0251D749 /* HistoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryListView.swift; sourceTree = "<group>"; };
 		5BD5D3779C3ADA48B9820C77 /* HistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStore.swift; sourceTree = "<group>"; };
+		644A9655A112A4CEB512EA84 /* ShortcutBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutBadge.swift; sourceTree = "<group>"; };
 		7716292477212411D84E93C5 /* HotSlot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HotSlot.entitlements; sourceTree = "<group>"; };
 		8108F534EC224E3BA83D449B /* BackdropController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackdropController.swift; sourceTree = "<group>"; };
 		841CFFDFFFAA50088B8764E1 /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
@@ -76,6 +83,8 @@
 		8BB751CC74D313DB9ADAC577 /* HotSlotDesign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotSlotDesign.swift; sourceTree = "<group>"; };
 		904BC54DEB4EA0FB71573C0A /* HistoryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStoreTests.swift; sourceTree = "<group>"; };
 		9C232CD058B6607F39574953 /* HotkeysSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeysSettingsView.swift; sourceTree = "<group>"; };
+		9C245D2B39A6052D9B218842 /* ClipThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipThumbnailView.swift; sourceTree = "<group>"; };
+		A3D8A3FBDC8BD6954875D49B /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		A51184CDE4DE57A7C42AA1D1 /* HotSlotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotSlotApp.swift; sourceTree = "<group>"; };
 		A6CF8C198E8B698B91A020C3 /* PasteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteService.swift; sourceTree = "<group>"; };
 		A911DBA98261441FF883EE51 /* PanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelView.swift; sourceTree = "<group>"; };
@@ -85,6 +94,7 @@
 		D1A146B669DE65CF68ECF5A0 /* HotSlot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HotSlot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4B5F0EEAA83D6809073C8CE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		DA7465C8DDE3F479100918D6 /* HotSlotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HotSlotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E2D9721B8E7B78F14E68B6D5 /* PanelSearchHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelSearchHeader.swift; sourceTree = "<group>"; };
 		E337777E4CDCB5C2D945FE7B /* ClipItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipItemTests.swift; sourceTree = "<group>"; };
 		E49192713FE49EA8C0DC9E8D /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		E9978112D3F44AE2BCE41F5E /* ClipItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipItem.swift; sourceTree = "<group>"; };
@@ -122,7 +132,10 @@
 			isa = PBXGroup;
 			children = (
 				3610897210D290C688FA1D3C /* ClipRowView.swift */,
+				9C245D2B39A6052D9B218842 /* ClipThumbnailView.swift */,
 				8BB751CC74D313DB9ADAC577 /* HotSlotDesign.swift */,
+				E2D9721B8E7B78F14E68B6D5 /* PanelSearchHeader.swift */,
+				644A9655A112A4CEB512EA84 /* ShortcutBadge.swift */,
 				F3B4D0B6EDEEE5D11496E08B /* ToastView.swift */,
 				345006B5580B09DB4988D950 /* VisualEffectBackground.swift */,
 			);
@@ -132,6 +145,7 @@
 		5054FA23AFDC791295B69AD6 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				4528F5EDD7002053F6D7D2AC /* AccessibilityPermission.swift */,
 				FEB4689A3F7F6A221FFD94DF /* AppSupportDirectory.swift */,
 				F694AB71C18F22C86D117ACC /* HotkeyName.swift */,
 				00C6BACA1F9F56E6F6098EF7 /* PasteboardHelper.swift */,
@@ -144,6 +158,7 @@
 			children = (
 				9C232CD058B6607F39574953 /* HotkeysSettingsView.swift */,
 				40B7E7A2B2C7D507EFD132F1 /* SettingsView.swift */,
+				A3D8A3FBDC8BD6954875D49B /* SettingsWindowController.swift */,
 				C6A2713A93781D6CF0A531E1 /* SlotsSettingsView.swift */,
 			);
 			path = Settings;
@@ -305,6 +320,14 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
+					248EBB8D02FD34E70AE77CA1 = {
+						DevelopmentTeam = 53M8KYX8G4;
+						ProvisioningStyle = Automatic;
+					};
+					DCAFD1C1F50920E7DEEB036D = {
+						DevelopmentTeam = 53M8KYX8G4;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = ED1CD970D01D813000053B99 /* Build configuration list for PBXProject "HotSlot" */;
@@ -356,6 +379,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A52EB6844570257DB70152C2 /* AccessibilityPermission.swift in Sources */,
 				A4444F4B642C0155DD82A848 /* AppDelegate.swift in Sources */,
 				E4EF388A93D722D36DE2BA7F /* AppSettings.swift in Sources */,
 				15E13B782F856BE19618FD98 /* AppState.swift in Sources */,
@@ -364,6 +388,7 @@
 				0C1B4C7C4F79CBF6E95CDA42 /* ClipContent.swift in Sources */,
 				98F6E095AE516BDCB9DEB19E /* ClipItem.swift in Sources */,
 				EC2FD2696FBFC7620CC1C497 /* ClipRowView.swift in Sources */,
+				43D29E4D7E7FF8E4255EFFA2 /* ClipThumbnailView.swift in Sources */,
 				12C677E12D06E670A5FA29DA /* ClipboardService.swift in Sources */,
 				BE931C778F5553DF67F0481B /* EmptyStateView.swift in Sources */,
 				06F67C3631616988E770F6FB /* FocusTracker.swift in Sources */,
@@ -375,10 +400,13 @@
 				5A7458632B0A0E2FB4810EAB /* HotkeyName.swift in Sources */,
 				C892DEF7905F0C9D07D2EAB4 /* HotkeysSettingsView.swift in Sources */,
 				8A1E4F5E452F9201228BA817 /* PanelController.swift in Sources */,
+				95DD54393C0079F7466465F7 /* PanelSearchHeader.swift in Sources */,
 				2666AEEE1C23121AC660B2AC /* PanelView.swift in Sources */,
 				7BF8D66985DA3B637EC97587 /* PasteService.swift in Sources */,
 				C4701F22F4DF19F9D5457B39 /* PasteboardHelper.swift in Sources */,
 				2C38077E80456117487988E8 /* SettingsView.swift in Sources */,
+				E908FB0191E4E88C5691B6EB /* SettingsWindowController.swift in Sources */,
+				666961C01803DCEA644EF356 /* ShortcutBadge.swift in Sources */,
 				8AD33E79675CC9C6D12CAE99 /* Slot.swift in Sources */,
 				F3DF1B41ADC0380D87AF4D07 /* SlotGridView.swift in Sources */,
 				5F03F3682880EE8CB86A7501 /* SlotStore.swift in Sources */,
@@ -467,9 +495,12 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 53M8KYX8G4;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -481,7 +512,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.4.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -555,9 +586,12 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 53M8KYX8G4;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -575,7 +609,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.4.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;

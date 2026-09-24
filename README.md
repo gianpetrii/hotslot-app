@@ -14,6 +14,7 @@ Clipboard manager nativo para macOS con historial, slots fijos y atajos globales
 | `v0.1.0` | MVP funcional: clipboard, slots, hotkeys |
 | `v0.2.0` | UI estilo Control Center (vibrancy + glass) |
 | `v0.3.0` | Animaciones Spotlight, backdrop blur, tipografía nativa |
+| `v0.4.0` | Pegado automático fiable, historial nativo (pin, busca, thumbs) y permisos claros |
 
 ## Nota sobre logs en Xcode
 

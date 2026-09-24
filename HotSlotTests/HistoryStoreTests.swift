@@ -48,4 +48,40 @@ final class HistoryStoreTests: XCTestCase {
         XCTAssertEqual(store2.items.count, 1)
         XCTAssertEqual(store2.items.first?.content.previewText, "persistido")
     }
+
+    func testPinMovesToTop() {
+        let store = HistoryStore()
+        let pinned = ClipItem(content: .text("fijado"))
+        let recent = ClipItem(content: .text("reciente"))
+        store.add(recent)
+        store.add(pinned)
+        store.togglePin(id: pinned.id)
+
+        XCTAssertTrue(store.items.first?.isPinned == true)
+        XCTAssertEqual(store.items.first?.content.previewText, "fijado")
+    }
+
+    func testNewItemsInsertBelowPinned() {
+        let store = HistoryStore()
+        let pinned = ClipItem(content: .text("fijado"))
+        store.add(pinned)
+        store.togglePin(id: pinned.id)
+
+        store.add(ClipItem(content: .text("nuevo")))
+        XCTAssertEqual(store.items.count, 2)
+        XCTAssertTrue(store.items[0].isPinned)
+        XCTAssertEqual(store.items[1].content.previewText, "nuevo")
+    }
+
+    func testMoveReordersItems() {
+        let store = HistoryStore()
+        store.replaceAll([
+            ClipItem(content: .text("a")),
+            ClipItem(content: .text("b")),
+            ClipItem(content: .text("c")),
+        ])
+        store.move(from: IndexSet(integer: 2), to: 0)
+
+        XCTAssertEqual(store.items.map(\.content.previewText), ["c", "a", "b"])
+    }
 }

@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 import ServiceManagement
 import SwiftUI
 
@@ -8,6 +9,7 @@ struct SettingsView: View {
     @State private var playSound = AppSettings.load().playSoundOnPaste
     @State private var historyLimit = AppSettings.load().historyLimit
     @State private var debugClipboard = AppSettings.load().debugClipboard
+    @State private var accessibilityTrusted = AccessibilityPermission.isTrusted
 
     var body: some View {
         TabView {
@@ -81,6 +83,10 @@ struct SettingsView: View {
                     }
                 }
             }
+
+            Section("Acerca de") {
+                LabeledContent("Versión", value: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
+            }
         }
         .formStyle(.grouped)
         .padding()
@@ -88,25 +94,34 @@ struct SettingsView: View {
 
     private var permissionsTab: some View {
         Form {
-            Section("Automatización") {
-                Text("HotSlot usa System Events para simular ⌘V y pegar en la app activa. macOS pedirá permiso la primera vez.")
+            Section("Accesibilidad") {
+                LabeledContent("Estado") {
+                    Text(accessibilityTrusted ? "Concedido" : "No concedido")
+                        .foregroundStyle(accessibilityTrusted ? Color.green : Color.orange)
+                }
+
+                Text("Hace falta para pegar automáticamente el ítem elegido en la app donde estabas.")
                     .font(.callout)
                     .foregroundStyle(.secondary)
 
-                Button("Abrir Ajustes del Sistema → Privacidad → Automatización") {
-                    if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Automation") {
-                        NSWorkspace.shared.open(url)
+                if accessibilityTrusted {
+                    Button("Administrar en Ajustes del Sistema") {
+                        AccessibilityPermission.openSettings()
+                    }
+                } else {
+                    Button("Conceder acceso…") {
+                        AccessibilityPermission.requestTrust(prompt: true)
+                        accessibilityTrusted = AccessibilityPermission.isTrusted
                     }
                 }
-            }
-
-            Section("Acerca de") {
-                LabeledContent("Versión", value: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
-                LabeledContent("Datos", value: "Solo almacenamiento local")
             }
         }
         .formStyle(.grouped)
         .padding()
+        .onAppear { accessibilityTrusted = AccessibilityPermission.isTrusted }
+        .onReceive(Timer.publish(every: 1.5, on: .main, in: .common).autoconnect()) { _ in
+            accessibilityTrusted = AccessibilityPermission.isTrusted
+        }
     }
 
     private func updateLaunchAtLogin(_ enabled: Bool) {
