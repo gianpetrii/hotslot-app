@@ -13,14 +13,18 @@ struct HotkeysSettingsView: View {
             }
 
             Section("Panel") {
-                LabeledContent("Abrir / cerrar panel") {
+                HStack {
+                    Text("Abrir / cerrar panel")
+                    Spacer()
                     KeyboardShortcuts.Recorder(for: .togglePanel)
                 }
             }
 
             Section("Pegar desde slot") {
                 ForEach(1...SlotStore.slotCount, id: \.self) { index in
-                    LabeledContent("Slot \(index)") {
+                    HStack {
+                        Text("Slot \(index)")
+                        Spacer()
                         KeyboardShortcuts.Recorder(for: pasteSlotName(index))
                     }
                 }
@@ -28,7 +32,9 @@ struct HotkeysSettingsView: View {
 
             Section("Guardar en slot") {
                 ForEach(1...SlotStore.slotCount, id: \.self) { index in
-                    LabeledContent("Slot \(index)") {
+                    HStack {
+                        Text("Slot \(index)")
+                        Spacer()
                         KeyboardShortcuts.Recorder(for: copyToSlotName(index))
                     }
                 }

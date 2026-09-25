@@ -8,6 +8,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
     private let backdrop = BackdropController()
     private var keyMonitor: Any?
     private var isAnimating = false
+    private var openGeneration = 0
     private var targetFrame: NSRect = .zero
 
     var isVisible: Bool {
@@ -27,8 +28,11 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         super.init(window: panel)
 
         let hosting = NSHostingController(rootView: PanelView(appState: appState, panelController: self))
+        hosting.sizingOptions = []
+        hosting.safeAreaRegions = []
         hosting.view.wantsLayer = true
         hosting.view.layer?.backgroundColor = NSColor.clear.cgColor
+        hosting.view.layer?.masksToBounds = false
         panel.contentViewController = hosting
         panel.isFloatingPanel = true
         panel.level = NSWindow.Level(rawValue: NSWindow.Level.floating.rawValue + 1)
@@ -63,26 +67,28 @@ final class PanelController: NSWindowController, NSWindowDelegate {
             self?.hide(animated: true)
         }
 
-        var startFrame = targetFrame.insetBy(dx: HotSlotDesign.openScaleInset, dy: HotSlotDesign.openScaleInset)
-        startFrame.origin.y += HotSlotDesign.openSlideOffset
-        window.setFrame(startFrame, display: true)
+        openGeneration += 1
+        let generation = openGeneration
+        appState.panelBodyRevealed = false
+
+        // Ventana ya del tamaño final y transparente: el redondeo lo dibuja la tarjeta.
+        window.setFrame(targetFrame, display: true)
         window.alphaValue = 0
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
 
         isAnimating = true
-        NSAnimationContext.runAnimationGroup { context in
-            context.duration = HotSlotDesign.openDuration
-            context.timingFunction = HotSlotDesign.springTiming
-            context.allowsImplicitAnimation = true
-            window.animator().alphaValue = 1
-            window.animator().setFrame(targetFrame, display: true)
-        } completionHandler: { [weak self] in
-            self?.isAnimating = false
-        }
-
         appState.isPanelVisible = true
         appState.clipboardService.pollNow()
+
+        NSAnimationContext.runAnimationGroup({ context in
+            context.duration = 0.16
+            context.timingFunction = CAMediaTimingFunction(name: .easeOut)
+            window.animator().alphaValue = 1
+        }, completionHandler: { [weak self] in
+            guard let self, generation == self.openGeneration else { return }
+            self.isAnimating = false
+        })
     }
 
     func hide(animated: Bool = true, completion: (() -> Void)? = nil) {
@@ -91,7 +97,9 @@ final class PanelController: NSWindowController, NSWindowDelegate {
             return
         }
 
+        openGeneration += 1
         appState.isPanelVisible = false
+        appState.panelBodyRevealed = false
 
         guard animated else {
             window.orderOut(nil)

@@ -10,24 +10,9 @@ struct ClipRowView: View {
     var body: some View {
         HStack(spacing: 8) {
             Button(action: onPaste) {
-                HStack(spacing: 12) {
-                    leadingVisual
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(item.content.displayTitle)
-                            .lineLimit(item.content.isText ? 2 : 1)
-                            .font(HotSlotTypography.rowPrimary)
-                            .foregroundStyle(.primary)
-
-                        Text(item.metadataLine())
-                            .lineLimit(1)
-                            .font(HotSlotTypography.rowSecondary)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    Spacer(minLength: 0)
-                }
-                .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.rowCornerRadius, style: .continuous))
+                rowBody
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.rowCornerRadius, style: .continuous))
             }
             .buttonStyle(.plain)
 
@@ -38,7 +23,6 @@ struct ClipRowView: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
-        .frame(minHeight: HotSlotDesign.rowHeight)
         .background {
             RoundedRectangle(cornerRadius: HotSlotDesign.rowCornerRadius, style: .continuous)
                 .fill(backgroundFill)
@@ -50,12 +34,24 @@ struct ClipRowView: View {
     }
 
     @ViewBuilder
-    private var leadingVisual: some View {
-        switch item.content {
-        case .image(let fileName):
-            ClipThumbnailView(fileName: fileName, style: .row)
-        case .text:
-            TextClipIcon()
+    private var rowBody: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            switch item.content {
+            case .image(let fileName):
+                ClipThumbnailView(fileName: fileName, style: .row)
+            case .text(let string):
+                Text(string.trimmingCharacters(in: .whitespacesAndNewlines))
+                    .font(HotSlotTypography.rowPrimary)
+                    .foregroundStyle(.primary)
+                    .lineLimit(3)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            Text(item.copiedLine())
+                .font(HotSlotTypography.rowSecondary)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
         }
     }
 
@@ -79,8 +75,8 @@ private struct PinButton: View {
                 .foregroundStyle(isPinned ? Color.accentColor : .secondary)
                 .frame(width: 28, height: 28)
                 .background {
-                    Circle()
-                        .fill(Color.primary.opacity(isHovering ? 0.1 : 0.06))
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(Color.primary.opacity(isHovering ? 0.12 : 0.07))
                 }
         }
         .buttonStyle(.plain)

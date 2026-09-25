@@ -60,13 +60,24 @@ enum ClipContent: Codable, Equatable, Sendable {
 }
 
 extension ClipItem {
-    func metadataLine(locale: Locale = .current) -> String {
+    func copiedLine() -> String {
         let time = createdAt.formatted(date: .omitted, time: .shortened)
-        let copied = "Copiado \(time)"
-        if let app = sourceAppName {
-            return "\(content.typeLabel) · \(app) · \(copied)"
+        let when: String
+        if Calendar.current.isDateInToday(createdAt) {
+            when = "Copiado \(time)"
+        } else if Calendar.current.isDateInYesterday(createdAt) {
+            when = "Ayer \(time)"
+        } else {
+            when = createdAt.formatted(date: .abbreviated, time: .shortened)
         }
-        return "\(content.typeLabel) · \(copied)"
+        if let app = sourceAppName, !app.isEmpty {
+            return "\(when) · \(app)"
+        }
+        return when
+    }
+
+    func metadataLine(locale: Locale = .current) -> String {
+        copiedLine()
     }
 
     func matchesSearch(_ query: String) -> Bool {

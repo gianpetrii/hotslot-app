@@ -2,7 +2,7 @@ import AppKit
 import KeyboardShortcuts
 import SwiftUI
 
-/// Ventana de ajustes (NSWindow regular para que el grabador de atajos reciba teclas).
+/// Ventana de ajustes regular. Las apps de menú bar no reciben teclas hasta pasar a `.regular`.
 final class SettingsWindowController: NSObject, NSWindowDelegate {
     private var window: NSWindow?
 
@@ -10,6 +10,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     func show(appState: AppState) {
         if window == nil {
             let hosting = NSHostingController(rootView: SettingsView(appState: appState))
+            hosting.safeAreaRegions = []
             let settingsWindow = NSWindow(
                 contentRect: NSRect(x: 0, y: 0, width: 520, height: 420),
                 styleMask: [.titled, .closable, .miniaturizable],
@@ -20,17 +21,22 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             settingsWindow.contentViewController = hosting
             settingsWindow.isReleasedWhenClosed = false
             settingsWindow.delegate = self
+            settingsWindow.level = .floating
+            settingsWindow.collectionBehavior = [.moveToActiveSpace]
             settingsWindow.center()
             window = settingsWindow
         }
 
         KeyboardShortcuts.disable(KeyboardShortcuts.Name.allShortcutNames)
-        window?.makeKeyAndOrderFront(nil)
+        NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
+        window?.makeKeyAndOrderFront(nil)
+        window?.makeFirstResponder(window?.contentView)
     }
 
     @MainActor
     func windowWillClose(_ notification: Notification) {
         KeyboardShortcuts.enable(KeyboardShortcuts.Name.allShortcutNames)
+        NSApp.setActivationPolicy(.accessory)
     }
 }

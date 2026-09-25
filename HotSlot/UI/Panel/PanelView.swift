@@ -5,8 +5,9 @@ struct PanelView: View {
     let panelController: PanelController
     @State private var searchText = ""
     @State private var keyboardHighlightIndex: Int?
-    @State private var showHeader = false
-    @State private var showBody = false
+    @State private var revealWidth = HotSlotDesign.panelWidth
+    @State private var revealHeight = HotSlotDesign.panelHeight
+    @State private var unfoldGeneration = 0
     @FocusState private var isSearchFocused: Bool
 
     private var filteredItems: [ClipItem] {
@@ -14,11 +15,10 @@ struct PanelView: View {
     }
 
     private let listAnimation = Animation.spring(response: 0.34, dampingFraction: 0.82)
-    private let bodyRevealAnimation = Animation.spring(response: 0.46, dampingFraction: 0.76)
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            PanelChrome {
+        ZStack(alignment: .topLeading) {
+            PanelChrome(revealWidth: revealWidth, revealHeight: revealHeight) {
                 VStack(spacing: 0) {
                     PanelSearchHeader(
                         searchText: $searchText,
@@ -26,8 +26,6 @@ struct PanelView: View {
                         onOpenSettings: { appState.openSettings?() },
                         onClose: { panelController.hide(animated: true) }
                     )
-                    .opacity(showHeader ? 1 : 0)
-                    .offset(y: showHeader ? 0 : -6)
 
                     VStack(spacing: 0) {
                         SlotGridView(appState: appState, panelController: panelController)
@@ -47,12 +45,12 @@ struct PanelView: View {
                         )
                         .padding(.top, HotSlotDesign.sectionSpacing)
                     }
-                    .frame(height: showBody ? HotSlotDesign.panelBodyHeight : 0, alignment: .top)
-                    .clipped()
-                    .opacity(showBody ? 1 : 0)
+                    .opacity(appState.panelBodyRevealed ? 1 : 0.35)
                 }
             }
-
+        }
+        .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .topLeading)
+        .overlay(alignment: .bottom) {
             if let toast = appState.toastMessage {
                 ToastView(message: toast)
                     .padding(.bottom, 18)
@@ -62,6 +60,7 @@ struct PanelView: View {
                     ))
             }
         }
+        .animation(.easeOut(duration: 0.2), value: appState.panelBodyRevealed)
         .animation(.spring(response: 0.3, dampingFraction: 0.88), value: appState.toastMessage)
         .animation(listAnimation, value: filteredItems.map(\.id))
         .onKeyPress(.upArrow) {
@@ -80,34 +79,59 @@ struct PanelView: View {
             panelController.hide(animated: true)
             return .handled
         }
-        .onAppear {
-            appState.clipboardService.pollNow()
-            keyboardHighlightIndex = nil
-            showHeader = false
-            showBody = false
-
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.88)) {
-                showHeader = true
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.14) {
-                withAnimation(bodyRevealAnimation) {
-                    showBody = true
-                }
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                isSearchFocused = true
+        .onChange(of: appState.isPanelVisible) { _, visible in
+            if visible {
+                playOpenAnimation()
+            } else {
+                unfoldGeneration += 1
             }
         }
-        .onDisappear {
-            searchText = ""
-            keyboardHighlightIndex = nil
-            showHeader = false
-            showBody = false
+        .onAppear {
+            if appState.isPanelVisible {
+                playOpenAnimation()
+            }
         }
         .onChange(of: searchText) { _, _ in
             withAnimation(listAnimation) {
                 keyboardHighlightIndex = nil
             }
+        }
+        .onDisappear {
+            searchText = ""
+            keyboardHighlightIndex = nil
+        }
+    }
+
+    private func playOpenAnimation() {
+        unfoldGeneration += 1
+        let generation = unfoldGeneration
+        keyboardHighlightIndex = nil
+        appState.panelBodyRevealed = false
+        revealWidth = HotSlotDesign.openSquareSize
+        revealHeight = HotSlotDesign.openSquareSize
+
+        DispatchQueue.main.async {
+            guard generation == unfoldGeneration else { return }
+            withAnimation(.spring(response: 0.42, dampingFraction: 0.78)) {
+                revealWidth = HotSlotDesign.panelWidth
+            }
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + HotSlotDesign.openRightDuration) {
+            guard generation == unfoldGeneration else { return }
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                revealHeight = HotSlotDesign.panelHeight
+                appState.panelBodyRevealed = true
+            }
+            isSearchFocused = true
+        }
+
+        // Si el spring no llega a disparar el segundo paso, el panel no puede quedar vacío.
+        DispatchQueue.main.asyncAfter(deadline: .now() + HotSlotDesign.openRightDuration + 0.8) {
+            guard generation == unfoldGeneration else { return }
+            revealWidth = HotSlotDesign.panelWidth
+            revealHeight = HotSlotDesign.panelHeight
+            appState.panelBodyRevealed = true
         }
     }
 

@@ -14,6 +14,7 @@ final class AppState {
 
     var toastMessage: String?
     var isPanelVisible = false
+    var panelBodyRevealed = false
     var openSettings: (() -> Void)?
 
     var settings: AppSettings {

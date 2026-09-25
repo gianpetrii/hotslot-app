@@ -15,17 +15,26 @@ enum HotSlotDesign {
     static let sectionSpacing: CGFloat = 10
     static let thumbnailSize: CGFloat = 44
     static let thumbnailCornerRadius: CGFloat = 8
-    static let rowHeight: CGFloat = 56
+    static let rowHeight: CGFloat = 52
+    static let imageRowPreviewWidth: CGFloat = 128
+    static let imageRowPreviewHeight: CGFloat = 76
 
     static let openDuration: TimeInterval = 0.4
     static let closeDuration: TimeInterval = 0.28
     static let springTiming = CAMediaTimingFunction(controlPoints: 0.22, 1.0, 0.36, 1.0)
     static let closeTiming = CAMediaTimingFunction(controlPoints: 0.4, 0.0, 0.6, 1.0)
+    /// Expandir a la derecha (cuadrado → barra de búsqueda).
+    static let openRightTiming = CAMediaTimingFunction(controlPoints: 0.16, 1.18, 0.28, 1.0)
+    /// Expandir hacia abajo (barra → panel completo).
+    static let openDownTiming = CAMediaTimingFunction(controlPoints: 0.2, 1.08, 0.32, 1.0)
+    static let openRightDuration: TimeInterval = 0.42
+    static let openDownDuration: TimeInterval = 0.48
 
     static let openScaleInset: CGFloat = 20
     static let closeScaleInset: CGFloat = 14
     static let openSlideOffset: CGFloat = 28
     static let closeSlideOffset: CGFloat = 16
+    static let openSquareSize: CGFloat = panelHeaderHeight
 }
 
 /// Tipografía alineada al Clipboard de macOS (SF Pro).
@@ -38,21 +47,36 @@ enum HotSlotTypography {
 }
 
 /// Contenedor del panel con material nativo.
+/// El frame externo es siempre el del panel completo (evita que NSHostingView redimensione la ventana).
 struct PanelChrome<Content: View>: View {
+    var revealWidth: CGFloat = HotSlotDesign.panelWidth
+    var revealHeight: CGFloat = HotSlotDesign.panelHeight
     @ViewBuilder var content: () -> Content
 
     var body: some View {
-        ZStack(alignment: .top) {
-            VisualEffectBackground(material: .menu, blendingMode: .behindWindow)
+        let shape = RoundedRectangle(cornerRadius: HotSlotDesign.cornerRadius, style: .continuous)
+
+        ZStack(alignment: .topLeading) {
+            VisualEffectBackground(
+                material: .menu,
+                blendingMode: .behindWindow,
+                cornerRadius: HotSlotDesign.cornerRadius
+            )
             content()
+                .frame(
+                    width: HotSlotDesign.panelWidth,
+                    height: HotSlotDesign.panelHeight,
+                    alignment: .topLeading
+                )
         }
-        .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .top)
-        .clipShape(RoundedRectangle(cornerRadius: HotSlotDesign.cornerRadius, style: .continuous))
+        .frame(width: revealWidth, height: revealHeight, alignment: .topLeading)
+        .clipShape(shape)
         .overlay {
-            RoundedRectangle(cornerRadius: HotSlotDesign.cornerRadius, style: .continuous)
-                .strokeBorder(Color.white.opacity(0.14), lineWidth: 0.5)
+            shape.strokeBorder(Color.white.opacity(0.14), lineWidth: 0.5)
         }
         .shadow(color: .black.opacity(0.2), radius: 14, y: 8)
+        .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .topLeading)
+        .contentShape(shape)
     }
 }
 

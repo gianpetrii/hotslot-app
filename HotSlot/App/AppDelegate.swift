@@ -25,6 +25,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         migrateHotkeysIfNeeded()
         state.openSettings = { [weak self] in
             guard let self, let state = self.appState else { return }
+            self.panelController?.hide(animated: false)
             self.settingsWindowController.show(appState: state)
         }
         state.bootstrap(panelController: panel)

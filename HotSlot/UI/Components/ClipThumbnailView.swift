@@ -26,8 +26,10 @@ struct ClipThumbnailView: View {
                 }
             }
         }
-        .frame(width: style == .row ? HotSlotDesign.thumbnailSize : nil,
-               height: style == .row ? HotSlotDesign.thumbnailSize : nil)
+        .frame(
+            width: style == .row ? HotSlotDesign.imageRowPreviewWidth : nil,
+            height: style == .row ? HotSlotDesign.imageRowPreviewHeight : nil
+        )
         .frame(maxWidth: style == .slot ? .infinity : nil,
                maxHeight: style == .slot ? .infinity : nil)
         .clipShape(RoundedRectangle(cornerRadius: HotSlotDesign.thumbnailCornerRadius, style: .continuous))
