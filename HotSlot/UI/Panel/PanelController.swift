@@ -39,7 +39,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.titleVisibility = .hidden
         panel.titlebarAppearsTransparent = true
-        panel.isMovableByWindowBackground = true
+        panel.isMovableByWindowBackground = false
         panel.backgroundColor = .clear
         panel.isOpaque = false
         panel.hasShadow = false

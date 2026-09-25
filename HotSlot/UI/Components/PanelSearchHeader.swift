@@ -54,5 +54,6 @@ struct PanelSearchHeader: View {
         .padding(.horizontal, HotSlotDesign.horizontalPadding)
         .padding(.top, 14)
         .padding(.bottom, 10)
+        .background(WindowDragHandle())
     }
 }

@@ -14,7 +14,8 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P0 | Fix ventana de Ajustes (hotkeys, slots, general) |
 | [x] | P0 | Quitar highlight automático del ítem más reciente |
 | [x] | P0 | Pegado: firma Apple Development + CGEvent (TCC ad-hoc invalidaba Accesibilidad) |
-| [~] | P0 | Grabador de atajos: app agent + `.regular` al abrir Ajustes (validar) |
+| [x] | P0 | Grabador de atajos: app agent + `.regular` al abrir Ajustes (el recorder sí graba) |
+| [ ] | P0 | Atajos grabados no aplican hasta relanzar (re-registrar al cerrar Ajustes) |
 | [ ] | P1 | Confiabilidad del paste — reintentos y mejor feedback |
 
 ## UI / Panel
@@ -27,11 +28,19 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P0 | Animar cambios del listado al escribir en el buscador |
 | [x] | P1 | Reordenar historial con drag & drop |
 | [x] | P1 | Filas más útiles: imagen grande, texto sin ícono, fecha de copiado, pin cuadrado |
-| [ ] | P1 | Reordenar ítems **pinneados** con drag & drop (orden persistente entre pines) |
-| [x] | P1 | Reordenar **slots** con drag & drop (el atajo sigue atado al número del slot) |
 | [x] | P1 | Layout dos columnas: buscador arriba, slots a la izquierda, historial a la derecha |
+| [x] | P0 | Drag de slot arrastra el panel (`isMovableByWindowBackground`); el drop no llega |
+| [ ] | P0 | Overlay en slot: atajo de pegar + cruz encima del contenido (también si está vacío) |
+| [ ] | P1 | Reordenar ítems **pinneados** con drag & drop (orden persistente entre pines) |
 | [ ] | P2 | Metadata en español ("Imagen PNG" en vez de "PNG image") |
 | [ ] | P2 | Sección visual separada para ítems pinneados vs recientes |
+
+## Ajustes
+
+| Estado | Pri | Tarea |
+|--------|-----|-------|
+| [ ] | P1 | Animar apertura/cierre de Ajustes (mismo lenguaje que el panel) |
+| [ ] | P1 | Panel principal oculto mientras Ajustes está abierto (ya se oculta; no reabrir hasta cerrar) |
 
 ## Animaciones
 
@@ -46,11 +55,20 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 
 | Estado | Pri | Tarea |
 |--------|-----|-------|
-| [ ] | P2 | Detectar conflictos de atajos con otras apps |
+| [ ] | P2 | Detectar / avisar conflictos de atajos (no auto-cambiar el default) |
 | [ ] | P2 | Modo depuración clipboard más pulido |
 | [ ] | P3 | Localización ES/EN completa |
 | [ ] | P1 | Ícono de app 1024×1024 |
 | [ ] | P1 | Archive + TestFlight |
+
+---
+
+## Siguiente oleada (orden de implementación)
+
+1. **P0 — Drag de slots vs mover el panel.** ~~Hecho: el panel se mueve desde el buscador; las tarjetas ya no arrastran la ventana.~~
+2. **P0 — Overlay de slot.** Atajo de pegar (siempre, también vacío) y cruz (si hay contenido, en hover) encima de la imagen/texto, no en una fila que coma altura.
+3. **P0 — Atajos en caliente.** `registerAll()` corre una vez al boot; al grabar se persiste pero el listener global no se refresca hasta relanzar. Al cerrar Ajustes hay que re-habilitar y re-bindear.
+4. **P1 — Ajustes.** Fade/unfold similar al panel; el popup de HotSlot permanece cerrado hasta que se cierra Ajustes.
 
 ---
 
@@ -60,8 +78,11 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 
 Panel 572×520: buscador a todo el ancho, slots en columna izquierda (~176 px), historial a la derecha.
 
-### Reordenar pines y slots (pendiente — P1)
+### Reordenar pines y slots
 
-- **Pinnes:** el drag actual mueve el array entero, pero al copiar de nuevo o al (des)fijar el pin vuelve arriba. Hace falta un orden propio entre pinneados que sobreviva a esas operaciones.
-- **Slots:** arrastrar intercambia contenido (y preview). El atajo ⌘⇧N sigue pegando el slot N, no “el que estaba en esa posición visual al grabar”.
+- **Pinnes (pendiente):** el drag del historial mueve el array, pero al copiar o (des)fijar el pin vuelve arriba.
+- **Slots:** `swapContents` intercambia contenido. El atajo sigue atado al número. El panel ya no se mueve al arrastrar un slot.
 
+### Conflictos de atajos
+
+No auto-robar ni cambiar el default si otra app ya lo usa. Avisar y dejar que el usuario grabe otro. ⌘⇧1…5 se mantienen como default de producto a propósito.
