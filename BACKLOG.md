@@ -27,7 +27,9 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P0 | Animar cambios del listado al escribir en el buscador |
 | [x] | P1 | Reordenar historial con drag & drop |
 | [x] | P1 | Filas más útiles: imagen grande, texto sin ícono, fecha de copiado, pin cuadrado |
-| [ ] | P1 | **Layout dos columnas**: slots en columna izquierda, buscador + historial a la derecha |
+| [ ] | P1 | Reordenar ítems **pinneados** con drag & drop (orden persistente entre pines) |
+| [x] | P1 | Reordenar **slots** con drag & drop (el atajo sigue atado al número del slot) |
+| [x] | P1 | Layout dos columnas: buscador arriba, slots a la izquierda, historial a la derecha |
 | [ ] | P2 | Metadata en español ("Imagen PNG" en vez de "PNG image") |
 | [ ] | P2 | Sección visual separada para ítems pinneados vs recientes |
 
@@ -54,8 +56,12 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 
 ## Notas de diseño
 
-### Layout dos columnas (pendiente — P1)
+### Layout dos columnas (hecho)
 
-Panel ~560×520 px: slots verticales a la izquierda, historial completo a la derecha.
+Panel 572×520: buscador a todo el ancho, slots en columna izquierda (~176 px), historial a la derecha.
 
-**Recomendación:** implementar después de validar pegado + ajustes + pin.
+### Reordenar pines y slots (pendiente — P1)
+
+- **Pinnes:** el drag actual mueve el array entero, pero al copiar de nuevo o al (des)fijar el pin vuelve arriba. Hace falta un orden propio entre pinneados que sobreviva a esas operaciones.
+- **Slots:** arrastrar intercambia contenido (y preview). El atajo ⌘⇧N sigue pegando el slot N, no “el que estaba en esa posición visual al grabar”.
+

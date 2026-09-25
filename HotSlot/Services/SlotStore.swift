@@ -34,6 +34,17 @@ final class SlotStore {
         save()
     }
 
+    /// Intercambia el contenido entre dos slots. El número (y su atajo) no se mueve.
+    func swapContents(from sourceIndex: Int, to destinationIndex: Int) {
+        guard sourceIndex != destinationIndex,
+              let i = slots.firstIndex(where: { $0.index == sourceIndex }),
+              let j = slots.firstIndex(where: { $0.index == destinationIndex }) else { return }
+        let sourceContent = slots[i].content
+        slots[i].content = slots[j].content
+        slots[j].content = sourceContent
+        save()
+    }
+
     func content(at index: Int) -> ClipContent? {
         slot(at: index)?.content
     }

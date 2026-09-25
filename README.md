@@ -16,6 +16,7 @@ Clipboard manager nativo para macOS con historial, slots fijos y atajos globales
 | `v0.3.0` | Animaciones Spotlight, backdrop blur, tipografía nativa |
 | `v0.4.0` | Pegado automático fiable, historial nativo (pin, busca, thumbs) y permisos claros |
 | `v0.5.0` | Unfold de apertura, filas más densas y grabador de atajos en app de menú |
+| `v0.6.0` | Layout dos columnas, hover con dwell, intercambio de slots y vaciar con ✕ |
 
 ## Nota sobre logs en Xcode
 

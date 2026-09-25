@@ -27,12 +27,14 @@ struct PanelView: View {
                         onClose: { panelController.hide(animated: true) }
                     )
 
-                    VStack(spacing: 0) {
+                    HStack(alignment: .top, spacing: 0) {
                         SlotGridView(appState: appState, panelController: panelController)
-                            .padding(.bottom, HotSlotDesign.sectionSpacing)
+                            .frame(width: HotSlotDesign.slotsColumnWidth)
 
-                        Divider().opacity(0.22)
-                            .padding(.horizontal, HotSlotDesign.horizontalPadding)
+                        Rectangle()
+                            .fill(Color.primary.opacity(0.1))
+                            .frame(width: 1)
+                            .padding(.vertical, 10)
 
                         HistoryListView(
                             historyStore: appState.historyStore,
@@ -43,8 +45,9 @@ struct PanelView: View {
                             },
                             keyboardHighlightIndex: $keyboardHighlightIndex
                         )
-                        .padding(.top, HotSlotDesign.sectionSpacing)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
+                    .padding(.bottom, 8)
                     .opacity(appState.panelBodyRevealed ? 1 : 0.35)
                 }
             }

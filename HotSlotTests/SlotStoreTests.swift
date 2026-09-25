@@ -43,4 +43,25 @@ final class SlotStoreTests: XCTestCase {
         store.clearSlot(index: 2)
         XCTAssertNil(store.content(at: 2))
     }
+
+    func testSwapContentsKeepsSlotNumbers() {
+        let store = SlotStore()
+        store.saveContent(index: 1, content: .text("uno"))
+        store.saveContent(index: 3, content: .text("tres"))
+        store.swapContents(from: 1, to: 3)
+
+        XCTAssertEqual(store.content(at: 1)?.previewText, "tres")
+        XCTAssertEqual(store.content(at: 3)?.previewText, "uno")
+        XCTAssertEqual(store.slot(at: 1)?.index, 1)
+        XCTAssertEqual(store.slot(at: 3)?.index, 3)
+    }
+
+    func testSwapWithEmptySlot() {
+        let store = SlotStore()
+        store.saveContent(index: 2, content: .text("lleno"))
+        store.swapContents(from: 2, to: 5)
+
+        XCTAssertNil(store.content(at: 2))
+        XCTAssertEqual(store.content(at: 5)?.previewText, "lleno")
+    }
 }

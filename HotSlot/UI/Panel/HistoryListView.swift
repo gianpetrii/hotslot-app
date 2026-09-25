@@ -38,7 +38,7 @@ struct HistoryListView: View {
                                 }
                             )
                             .id(item.id)
-                            .listRowInsets(EdgeInsets(top: 1, leading: HotSlotDesign.horizontalPadding, bottom: 1, trailing: HotSlotDesign.horizontalPadding))
+                            .listRowInsets(EdgeInsets(top: 1, leading: 8, bottom: 1, trailing: 8))
                             .listRowSeparator(.hidden)
                             .listRowBackground(Color.clear)
                             .contextMenu {
@@ -84,6 +84,7 @@ struct HistoryListView: View {
                 }
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .animation(listAnimation, value: items.map(\.id))
     }
 }

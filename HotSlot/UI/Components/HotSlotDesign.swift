@@ -4,10 +4,11 @@ import SwiftUI
 
 /// Constantes de diseño compartidas (estilo Clipboard nativo de macOS).
 enum HotSlotDesign {
-    static let panelWidth: CGFloat = 392
+    static let panelWidth: CGFloat = 572
     static let panelHeight: CGFloat = 520
     static let panelHeaderHeight: CGFloat = 58
     static let panelBodyHeight: CGFloat = panelHeight - panelHeaderHeight
+    static let slotsColumnWidth: CGFloat = 176
     static let cornerRadius: CGFloat = 16
     static let cardCornerRadius: CGFloat = 10
     static let rowCornerRadius: CGFloat = 10
@@ -18,6 +19,8 @@ enum HotSlotDesign {
     static let rowHeight: CGFloat = 52
     static let imageRowPreviewWidth: CGFloat = 128
     static let imageRowPreviewHeight: CGFloat = 76
+    static let imageRowPreviewHeightExpanded: CGFloat = 148
+    static let hoverExpandDelay: TimeInterval = 0.42
 
     static let openDuration: TimeInterval = 0.4
     static let closeDuration: TimeInterval = 0.28
@@ -115,6 +118,31 @@ struct RowActionButton: View {
                 }
         }
         .buttonStyle(.plain)
+        .onHover { isHovering = $0 }
+    }
+}
+
+/// Botón cuadrado redondeado (pin, vaciar slot).
+struct PanelGlyphButton: View {
+    let systemImage: String
+    var foreground: Color = .secondary
+    var help: String?
+    let action: () -> Void
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(foreground)
+                .frame(width: 28, height: 28)
+                .background {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(Color.primary.opacity(isHovering ? 0.12 : 0.07))
+                }
+        }
+        .buttonStyle(.plain)
+        .help(help ?? "")
         .onHover { isHovering = $0 }
     }
 }

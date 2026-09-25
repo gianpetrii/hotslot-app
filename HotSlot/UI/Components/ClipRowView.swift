@@ -6,9 +6,13 @@ struct ClipRowView: View {
     let onPaste: () -> Void
     let onTogglePin: () -> Void
     @State private var isHovering = false
+    @State private var isExpanded = false
+    @State private var expandTask: Task<Void, Never>?
+
+    private let expandAnimation = Animation.spring(response: 0.38, dampingFraction: 0.86)
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(alignment: .top, spacing: 8) {
             Button(action: onPaste) {
                 rowBody
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -18,7 +22,11 @@ struct ClipRowView: View {
 
             if item.isPinned || isHovering {
                 PinButton(isPinned: item.isPinned, action: onTogglePin)
-                    .transition(.scale(scale: 0.8).combined(with: .opacity))
+                    .padding(.top, 2)
+                    .transition(.asymmetric(
+                        insertion: .scale(scale: 0.82, anchor: .top).combined(with: .opacity),
+                        removal: .scale(scale: 0.82, anchor: .top).combined(with: .opacity)
+                    ))
             }
         }
         .padding(.horizontal, 10)
@@ -27,10 +35,32 @@ struct ClipRowView: View {
             RoundedRectangle(cornerRadius: HotSlotDesign.rowCornerRadius, style: .continuous)
                 .fill(backgroundFill)
         }
-        .onHover { isHovering = $0 }
+        .onHover { hovering in
+            isHovering = hovering
+            expandTask?.cancel()
+            if hovering {
+                expandTask = Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: UInt64(HotSlotDesign.hoverExpandDelay * 1_000_000_000))
+                    guard !Task.isCancelled else { return }
+                    withAnimation(expandAnimation) {
+                        isExpanded = true
+                    }
+                }
+            } else {
+                withAnimation(expandAnimation) {
+                    isExpanded = false
+                }
+            }
+        }
         .animation(.easeOut(duration: 0.12), value: isHovering)
+        .animation(expandAnimation, value: isExpanded)
         .animation(.easeOut(duration: 0.12), value: isKeyboardHighlighted)
         .animation(.easeOut(duration: 0.15), value: item.isPinned)
+        .onDisappear {
+            expandTask?.cancel()
+            isExpanded = false
+            isHovering = false
+        }
     }
 
     @ViewBuilder
@@ -38,12 +68,13 @@ struct ClipRowView: View {
         VStack(alignment: .leading, spacing: 5) {
             switch item.content {
             case .image(let fileName):
-                ClipThumbnailView(fileName: fileName, style: .row)
+                ClipThumbnailView(fileName: fileName, style: .row, isExpanded: isExpanded)
             case .text(let string):
                 Text(string.trimmingCharacters(in: .whitespacesAndNewlines))
                     .font(HotSlotTypography.rowPrimary)
                     .foregroundStyle(.primary)
-                    .lineLimit(3)
+                    .lineLimit(isExpanded ? 12 : 3)
+                    .truncationMode(.tail)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -66,21 +97,13 @@ struct ClipRowView: View {
 private struct PinButton: View {
     let isPinned: Bool
     let action: () -> Void
-    @State private var isHovering = false
 
     var body: some View {
-        Button(action: action) {
-            Image(systemName: isPinned ? "pin.fill" : "pin")
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(isPinned ? Color.accentColor : .secondary)
-                .frame(width: 28, height: 28)
-                .background {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(Color.primary.opacity(isHovering ? 0.12 : 0.07))
-                }
-        }
-        .buttonStyle(.plain)
-        .help(isPinned ? "Desfijar" : "Fijar arriba")
-        .onHover { isHovering = $0 }
+        PanelGlyphButton(
+            systemImage: isPinned ? "pin.fill" : "pin",
+            foreground: isPinned ? Color.accentColor : .secondary,
+            help: isPinned ? "Desfijar" : "Fijar arriba",
+            action: action
+        )
     }
 }

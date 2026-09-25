@@ -10,6 +10,7 @@ enum ClipThumbnailStyle {
 struct ClipThumbnailView: View {
     let fileName: String
     var style: ClipThumbnailStyle = .row
+    var isExpanded: Bool = false
 
     var body: some View {
         Group {
@@ -26,17 +27,25 @@ struct ClipThumbnailView: View {
                 }
             }
         }
-        .frame(
-            width: style == .row ? HotSlotDesign.imageRowPreviewWidth : nil,
-            height: style == .row ? HotSlotDesign.imageRowPreviewHeight : nil
-        )
-        .frame(maxWidth: style == .slot ? .infinity : nil,
+        .frame(width: rowPreviewWidth, height: rowPreviewHeight)
+        .frame(maxWidth: style == .slot ? .infinity : (isExpanded ? .infinity : nil),
                maxHeight: style == .slot ? .infinity : nil)
         .clipShape(RoundedRectangle(cornerRadius: HotSlotDesign.thumbnailCornerRadius, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: HotSlotDesign.thumbnailCornerRadius, style: .continuous)
                 .strokeBorder(Color.black.opacity(0.1), lineWidth: 0.5)
         }
+        .animation(.spring(response: 0.38, dampingFraction: 0.86), value: isExpanded)
+    }
+
+    private var rowPreviewWidth: CGFloat? {
+        guard style == .row else { return nil }
+        return isExpanded ? nil : HotSlotDesign.imageRowPreviewWidth
+    }
+
+    private var rowPreviewHeight: CGFloat? {
+        guard style == .row else { return nil }
+        return isExpanded ? HotSlotDesign.imageRowPreviewHeightExpanded : HotSlotDesign.imageRowPreviewHeight
     }
 }
 
