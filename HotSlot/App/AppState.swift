@@ -55,16 +55,24 @@ final class AppState {
         }
 
         hotkeyManager.onCopyToSlot = { [weak self] index in
-            guard let self else { return }
-            if let content = self.clipboardService.currentContent() {
-                self.slotStore.saveContent(index: index, content: content)
-                self.showToast("Guardado en slot \(index)")
+            Task { @MainActor in
+                guard let self else { return }
+                self.focusTracker.capture()
+                if let content = await self.clipboardService.captureSelection() {
+                    self.slotStore.saveContent(index: index, content: content)
+                    FeedbackSound.play(.saved)
+                    self.showToast("Guardado en slot \(index)")
+                } else {
+                    FeedbackSound.play(.pasteFailed)
+                    self.showToast("Nada seleccionado para guardar")
+                }
             }
         }
 
         hotkeyManager.registerAll()
         observeShortcutChanges()
         clipboardService.start()
+        focusTracker.start()
     }
 
     func noteShortcutsChanged() {
@@ -88,19 +96,26 @@ final class AppState {
         let content = item.content
         panelController.hide(animated: true) {
             self.isPanelVisible = false
-            self.pasteService.paste(content: content, targetApp: target)
+            self.pasteService.paste(
+                content: content,
+                targetApp: FocusTracker.pasteTarget(preferred: target)
+            )
         }
     }
 
     func pasteSlot(index: Int, panelController: PanelController) {
         guard let content = slotStore.content(at: index) else {
+            FeedbackSound.play(.pasteFailed)
             showToast("El slot \(index) está vacío")
             return
         }
         let target = focusTracker.targetApp
         panelController.hide(animated: true) {
             self.isPanelVisible = false
-            self.pasteService.paste(content: content, targetApp: target)
+            self.pasteService.paste(
+                content: content,
+                targetApp: FocusTracker.pasteTarget(preferred: target)
+            )
         }
     }
 

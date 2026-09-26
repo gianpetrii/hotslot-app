@@ -20,6 +20,7 @@ Clipboard manager nativo para macOS con historial, slots fijos y atajos globales
 | `v0.7.0` | Drag de slots intercambia contenido; el panel se mueve desde el buscador |
 | `v0.8.0` | Overlay de slots, atajos en caliente y arrastrar historial a un slot |
 | `v0.9.0` | Peek de slots al hover; texto del peek se ajusta al contenido |
+| `v0.10.0` | Sonidos por acción; guardar la selección en el slot; error si no hay destino |
 
 ## Nota sobre logs en Xcode
 

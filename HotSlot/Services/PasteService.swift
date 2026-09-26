@@ -26,7 +26,9 @@ final class PasteService {
         let changeCount = PasteboardHelper.copyContentToPasteboard(content)
         clipboardService?.suppressUntilChangeCount = changeCount
 
-        guard let target = targetApp, !target.isTerminated else {
+        let target = FocusTracker.pasteTarget(preferred: targetApp)
+        guard let target else {
+            FeedbackSound.play(.pasteFailed)
             onShowToast?("Contenido copiado al portapapeles")
             return .copiedNeedsManualPaste
         }
@@ -35,20 +37,18 @@ final class PasteService {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             guard let self else { return }
-            if Self.sendCommandV() {
-                if AppSettings.load().playSoundOnPaste {
-                    NSSound(named: "Pop")?.play()
-                }
-                self.onShowToast?(nil)
-            } else {
-                target.activate()
-                if AccessibilityPermission.isTrusted {
-                    self.onShowToast?("Contenido listo — pulsa ⌘V para pegar")
-                } else {
-                    self.logger.warning("⌘V bloqueado: el proceso actual no está en Accesibilidad")
-                    self.onShowToast?("Sin Accesibilidad — el contenido quedó copiado, pegá con ⌘V")
-                }
+            guard FocusTracker.pasteTarget(preferred: target) != nil else {
+                FeedbackSound.play(.pasteFailed)
+                self.onShowToast?("Contenido copiado al portapapeles")
+                return
             }
+            guard HIDKeystroke.commandV() else {
+                FeedbackSound.play(.pasteFailed)
+                self.onShowToast?("Contenido listo — pulsa ⌘V para pegar")
+                return
+            }
+            FeedbackSound.play(.pasteSuccess)
+            self.onShowToast?(nil)
         }
 
         return .pastedAutomatically
@@ -56,6 +56,7 @@ final class PasteService {
 
     func pasteFromSlot(index: Int, slotStore: SlotStore, focusTracker: FocusTracker) -> PasteResult {
         guard let content = slotStore.content(at: index) else {
+            FeedbackSound.play(.pasteFailed)
             onShowToast?("El slot \(index) está vacío")
             return .failed("Slot vacío")
         }
@@ -66,8 +67,14 @@ final class PasteService {
         paste(content: item.content, targetApp: focusTracker.targetApp)
     }
 
-    /// Sintetiza ⌘V a nivel de sesión. No usa System Events (evita el error 1002).
-    private static func sendCommandV() -> Bool {
+}
+
+enum HIDKeystroke {
+    static func commandC() -> Bool { command(0x08) }
+    static func commandV() -> Bool { command(0x09) }
+
+    /// Sintetiza ⌘+tecla a nivel de sesión. No usa System Events (evita el error 1002).
+    private static func command(_ virtualKey: CGKeyCode) -> Bool {
         let source = CGEventSource(stateID: .combinedSessionState)
         source?.setLocalEventsFilterDuringSuppressionState(
             [.permitLocalMouseEvents, .permitLocalKeyboardEvents],
@@ -76,8 +83,8 @@ final class PasteService {
         source?.localEventsSuppressionInterval = 0
 
         guard
-            let down = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: true),
-            let up = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: false)
+            let down = CGEvent(keyboardEventSource: source, virtualKey: virtualKey, keyDown: true),
+            let up = CGEvent(keyboardEventSource: source, virtualKey: virtualKey, keyDown: false)
         else {
             return false
         }
@@ -86,8 +93,6 @@ final class PasteService {
         up.flags = .maskCommand
         down.post(tap: .cghidEventTap)
         up.post(tap: .cghidEventTap)
-
-        // Si el proceso no está trusted, macOS descarta los eventos sin error.
-        return AccessibilityPermission.isTrusted
+        return true
     }
 }

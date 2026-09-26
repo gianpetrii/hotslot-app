@@ -18,6 +18,7 @@
 		2C243CEF754FA0B312FCF6AD /* SlotStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099675B8BFE15486169F4C0B /* SlotStoreTests.swift */; };
 		2C38077E80456117487988E8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B7E7A2B2C7D507EFD132F1 /* SettingsView.swift */; };
 		3349436229CCD5233793196B /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446EF048FFED63B26C12887 /* HotkeyManager.swift */; };
+		3726AD86BCF2F30C02228F26 /* FeedbackSound.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB00CAB33F7731154F7391F1 /* FeedbackSound.swift */; };
 		43D29E4D7E7FF8E4255EFFA2 /* ClipThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C245D2B39A6052D9B218842 /* ClipThumbnailView.swift */; };
 		5A7458632B0A0E2FB4810EAB /* HotkeyName.swift in Sources */ = {isa = PBXBuildFile; fileRef = F694AB71C18F22C86D117ACC /* HotkeyName.swift */; };
 		5AEB6A3416609666695B9C48 /* SlotsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A2713A93781D6CF0A531E1 /* SlotsSettingsView.swift */; };
@@ -96,6 +97,7 @@
 		B880BD3AB5B57E6D542F8B5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BD36EA0DCFD93B6DFACE95B8 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		C6A2713A93781D6CF0A531E1 /* SlotsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsSettingsView.swift; sourceTree = "<group>"; };
+		CB00CAB33F7731154F7391F1 /* FeedbackSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackSound.swift; sourceTree = "<group>"; };
 		D1A146B669DE65CF68ECF5A0 /* HotSlot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HotSlot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4B5F0EEAA83D6809073C8CE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		DA7465C8DDE3F479100918D6 /* HotSlotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HotSlotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -154,6 +156,7 @@
 			children = (
 				4528F5EDD7002053F6D7D2AC /* AccessibilityPermission.swift */,
 				FEB4689A3F7F6A221FFD94DF /* AppSupportDirectory.swift */,
+				CB00CAB33F7731154F7391F1 /* FeedbackSound.swift */,
 				F694AB71C18F22C86D117ACC /* HotkeyName.swift */,
 				00C6BACA1F9F56E6F6098EF7 /* PasteboardHelper.swift */,
 			);
@@ -400,6 +403,7 @@
 				43D29E4D7E7FF8E4255EFFA2 /* ClipThumbnailView.swift in Sources */,
 				12C677E12D06E670A5FA29DA /* ClipboardService.swift in Sources */,
 				BE931C778F5553DF67F0481B /* EmptyStateView.swift in Sources */,
+				3726AD86BCF2F30C02228F26 /* FeedbackSound.swift in Sources */,
 				06F67C3631616988E770F6FB /* FocusTracker.swift in Sources */,
 				8FF03433C9CE0E0D64619F77 /* HistoryListView.swift in Sources */,
 				CE22760276774C6B27A032C5 /* HistoryStore.swift in Sources */,
@@ -510,7 +514,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 53M8KYX8G4;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -524,7 +528,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.9.0;
+				MARKETING_VERSION = 0.10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -601,7 +605,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 53M8KYX8G4;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -621,7 +625,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.9.0;
+				MARKETING_VERSION = 0.10.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;

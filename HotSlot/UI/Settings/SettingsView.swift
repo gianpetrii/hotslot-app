@@ -52,12 +52,15 @@ struct SettingsView: View {
             }
 
             Section("Sonido") {
-                Toggle("Sonido al pegar", isOn: $playSound)
+                Toggle("Sonidos de acciones", isOn: $playSound)
                     .onChange(of: playSound) { _, newValue in
                         var settings = AppSettings.load()
                         settings.playSoundOnPaste = newValue
                         settings.save()
                     }
+                Text("Pegar, guardar en un slot o cuando no se puede completar la acción.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
             Section("Depuración") {

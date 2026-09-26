@@ -31,23 +31,19 @@ enum PasteboardHelper {
     }
 
     /// Clasifica el contenido actual del pasteboard.
-    static func readContent(from pasteboard: NSPasteboard = .general) -> ClipContent? {
+    /// Si `previous` es el clip ya capturado, prefiere una representación distinta
+    /// (p. ej. imagen o RTF nuevo) cuando `.string` quedó pegado al texto anterior.
+    static func readContent(
+        from pasteboard: NSPasteboard = .general,
+        preferringChangeFrom previous: ClipContent? = nil
+    ) -> ClipContent? {
         if shouldIgnore(pasteboard: pasteboard) { return nil }
 
-        // Ruta rápida: texto plano (la mayoría de apps)
-        if let string = pasteboard.string(forType: .string) {
-            let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !trimmed.isEmpty { return .text(string) }
+        let candidates = collectCandidates(from: pasteboard)
+        if let previous, let fresh = candidates.first(where: { $0 != previous }) {
+            return fresh
         }
-
-        // Preferir pasteboardItems (API recomendada por Apple)
-        if let items = pasteboard.pasteboardItems, let first = items.first {
-            if let content = readContent(from: first) {
-                return content
-            }
-        }
-
-        return readContentLegacy(from: pasteboard)
+        return primaryCandidate(from: pasteboard, in: candidates)
     }
 
     @discardableResult
@@ -81,25 +77,62 @@ enum PasteboardHelper {
         write(content: content)
     }
 
-    // MARK: - Lectura desde NSPasteboardItem
+    // MARK: - Candidatos
 
-    private static func readContent(from item: NSPasteboardItem) -> ClipContent? {
-        let orderedTypes = item.types
+    private static func collectCandidates(from pasteboard: NSPasteboard) -> [ClipContent] {
+        var result: [ClipContent] = []
+        var seen = Set<String>()
 
-        for type in orderedTypes where textTypes.contains(type) {
-            if let text = readText(from: item, type: type) {
-                return .text(text)
+        func add(_ content: ClipContent) {
+            let key: String
+            switch content {
+            case .text(let string):
+                key = "t:" + string
+            case .image(let fileName):
+                key = "i:" + fileName
+            }
+            if seen.insert(key).inserted {
+                result.append(content)
             }
         }
 
-        for type in orderedTypes where imageTypes.contains(type) {
+        if let items = pasteboard.pasteboardItems {
+            for item in items {
+                collectContents(from: item, add: add)
+            }
+        }
+
+        if let legacy = readContentLegacy(from: pasteboard) {
+            add(legacy)
+        }
+
+        return result
+    }
+
+    private static func primaryCandidate(from pasteboard: NSPasteboard, in candidates: [ClipContent]) -> ClipContent? {
+        let text = candidates.first { if case .text = $0 { return true }; return false }
+        let image = candidates.first { if case .image = $0 { return true }; return false }
+        for type in pasteboard.types ?? [] {
+            if imageTypes.contains(type), let image { return image }
+            if textTypes.contains(type), let text { return text }
+        }
+        return candidates.first
+    }
+
+    private static func collectContents(from item: NSPasteboardItem, add: (ClipContent) -> Void) {
+        for type in item.types where textTypes.contains(type) {
+            if let text = readText(from: item, type: type) {
+                add(.text(text))
+                break
+            }
+        }
+        for type in item.types where imageTypes.contains(type) {
             if let data = item.data(forType: type),
                let content = imageContent(from: data) {
-                return content
+                add(content)
+                break
             }
         }
-
-        return nil
     }
 
     private static func readText(from item: NSPasteboardItem, type: NSPasteboard.PasteboardType) -> String? {

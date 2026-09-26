@@ -16,6 +16,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P0 | Pegado: firma Apple Development + CGEvent (TCC ad-hoc invalidaba Accesibilidad) |
 | [x] | P0 | Grabador de atajos: app agent + `.regular` al abrir Ajustes (el recorder sí graba) |
 | [x] | P0 | Atajos grabados no aplican hasta relanzar (re-registrar al cerrar Ajustes) |
+| [ ] | P1 | Defaults de slots: pegar ⌘⇧A S D Q W y guardar ⌘⌥A S D Q W (hoy 1–5) |
 | [ ] | P1 | Confiabilidad del paste — reintentos y mejor feedback |
 
 ## UI / Panel
@@ -34,7 +35,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P2 | Cruz de vaciar al mismo tamaño visual que el badge de atajo (no más grande) |
 | [x] | P1 | Arrastrar un ítem del historial a un slot para guardarlo ahí |
 | [x] | P1 | Ver mejor el contenido de un slot (peek al hover; no copiar el expand de filas) |
-| [ ] | P1 | Sonidos por acción (éxito vs no se pudo pegar vs guardado vs vacío) |
+| [x] | P1 | Sonidos por acción (éxito vs no se pudo pegar vs guardado vs vacío) |
 | [ ] | P1 | Reordenar ítems **pinneados** con drag & drop (orden persistente entre pines) |
 | [ ] | P2 | Metadata en español ("Imagen PNG" en vez de "PNG image") |
 | [ ] | P2 | Sección visual separada para ítems pinneados vs recientes |
@@ -74,9 +75,10 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 3. **P0 — Atajos en caliente.** ~~Hecho: al cerrar Ajustes se `removeAllHandlers` + `registerAll` + `enable`.~~
 4. **P1 — Historial → slot.** ~~Hecho: drop de un clip sobre un slot lo guarda (reemplaza). El swap entre slots se mantiene.~~
 5. **P1 — Peek de slot.** ~~Hecho: popover al dwell; historial in-place; texto del peek se achica al contenido.~~
-6. **P1 — Sonidos.** Feedback acústico distinto según el resultado (pegar ok ≠ no había dónde pegar ≠ slot vacío ≠ guardado). El toggle de Ajustes es el interruptor maestro.
-7. **P1 — Ícono.** Partir de `docs/portapapeles.png` (512×512). Dock/App Icon con márgenes estilo macOS; menu bar en template (no el PNG a color). Atribución ya está en Ajustes → General.
-8. **P1 — Ajustes.** Fade/unfold similar al panel; el popup de HotSlot permanece cerrado hasta que se cierra Ajustes.
+6. **P1 — Sonidos.** ~~Hecho en v0.10.0: Boop al pegar; Bubble si no hay destino/slot vacío; Funky al guardar. El atajo de guardar toma la selección, no el último clip.~~
+7. **P1 — Defaults A S D Q W.** Pegar ⌘⇧A/S/D/Q/W y guardar ⌘⌥ iguales. Migración de UserDefaults (como v3). No auto-robar si el usuario ya grabó otros.
+8. **P1 — Ícono.** Partir de `docs/portapapeles.png` (512×512). Dock/App Icon con márgenes estilo macOS; menu bar en template (no el PNG a color). Atribución ya está en Ajustes → General.
+9. **P1 — Ajustes.** Fade/unfold similar al panel; el popup de HotSlot permanece cerrado hasta que se cierra Ajustes.
 
 **Más tarde:** orden persistente de pines.
 
@@ -106,7 +108,7 @@ Dirección: **peek**, no grow. ~~Hecho: popover al dwell, a la derecha. Historia
 
 ### Conflictos de atajos
 
-No auto-robar ni cambiar el default si otra app ya lo usa. Avisar y dejar que el usuario grabe otro. ⌘⇧1…5 se mantienen como default de producto a propósito.
+No auto-robar ni cambiar el default si otra app ya lo usa. Avisar y dejar que el usuario grabe otro. Hoy el default de producto es ⌘⇧1…5; **pendiente** pasar a ⌘⇧A/S/D/Q/W (más cómodo, lejos de la fila numérica).
 
 ### Ícono (pendiente)
 
@@ -116,15 +118,9 @@ Fuente: [portapapeles / Magnific — Flaticon](https://www.flaticon.es/icono-gra
 - **Menu bar:** silueta template 18 pt (`isTemplate = true`), no el glifo relleno a color. Hoy es `doc.on.clipboard`.
 - **Licencia:** atribución visible en Ajustes → General, pie de «Acerca de», y en el README. Texto requerido: “Reporte iconos creados por Magnific - Flaticon” → https://www.flaticon.es/iconos-gratis/reporte
 
-### Sonidos (pendiente)
+### Sonidos
 
-Hoy solo suena `Pop` si el pegado automático llega a enviar ⌘V. Falta un mapa:
-
-- **Pegado ok** — `Pop` (ya está).
-- **No había app/campo donde pegar** (solo copió) — más grave, p. ej. `Basso`.
-- **Sin Accesibilidad / ⌘V no salió** — `Basso`.
-- **Slot vacío** — `Funk`.
-- **Guardado en slot** (atajo, drop, menú) — `Tink`.
-- **Vaciar slot / errores menores** — opcional y más suave.
-
-El toggle «Sonido al pegar» pasa a ser el maestro de estos avisos, no un segundo switch. No sonar en hover ni en peek.
+- **Pegado ok** — Boop (`Tink.aiff`).
+- **Error** (escritorio/Finder, sin destino, o slot vacío) — Bubble (`Pop.aiff`).
+- **Guardado en slot** — Funky (`Funk.aiff`).
+- Hover y peek no suenan. El toggle «Sonidos de acciones» los silencia todos.
