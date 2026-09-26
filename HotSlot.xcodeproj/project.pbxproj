@@ -11,6 +11,7 @@
 		0C1B4C7C4F79CBF6E95CDA42 /* ClipContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41FC0ED81ECB6C60BC9AA3FF /* ClipContent.swift */; };
 		12C677E12D06E670A5FA29DA /* ClipboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB823AC3606502B337159418 /* ClipboardService.swift */; };
 		15E13B782F856BE19618FD98 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858AB04884B62F4C91EF2DF9 /* AppState.swift */; };
+		18006E349309415F307A5D15 /* SlotPeekView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DECF19C0558E479917409747 /* SlotPeekView.swift */; };
 		1BEBD40631434B777BF77F74 /* BackdropController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8108F534EC224E3BA83D449B /* BackdropController.swift */; };
 		1EB231A326C88DBB560DCA62 /* PanelDragPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73024E80E174C79983E6A25D /* PanelDragPayload.swift */; };
 		2666AEEE1C23121AC660B2AC /* PanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A911DBA98261441FF883EE51 /* PanelView.swift */; };
@@ -98,6 +99,7 @@
 		D1A146B669DE65CF68ECF5A0 /* HotSlot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HotSlot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4B5F0EEAA83D6809073C8CE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		DA7465C8DDE3F479100918D6 /* HotSlotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HotSlotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DECF19C0558E479917409747 /* SlotPeekView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotPeekView.swift; sourceTree = "<group>"; };
 		E2D9721B8E7B78F14E68B6D5 /* PanelSearchHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelSearchHeader.swift; sourceTree = "<group>"; };
 		E337777E4CDCB5C2D945FE7B /* ClipItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipItemTests.swift; sourceTree = "<group>"; };
 		E49192713FE49EA8C0DC9E8D /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
@@ -230,6 +232,7 @@
 				73024E80E174C79983E6A25D /* PanelDragPayload.swift */,
 				A911DBA98261441FF883EE51 /* PanelView.swift */,
 				0F806ECE71FCC38E52033D0F /* SlotGridView.swift */,
+				DECF19C0558E479917409747 /* SlotPeekView.swift */,
 			);
 			path = Panel;
 			sourceTree = "<group>";
@@ -416,6 +419,7 @@
 				666961C01803DCEA644EF356 /* ShortcutBadge.swift in Sources */,
 				8AD33E79675CC9C6D12CAE99 /* Slot.swift in Sources */,
 				F3DF1B41ADC0380D87AF4D07 /* SlotGridView.swift in Sources */,
+				18006E349309415F307A5D15 /* SlotPeekView.swift in Sources */,
 				5F03F3682880EE8CB86A7501 /* SlotStore.swift in Sources */,
 				5AEB6A3416609666695B9C48 /* SlotsSettingsView.swift in Sources */,
 				709457F1F7152675FEE4A77B /* StatusBarController.swift in Sources */,
@@ -506,7 +510,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 53M8KYX8G4;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -520,7 +524,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.8.0;
+				MARKETING_VERSION = 0.9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -597,7 +601,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 53M8KYX8G4;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -617,7 +621,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.8.0;
+				MARKETING_VERSION = 0.9.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;

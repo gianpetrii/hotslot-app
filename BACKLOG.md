@@ -33,7 +33,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P0 | Overlay en slot: atajo de pegar + cruz encima del contenido (también si está vacío) |
 | [x] | P2 | Cruz de vaciar al mismo tamaño visual que el badge de atajo (no más grande) |
 | [x] | P1 | Arrastrar un ítem del historial a un slot para guardarlo ahí |
-| [ ] | P1 | Ver mejor el contenido de un slot (peek al hover; no copiar el expand de filas) |
+| [x] | P1 | Ver mejor el contenido de un slot (peek al hover; no copiar el expand de filas) |
 | [ ] | P1 | Sonidos por acción (éxito vs no se pudo pegar vs guardado vs vacío) |
 | [ ] | P1 | Reordenar ítems **pinneados** con drag & drop (orden persistente entre pines) |
 | [ ] | P2 | Metadata en español ("Imagen PNG" en vez de "PNG image") |
@@ -73,7 +73,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 2. **P0 — Overlay de slot.** ~~Hecho.~~
 3. **P0 — Atajos en caliente.** ~~Hecho: al cerrar Ajustes se `removeAllHandlers` + `registerAll` + `enable`.~~
 4. **P1 — Historial → slot.** ~~Hecho: drop de un clip sobre un slot lo guarda (reemplaza). El swap entre slots se mantiene.~~
-5. **P1 — Peek de slot.** Al hover (con dwell), mostrar con claridad imagen/texto sin reventar la columna de 176 px.
+5. **P1 — Peek de slot.** ~~Hecho: popover al dwell; historial in-place; texto del peek se achica al contenido.~~
 6. **P1 — Sonidos.** Feedback acústico distinto según el resultado (pegar ok ≠ no había dónde pegar ≠ slot vacío ≠ guardado). El toggle de Ajustes es el interruptor maestro.
 7. **P1 — Ícono.** Partir de `docs/portapapeles.png` (512×512). Dock/App Icon con márgenes estilo macOS; menu bar en template (no el PNG a color). Atribución ya está en Ajustes → General.
 8. **P1 — Ajustes.** Fade/unfold similar al panel; el popup de HotSlot permanece cerrado hasta que se cierra Ajustes.
@@ -102,7 +102,7 @@ La cruz no debe ser más grande que el badge. ~~Hecho: overlay 22×22, mismo alt
 
 La columna es fija (~176 px, cinco tarjetas). Expandir como en el historial (más alto, más líneas) empuja al resto o recorta. No copiar ese patrón.
 
-Dirección: **peek**, no grow. Mismo dwell que las filas (~0.42 s). Preview flotante (popover o lamina sobre el panel): imagen más grande, texto con más líneas. El slot en la grilla no cambia de tamaño. Clic sigue pegando; el peek es solo lectura.
+Dirección: **peek**, no grow. ~~Hecho: popover al dwell, a la derecha. Historial sigue expandiendo in-place. Texto del peek se achica al contenido, con tope y scroll. Imagen tamaño fijo.~~
 
 ### Conflictos de atajos
 

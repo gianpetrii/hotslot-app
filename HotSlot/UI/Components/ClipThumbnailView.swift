@@ -4,6 +4,7 @@ import SwiftUI
 enum ClipThumbnailStyle {
     case row
     case slot
+    case peek
 }
 
 /// Miniatura solo para imágenes.
@@ -28,11 +29,11 @@ struct ClipThumbnailView: View {
             }
         }
         .frame(width: rowPreviewWidth, height: rowPreviewHeight)
-        .frame(maxWidth: style == .slot ? .infinity : (isExpanded ? .infinity : nil),
-               maxHeight: style == .slot ? .infinity : nil)
+        .frame(maxWidth: style == .slot ? .infinity : (isExpanded || style == .peek ? .infinity : nil),
+               maxHeight: style == .slot || style == .peek ? .infinity : nil)
         .clipShape(RoundedRectangle(cornerRadius: clipRadius, style: .continuous))
         .overlay {
-            if style != .slot {
+            if style == .row {
                 RoundedRectangle(cornerRadius: clipRadius, style: .continuous)
                     .strokeBorder(Color.black.opacity(0.1), lineWidth: 0.5)
             }
@@ -41,17 +42,27 @@ struct ClipThumbnailView: View {
     }
 
     private var clipRadius: CGFloat {
-        style == .slot ? HotSlotDesign.cardCornerRadius : HotSlotDesign.thumbnailCornerRadius
+        switch style {
+        case .slot: return HotSlotDesign.cardCornerRadius
+        case .peek: return 8
+        case .row: return HotSlotDesign.thumbnailCornerRadius
+        }
     }
 
     private var rowPreviewWidth: CGFloat? {
-        guard style == .row else { return nil }
-        return isExpanded ? nil : HotSlotDesign.imageRowPreviewWidth
+        switch style {
+        case .row: return isExpanded ? nil : HotSlotDesign.imageRowPreviewWidth
+        case .peek: return HotSlotDesign.slotPeekWidth
+        case .slot: return nil
+        }
     }
 
     private var rowPreviewHeight: CGFloat? {
-        guard style == .row else { return nil }
-        return isExpanded ? HotSlotDesign.imageRowPreviewHeightExpanded : HotSlotDesign.imageRowPreviewHeight
+        switch style {
+        case .row: return isExpanded ? HotSlotDesign.imageRowPreviewHeightExpanded : HotSlotDesign.imageRowPreviewHeight
+        case .peek: return HotSlotDesign.slotPeekImageHeight
+        case .slot: return nil
+        }
     }
 }
 

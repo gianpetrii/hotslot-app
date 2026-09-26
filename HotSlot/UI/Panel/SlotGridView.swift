@@ -55,6 +55,9 @@ private struct SlotCardView: View {
     let onSwapFrom: (Int) -> Void
     @State private var isHovering = false
     @State private var isDropTarget = false
+    @State private var isPeeking = false
+    @State private var isPeekHovered = false
+    @State private var peekTask: Task<Void, Never>?
 
     private var hasContent: Bool { slot.content != nil }
     private var pasteShortcut: KeyboardShortcuts.Name {
@@ -112,7 +115,19 @@ private struct SlotCardView: View {
         }
         .clipShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
         .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
-        .onHover { isHovering = $0 }
+        .onHover { hovering in
+            isHovering = hovering
+            schedulePeek(hovering: hovering)
+        }
+        .popover(isPresented: $isPeeking, arrowEdge: .trailing) {
+            if let content = slot.content {
+                SlotPeekView(content: content)
+                    .onHover { hovering in
+                        isPeekHovered = hovering
+                        schedulePeek(hovering: isHovering || hovering)
+                    }
+            }
+        }
         .draggable(PanelDragPayload.slot(index: slot.index))
         .onDrop(of: [UTType.hotslotPanelDrag], isTargeted: $isDropTarget) { providers in
             Self.acceptDrop(providers) { payload in
@@ -135,6 +150,38 @@ private struct SlotCardView: View {
             }
         }
         .help("Pegar slot \(slot.index). Arrastrá para intercambiar o soltá un clip del historial.")
+        .onChange(of: isDropTarget) { _, targeted in
+            if targeted {
+                peekTask?.cancel()
+                isPeeking = false
+            }
+        }
+        .onDisappear {
+            peekTask?.cancel()
+            isPeeking = false
+            isPeekHovered = false
+        }
+    }
+
+    private func schedulePeek(hovering: Bool) {
+        peekTask?.cancel()
+        guard hasContent, !isDropTarget else {
+            isPeeking = false
+            return
+        }
+        if hovering {
+            peekTask = Task { @MainActor in
+                try? await Task.sleep(nanoseconds: UInt64(HotSlotDesign.hoverExpandDelay * 1_000_000_000))
+                guard !Task.isCancelled, (isHovering || isPeekHovered), !isDropTarget else { return }
+                isPeeking = true
+            }
+        } else {
+            peekTask = Task { @MainActor in
+                try? await Task.sleep(nanoseconds: UInt64(HotSlotDesign.slotPeekHideDelay * 1_000_000_000))
+                guard !Task.isCancelled, !isHovering, !isPeekHovered else { return }
+                isPeeking = false
+            }
+        }
     }
 
     private static func acceptDrop(
