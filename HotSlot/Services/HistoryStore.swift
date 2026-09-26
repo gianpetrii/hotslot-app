@@ -32,6 +32,10 @@ final class HistoryStore {
         save()
     }
 
+    func item(id: UUID) -> ClipItem? {
+        items.first { $0.id == id }
+    }
+
     func remove(id: UUID) {
         items.removeAll { $0.id == id }
         save()

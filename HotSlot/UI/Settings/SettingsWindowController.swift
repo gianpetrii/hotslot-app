@@ -5,9 +5,11 @@ import SwiftUI
 /// Ventana de ajustes regular. Las apps de menú bar no reciben teclas hasta pasar a `.regular`.
 final class SettingsWindowController: NSObject, NSWindowDelegate {
     private var window: NSWindow?
+    private var appState: AppState?
 
     @MainActor
     func show(appState: AppState) {
+        self.appState = appState
         if window == nil {
             let hosting = NSHostingController(rootView: SettingsView(appState: appState))
             hosting.safeAreaRegions = []
@@ -36,7 +38,8 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
 
     @MainActor
     func windowWillClose(_ notification: Notification) {
-        KeyboardShortcuts.enable(KeyboardShortcuts.Name.allShortcutNames)
+        appState?.hotkeyManager.applyStoredShortcuts()
+        appState?.noteShortcutsChanged()
         NSApp.setActivationPolicy(.accessory)
     }
 }

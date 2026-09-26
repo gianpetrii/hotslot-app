@@ -84,8 +84,20 @@ struct SettingsView: View {
                 }
             }
 
-            Section("Acerca de") {
+            Section {
                 LabeledContent("Versión", value: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
+            } header: {
+                Text("Acerca de")
+            } footer: {
+                Link(destination: Self.iconAttributionURL) {
+                    Text("Reporte iconos creados por Magnific - Flaticon")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .buttonStyle(.plain)
+                .focusable(false)
             }
         }
         .formStyle(.grouped)
@@ -123,6 +135,8 @@ struct SettingsView: View {
             accessibilityTrusted = AccessibilityPermission.isTrusted
         }
     }
+
+    private static let iconAttributionURL = URL(string: "https://www.flaticon.es/iconos-gratis/reporte")!
 
     private func updateLaunchAtLogin(_ enabled: Bool) {
         var settings = AppSettings.load()

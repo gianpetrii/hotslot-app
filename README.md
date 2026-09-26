@@ -18,6 +18,7 @@ Clipboard manager nativo para macOS con historial, slots fijos y atajos globales
 | `v0.5.0` | Unfold de apertura, filas más densas y grabador de atajos en app de menú |
 | `v0.6.0` | Layout dos columnas, hover con dwell, intercambio de slots y vaciar con ✕ |
 | `v0.7.0` | Drag de slots intercambia contenido; el panel se mueve desde el buscador |
+| `v0.8.0` | Overlay de slots, atajos en caliente y arrastrar historial a un slot |
 
 ## Nota sobre logs en Xcode
 
@@ -61,6 +62,10 @@ HotSlot usa **Automatización** (System Events) para pegar automáticamente con 
 - Sandbox habilitado
 - Sin recolección de datos
 - Bundle ID: `com.hotslot.app`
+
+## Créditos
+
+[Reporte iconos creados por Magnific - Flaticon](https://www.flaticon.es/iconos-gratis/reporte)
 
 ## Estructura
 

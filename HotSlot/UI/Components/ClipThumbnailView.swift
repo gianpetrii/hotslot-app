@@ -30,12 +30,18 @@ struct ClipThumbnailView: View {
         .frame(width: rowPreviewWidth, height: rowPreviewHeight)
         .frame(maxWidth: style == .slot ? .infinity : (isExpanded ? .infinity : nil),
                maxHeight: style == .slot ? .infinity : nil)
-        .clipShape(RoundedRectangle(cornerRadius: HotSlotDesign.thumbnailCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: clipRadius, style: .continuous))
         .overlay {
-            RoundedRectangle(cornerRadius: HotSlotDesign.thumbnailCornerRadius, style: .continuous)
-                .strokeBorder(Color.black.opacity(0.1), lineWidth: 0.5)
+            if style != .slot {
+                RoundedRectangle(cornerRadius: clipRadius, style: .continuous)
+                    .strokeBorder(Color.black.opacity(0.1), lineWidth: 0.5)
+            }
         }
         .animation(.spring(response: 0.38, dampingFraction: 0.86), value: isExpanded)
+    }
+
+    private var clipRadius: CGFloat {
+        style == .slot ? HotSlotDesign.cardCornerRadius : HotSlotDesign.thumbnailCornerRadius
     }
 
     private var rowPreviewWidth: CGFloat? {

@@ -16,6 +16,8 @@ final class AppState {
     var isPanelVisible = false
     var panelBodyRevealed = false
     var openSettings: (() -> Void)?
+    /// Sube cuando cambia un atajo grabado, para refrescar badges sin relanzar.
+    var shortcutEpoch = 0
 
     var settings: AppSettings {
         get { AppSettings.load() }
@@ -61,7 +63,24 @@ final class AppState {
         }
 
         hotkeyManager.registerAll()
+        observeShortcutChanges()
         clipboardService.start()
+    }
+
+    func noteShortcutsChanged() {
+        shortcutEpoch += 1
+    }
+
+    private func observeShortcutChanges() {
+        NotificationCenter.default.addObserver(
+            forName: Notification.Name("KeyboardShortcuts_shortcutByNameDidChange"),
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.noteShortcutsChanged()
+            }
+        }
     }
 
     func pasteItem(_ item: ClipItem, panelController: PanelController) {

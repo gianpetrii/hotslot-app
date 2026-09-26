@@ -103,6 +103,7 @@ struct PanelView: View {
             searchText = ""
             keyboardHighlightIndex = nil
         }
+        .environment(appState)
     }
 
     private func playOpenAnimation() {

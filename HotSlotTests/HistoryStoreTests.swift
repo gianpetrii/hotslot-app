@@ -84,4 +84,12 @@ final class HistoryStoreTests: XCTestCase {
 
         XCTAssertEqual(store.items.map(\.content.previewText), ["c", "a", "b"])
     }
+
+    func testItemLookupByID() {
+        let store = HistoryStore()
+        let item = ClipItem(content: .text("buscar"))
+        store.replaceAll([item])
+        XCTAssertEqual(store.item(id: item.id)?.content, .text("buscar"))
+        XCTAssertNil(store.item(id: UUID()))
+    }
 }

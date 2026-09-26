@@ -21,6 +21,9 @@ enum HotSlotDesign {
     static let imageRowPreviewHeight: CGFloat = 76
     static let imageRowPreviewHeightExpanded: CGFloat = 148
     static let hoverExpandDelay: TimeInterval = 0.42
+    static let slotOverlayControlSize: CGFloat = 22
+    static let slotOverlayIconSize: CGFloat = 10
+    static let slotOverlayCornerRadius: CGFloat = 6
 
     static let openDuration: TimeInterval = 0.4
     static let closeDuration: TimeInterval = 0.28
@@ -127,17 +130,20 @@ struct PanelGlyphButton: View {
     let systemImage: String
     var foreground: Color = .secondary
     var help: String?
+    var size: CGFloat = 28
+    var iconSize: CGFloat = 12
+    var cornerRadius: CGFloat = 8
     let action: () -> Void
     @State private var isHovering = false
 
     var body: some View {
         Button(action: action) {
             Image(systemName: systemImage)
-                .font(.system(size: 12, weight: .medium))
+                .font(.system(size: iconSize, weight: .medium))
                 .foregroundStyle(foreground)
-                .frame(width: 28, height: 28)
+                .frame(width: size, height: size)
                 .background {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                         .fill(Color.primary.opacity(isHovering ? 0.12 : 0.07))
                 }
         }

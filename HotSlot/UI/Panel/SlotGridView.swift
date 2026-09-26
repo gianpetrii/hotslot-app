@@ -1,3 +1,4 @@
+import AppKit
 import KeyboardShortcuts
 import SwiftUI
 import UniformTypeIdentifiers
@@ -23,6 +24,11 @@ struct SlotGridView: View {
                                 appState.showToast("Guardado en slot \(slot.index)")
                             }
                         },
+                        onSaveHistoryItem: { itemID in
+                            guard let content = appState.historyStore.item(id: itemID)?.content else { return }
+                            appState.slotStore.saveContent(index: slot.index, content: content)
+                            appState.showToast("Guardado en slot \(slot.index)")
+                        },
                         onClear: {
                             appState.slotStore.clearSlot(index: slot.index)
                         },
@@ -40,18 +46,11 @@ struct SlotGridView: View {
     }
 }
 
-private struct SlotDragToken: Codable, Transferable {
-    let index: Int
-
-    static var transferRepresentation: some TransferRepresentation {
-        CodableRepresentation(contentType: .json)
-    }
-}
-
 private struct SlotCardView: View {
     let slot: Slot
     let onPaste: () -> Void
     let onSaveFromClipboard: () -> Void
+    let onSaveHistoryItem: (UUID) -> Void
     let onClear: () -> Void
     let onSwapFrom: (Int) -> Void
     @State private var isHovering = false
@@ -63,28 +62,41 @@ private struct SlotCardView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 4) {
+        ZStack(alignment: .top) {
+            slotContent
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: contentAlignment)
+                .padding(contentPadding)
+                .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
+                .onTapGesture { onPaste() }
+
+            if isImageContent {
+                LinearGradient(
+                    colors: [Color.black.opacity(0.38), Color.clear],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 48)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .allowsHitTesting(false)
+            }
+
+            HStack(alignment: .top, spacing: 4) {
                 if hasContent {
                     PanelGlyphButton(
                         systemImage: "xmark",
                         help: "Vaciar slot \(slot.index)",
+                        size: HotSlotDesign.slotOverlayControlSize,
+                        iconSize: HotSlotDesign.slotOverlayIconSize,
+                        cornerRadius: HotSlotDesign.slotOverlayCornerRadius,
                         action: onClear
                     )
                     .opacity(isHovering ? 1 : 0)
                     .allowsHitTesting(isHovering)
                 }
                 Spacer(minLength: 0)
-                ShortcutBadge(name: pasteShortcut)
-                    .scaleEffect(0.84)
+                ShortcutBadge(name: pasteShortcut, compact: true)
             }
-            .padding(.horizontal, 6)
-            .padding(.top, 6)
-
-            slotContent
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .padding(.horizontal, 8)
-                .padding(.bottom, 8)
+            .padding(6)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background {
@@ -100,15 +112,19 @@ private struct SlotCardView: View {
         }
         .clipShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
         .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
-        .onTapGesture { onPaste() }
         .onHover { isHovering = $0 }
-        .draggable(SlotDragToken(index: slot.index))
-        .dropDestination(for: SlotDragToken.self) { tokens, _ in
-            guard let source = tokens.first?.index,
-                  (1...SlotStore.slotCount).contains(source) else { return false }
-            onSwapFrom(source)
-            return true
-        } isTargeted: { isDropTarget = $0 }
+        .draggable(PanelDragPayload.slot(index: slot.index))
+        .onDrop(of: [UTType.hotslotPanelDrag], isTargeted: $isDropTarget) { providers in
+            Self.acceptDrop(providers) { payload in
+                switch payload {
+                case .slot(let source):
+                    guard (1...SlotStore.slotCount).contains(source), source != slot.index else { return }
+                    onSwapFrom(source)
+                case .historyItem(let id):
+                    onSaveHistoryItem(id)
+                }
+            }
+        }
         .animation(.easeOut(duration: 0.12), value: isHovering)
         .animation(.easeOut(duration: 0.12), value: isDropTarget)
         .contextMenu {
@@ -118,13 +134,47 @@ private struct SlotCardView: View {
                 Button("Vaciar", role: .destructive) { onClear() }
             }
         }
-        .help("Pegar slot \(slot.index). Arrastrá para intercambiar.")
+        .help("Pegar slot \(slot.index). Arrastrá para intercambiar o soltá un clip del historial.")
+    }
+
+    private static func acceptDrop(
+        _ providers: [NSItemProvider],
+        handle: @escaping (PanelDragPayload) -> Void
+    ) -> Bool {
+        let type = UTType.hotslotPanelDrag.identifier
+        guard let provider = providers.first(where: { $0.hasItemConformingToTypeIdentifier(type) }) else {
+            return false
+        }
+        provider.loadDataRepresentation(forTypeIdentifier: type) { data, _ in
+            guard let data,
+                  let payload = try? JSONDecoder().decode(PanelDragPayload.self, from: data) else { return }
+            DispatchQueue.main.async {
+                handle(payload)
+            }
+        }
+        return true
     }
 
     private var fillOpacity: Double {
         if isDropTarget { return 0.12 }
         if isHovering { return 0.07 }
         return 0.04
+    }
+
+    private var isImageContent: Bool {
+        if case .image = slot.content { return true }
+        return false
+    }
+
+    private var contentAlignment: Alignment {
+        if hasContent { return isImageContent ? .center : .topLeading }
+        return .center
+    }
+
+    private var contentPadding: EdgeInsets {
+        if isImageContent { return EdgeInsets() }
+        if hasContent { return EdgeInsets(top: 28, leading: 8, bottom: 8, trailing: 8) }
+        return EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
     }
 
     private var strokeColor: Color {

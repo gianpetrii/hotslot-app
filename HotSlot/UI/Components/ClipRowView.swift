@@ -13,12 +13,21 @@ struct ClipRowView: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
-            Button(action: onPaste) {
+            ZStack(alignment: .topLeading) {
                 rowBody
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.rowCornerRadius, style: .continuous))
+                Color.clear
+                    .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .onTapGesture(perform: onPaste)
+            .draggable(PanelDragPayload.historyItem(id: item.id)) {
+                Text(item.content.previewText)
+                    .font(.system(size: 12, weight: .medium))
+                    .lineLimit(2)
+                    .padding(8)
+                    .frame(maxWidth: 180, alignment: .leading)
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            }
 
             if item.isPinned || isHovering {
                 PinButton(isPinned: item.isPinned, action: onTogglePin)
@@ -61,6 +70,8 @@ struct ClipRowView: View {
             isExpanded = false
             isHovering = false
         }
+        .accessibilityAddTraits(.isButton)
+        .accessibilityHint("Clic para pegar. Arrastrá para guardar en un slot.")
     }
 
     @ViewBuilder
