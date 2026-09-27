@@ -58,7 +58,7 @@ struct HotkeysSettingsView: View {
             }
             Button("Cancelar", role: .cancel) {}
         } message: {
-            Text("Se aplicarán los atajos por defecto (⌘⇧V, ⌘⇧1–5, ⌘⌥1–5).")
+            Text("Se aplicarán los atajos por defecto (⌘⇧V, pegar ⌘⇧A S D Q W, guardar ⌘⌃ iguales).")
         }
     }
 

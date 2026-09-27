@@ -21,6 +21,7 @@ Clipboard manager nativo para macOS con historial, slots fijos y atajos globales
 | `v0.8.0` | Overlay de slots, atajos en caliente y arrastrar historial a un slot |
 | `v0.9.0` | Peek de slots al hover; texto del peek se ajusta al contenido |
 | `v0.10.0` | Sonidos por acción; guardar la selección en el slot; error si no hay destino |
+| `v0.11.0` | Atajos A/S/D/Q/W; Ajustes animados; pegado otra vez en Chrome y Cursor |
 
 ## Nota sobre logs en Xcode
 
@@ -50,8 +51,8 @@ open HotSlot.xcodeproj
 | Acción | Atajo |
 |--------|-------|
 | Abrir/cerrar panel | ⌘⇧V |
-| Pegar slot 1–5 | ⌘⇧1 … ⌘⇧5 |
-| Guardar en slot 1–5 | ⌘⌥1 … ⌘⌥5 |
+| Pegar slot 1–5 | ⌘⇧A, S, D, Q, W |
+| Guardar en slot 1–5 | ⌘⌃A, S, D, Q, W |
 
 Si un atajo no funciona: **Ajustes → Atajos → Restaurar atajos por defecto** o grabá uno nuevo.
 

@@ -16,7 +16,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P0 | Pegado: firma Apple Development + CGEvent (TCC ad-hoc invalidaba Accesibilidad) |
 | [x] | P0 | Grabador de atajos: app agent + `.regular` al abrir Ajustes (el recorder sí graba) |
 | [x] | P0 | Atajos grabados no aplican hasta relanzar (re-registrar al cerrar Ajustes) |
-| [ ] | P1 | Defaults de slots: pegar ⌘⇧A S D Q W y guardar ⌘⌥A S D Q W (hoy 1–5) |
+| [x] | P1 | Defaults de slots: pegar ⌘⇧A S D Q W y guardar ⌘⌃A S D Q W |
 | [ ] | P1 | Confiabilidad del paste — reintentos y mejor feedback |
 
 ## UI / Panel
@@ -44,8 +44,8 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 
 | Estado | Pri | Tarea |
 |--------|-----|-------|
-| [ ] | P1 | Animar apertura/cierre de Ajustes (mismo lenguaje que el panel) |
-| [ ] | P1 | Panel principal oculto mientras Ajustes está abierto (ya se oculta; no reabrir hasta cerrar) |
+| [x] | P1 | Animar apertura/cierre de Ajustes (mismo lenguaje que el panel) |
+| [x] | P1 | Panel principal oculto mientras Ajustes está abierto; al cerrar se reabre el popup |
 
 ## Animaciones
 
@@ -76,9 +76,9 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 4. **P1 — Historial → slot.** ~~Hecho: drop de un clip sobre un slot lo guarda (reemplaza). El swap entre slots se mantiene.~~
 5. **P1 — Peek de slot.** ~~Hecho: popover al dwell; historial in-place; texto del peek se achica al contenido.~~
 6. **P1 — Sonidos.** ~~Hecho en v0.10.0: Boop al pegar; Bubble si no hay destino/slot vacío; Funky al guardar. El atajo de guardar toma la selección, no el último clip.~~
-7. **P1 — Defaults A S D Q W.** Pegar ⌘⇧A/S/D/Q/W y guardar ⌘⌥ iguales. Migración de UserDefaults (como v3). No auto-robar si el usuario ya grabó otros.
-8. **P1 — Ícono.** Partir de `docs/portapapeles.png` (512×512). Dock/App Icon con márgenes estilo macOS; menu bar en template (no el PNG a color). Atribución ya está en Ajustes → General.
-9. **P1 — Ajustes.** Fade/unfold similar al panel; el popup de HotSlot permanece cerrado hasta que se cierra Ajustes.
+7. **P1 — Defaults A S D Q W.** ~~Hecho: pegar ⌘⇧A/S/D/Q/W y guardar ⌘⌃ iguales. Migración v4/v5 solo si el atajo era el de fábrica; si el usuario grabó otro, no se toca.~~
+8. **P1 — Ajustes.** ~~Fade al abrir/cerrar; al cerrar se reabre el popup. Sin `close()` ni resize (ViewBridge/lldb).~~
+9. **P1 — Ícono.** Partir de `docs/portapapeles.png` (512×512). Dock/App Icon con márgenes estilo macOS; menu bar en template (no el PNG a color). Atribución ya está en Ajustes → General.
 
 **Más tarde:** orden persistente de pines.
 
@@ -108,7 +108,7 @@ Dirección: **peek**, no grow. ~~Hecho: popover al dwell, a la derecha. Historia
 
 ### Conflictos de atajos
 
-No auto-robar ni cambiar el default si otra app ya lo usa. Avisar y dejar que el usuario grabe otro. Hoy el default de producto es ⌘⇧1…5; **pendiente** pasar a ⌘⇧A/S/D/Q/W (más cómodo, lejos de la fila numérica).
+No auto-robar ni cambiar el default si otra app ya lo usa. Avisar y dejar que el usuario grabe otro. Default de producto: ⌘⇧A/S/D/Q/W (pegar) y ⌘⌃ iguales (guardar). Quien tenía 1–5 o ⌘⌥ de fábrica pasa a esos; atajos personalizados se conservan.
 
 ### Ícono (pendiente)
 

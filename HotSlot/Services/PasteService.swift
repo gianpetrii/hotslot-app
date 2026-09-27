@@ -37,7 +37,9 @@ final class PasteService {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             guard let self else { return }
-            guard FocusTracker.pasteTarget(preferred: target) != nil else {
+            if let front = NSWorkspace.shared.frontmostApplication,
+               front.bundleIdentifier != Bundle.main.bundleIdentifier,
+               FocusTracker.pasteTarget(preferred: front) == nil {
                 FeedbackSound.play(.pasteFailed)
                 self.onShowToast?("Contenido copiado al portapapeles")
                 return

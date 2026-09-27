@@ -56,8 +56,9 @@ final class PanelController: NSWindowController, NSWindowDelegate {
     }
 
     func show() {
-        guard let window, !isAnimating else { return }
+        guard let window else { return }
         if isVisible { return }
+        isAnimating = false
 
         let screen = screenForMouse() ?? NSScreen.main
         guard let screen else { return }
