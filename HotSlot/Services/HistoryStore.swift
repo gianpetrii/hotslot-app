@@ -12,23 +12,26 @@ final class HistoryStore {
     }
 
     func add(_ item: ClipItem) {
-        var newItem = item
-        if let existing = items.first(where: { $0.contentFingerprint == item.contentFingerprint }) {
-            newItem.isPinned = existing.isPinned
-        }
-
-        items.removeAll { $0.contentFingerprint == item.contentFingerprint }
-
-        if newItem.isPinned {
-            items.insert(newItem, at: 0)
+        if let index = items.firstIndex(where: { $0.contentFingerprint == item.contentFingerprint }) {
+            let existing = items[index]
+            let updated = ClipItem(
+                id: existing.id,
+                content: item.content,
+                createdAt: item.createdAt,
+                sourceAppName: item.sourceAppName,
+                sourceAppBundleID: item.sourceAppBundleID,
+                isPinned: existing.isPinned
+            )
+            if existing.isPinned {
+                items[index] = updated
+            } else {
+                items.remove(at: index)
+                items.insert(updated, at: firstUnpinnedIndex)
+            }
         } else {
-            let insertIndex = items.firstIndex(where: { !$0.isPinned }) ?? items.count
-            items.insert(newItem, at: insertIndex)
+            items.insert(item, at: firstUnpinnedIndex)
         }
-
-        if items.count > historyLimit {
-            items = Array(items.prefix(historyLimit))
-        }
+        trimToLimit()
         save()
     }
 
@@ -45,19 +48,28 @@ final class HistoryStore {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }
         var item = items.remove(at: index)
         item.isPinned.toggle()
-
-        if item.isPinned {
-            items.insert(item, at: 0)
-        } else {
-            let insertIndex = items.firstIndex(where: { !$0.isPinned }) ?? items.count
-            items.insert(item, at: insertIndex)
-        }
+        items.insert(item, at: firstUnpinnedIndex)
         save()
     }
 
     func move(from source: IndexSet, to destination: Int) {
         items.move(fromOffsets: source, toOffset: destination)
+        let pins = items.filter(\.isPinned)
+        let rest = items.filter { !$0.isPinned }
+        items = pins + rest
         save()
+    }
+
+    private var firstUnpinnedIndex: Int {
+        items.firstIndex(where: { !$0.isPinned }) ?? items.count
+    }
+
+    private func trimToLimit() {
+        guard items.count > historyLimit else { return }
+        let pins = items.filter(\.isPinned)
+        let rest = items.filter { !$0.isPinned }
+        let room = max(0, historyLimit - pins.count)
+        items = pins + Array(rest.prefix(room))
     }
 
     func clear() {

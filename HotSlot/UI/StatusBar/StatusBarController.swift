@@ -19,7 +19,11 @@ final class StatusBarController {
     private func configureButton() {
         guard let button = statusItem.button else { return }
 
-        if let image = NSImage(systemSymbolName: "doc.on.clipboard", accessibilityDescription: "HotSlot") {
+        if let image = NSImage(named: "MenuBarIcon") {
+            image.isTemplate = true
+            button.image = image
+            button.image?.size = NSSize(width: 18, height: 18)
+        } else if let image = NSImage(systemSymbolName: "doc.on.clipboard", accessibilityDescription: "HotSlot") {
             image.isTemplate = true
             button.image = image
         }

@@ -85,6 +85,46 @@ final class HistoryStoreTests: XCTestCase {
         XCTAssertEqual(store.items.map(\.content.previewText), ["c", "a", "b"])
     }
 
+    func testNewPinAppendsAfterExistingPins() {
+        let store = HistoryStore()
+        let first = ClipItem(content: .text("primero"))
+        let second = ClipItem(content: .text("segundo"))
+        store.add(first)
+        store.togglePin(id: first.id)
+        store.add(second)
+        store.togglePin(id: second.id)
+
+        XCTAssertEqual(store.items.map(\.content.previewText), ["primero", "segundo"])
+        XCTAssertTrue(store.items.allSatisfy(\.isPinned))
+    }
+
+    func testPinnedCopyKeepsOrder() {
+        let store = HistoryStore()
+        let first = ClipItem(content: .text("primero"))
+        let second = ClipItem(content: .text("segundo"))
+        store.add(first)
+        store.togglePin(id: first.id)
+        store.add(second)
+        store.togglePin(id: second.id)
+        store.move(from: IndexSet(integer: 1), to: 0)
+
+        XCTAssertEqual(store.items.map(\.content.previewText), ["segundo", "primero"])
+        store.add(ClipItem(content: .text("primero")))
+        XCTAssertEqual(store.items.map(\.content.previewText), ["segundo", "primero"])
+        XCTAssertTrue(store.items[1].isPinned)
+    }
+
+    func testMoveKeepsPinsGrouped() {
+        let store = HistoryStore()
+        let pinned = ClipItem(content: .text("fijado"), isPinned: true)
+        let recent = ClipItem(content: .text("reciente"))
+        store.replaceAll([pinned, recent])
+        store.move(from: IndexSet(integer: 0), to: 2)
+
+        XCTAssertTrue(store.items[0].isPinned)
+        XCTAssertEqual(store.items.map(\.content.previewText), ["fijado", "reciente"])
+    }
+
     func testItemLookupByID() {
         let store = HistoryStore()
         let item = ClipItem(content: .text("buscar"))
