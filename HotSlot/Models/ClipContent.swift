@@ -36,7 +36,7 @@ enum ClipContent: Codable, Equatable, Sendable {
         case .text: return "Texto"
         case .image(let fileName):
             let ext = (fileName as NSString).pathExtension.uppercased()
-            return ext.isEmpty ? "Imagen" : "\(ext) image"
+            return ext.isEmpty ? "Imagen" : "Imagen \(ext)"
         }
     }
 
@@ -77,7 +77,7 @@ extension ClipItem {
     }
 
     func metadataLine(locale: Locale = .current) -> String {
-        copiedLine()
+        "\(content.typeLabel) · \(copiedLine())"
     }
 
     func matchesSearch(_ query: String) -> Bool {

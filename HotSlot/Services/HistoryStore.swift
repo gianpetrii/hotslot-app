@@ -60,6 +60,18 @@ final class HistoryStore {
         save()
     }
 
+    func moveItem(id: UUID, before destinationID: UUID) {
+        guard id != destinationID,
+              let from = items.firstIndex(where: { $0.id == id }),
+              let to = items.firstIndex(where: { $0.id == destinationID }) else { return }
+        let dest = from < to ? to + 1 : to
+        items.move(fromOffsets: IndexSet(integer: from), toOffset: dest)
+        let pins = items.filter(\.isPinned)
+        let rest = items.filter { !$0.isPinned }
+        items = pins + rest
+        save()
+    }
+
     private var firstUnpinnedIndex: Int {
         items.firstIndex(where: { !$0.isPinned }) ?? items.count
     }

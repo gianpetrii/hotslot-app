@@ -9,7 +9,7 @@ struct ClipRowView: View {
     @State private var isExpanded = false
     @State private var expandTask: Task<Void, Never>?
 
-    private let expandAnimation = Animation.spring(response: 0.38, dampingFraction: 0.86)
+    private let expandAnimation = Animation.spring(response: 0.32, dampingFraction: 0.92)
 
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
@@ -18,7 +18,7 @@ struct ClipRowView: View {
                 Color.clear
                     .contentShape(Rectangle())
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
             .onTapGesture(perform: onPaste)
             .draggable(PanelDragPayload.historyItem(id: item.id)) {
                 Text(item.content.previewText)
@@ -62,7 +62,6 @@ struct ClipRowView: View {
             }
         }
         .animation(.easeOut(duration: 0.12), value: isHovering)
-        .animation(expandAnimation, value: isExpanded)
         .animation(.easeOut(duration: 0.12), value: isKeyboardHighlighted)
         .animation(.easeOut(duration: 0.15), value: item.isPinned)
         .onDisappear {
@@ -81,20 +80,36 @@ struct ClipRowView: View {
             case .image(let fileName):
                 ClipThumbnailView(fileName: fileName, style: .row, isExpanded: isExpanded)
             case .text(let string):
-                Text(string.trimmingCharacters(in: .whitespacesAndNewlines))
+                let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
+                Text(trimmed)
                     .font(HotSlotTypography.rowPrimary)
                     .foregroundStyle(.primary)
                     .lineLimit(isExpanded ? 12 : 3)
                     .truncationMode(.tail)
                     .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                    .frame(
+                        height: textUsesExpand ? textPreviewHeight : nil,
+                        alignment: .topLeading
+                    )
+                    .clipped()
             }
 
-            Text(item.copiedLine())
+            Text(item.metadataLine())
                 .font(HotSlotTypography.rowSecondary)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
         }
+    }
+
+    private var textUsesExpand: Bool {
+        guard case .text(let string) = item.content else { return false }
+        let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.count > 120 || trimmed.contains("\n")
+    }
+
+    private var textPreviewHeight: CGFloat {
+        isExpanded ? HotSlotDesign.textRowPreviewHeightExpanded : HotSlotDesign.textRowPreviewHeight
     }
 
     private var backgroundFill: Color {

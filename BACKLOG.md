@@ -17,7 +17,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P0 | Grabador de atajos: app agent + `.regular` al abrir Ajustes (el recorder sí graba) |
 | [x] | P0 | Atajos grabados no aplican hasta relanzar (re-registrar al cerrar Ajustes) |
 | [x] | P1 | Defaults de slots: pegar ⌘⇧A S D Q W y guardar ⌘⌃A S D Q W |
-| [ ] | P1 | Confiabilidad del paste — reintentos y mejor feedback |
+| [x] | P1 | Confiabilidad del paste — reintentos y mejor feedback |
 
 ## UI / Panel
 
@@ -37,8 +37,8 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P1 | Ver mejor el contenido de un slot (peek al hover; no copiar el expand de filas) |
 | [x] | P1 | Sonidos por acción (éxito vs no se pudo pegar vs guardado vs vacío) |
 | [x] | P1 | Reordenar ítems **pinneados** con drag & drop (orden persistente entre pines) |
-| [ ] | P2 | Metadata en español ("Imagen PNG" en vez de "PNG image") |
-| [ ] | P2 | Sección visual separada para ítems pinneados vs recientes |
+| [x] | P2 | Metadata en español ("Imagen PNG" en vez de "PNG image") |
+| [ ] | P2 | Sección visual separada para ítems pinneados vs recientes — descartado: ya se entiende |
 
 ## Ajustes
 
@@ -54,13 +54,14 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P1 | Animaciones de apertura/cierre más notorias (spring + slide) |
 | [x] | P0 | Unfold de apertura (clip fijo; no redimensionar la ventana) |
 | [ ] | P2 | Animación stagger al abrir (filas entran una a una) |
+| [x] | P2 | Expand/collapse de filas: texto animado; imagen crece desde arriba sin el “bajón” |
 | [ ] | P3 | Grabar referencia del Clipboard nativo y afinar timing |
 
 ## Otros
 
 | Estado | Pri | Tarea |
 |--------|-----|-------|
-| [ ] | P2 | Detectar / avisar conflictos de atajos (no auto-cambiar el default) |
+| [x] | P2 | Detectar / avisar conflictos de atajos (no auto-cambiar el default) |
 | [ ] | P2 | Modo depuración clipboard más pulido |
 | [ ] | P3 | Localización ES/EN completa |
 | [x] | P1 | Ícono de app: `docs/portapapeles.png` (Magnific / Flaticon) → AppIcon + menu bar |

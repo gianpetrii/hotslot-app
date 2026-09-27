@@ -34,26 +34,61 @@ final class PasteService {
         }
 
         target.activate()
+        schedulePaste(into: target, attempt: 0)
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+        return .pastedAutomatically
+    }
+
+    /// Espera a que la app destino esté al frente y manda ⌘V una sola vez (si se manda dos, pega doble).
+    private func schedulePaste(into target: NSRunningApplication, attempt: Int) {
+        let maxAttempts = 5
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) { [weak self] in
             guard let self else { return }
-            if let front = NSWorkspace.shared.frontmostApplication,
-               front.bundleIdentifier != Bundle.main.bundleIdentifier,
-               FocusTracker.pasteTarget(preferred: front) == nil {
+
+            if Self.frontIsNonPasteable() {
                 FeedbackSound.play(.pasteFailed)
                 self.onShowToast?("Contenido copiado al portapapeles")
                 return
             }
-            guard HIDKeystroke.commandV() else {
-                FeedbackSound.play(.pasteFailed)
-                self.onShowToast?("Contenido listo — pulsa ⌘V para pegar")
+
+            let front = NSWorkspace.shared.frontmostApplication
+            let own = Bundle.main.bundleIdentifier
+            let targetIsFront = front?.processIdentifier == target.processIdentifier
+                || (front?.bundleIdentifier == target.bundleIdentifier && front?.bundleIdentifier != own)
+            let stillUs = front?.bundleIdentifier == own
+
+            if (targetIsFront || attempt >= maxAttempts), !stillUs {
+                guard FocusTracker.pasteTarget(preferred: target) != nil else {
+                    FeedbackSound.play(.pasteFailed)
+                    self.onShowToast?("Contenido copiado al portapapeles")
+                    return
+                }
+                guard HIDKeystroke.commandV() else {
+                    FeedbackSound.play(.pasteFailed)
+                    self.onShowToast?("Contenido listo — pulsa ⌘V para pegar")
+                    return
+                }
+                FeedbackSound.play(.pasteSuccess)
+                self.onShowToast?(nil)
                 return
             }
-            FeedbackSound.play(.pasteSuccess)
-            self.onShowToast?(nil)
-        }
 
-        return .pastedAutomatically
+            if attempt >= maxAttempts {
+                FeedbackSound.play(.pasteFailed)
+                self.onShowToast?("Contenido copiado al portapapeles")
+                return
+            }
+
+            target.activate()
+            self.schedulePaste(into: target, attempt: attempt + 1)
+        }
+    }
+
+    private static func frontIsNonPasteable() -> Bool {
+        let own = Bundle.main.bundleIdentifier
+        guard let front = NSWorkspace.shared.frontmostApplication,
+              front.bundleIdentifier != own else { return false }
+        return FocusTracker.pasteTarget(preferred: front) == nil
     }
 
     func pasteFromSlot(index: Int, slotStore: SlotStore, focusTracker: FocusTracker) -> PasteResult {

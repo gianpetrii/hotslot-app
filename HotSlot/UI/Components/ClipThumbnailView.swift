@@ -14,31 +14,75 @@ struct ClipThumbnailView: View {
     var isExpanded: Bool = false
 
     var body: some View {
+        switch style {
+        case .row:
+            rowPreview
+        case .slot, .peek:
+            imageFill
+                .frame(width: rowPreviewWidth, height: rowPreviewHeight)
+                .frame(
+                    maxWidth: style == .slot || style == .peek ? .infinity : nil,
+                    maxHeight: style == .slot || style == .peek ? .infinity : nil
+                )
+                .clipShape(RoundedRectangle(cornerRadius: clipRadius, style: .continuous))
+        }
+    }
+
+    /// Cerrada: recorte 128×76. Abierta: todo el ancho, proporción original (`.fit`).
+    @ViewBuilder
+    private var rowPreview: some View {
+        let collapsedWidth = HotSlotDesign.imageRowPreviewWidth
+        let collapsedHeight = HotSlotDesign.imageRowPreviewHeight
+
         Group {
-            if let image = PasteboardHelper.loadImage(named: fileName) {
-                Image(nsImage: image)
+            if let nsImage = PasteboardHelper.loadImage(named: fileName) {
+                Image(nsImage: nsImage)
                     .resizable()
-                    .aspectRatio(contentMode: .fill)
+                    .aspectRatio(
+                        isExpanded ? (nsImage.size.width / max(nsImage.size.height, 1)) : nil,
+                        contentMode: isExpanded ? .fit : .fill
+                    )
             } else {
                 ZStack {
                     Color.primary.opacity(0.05)
                     Image(systemName: "photo")
-                        .font(.system(size: style == .row ? 16 : 20, weight: .medium))
+                        .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(.secondary)
                 }
             }
         }
-        .frame(width: rowPreviewWidth, height: rowPreviewHeight)
-        .frame(maxWidth: style == .slot ? .infinity : (isExpanded || style == .peek ? .infinity : nil),
-               maxHeight: style == .slot || style == .peek ? .infinity : nil)
+        .frame(
+            width: isExpanded ? nil : collapsedWidth,
+            height: isExpanded ? nil : collapsedHeight,
+            alignment: .topLeading
+        )
+        .frame(
+            maxWidth: isExpanded ? .infinity : collapsedWidth,
+            maxHeight: isExpanded ? HotSlotDesign.imageRowPreviewMaxExpandedHeight : collapsedHeight,
+            alignment: .topLeading
+        )
+        .clipped()
         .clipShape(RoundedRectangle(cornerRadius: clipRadius, style: .continuous))
         .overlay {
-            if style == .row {
-                RoundedRectangle(cornerRadius: clipRadius, style: .continuous)
-                    .strokeBorder(Color.black.opacity(0.1), lineWidth: 0.5)
+            RoundedRectangle(cornerRadius: clipRadius, style: .continuous)
+                .strokeBorder(Color.black.opacity(0.1), lineWidth: 0.5)
+        }
+    }
+
+    @ViewBuilder
+    private var imageFill: some View {
+        if let image = PasteboardHelper.loadImage(named: fileName) {
+            Image(nsImage: image)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+        } else {
+            ZStack {
+                Color.primary.opacity(0.05)
+                Image(systemName: "photo")
+                    .font(.system(size: style == .row ? 16 : 20, weight: .medium))
+                    .foregroundStyle(.secondary)
             }
         }
-        .animation(.spring(response: 0.38, dampingFraction: 0.86), value: isExpanded)
     }
 
     private var clipRadius: CGFloat {
@@ -51,7 +95,7 @@ struct ClipThumbnailView: View {
 
     private var rowPreviewWidth: CGFloat? {
         switch style {
-        case .row: return isExpanded ? nil : HotSlotDesign.imageRowPreviewWidth
+        case .row: return HotSlotDesign.imageRowPreviewWidth
         case .peek: return HotSlotDesign.slotPeekWidth
         case .slot: return nil
         }
@@ -59,7 +103,7 @@ struct ClipThumbnailView: View {
 
     private var rowPreviewHeight: CGFloat? {
         switch style {
-        case .row: return isExpanded ? HotSlotDesign.imageRowPreviewHeightExpanded : HotSlotDesign.imageRowPreviewHeight
+        case .row: return HotSlotDesign.imageRowPreviewHeight
         case .peek: return HotSlotDesign.slotPeekImageHeight
         case .slot: return nil
         }

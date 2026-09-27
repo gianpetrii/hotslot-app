@@ -20,6 +20,9 @@ enum HotSlotDesign {
     static let imageRowPreviewWidth: CGFloat = 128
     static let imageRowPreviewHeight: CGFloat = 76
     static let imageRowPreviewHeightExpanded: CGFloat = 148
+    static let imageRowPreviewMaxExpandedHeight: CGFloat = 240
+    static let textRowPreviewHeight: CGFloat = 48
+    static let textRowPreviewHeightExpanded: CGFloat = 176
     static let hoverExpandDelay: TimeInterval = 0.42
     static let slotPeekWidth: CGFloat = 268
     static let slotPeekImageHeight: CGFloat = 168

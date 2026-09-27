@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct HistoryListView: View {
     @Bindable var historyStore: HistoryStore
@@ -24,55 +25,54 @@ struct HistoryListView: View {
                 .transition(.opacity.combined(with: .scale(scale: 0.98)))
             } else {
                 ScrollViewReader { proxy in
-                    List {
-                        ForEach(items) { item in
-                            let offset = items.firstIndex(where: { $0.id == item.id }) ?? 0
-                            ClipRowView(
-                                item: item,
-                                isKeyboardHighlighted: keyboardHighlightIndex == offset,
-                                onPaste: { onPaste(item) },
-                                onTogglePin: {
-                                    withAnimation(listAnimation) {
-                                        historyStore.togglePin(id: item.id)
+                    ScrollView {
+                        LazyVStack(alignment: .leading, spacing: 2) {
+                            ForEach(items) { item in
+                                let offset = items.firstIndex(where: { $0.id == item.id }) ?? 0
+                                ClipRowView(
+                                    item: item,
+                                    isKeyboardHighlighted: keyboardHighlightIndex == offset,
+                                    onPaste: { onPaste(item) },
+                                    onTogglePin: {
+                                        withAnimation(listAnimation) {
+                                            historyStore.togglePin(id: item.id)
+                                        }
                                     }
-                                }
-                            )
-                            .id(item.id)
-                            .listRowInsets(EdgeInsets(top: 1, leading: 8, bottom: 1, trailing: 8))
-                            .listRowSeparator(.hidden)
-                            .listRowBackground(Color.clear)
-                            .contextMenu {
-                                Button(item.isPinned ? "Desfijar" : "Fijar arriba") {
-                                    withAnimation(listAnimation) {
-                                        historyStore.togglePin(id: item.id)
-                                    }
-                                }
-                                Button("Pegar") { onPaste(item) }
-                                Button("Eliminar", role: .destructive) {
-                                    withAnimation(listAnimation) {
-                                        historyStore.remove(id: item.id)
-                                    }
-                                }
-                            }
-                            .transition(
-                                .asymmetric(
-                                    insertion: .move(edge: .top).combined(with: .opacity),
-                                    removal: .scale(scale: 0.94, anchor: .top).combined(with: .opacity)
                                 )
-                            )
-                        }
-                        .onMove { source, destination in
-                            guard !isSearching else { return }
-                            withAnimation(listAnimation) {
-                                historyStore.move(from: source, to: destination)
+                                .id(item.id)
+                                .padding(.horizontal, 8)
+                                .contextMenu {
+                                    Button(item.isPinned ? "Desfijar" : "Fijar arriba") {
+                                        withAnimation(listAnimation) {
+                                            historyStore.togglePin(id: item.id)
+                                        }
+                                    }
+                                    Button("Pegar") { onPaste(item) }
+                                    Button("Eliminar", role: .destructive) {
+                                        withAnimation(listAnimation) {
+                                            historyStore.remove(id: item.id)
+                                        }
+                                    }
+                                }
+                                .onDrop(of: [UTType.hotslotPanelDrag], isTargeted: nil) { providers in
+                                    guard !isSearching else { return false }
+                                    return Self.acceptHistoryDrop(providers) { sourceID in
+                                        withAnimation(listAnimation) {
+                                            historyStore.moveItem(id: sourceID, before: item.id)
+                                        }
+                                    }
+                                }
+                                .transition(
+                                    .asymmetric(
+                                        insertion: .move(edge: .top).combined(with: .opacity),
+                                        removal: .scale(scale: 0.94, anchor: .top).combined(with: .opacity)
+                                    )
+                                )
                             }
                         }
-                        .moveDisabled(isSearching)
+                        .padding(.bottom, 8)
                     }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
                     .scrollIndicators(.hidden)
-                    .environment(\.defaultMinListRowHeight, HotSlotDesign.rowHeight)
                     .animation(listAnimation, value: items.map(\.id))
                     .onChange(of: keyboardHighlightIndex) { _, newValue in
                         if let idx = newValue, let id = items[safe: idx]?.id {
@@ -86,6 +86,25 @@ struct HistoryListView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .animation(listAnimation, value: items.map(\.id))
+    }
+
+    private static func acceptHistoryDrop(
+        _ providers: [NSItemProvider],
+        handle: @escaping (UUID) -> Void
+    ) -> Bool {
+        let type = UTType.hotslotPanelDrag.identifier
+        guard let provider = providers.first(where: { $0.hasItemConformingToTypeIdentifier(type) }) else {
+            return false
+        }
+        provider.loadDataRepresentation(forTypeIdentifier: type) { data, _ in
+            guard let data,
+                  let payload = try? JSONDecoder().decode(PanelDragPayload.self, from: data),
+                  case .historyItem(let id) = payload else { return }
+            DispatchQueue.main.async {
+                handle(id)
+            }
+        }
+        return true
     }
 }
 

@@ -31,4 +31,16 @@ final class ClipItemTests: XCTestCase {
         let content = ClipContent.text(long)
         XCTAssertTrue(content.previewText.hasSuffix("…"))
     }
+
+    func testImageTypeLabelIsSpanish() {
+        let content = ClipContent.image(fileName: "abc.png")
+        XCTAssertEqual(content.typeLabel, "Imagen PNG")
+        let item = ClipItem(content: content)
+        XCTAssertTrue(item.metadataLine().hasPrefix("Imagen PNG · "))
+    }
+
+    func testTextTypeLabelIsSpanish() {
+        let content = ClipContent.text("hola")
+        XCTAssertEqual(content.typeLabel, "Texto")
+    }
 }
