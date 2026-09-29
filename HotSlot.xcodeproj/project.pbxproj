@@ -312,9 +312,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 75264FE679E091E2891EC367 /* Build configuration list for PBXNativeTarget "HotSlot" */;
 			buildPhases = (
+				9352C7F043CAD7E65549A7E9 /* Strip Quarantine (Resources) */,
 				BBBAAF84CD748055B3194B6C /* Sources */,
 				EB7366E1C45497CFEC2C7A59 /* Resources */,
 				40C737A00FD8687CFE25D17E /* Frameworks */,
+				F2D0DAE2EA56A6B9284E20DB /* Strip Quarantine (App Bundle) */,
 			);
 			buildRules = (
 			);
@@ -399,6 +401,47 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		9352C7F043CAD7E65549A7E9 /* Strip Quarantine (Resources) */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Strip Quarantine (Resources)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xattr -cr \"${SRCROOT}/HotSlot/Resources\" 2>/dev/null || true\n";
+		};
+		F2D0DAE2EA56A6B9284E20DB /* Strip Quarantine (App Bundle) */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Strip Quarantine (App Bundle)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xattr -cr \"${TARGET_BUILD_DIR}/${FULL_PRODUCT_NAME}\" 2>/dev/null || true\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		88976BA868EBEC67452124B4 /* Sources */ = {
@@ -542,7 +585,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 53M8KYX8G4;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -635,7 +678,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 53M8KYX8G4;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
