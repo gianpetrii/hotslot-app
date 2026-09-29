@@ -6,12 +6,14 @@ struct AppSettings: Codable, Equatable {
     var launchAtLogin: Bool
     var playSoundOnPaste: Bool
     var debugClipboard: Bool
+    var hasCompletedOnboarding: Bool
 
     static let `default` = AppSettings(
         historyLimit: 50,
         launchAtLogin: false,
         playSoundOnPaste: true,
-        debugClipboard: false
+        debugClipboard: false,
+        hasCompletedOnboarding: false
     )
 
     private enum Keys {
@@ -19,14 +21,21 @@ struct AppSettings: Codable, Equatable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case historyLimit, launchAtLogin, playSoundOnPaste, debugClipboard
+        case historyLimit, launchAtLogin, playSoundOnPaste, debugClipboard, hasCompletedOnboarding
     }
 
-    init(historyLimit: Int, launchAtLogin: Bool, playSoundOnPaste: Bool, debugClipboard: Bool) {
+    init(
+        historyLimit: Int,
+        launchAtLogin: Bool,
+        playSoundOnPaste: Bool,
+        debugClipboard: Bool,
+        hasCompletedOnboarding: Bool
+    ) {
         self.historyLimit = historyLimit
         self.launchAtLogin = launchAtLogin
         self.playSoundOnPaste = playSoundOnPaste
         self.debugClipboard = debugClipboard
+        self.hasCompletedOnboarding = hasCompletedOnboarding
     }
 
     init(from decoder: Decoder) throws {
@@ -35,6 +44,7 @@ struct AppSettings: Codable, Equatable {
         launchAtLogin = try container.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? false
         playSoundOnPaste = try container.decodeIfPresent(Bool.self, forKey: .playSoundOnPaste) ?? true
         debugClipboard = try container.decodeIfPresent(Bool.self, forKey: .debugClipboard) ?? false
+        hasCompletedOnboarding = try container.decodeIfPresent(Bool.self, forKey: .hasCompletedOnboarding) ?? false
     }
 
     static func load() -> AppSettings {

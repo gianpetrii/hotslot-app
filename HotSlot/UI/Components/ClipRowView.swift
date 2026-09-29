@@ -2,7 +2,8 @@ import SwiftUI
 
 struct ClipRowView: View {
     let item: ClipItem
-    let isKeyboardHighlighted: Bool
+    var isKeyboardHighlighted: Bool = false
+    var isDemo: Bool = false
     let onPaste: () -> Void
     let onTogglePin: () -> Void
     @State private var isHovering = false
@@ -19,18 +20,11 @@ struct ClipRowView: View {
                     .contentShape(Rectangle())
             }
             .frame(maxWidth: .infinity, alignment: .topLeading)
-            .onTapGesture(perform: onPaste)
-            .draggable(PanelDragPayload.historyItem(id: item.id)) {
-                Text(item.content.previewText)
-                    .font(.system(size: 12, weight: .medium))
-                    .lineLimit(2)
-                    .padding(8)
-                    .frame(maxWidth: 180, alignment: .leading)
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-            }
+            .modifier(ClipRowInteractionModifier(isDemo: isDemo, item: item, onPaste: onPaste))
 
             if item.isPinned || isHovering {
                 PinButton(isPinned: item.isPinned, action: onTogglePin)
+                    .allowsHitTesting(!isDemo)
                     .padding(.top, 2)
                     .transition(.asymmetric(
                         insertion: .scale(scale: 0.82, anchor: .top).combined(with: .opacity),
@@ -117,6 +111,29 @@ struct ClipRowView: View {
         if item.isPinned { return Color.accentColor.opacity(0.05) }
         if isHovering { return Color.primary.opacity(0.05) }
         return Color.clear
+    }
+}
+
+private struct ClipRowInteractionModifier: ViewModifier {
+    let isDemo: Bool
+    let item: ClipItem
+    let onPaste: () -> Void
+
+    func body(content: Content) -> some View {
+        if isDemo {
+            content
+        } else {
+            content
+                .onTapGesture(perform: onPaste)
+                .draggable(PanelDragPayload.historyItem(id: item.id)) {
+                    Text(item.content.previewText)
+                        .font(.system(size: 12, weight: .medium))
+                        .lineLimit(2)
+                        .padding(8)
+                        .frame(maxWidth: 180, alignment: .leading)
+                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
+        }
     }
 }
 

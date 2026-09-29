@@ -46,6 +46,10 @@ final class StatusBarController {
         settingsItem.target = self
         menu.addItem(settingsItem)
 
+        let tourItem = NSMenuItem(title: "Cómo usar HotSlot", action: #selector(openTour), keyEquivalent: "")
+        tourItem.target = self
+        menu.addItem(tourItem)
+
         menu.addItem(.separator())
 
         let quitItem = NSMenuItem(title: "Salir de HotSlot", action: #selector(quit), keyEquivalent: "q")
@@ -82,6 +86,10 @@ final class StatusBarController {
 
     @objc private func openSettings() {
         appState.openSettings?()
+    }
+
+    @objc private func openTour() {
+        appState.openOnboarding?()
     }
 
     @objc private func quit() {

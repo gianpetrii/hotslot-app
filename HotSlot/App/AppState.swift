@@ -1,6 +1,13 @@
 import AppKit
 import Foundation
 
+enum SettingsTab: Int {
+    case hotkeys = 0
+    case slots = 1
+    case general = 2
+    case permissions = 3
+}
+
 /// Estado global de la aplicación.
 @MainActor
 @Observable
@@ -16,6 +23,9 @@ final class AppState {
     var isPanelVisible = false
     var panelBodyRevealed = false
     var openSettings: (() -> Void)?
+    var openOnboarding: (() -> Void)?
+    /// Pestaña a abrir la próxima vez que se muestren Ajustes (p. ej. tras el tour).
+    var pendingSettingsTab: SettingsTab?
     /// Sube cuando cambia un atajo grabado, para refrescar badges sin relanzar.
     var shortcutEpoch = 0
 

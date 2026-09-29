@@ -10,22 +10,33 @@ struct SettingsView: View {
     @State private var historyLimit = AppSettings.load().historyLimit
     @State private var debugClipboard = AppSettings.load().debugClipboard
     @State private var accessibilityTrusted = AccessibilityPermission.isTrusted
+    @State private var selectedTab: SettingsTab = .general
 
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             HotkeysSettingsView()
                 .tabItem { Label("Atajos", systemImage: "keyboard") }
+                .tag(SettingsTab.hotkeys)
 
             SlotsSettingsView(appState: appState)
                 .tabItem { Label("Slots", systemImage: "square.grid.2x2") }
+                .tag(SettingsTab.slots)
 
             generalTab
                 .tabItem { Label("General", systemImage: "gearshape") }
+                .tag(SettingsTab.general)
 
             permissionsTab
                 .tabItem { Label("Permisos", systemImage: "lock.shield") }
+                .tag(SettingsTab.permissions)
         }
         .frame(width: 520, height: 420)
+        .onAppear {
+            if let pending = appState.pendingSettingsTab {
+                selectedTab = pending
+                appState.pendingSettingsTab = nil
+            }
+        }
     }
 
     private var generalTab: some View {
@@ -84,6 +95,12 @@ struct SettingsView: View {
                             appState.clipboardService.pollNow()
                         }
                     }
+                }
+            }
+
+            Section("Ayuda") {
+                Button("Cómo usar HotSlot") {
+                    appState.openOnboarding?()
                 }
             }
 

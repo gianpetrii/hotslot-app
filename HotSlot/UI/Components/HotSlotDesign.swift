@@ -31,6 +31,10 @@ enum HotSlotDesign {
     static let slotOverlayControlSize: CGFloat = 22
     static let slotOverlayIconSize: CGFloat = 10
     static let slotOverlayCornerRadius: CGFloat = 6
+    static let onboardingWidth: CGFloat = 460
+    static let onboardingHeight: CGFloat = 560
+
+    static let rowExpandAnimation = Animation.spring(response: 0.32, dampingFraction: 0.92)
 
     static let openDuration: TimeInterval = 0.4
     static let closeDuration: TimeInterval = 0.28

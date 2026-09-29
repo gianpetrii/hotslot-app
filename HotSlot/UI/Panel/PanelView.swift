@@ -24,6 +24,7 @@ struct PanelView: View {
                         searchText: $searchText,
                         isSearchFocused: $isSearchFocused,
                         onOpenSettings: { appState.openSettings?() },
+                        onOpenTour: { appState.openOnboarding?() },
                         onClose: { panelController.hide(animated: true) }
                     )
 

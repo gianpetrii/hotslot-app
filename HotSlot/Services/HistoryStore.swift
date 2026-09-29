@@ -6,9 +6,20 @@ import Foundation
 final class HistoryStore {
     private(set) var items: [ClipItem] = []
     var historyLimit: Int = AppSettings.load().historyLimit
+    private var persistChanges = true
 
-    init() {
-        load()
+    init(loadPersisted: Bool = true) {
+        if loadPersisted {
+            load()
+        }
+    }
+
+    /// Datos en memoria para el tour; no lee ni escribe disco.
+    static func preview(items: [ClipItem]) -> HistoryStore {
+        let store = HistoryStore(loadPersisted: false)
+        store.items = items
+        store.persistChanges = false
+        return store
     }
 
     func add(_ item: ClipItem) {
@@ -103,6 +114,7 @@ final class HistoryStore {
     }
 
     private func save() {
+        guard persistChanges else { return }
         guard let data = try? JSONEncoder().encode(items) else { return }
         try? data.write(to: AppSupportDirectory.historyFile, options: .atomic)
     }

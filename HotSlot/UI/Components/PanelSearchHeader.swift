@@ -5,6 +5,7 @@ struct PanelSearchHeader: View {
     @Binding var searchText: String
     @FocusState.Binding var isSearchFocused: Bool
     let onOpenSettings: () -> Void
+    let onOpenTour: () -> Void
     let onClose: () -> Void
 
     var body: some View {
@@ -29,6 +30,7 @@ struct PanelSearchHeader: View {
             }
 
             Menu {
+                Button("Cómo usar HotSlot") { onOpenTour() }
                 Button("Ajustes…") { onOpenSettings() }
                 Divider()
                 Button("Cerrar panel") { onClose() }

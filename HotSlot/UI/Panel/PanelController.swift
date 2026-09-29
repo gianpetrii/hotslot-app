@@ -157,7 +157,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
 
     private func setupKeyMonitor() {
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            guard let self, self.isVisible else { return event }
+            guard let self, self.isVisible, self.window?.isKeyWindow == true else { return event }
             if event.keyCode == 53 { // Esc
                 self.hide(animated: true)
                 return nil

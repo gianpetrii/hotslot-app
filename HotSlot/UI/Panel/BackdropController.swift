@@ -51,6 +51,8 @@ final class BackdropController {
             return
         }
 
+        clickHandler = nil
+
         NSAnimationContext.runAnimationGroup { context in
             context.duration = HotSlotDesign.closeDuration
             context.timingFunction = HotSlotDesign.closeTiming

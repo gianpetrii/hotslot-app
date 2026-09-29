@@ -7,6 +7,7 @@ struct HistoryListView: View {
     let isSearching: Bool
     let onPaste: (ClipItem) -> Void
     @Binding var keyboardHighlightIndex: Int?
+    var isDemo: Bool = false
 
     private let listAnimation = Animation.spring(response: 0.34, dampingFraction: 0.82)
 
@@ -32,6 +33,7 @@ struct HistoryListView: View {
                                 ClipRowView(
                                     item: item,
                                     isKeyboardHighlighted: keyboardHighlightIndex == offset,
+                                    isDemo: isDemo,
                                     onPaste: { onPaste(item) },
                                     onTogglePin: {
                                         withAnimation(listAnimation) {
@@ -41,27 +43,13 @@ struct HistoryListView: View {
                                 )
                                 .id(item.id)
                                 .padding(.horizontal, 8)
-                                .contextMenu {
-                                    Button(item.isPinned ? "Desfijar" : "Fijar arriba") {
-                                        withAnimation(listAnimation) {
-                                            historyStore.togglePin(id: item.id)
-                                        }
-                                    }
-                                    Button("Pegar") { onPaste(item) }
-                                    Button("Eliminar", role: .destructive) {
-                                        withAnimation(listAnimation) {
-                                            historyStore.remove(id: item.id)
-                                        }
-                                    }
-                                }
-                                .onDrop(of: [UTType.hotslotPanelDrag], isTargeted: nil) { providers in
-                                    guard !isSearching else { return false }
-                                    return Self.acceptHistoryDrop(providers) { sourceID in
-                                        withAnimation(listAnimation) {
-                                            historyStore.moveItem(id: sourceID, before: item.id)
-                                        }
-                                    }
-                                }
+                                .modifier(HistoryRowChromeModifier(
+                                    isDemo: isDemo,
+                                    item: item,
+                                    isSearching: isSearching,
+                                    historyStore: historyStore,
+                                    onPaste: { onPaste(item) }
+                                ))
                                 .transition(
                                     .asymmetric(
                                         insertion: .move(edge: .top).combined(with: .opacity),
@@ -88,7 +76,7 @@ struct HistoryListView: View {
         .animation(listAnimation, value: items.map(\.id))
     }
 
-    private static func acceptHistoryDrop(
+    fileprivate static func acceptHistoryDrop(
         _ providers: [NSItemProvider],
         handle: @escaping (UUID) -> Void
     ) -> Bool {
@@ -105,6 +93,45 @@ struct HistoryListView: View {
             }
         }
         return true
+    }
+}
+
+private struct HistoryRowChromeModifier: ViewModifier {
+    let isDemo: Bool
+    let item: ClipItem
+    let isSearching: Bool
+    @Bindable var historyStore: HistoryStore
+    let onPaste: () -> Void
+
+    private let listAnimation = Animation.spring(response: 0.34, dampingFraction: 0.82)
+
+    func body(content: Content) -> some View {
+        if isDemo {
+            content
+        } else {
+            content
+                .contextMenu {
+                    Button(item.isPinned ? "Desfijar" : "Fijar arriba") {
+                        withAnimation(listAnimation) {
+                            historyStore.togglePin(id: item.id)
+                        }
+                    }
+                    Button("Pegar", action: onPaste)
+                    Button("Eliminar", role: .destructive) {
+                        withAnimation(listAnimation) {
+                            historyStore.remove(id: item.id)
+                        }
+                    }
+                }
+                .onDrop(of: [UTType.hotslotPanelDrag], isTargeted: nil) { providers in
+                    guard !isSearching else { return false }
+                    return HistoryListView.acceptHistoryDrop(providers) { sourceID in
+                        withAnimation(listAnimation) {
+                            historyStore.moveItem(id: sourceID, before: item.id)
+                        }
+                    }
+                }
+        }
     }
 }
 

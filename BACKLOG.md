@@ -55,6 +55,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P0 | Unfold de apertura (clip fijo; no redimensionar la ventana) |
 | [ ] | P2 | Animación stagger al abrir (filas entran una a una) |
 | [x] | P2 | Expand/collapse de filas: texto animado; imagen crece desde arriba sin el “bajón” |
+| [x] | P2 | Onboarding de primera vez (tour saltables, repetible) |
 | [ ] | P3 | Grabar referencia del Clipboard nativo y afinar timing |
 
 ## Otros
@@ -65,7 +66,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [ ] | P2 | Modo depuración clipboard más pulido |
 | [ ] | P3 | Localización ES/EN completa |
 | [x] | P1 | Ícono de app: `docs/portapapeles.png` (Magnific / Flaticon) → AppIcon + menu bar |
-| [ ] | P1 | Archive + TestFlight |
+| [~] | P1 | Archive + TestFlight |
 
 ---
 
