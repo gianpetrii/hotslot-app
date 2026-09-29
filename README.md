@@ -67,6 +67,7 @@ HotSlot usa **Automatización** (System Events) para pegar automáticamente con 
 - Sandbox habilitado
 - Sin recolección de datos
 - Bundle ID: `com.hotslot.app`
+- [Política de privacidad](https://gianpetrii.github.io/hotslot-app/privacy.html)
 
 ## Créditos
 

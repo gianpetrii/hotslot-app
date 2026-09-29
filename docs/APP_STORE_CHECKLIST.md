@@ -13,8 +13,8 @@
 
 - [ ] Crear app en App Store Connect (macOS)
 - [ ] Descripción, keywords, categoría Productivity
-- [ ] Privacy Policy URL (declarar almacenamiento local únicamente)
-- [ ] App Privacy: **No data collected**
+- [x] Privacy Policy URL: https://gianpetrii.github.io/hotslot-app/privacy.html
+- [x] App Privacy: **No data collected**
 - [ ] Export compliance: sin cifrado propio → No
 - [ ] Age rating completado
 - [ ] Notas para revisión:
