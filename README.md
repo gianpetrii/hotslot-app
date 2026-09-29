@@ -24,6 +24,7 @@ Clipboard manager nativo para macOS con historial, slots fijos y atajos globales
 | `v0.11.0` | Atajos A/S/D/Q/W; Ajustes animados; pegado otra vez en Chrome y Cursor |
 | `v0.12.0` | Ícono de app; orden persistente de pines en el historial |
 | `v0.13.0` | Hover de filas; paste espera el foco; metadata en español; aviso de atajos |
+| `v0.15.0` | Onboarding interactivo; App Sandbox; Archive / App Store Connect |
 
 ## Nota sobre logs en Xcode
 
@@ -67,7 +68,7 @@ HotSlot usa **Automatización** (System Events) para pegar automáticamente con 
 - Sandbox habilitado
 - Sin recolección de datos
 - Bundle ID: `com.hotslot.app`
-- [Política de privacidad](https://gianpetrii.github.io/hotslot-app/privacy.html)
+- [Política de privacidad](https://hotslot-app-docs.vercel.app/privacy.html)
 
 ## Créditos
 

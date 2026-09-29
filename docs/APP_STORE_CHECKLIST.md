@@ -2,32 +2,33 @@
 
 ## Antes de subir
 
-- [ ] Cuenta Apple Developer activa
-- [ ] Bundle ID `com.hotslot.app` registrado con App Sandbox
-- [ ] Certificado "Mac App Distribution" configurado en Xcode
-- [ ] App icon 1024×1024 (sin canal alpha) en Assets.xcassets
-- [ ] Screenshots macOS (mín. 1280×800)
-- [ ] Versión y build number actualizados en project.yml
+- [x] Cuenta Apple Developer activa
+- [x] Bundle ID `com.hotslot.app` registrado con App Sandbox
+- [x] Certificado "Mac App Distribution" configurado en Xcode
+- [x] App icon 1024×1024 (sin canal alpha) en Assets.xcassets
+- [x] Screenshots macOS → `docs/app-store-screenshots/1280x800/`
+- [x] Versión **0.15.0 (16)** en project.yml
 
 ## App Store Connect
 
-- [ ] Crear app en App Store Connect (macOS)
-- [ ] Descripción, keywords, categoría Productivity
-- [x] Privacy Policy URL: https://gianpetrii.github.io/hotslot-app/privacy.html
+- [x] Crear app en App Store Connect (macOS)
+- [x] Descripción, keywords, categoría Productivity
+- [x] Privacy Policy URL: https://hotslot-app-docs.vercel.app/privacy.html
 - [x] App Privacy: **No data collected**
-- [ ] Export compliance: sin cifrado propio → No
-- [ ] Age rating completado
+- [x] Export compliance: sin cifrado propio → No
+- [x] Age rating completado (4+)
 - [ ] Notas para revisión:
   - App de clipboard local, sin red
   - Usa Automatización (System Events) solo para simular ⌘V al pegar
 
 ## Permisos explicados al usuario
 
-- **Automatización**: pegar en la app activa
-- **No** requiere Accesibilidad ni Input Monitoring (hotkeys vía Carbon)
+- **Accesibilidad**: pegado automático (simula ⌘V) — opcional; sin permiso, copia al portapapeles
+- **Automatización (Apple Events)**: mismo fin de pegado
+- **Atajos globales**: Carbon / KeyboardShortcuts (no Input Monitoring)
 
-## TestFlight
+## TestFlight / Archive
 
-- [ ] Build subida con `xcodebuild archive` + `notarytool` / Xcode Organizer
-- [ ] Prueba interna en Safari, Notes, Chrome, VS Code
-- [ ] Verificar pegado con y sin permiso de Automatización
+- [x] Build **0.15.0 (16)** subida a App Store Connect
+- [~] Ficha macOS + capturas → enviar a revisión
+- [ ] Probar build en Safari, Notes, Chrome (TestFlight o instalación local)

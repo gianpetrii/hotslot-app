@@ -66,7 +66,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [ ] | P2 | Modo depuración clipboard más pulido |
 | [ ] | P3 | Localización ES/EN completa |
 | [x] | P1 | Ícono de app: `docs/portapapeles.png` (Magnific / Flaticon) → AppIcon + menu bar |
-| [~] | P1 | Archive + TestFlight (v0.15.0 subido a App Store Connect) |
+| [~] | P1 | Archive + App Store (v0.15.0 build 16 subido; ficha + capturas listas) |
 
 ---
 
