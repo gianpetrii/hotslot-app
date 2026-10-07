@@ -8,8 +8,6 @@ struct OnboardingView: View {
 
     @Environment(AppState.self) private var appState
     @State private var page = 0
-    @State private var accessibilityTrusted = AccessibilityPermission.isTrusted
-
     private let pages = OnboardingPage.all
     private let pageAnimation = HotSlotDesign.rowExpandAnimation
 
@@ -40,9 +38,6 @@ struct OnboardingView: View {
         .overlay {
             RoundedRectangle(cornerRadius: HotSlotDesign.cornerRadius, style: .continuous)
                 .strokeBorder(Color.white.opacity(0.14), lineWidth: 0.5)
-        }
-        .onReceive(Timer.publish(every: 1.5, on: .main, in: .common).autoconnect()) { _ in
-            accessibilityTrusted = AccessibilityPermission.isTrusted
         }
     }
 
@@ -112,11 +107,11 @@ struct OnboardingView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 340)
 
-            if item.demo != .accessibility {
+            if item.demo != .automation {
                 onboardingDemo(for: item.demo)
                     .padding(.horizontal, 4)
             } else {
-                accessibilityBlock
+                automationBlock
             }
 
             if item.hint != nil {
@@ -131,9 +126,9 @@ struct OnboardingView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
-    private var accessibilityBlock: some View {
+    private var automationBlock: some View {
         VStack(spacing: 14) {
-            Image(systemName: "lock.shield")
+            Image(systemName: "gearshape.2")
                 .font(.system(size: 36, weight: .medium))
                 .foregroundStyle(.secondary)
                 .frame(width: 64, height: 64)
@@ -142,15 +137,14 @@ struct OnboardingView: View {
                         .fill(Color.primary.opacity(0.07))
                 }
 
-            if accessibilityTrusted {
-                Label("Accesibilidad concedida", systemImage: "checkmark.circle.fill")
-                    .font(HotSlotTypography.rowSecondary)
-                    .foregroundStyle(.secondary)
-            } else {
-                OnboardingChromeButton(title: "Conceder Accesibilidad…", emphasized: false) {
-                    AccessibilityPermission.requestTrust(prompt: true)
-                    accessibilityTrusted = AccessibilityPermission.isTrusted
-                }
+            Text("La primera vez que pegues, macOS puede pedir permiso de Automatización para HotSlot en la app destino.")
+                .font(HotSlotTypography.rowSecondary)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: 320)
+
+            OnboardingChromeButton(title: "Ver Automatización en Ajustes…", emphasized: false) {
+                AutomationPermission.openSettings()
             }
         }
         .padding(.top, 24)
@@ -223,9 +217,9 @@ private struct OnboardingPage {
         ),
         OnboardingPage(
             title: "Pegado automático",
-            caption: "Con Accesibilidad, un clic pega solo. Sin permiso, usás ⌘V.",
-            demo: .accessibility,
-            hint: "Al tocar Empezar abrimos Ajustes → Permisos si aún no lo diste"
+            caption: "Un clic pega en la app activa vía Automatización (System Events).",
+            demo: .automation,
+            hint: "Si macOS lo pide, permití que HotSlot controle la app destino"
         ),
     ]
 }

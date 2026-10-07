@@ -41,12 +41,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self.onboardingWindowController.show(appState: state) { openPanel in
                     NSApp.setActivationPolicy(.accessory)
                     guard openPanel else { return }
-                    if AccessibilityPermission.isTrusted {
-                        reopen()
-                    } else {
-                        state.pendingSettingsTab = .permissions
-                        state.openSettings?()
-                    }
+                    reopen()
                 }
             }
         }

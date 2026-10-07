@@ -23,8 +23,8 @@
 
 ## Permisos explicados al usuario
 
-- **Accesibilidad**: pegado automático (simula ⌘V) — opcional; sin permiso, copia al portapapeles
-- **Automatización (Apple Events)**: mismo fin de pegado
+- **Automatización (Apple Events)**: pegado ⌘V y guardar selección ⌘C — macOS pide permiso por app destino
+- **No usa Accesibilidad** (requisito App Store 2.4.5)
 - **Atajos globales**: Carbon / KeyboardShortcuts (no Input Monitoring)
 
 ## TestFlight / Archive

@@ -63,9 +63,9 @@ final class PasteService {
                     self.onShowToast?("Contenido copiado al portapapeles")
                     return
                 }
-                guard HIDKeystroke.commandV() else {
+                guard SystemEventsKeystroke.commandV() else {
                     FeedbackSound.play(.pasteFailed)
-                    self.onShowToast?("Contenido listo — pulsa ⌘V para pegar")
+                    self.onShowToast?("Copiado — concedé Automatización a HotSlot o pegá con ⌘V")
                     return
                 }
                 FeedbackSound.play(.pasteSuccess)
@@ -104,32 +104,4 @@ final class PasteService {
         paste(content: item.content, targetApp: focusTracker.targetApp)
     }
 
-}
-
-enum HIDKeystroke {
-    static func commandC() -> Bool { command(0x08) }
-    static func commandV() -> Bool { command(0x09) }
-
-    /// Sintetiza ⌘+tecla a nivel de sesión. No usa System Events (evita el error 1002).
-    private static func command(_ virtualKey: CGKeyCode) -> Bool {
-        let source = CGEventSource(stateID: .combinedSessionState)
-        source?.setLocalEventsFilterDuringSuppressionState(
-            [.permitLocalMouseEvents, .permitLocalKeyboardEvents],
-            state: .eventSuppressionStateSuppressionInterval
-        )
-        source?.localEventsSuppressionInterval = 0
-
-        guard
-            let down = CGEvent(keyboardEventSource: source, virtualKey: virtualKey, keyDown: true),
-            let up = CGEvent(keyboardEventSource: source, virtualKey: virtualKey, keyDown: false)
-        else {
-            return false
-        }
-
-        down.flags = .maskCommand
-        up.flags = .maskCommand
-        down.post(tap: .cghidEventTap)
-        up.post(tap: .cghidEventTap)
-        return true
-    }
 }

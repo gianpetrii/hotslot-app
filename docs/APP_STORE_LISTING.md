@@ -68,7 +68,7 @@ PRIVACIDAD
 • No recopilamos datos
 
 PERMISOS
-Para pegar automáticamente en la app donde estabas trabajando, HotSlot puede pedir Accesibilidad (simula ⌘V). Sin ese permiso, copia al portapapeles del sistema y podés pegar manualmente.
+HotSlot usa Automatización (Apple Events) para pegar con ⌘V y guardar selección con ⌘C. macOS puede pedir permiso por app. No usa Accesibilidad. Si falla, copia al portapapeles y podés pegar manualmente.
 
 REQUISITOS
 • macOS 14.0 o posterior
@@ -141,7 +141,7 @@ Cómo probar:
 2. Clic en el ícono para abrir el panel, o usar ⌘⇧V.
 3. Copiar texto en Safari o Notas; el ítem aparece en el historial a la derecha.
 4. Clic en un ítem del historial para pegarlo en la app activa.
-5. Para pegado automático: Ajustes del sistema → Privacidad y seguridad → Accesibilidad → activar HotSlot. Sin este permiso, la app copia al portapapeles y el usuario pega con ⌘V manualmente.
+5. Para pegado automático: al pegar en Safari o Notas, macOS puede pedir Automatización — permitir que HotSlot controle la app. HotSlot no solicita Accesibilidad.
 
 No hay cuenta de usuario ni funciones en línea. Todos los datos son locales.
 

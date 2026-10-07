@@ -57,10 +57,10 @@ final class FocusTracker {
             return nil
         }
 
-        if let app = preferred, isPasteable(app, excluding: own), AccessibilityFocus.canAcceptPaste(in: app) {
+        if let app = preferred, isPasteable(app, excluding: own) {
             return app
         }
-        if let front, isPasteable(front, excluding: own), AccessibilityFocus.canAcceptPaste(in: front) {
+        if let front, isPasteable(front, excluding: own) {
             return front
         }
         return nil

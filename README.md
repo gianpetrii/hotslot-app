@@ -25,6 +25,7 @@ Clipboard manager nativo para macOS con historial, slots fijos y atajos globales
 | `v0.12.0` | Ícono de app; orden persistente de pines en el historial |
 | `v0.13.0` | Hover de filas; paste espera el foco; metadata en español; aviso de atajos |
 | `v0.15.0` | Onboarding interactivo; App Sandbox; Archive / App Store Connect |
+| `v0.15.1` | Pegado vía Automatización (sin Accesibilidad) — App Store 2.4.5 |
 
 ## Nota sobre logs en Xcode
 
@@ -61,7 +62,7 @@ Si un atajo no funciona: **Ajustes → Atajos → Restaurar atajos por defecto**
 
 ## Permisos
 
-HotSlot usa **Automatización** (System Events) para pegar automáticamente con ⌘V simulado. Si el permiso no está concedido, copia al portapapeles y muestra un aviso.
+HotSlot usa **Automatización** (Apple Events → System Events) para simular ⌘V al pegar y ⌘C al guardar selección en un slot. macOS puede pedir permiso por app destino. **No usa Accesibilidad.** Si falla, copia al portapapeles y podés pegar con ⌘V.
 
 ## Mac App Store
 

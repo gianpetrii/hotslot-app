@@ -16,7 +16,7 @@ Estos datos no se envían al desarrollador ni a terceros.
 
 ## Permisos
 
-- **Accesibilidad** y **Automatización:** solo para simular ⌘V y pegar en la app activa, en tu dispositivo.
+- **Automatización (Apple Events):** simula ⌘V al pegar y ⌘C al guardar selección. No usa Accesibilidad.
 
 ## Terceros
 
