@@ -30,4 +30,4 @@ Vacía historial/slots desde la app, o desinstala HotSlot.
 
 gianluca.petri.98@gmail.com
 
-Versión web: [docs/privacy.html](docs/privacy.html) · [docs/index.html](docs/index.html)
+Versión web: [hotslot-app-docs.vercel.app/privacy.html](https://hotslot-app-docs.vercel.app/privacy.html)

@@ -68,9 +68,9 @@ HotSlot pide **Accesibilidad** para simular ⌘V/⌘C en la app donde estabas (p
 
 La versión completa se distribuye con **Developer ID + notarización** (no Mac App Store).
 
-- [Landing / descarga](docs/index.html)
-- [Política de privacidad](docs/privacy.html)
-- [Guía de release](docs/DIRECT_DOWNLOAD.md)
+- [Landing / descarga](https://hotslot-app-docs.vercel.app/)
+- [Política de privacidad](https://hotslot-app-docs.vercel.app/privacy.html)
+- [Guía de release](docs/DIRECT_DOWNLOAD.md) · [Deploy docs (Vercel)](docs/DEPLOY_VERCEL.md)
 - Script: `./scripts/release-direct.sh`
 
 ```bash

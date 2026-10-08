@@ -42,7 +42,7 @@ Salida en `build/release/`:
 
 1. **Notarización** — obligatoria; sin stapler, Gatekeeper advierte.
 2. **GitHub Release** — subí el `.dmg` + SHA-256 en las notas.
-3. **Política de privacidad** — [privacy.html](privacy.html) (Accesibilidad explicada).
+3. **Política de privacidad** — [hotslot-app-docs.vercel.app/privacy.html](https://hotslot-app-docs.vercel.app/privacy.html) (Accesibilidad explicada).
 4. **Código** — repo público o fuentes accesibles.
 5. **Soporte** — email en README / Issues de GitHub.
 
