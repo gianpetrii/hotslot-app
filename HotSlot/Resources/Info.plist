@@ -27,7 +27,9 @@
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSAppleEventsUsageDescription</key>
-	<string>HotSlot usa Automatización para enviar ⌘V y pegar, y ⌘C para guardar la selección en un slot, en la app donde estabas trabajando.</string>
+	<string>HotSlot necesita enviar ⌘V a la app activa para pegar el contenido que elegiste desde un slot o el historial.</string>
+	<key>NSAccessibilityUsageDescription</key>
+	<string>HotSlot necesita acceso de accesibilidad para simular ⌘V y pegar automáticamente en la app donde estabas trabajando.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>© 2026 HotSlot</string>
 	<key>NSPrincipalClass</key>

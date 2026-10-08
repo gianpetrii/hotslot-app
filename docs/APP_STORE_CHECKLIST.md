@@ -1,5 +1,7 @@
 # Checklist App Store Connect — HotSlot
 
+> **Oct 2026:** HotSlot **v0.16+** se publica por **distribución directa** (Developer ID). Este checklist queda como referencia histórica del intento en App Store. Ver [DIRECT_DOWNLOAD.md](DIRECT_DOWNLOAD.md).
+
 ## Antes de subir
 
 - [x] Cuenta Apple Developer activa

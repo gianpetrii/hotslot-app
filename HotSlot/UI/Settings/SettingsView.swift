@@ -9,6 +9,7 @@ struct SettingsView: View {
     @State private var playSound = AppSettings.load().playSoundOnPaste
     @State private var historyLimit = AppSettings.load().historyLimit
     @State private var debugClipboard = AppSettings.load().debugClipboard
+    @State private var accessibilityTrusted = AccessibilityPermission.isTrusted
     @State private var selectedTab: SettingsTab = .general
 
     var body: some View {
@@ -125,28 +126,34 @@ struct SettingsView: View {
 
     private var permissionsTab: some View {
         Form {
-            Section("Automatización") {
-                Text("HotSlot usa Automatización (System Events) para simular ⌘V al pegar y ⌘C al guardar la selección en un slot.")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-
-                Text("La primera vez que pegues en una app, macOS puede pedirte que permitas que HotSlot controle esa app. Activá HotSlot en el diálogo.")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-
-                Button("Abrir Ajustes del Sistema → Automatización") {
-                    AutomationPermission.openSettings()
+            Section("Accesibilidad") {
+                LabeledContent("Estado") {
+                    Text(accessibilityTrusted ? "Concedido" : "No concedido")
+                        .foregroundStyle(accessibilityTrusted ? Color.green : Color.orange)
                 }
-            }
 
-            Section {
-                Text("HotSlot no usa Accesibilidad. Si lo tenías activado de una versión anterior, podés desactivarlo en Privacidad → Accesibilidad.")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
+                Text("Hace falta para pegar automáticamente el ítem elegido en la app donde estabas.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+
+                if accessibilityTrusted {
+                    Button("Administrar en Ajustes del Sistema") {
+                        AccessibilityPermission.openSettings()
+                    }
+                } else {
+                    Button("Conceder acceso…") {
+                        AccessibilityPermission.requestTrust(prompt: true)
+                        accessibilityTrusted = AccessibilityPermission.isTrusted
+                    }
+                }
             }
         }
         .formStyle(.grouped)
         .padding()
+        .onAppear { accessibilityTrusted = AccessibilityPermission.isTrusted }
+        .onReceive(Timer.publish(every: 1.5, on: .main, in: .common).autoconnect()) { _ in
+            accessibilityTrusted = AccessibilityPermission.isTrusted
+        }
     }
 
     private static let iconAttributionURL = URL(string: "https://www.flaticon.es/iconos-gratis/reporte")!

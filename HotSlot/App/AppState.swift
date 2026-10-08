@@ -48,7 +48,7 @@ final class AppState {
                 panelController.hide()
                 self.isPanelVisible = false
             } else {
-                self.focusTracker.capture()
+                self.focusTracker.captureForUpcomingPaste()
                 panelController.show()
                 self.isPanelVisible = true
             }
@@ -102,14 +102,12 @@ final class AppState {
     }
 
     func pasteItem(_ item: ClipItem, panelController: PanelController) {
-        let target = focusTracker.targetApp
+        let target = focusTracker.pasteDestination()
         let content = item.content
         panelController.hide(animated: true) {
             self.isPanelVisible = false
-            self.pasteService.paste(
-                content: content,
-                targetApp: FocusTracker.pasteTarget(preferred: target)
-            )
+            self.pasteService.paste(content: content, targetApp: target)
+            self.focusTracker.clearPasteDestination()
         }
     }
 
@@ -119,13 +117,11 @@ final class AppState {
             showToast("El slot \(index) está vacío")
             return
         }
-        let target = focusTracker.targetApp
+        let target = focusTracker.pasteDestination()
         panelController.hide(animated: true) {
             self.isPanelVisible = false
-            self.pasteService.paste(
-                content: content,
-                targetApp: FocusTracker.pasteTarget(preferred: target)
-            )
+            self.pasteService.paste(content: content, targetApp: target)
+            self.focusTracker.clearPasteDestination()
         }
     }
 

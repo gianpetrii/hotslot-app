@@ -75,8 +75,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         // Ventana ya del tamaño final y transparente: el redondeo lo dibuja la tarjeta.
         window.setFrame(targetFrame, display: true)
         window.alphaValue = 0
-        window.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
+        window.orderFrontRegardless()
 
         isAnimating = true
         appState.isPanelVisible = true

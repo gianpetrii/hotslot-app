@@ -28,11 +28,13 @@ final class PasteService {
 
         let target = FocusTracker.pasteTarget(preferred: targetApp)
         guard let target else {
+            logger.debug("Paste sin destino pasteable")
             FeedbackSound.play(.pasteFailed)
             onShowToast?("Contenido copiado al portapapeles")
             return .copiedNeedsManualPaste
         }
 
+        logger.debug("Pegando en \(target.bundleIdentifier ?? "?", privacy: .public)")
         target.activate()
         schedulePaste(into: target, attempt: 0)
 
@@ -63,9 +65,9 @@ final class PasteService {
                     self.onShowToast?("Contenido copiado al portapapeles")
                     return
                 }
-                guard SystemEventsKeystroke.commandV() else {
+                guard HIDKeystroke.commandV() else {
                     FeedbackSound.play(.pasteFailed)
-                    self.onShowToast?("Copiado — concedé Automatización a HotSlot o pegá con ⌘V")
+                    self.onShowToast?("Contenido listo — concedé Accesibilidad a HotSlot o pulsá ⌘V")
                     return
                 }
                 FeedbackSound.play(.pasteSuccess)
@@ -97,11 +99,38 @@ final class PasteService {
             onShowToast?("El slot \(index) está vacío")
             return .failed("Slot vacío")
         }
-        return paste(content: content, targetApp: focusTracker.targetApp)
+        return paste(content: content, targetApp: focusTracker.pasteDestination())
     }
 
     func pasteFromHistory(item: ClipItem, focusTracker: FocusTracker) -> PasteResult {
-        paste(content: item.content, targetApp: focusTracker.targetApp)
+        paste(content: item.content, targetApp: focusTracker.pasteDestination())
     }
+}
 
+enum HIDKeystroke {
+    static func commandC() -> Bool { command(0x08) }
+    static func commandV() -> Bool { command(0x09) }
+
+    /// Sintetiza ⌘+tecla a nivel de sesión. Requiere Accesibilidad (TCC).
+    private static func command(_ virtualKey: CGKeyCode) -> Bool {
+        let source = CGEventSource(stateID: .combinedSessionState)
+        source?.setLocalEventsFilterDuringSuppressionState(
+            [.permitLocalMouseEvents, .permitLocalKeyboardEvents],
+            state: .eventSuppressionStateSuppressionInterval
+        )
+        source?.localEventsSuppressionInterval = 0
+
+        guard
+            let down = CGEvent(keyboardEventSource: source, virtualKey: virtualKey, keyDown: true),
+            let up = CGEvent(keyboardEventSource: source, virtualKey: virtualKey, keyDown: false)
+        else {
+            return false
+        }
+
+        down.flags = .maskCommand
+        up.flags = .maskCommand
+        down.post(tap: .cghidEventTap)
+        up.post(tap: .cghidEventTap)
+        return true
+    }
 }

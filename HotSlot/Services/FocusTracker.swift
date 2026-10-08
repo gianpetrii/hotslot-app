@@ -4,6 +4,8 @@ import AppKit
 @MainActor
 final class FocusTracker {
     private(set) var lastFrontmostApp: NSRunningApplication?
+    /// App destino congelada al abrir el panel (no se pisa mientras el panel está abierto).
+    private(set) var frozenPasteTarget: NSRunningApplication?
     private var observers: [NSObjectProtocol] = []
 
     deinit {
@@ -40,12 +42,28 @@ final class FocusTracker {
         remember(NSWorkspace.shared.frontmostApplication)
     }
 
-    func clear() {
-        lastFrontmostApp = nil
+    /// Llamar justo antes de mostrar el panel: fija el destino del próximo pegado.
+    func captureForUpcomingPaste() {
+        let front = NSWorkspace.shared.frontmostApplication
+        remember(front)
+        frozenPasteTarget = Self.pasteTarget(preferred: front)
+    }
+
+    func clearPasteDestination() {
+        frozenPasteTarget = nil
     }
 
     var targetApp: NSRunningApplication? {
-        Self.pasteTarget(preferred: lastFrontmostApp)
+        pasteDestination()
+    }
+
+    func pasteDestination() -> NSRunningApplication? {
+        if let frozen = frozenPasteTarget,
+           !frozen.isTerminated,
+           Self.isPasteable(frozen, excluding: Bundle.main.bundleIdentifier) {
+            return frozen
+        }
+        return Self.pasteTarget(preferred: lastFrontmostApp)
     }
 
     /// Destino real al pegar: si ahora mismo está Finder/escritorio, no uses un Cursor viejo.

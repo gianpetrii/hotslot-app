@@ -7,7 +7,7 @@ enum OnboardingDemoKind {
     case slot
     case history
     case drag
-    case automation
+    case accessibility
 }
 
 // MARK: - Contenedor común
@@ -298,7 +298,7 @@ enum OnboardingSamples {
                     Reunión con el equipo — notas copiadas del portapapeles:
 
                     • Revisar el hover del historial y que las imágenes mantengan proporción al expandirse.
-                    • Probar pegado con Automatización activa en Safari y Mail.
+                    • Probar pegado con Accesibilidad activa en Safari y Mail.
                     • Link de la sala: https://ejemplo.com/sala/abc123?utm=demo
 
                     Pasá el mouse sobre esta fila para ver el texto completo, igual que en el panel.
@@ -342,6 +342,6 @@ func onboardingDemo(for kind: OnboardingDemoKind) -> some View {
     case .slot: OnboardingSlotDemo()
     case .history: OnboardingHistoryDemo()
     case .drag: OnboardingDragDemo()
-    case .automation: EmptyView()
+    case .accessibility: EmptyView()
     }
 }

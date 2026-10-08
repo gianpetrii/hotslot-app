@@ -1,6 +1,6 @@
 # Política de privacidad — HotSlot
 
-**Última actualización:** 28 de septiembre de 2026
+**Última actualización:** 8 de octubre de 2026
 
 HotSlot es un gestor de portapapeles para macOS. **No recopilamos, transmitimos ni vendemos datos personales.**
 
@@ -16,7 +16,7 @@ Estos datos no se envían al desarrollador ni a terceros.
 
 ## Permisos
 
-- **Automatización (Apple Events):** simula ⌘V al pegar y ⌘C al guardar selección. No usa Accesibilidad.
+- **Accesibilidad:** simula ⌘V al pegar y ⌘C al guardar selección en la app donde estabas. Solo en tu dispositivo; no subimos el contenido del portapapeles.
 
 ## Terceros
 
@@ -30,4 +30,4 @@ Vacía historial/slots desde la app, o desinstala HotSlot.
 
 gianluca.petri.98@gmail.com
 
-Versión web: [docs/privacy.html](docs/privacy.html)
+Versión web: [docs/privacy.html](docs/privacy.html) · [docs/index.html](docs/index.html)

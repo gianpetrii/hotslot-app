@@ -139,9 +139,16 @@ final class ClipboardService {
             lastSourceApp = source
         }
 
+        if let text = AccessibilityFocus.selectedText(in: source),
+           !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            logDebug("Guardar slot: selección AX \"\(text.prefix(80))\"")
+            recordExternalContent(.text(text), source: source)
+            return .text(text)
+        }
+
         let before = pasteboard.changeCount
-        logDebug("Guardar slot: enviando ⌘C (changeCount \(before))")
-        guard SystemEventsKeystroke.commandC() else { return nil }
+        logDebug("Guardar slot: sin AX, enviando ⌘C (changeCount \(before))")
+        guard HIDKeystroke.commandC() else { return nil }
 
         for _ in 0..<24 {
             try? await Task.sleep(for: .milliseconds(25))

@@ -78,7 +78,7 @@ final class StatusBarController {
             panelController.hide()
             appState.isPanelVisible = false
         } else {
-            appState.focusTracker.capture()
+            appState.focusTracker.captureForUpcomingPaste()
             panelController.show()
             appState.isPanelVisible = true
         }

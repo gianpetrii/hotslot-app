@@ -24,8 +24,8 @@ Clipboard manager nativo para macOS con historial, slots fijos y atajos globales
 | `v0.11.0` | Atajos A/S/D/Q/W; Ajustes animados; pegado otra vez en Chrome y Cursor |
 | `v0.12.0` | Ícono de app; orden persistente de pines en el historial |
 | `v0.13.0` | Hover de filas; paste espera el foco; metadata en español; aviso de atajos |
-| `v0.15.0` | Onboarding interactivo; App Sandbox; Archive / App Store Connect |
-| `v0.15.1` | Pegado vía Automatización (sin Accesibilidad) — App Store 2.4.5 |
+| `v0.15.0` | Onboarding interactivo; App Sandbox (intento Mac App Store) |
+| `v0.16.0` | **Release pública directa** — pegado completo (Accesibilidad + CGEvent) |
 
 ## Nota sobre logs en Xcode
 
@@ -62,14 +62,27 @@ Si un atajo no funciona: **Ajustes → Atajos → Restaurar atajos por defecto**
 
 ## Permisos
 
-HotSlot usa **Automatización** (Apple Events → System Events) para simular ⌘V al pegar y ⌘C al guardar selección en un slot. macOS puede pedir permiso por app destino. **No usa Accesibilidad.** Si falla, copia al portapapeles y podés pegar con ⌘V.
+HotSlot pide **Accesibilidad** para simular ⌘V/⌘C en la app donde estabas (pegado automático y guardar selección en slots). Configuralo en **Ajustes → Permisos** o en el onboarding.
 
-## Mac App Store
+## Descarga pública (fuera de Mac App Store)
 
-- Sandbox habilitado
-- Sin recolección de datos
-- Bundle ID: `com.hotslot.app`
-- [Política de privacidad](https://hotslot-app-docs.vercel.app/privacy.html)
+La versión completa se distribuye con **Developer ID + notarización** (no Mac App Store).
+
+- [Landing / descarga](docs/index.html)
+- [Política de privacidad](docs/privacy.html)
+- [Guía de release](docs/DIRECT_DOWNLOAD.md)
+- Script: `./scripts/release-direct.sh`
+
+```bash
+# Release (requiere certificado Developer ID y credenciales notarytool)
+export DEVELOPER_ID="Developer ID Application: …"
+export NOTARY_APPLE_ID="…"
+export NOTARY_TEAM_ID="…"
+export NOTARY_PASSWORD="…"
+./scripts/release-direct.sh
+```
+
+Bundle ID: `com.hotslot.app` · Sandbox habilitado · Sin recolección de datos
 
 ## Créditos
 
