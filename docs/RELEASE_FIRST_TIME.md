@@ -28,11 +28,12 @@ En la terminal (o en `~/.zshrc` si querés):
 
 ```bash
 export DEVELOPMENT_TEAM="53M8KYX8G4"
-export DEVELOPER_ID="Developer ID Application: Gianluca Petri (53M8KYX8G4)"   # ajustá el nombre exacto del paso 1
 export NOTARY_APPLE_ID="gianluca.petri.98@icloud.com"
 export NOTARY_TEAM_ID="53M8KYX8G4"
-export NOTARY_PASSWORD="xxxx-xxxx-xxxx-xxxx"
+export NOTARY_PASSWORD="xxxx-xxxx-xxxx-xxxx"   # la contraseña de app que generó Apple (no la de iCloud)
 ```
+
+**No hace falta** `DEVELOPER_ID`: el script lo lee del llavero. **No uses** textos de ejemplo con `…` — eso rompe el archive.
 
 ## 4. Build + notarize + DMG
 

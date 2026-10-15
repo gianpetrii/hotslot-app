@@ -13,42 +13,41 @@ TEAM_ID="${DEVELOPMENT_TEAM:-53M8KYX8G4}"
 
 MARKETING_VERSION="$(grep MARKETING_VERSION project.yml | head -1 | sed 's/.*"\(.*\)".*/\1/')"
 
-require_developer_id() {
-  if security find-identity -v -p codesigning 2>/dev/null | grep -q "Developer ID Application"; then
-    return 0
+resolve_developer_id() {
+  local from_keychain
+  from_keychain="$(security find-identity -v -p codesigning 2>/dev/null | sed -n 's/.*"\(Developer ID Application:.*\)"/\1/p' | head -1)"
+  if [[ -z "$from_keychain" ]]; then
+    echo "❌ No hay certificado «Developer ID Application» en el llavero." >&2
+    echo "   Xcode → Settings → Accounts → Manage Certificates → + → Developer ID Application" >&2
+    echo "   Guía: docs/RELEASE_FIRST_TIME.md" >&2
+    exit 1
   fi
-  echo "❌ No hay certificado «Developer ID Application» en el llavero." >&2
-  echo "   Xcode → Settings → Accounts → Manage Certificates → + → Developer ID Application" >&2
-  echo "   Guía: docs/RELEASE_FIRST_TIME.md" >&2
-  exit 1
+  if [[ -n "${DEVELOPER_ID:-}" && "$DEVELOPER_ID" != *"…"* && "$DEVELOPER_ID" != *"..."* ]]; then
+    if security find-identity -v -p codesigning 2>/dev/null | grep -Fq "$DEVELOPER_ID"; then
+      echo "$DEVELOPER_ID"
+      return
+    fi
+    echo "⚠️  DEVELOPER_ID no válido en el llavero; uso autodetect." >&2
+  fi
+  echo "$from_keychain"
 }
 
-require_developer_id
-
-if [[ -z "${DEVELOPER_ID:-}" ]]; then
-  DEVELOPER_ID="$(security find-identity -v -p codesigning | sed -n 's/.*"\(Developer ID Application:.*\)"/\1/p' | head -1)"
-fi
-if [[ -z "$DEVELOPER_ID" ]]; then
-  echo "❌ Definí DEVELOPER_ID o creá el certificado Developer ID Application." >&2
-  exit 1
-fi
-
-echo "→ Firmando con: $DEVELOPER_ID"
+DEVELOPER_ID="$(resolve_developer_id)"
+echo "→ Developer ID: $DEVELOPER_ID"
 
 echo "→ xcodegen"
 xcodegen generate
 
 mkdir -p "$ROOT/build"
 
-echo "→ Archive (Release)"
+echo "→ Archive (Release, firma automática — export Developer ID después)"
 xcodebuild \
   -scheme "$SCHEME" \
   -configuration Release \
   -archivePath "$ARCHIVE_PATH" \
   archive \
   DEVELOPMENT_TEAM="$TEAM_ID" \
-  CODE_SIGN_STYLE=Manual \
-  CODE_SIGN_IDENTITY="$DEVELOPER_ID"
+  CODE_SIGN_STYLE=Automatic
 
 rm -rf "$EXPORT_DIR"
 mkdir -p "$EXPORT_DIR"
