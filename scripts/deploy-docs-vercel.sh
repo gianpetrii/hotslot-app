@@ -11,7 +11,7 @@ if [[ -z "${VERCEL_TOKEN:-}" ]]; then
   echo "→ Login interactivo (npx vercel login) si hace falta"
 fi
 
-echo "→ Deploy docs/ → production"
-npx --yes vercel@latest deploy --prod --yes --name hotslot-app-docs
+echo "→ Deploy docs/ → production (proyecto vinculado en docs/.vercel tras el primer deploy)"
+npx --yes vercel@latest deploy --prod --yes
 
 echo "✓ Sitio: https://hotslot-app-docs.vercel.app/"
