@@ -60,11 +60,10 @@ private struct SlotCardView: View {
     @State private var isPeeking = false
     @State private var isPeekHovered = false
     @State private var peekTask: Task<Void, Never>?
+    @State private var isEditingShortcuts = false
+    @State private var suppressPeekForBadges = false
 
     private var hasContent: Bool { slot.content != nil }
-    private var pasteShortcut: KeyboardShortcuts.Name {
-        KeyboardShortcuts.Name.pasteSlotNames[slot.index - 1]
-    }
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -99,7 +98,14 @@ private struct SlotCardView: View {
                     .allowsHitTesting(isHovering)
                 }
                 Spacer(minLength: 0)
-                ShortcutBadge(name: pasteShortcut, compact: true)
+                SlotShortcutBadges(
+                    slotIndex: slot.index,
+                    isEditing: $isEditingShortcuts,
+                    suppressPeek: $suppressPeekForBadges
+                )
+                .popover(isPresented: $isEditingShortcuts, arrowEdge: .leading) {
+                    SlotShortcutEditorPopover(slotIndex: slot.index)
+                }
             }
             .padding(6)
         }
@@ -158,6 +164,12 @@ private struct SlotCardView: View {
                 isPeeking = false
             }
         }
+        .onChange(of: isEditingShortcuts) { _, editing in
+            if editing {
+                peekTask?.cancel()
+                isPeeking = false
+            }
+        }
         .onDisappear {
             peekTask?.cancel()
             isPeeking = false
@@ -167,7 +179,7 @@ private struct SlotCardView: View {
 
     private func schedulePeek(hovering: Bool) {
         peekTask?.cancel()
-        guard hasContent, !isDropTarget else {
+        guard hasContent, !isDropTarget, !suppressPeekForBadges, !isEditingShortcuts else {
             isPeeking = false
             return
         }

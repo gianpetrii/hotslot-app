@@ -46,6 +46,9 @@ struct SettingsView: View {
                     .onChange(of: launchAtLogin) { _, newValue in
                         updateLaunchAtLogin(newValue)
                     }
+                Text("\(BrandDisplay.name) vive en la barra de menú (⌘ arriba a la derecha). Si el atajo del panel falla, hacé clic ahí o abrí Slots desde Aplicaciones para ver el panel.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
             Section("Historial") {
@@ -99,7 +102,7 @@ struct SettingsView: View {
             }
 
             Section("Ayuda") {
-                Button("Cómo usar HotSlot") {
+                Button("Cómo usar \(BrandDisplay.name)") {
                     appState.openOnboarding?()
                 }
             }
@@ -141,10 +144,12 @@ struct SettingsView: View {
                         AccessibilityPermission.openSettings()
                     }
                 } else {
-                    Button("Conceder acceso…") {
-                        AccessibilityPermission.requestTrust(prompt: true)
-                        accessibilityTrusted = AccessibilityPermission.isTrusted
+                    Button("Abrir Accesibilidad en Ajustes del Sistema…") {
+                        AccessibilityPermission.guideUserToGrantAccess()
                     }
+                    Text("Activá el interruptor junto a \(BrandDisplay.name). Si hay varias entradas, probá con la de la build actual (Xcode o la de Aplicaciones).")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
         }

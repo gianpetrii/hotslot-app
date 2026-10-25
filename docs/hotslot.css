@@ -22,7 +22,7 @@
   --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.08);
   --blur: 24px;
   --max-width: 980px;
-  --release-dmg: HotSlot-0.16.0.dmg;
+  --release-dmg: Slots-0.18.0.dmg;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -127,11 +127,27 @@ body {
   width: 28px;
   height: 28px;
   border-radius: 7px;
-  background: linear-gradient(145deg, #4d7fff, #3a72fb);
-  box-shadow: 0 2px 8px rgba(58, 114, 251, 0.35);
+  background: linear-gradient(180deg, #f4f4f7 0%, #d2d2da 100%);
+  border: 0.5px solid rgba(255, 255, 255, 0.75);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  color: #3a3a3c;
   display: grid;
   place-items: center;
   font-size: 14px;
+  font-weight: 500;
+}
+
+@media (prefers-color-scheme: dark) {
+  .brand-mark {
+    background: linear-gradient(180deg, #5c5c62 0%, #3d3d42 100%);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow:
+      0 1px 4px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    color: #f2f2f7;
+  }
 }
 
 .nav-links {

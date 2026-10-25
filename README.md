@@ -70,23 +70,38 @@ La versión completa se distribuye con **Developer ID + notarización** (no Mac 
 
 - [Landing / descarga](https://hotslot-app-docs.vercel.app/)
 - [Política de privacidad](https://hotslot-app-docs.vercel.app/privacy.html)
-- [Guía de release](docs/DIRECT_DOWNLOAD.md) · [Deploy docs (Vercel)](docs/DEPLOY_VERCEL.md)
-- Script: `./scripts/release-direct.sh`
+- Script: `./scripts/release-direct.sh` · Cambios por versión: `CHANGELOG.md`
+
+### Release (mantenedor)
+
+Certificado **Developer ID Application** en el llavero. El script autodetecta el certificado si no pasás `DEVELOPER_ID`.
 
 ```bash
-# Release (requiere certificado Developer ID y credenciales notarytool)
-export DEVELOPER_ID="Developer ID Application: …"
-export NOTARY_APPLE_ID="…"
-export NOTARY_TEAM_ID="…"
-export NOTARY_PASSWORD="…"
+export NOTARY_APPLE_ID="tu@email.com"
+export NOTARY_TEAM_ID="53M8KYX8G4"
+export NOTARY_PASSWORD="app-specific-password"
+brew install create-dmg   # opcional, para .dmg
 ./scripts/release-direct.sh
+# Subir: gh release upload vX.Y.Z build/release/HotSlot-X.Y.Z.dmg build/release/SHA256.txt
 ```
 
-Bundle ID: `com.hotslot.app` · Sandbox habilitado · Sin recolección de datos
+**Sparkle (actualizaciones in-app):** una vez por máquina de release, generar claves con el binario `generate_keys` del paquete Sparkle y añadir `SUPublicEDKey` a `Info.plist`. Tras el `.dmg`, actualizar `docs/appcast.xml` con `generate_appcast` y commitear. Feed: `SUFeedURL` en Info.plist.
+
+**Docs web (Vercel):** repo `docs/` → proyecto [hotslot-app-docs](https://vercel.com/gianpetriis-projects/hotslot-app-docs), root `docs`; push a `main` o `cd docs && npx vercel --prod`.
+
+Bundle ID: `com.hotslot.app` · Sin recolección de datos
 
 ## Créditos
 
 [Reporte iconos creados por Magnific - Flaticon](https://www.flaticon.es/iconos-gratis/reporte)
+
+## Scripts
+
+| Script | Uso |
+|--------|-----|
+| `release-direct.sh` | Archive, export Developer ID, notarize, staple, `.dmg` |
+| `deploy-docs-vercel.sh` | Deploy manual de `docs/` |
+| `seed_screenshot_demo.py` | Datos demo para capturas |
 
 ## Estructura
 
@@ -98,3 +113,5 @@ HotSlot/
 ├── UI/            # Panel, Settings, StatusBar
 └── Utilities/     # Pasteboard, AppSupport
 ```
+
+Roadmap: `BACKLOG.md`

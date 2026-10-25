@@ -96,12 +96,18 @@ final class AppState {
             queue: .main
         ) { [weak self] _ in
             Task { @MainActor in
+                self?.hotkeyManager.reloadFromStorage()
                 self?.noteShortcutsChanged()
             }
         }
     }
 
     func pasteItem(_ item: ClipItem, panelController: PanelController) {
+        guard AccessibilityPermission.isTrusted else {
+            showToast("Ajustes → Permisos → Abrir Accesibilidad en Ajustes del Sistema")
+            FeedbackSound.play(.pasteFailed)
+            return
+        }
         let target = focusTracker.pasteDestination()
         let content = item.content
         panelController.hide(animated: true) {
@@ -112,6 +118,11 @@ final class AppState {
     }
 
     func pasteSlot(index: Int, panelController: PanelController) {
+        guard AccessibilityPermission.isTrusted else {
+            showToast("Ajustes → Permisos → Abrir Accesibilidad en Ajustes del Sistema")
+            FeedbackSound.play(.pasteFailed)
+            return
+        }
         guard let content = slotStore.content(at: index) else {
             FeedbackSound.play(.pasteFailed)
             showToast("El slot \(index) está vacío")

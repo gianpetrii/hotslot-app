@@ -10,7 +10,7 @@ struct HotkeysSettingsView: View {
             if !issues.isEmpty {
                 Section {
                     Label {
-                        Text("Algunos atajos coinciden con otro de HotSlot o con macOS. No los cambiamos solos: grabá uno distinto o restaurá los valores por defecto.")
+                        Text("Algunos atajos coinciden con otro de \(BrandDisplay.name) o con macOS. No los cambiamos solos: grabá uno distinto o restaurá los valores por defecto.")
                     } icon: {
                         Image(systemName: "exclamationmark.triangle.fill")
                             .foregroundStyle(.orange)
@@ -36,7 +36,7 @@ struct HotkeysSettingsView: View {
             }
 
             Section {
-                Text("Si un atajo no responde, otra app puede estar usándolo. HotSlot no puede listar esas apps: grabá uno nuevo.")
+                Text("Si un atajo no responde, otra app puede estar usándolo. \(BrandDisplay.name) no puede listar esas apps: grabá uno nuevo.")
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }

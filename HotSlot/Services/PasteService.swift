@@ -67,7 +67,7 @@ final class PasteService {
                 }
                 guard HIDKeystroke.commandV() else {
                     FeedbackSound.play(.pasteFailed)
-                    self.onShowToast?("Contenido listo — concedé Accesibilidad a HotSlot o pulsá ⌘V")
+                    self.onShowToast?("Contenido listo — concedé Accesibilidad a \(BrandDisplay.name) o pulsá ⌘V")
                     return
                 }
                 FeedbackSound.play(.pasteSuccess)

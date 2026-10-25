@@ -40,7 +40,7 @@ struct OnboardingPanelDemo: View {
                     Image(systemName: "magnifyingglass")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundStyle(.secondary)
-                    Text("HotSlot")
+                    Text(BrandDisplay.name)
                         .font(HotSlotTypography.rowSecondary)
                         .foregroundStyle(.tertiary)
                     Spacer()

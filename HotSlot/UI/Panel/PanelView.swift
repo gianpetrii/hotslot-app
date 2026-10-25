@@ -79,9 +79,8 @@ struct PanelView: View {
             pasteKeyboardHighlightedItem()
             return .handled
         }
-        .onKeyPress(.escape) {
+        .onExitCommand {
             panelController.hide(animated: true)
-            return .handled
         }
         .onChange(of: appState.isPanelVisible) { _, visible in
             if visible {

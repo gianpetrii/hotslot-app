@@ -12,6 +12,8 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Slots</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -24,14 +26,20 @@
 	<string>public.app-category.productivity</string>
 	<key>LSUIElement</key>
 	<true/>
+	<key>SUFeedURL</key>
+	<string>https://raw.githubusercontent.com/gianpetrii/hotslot-app/main/docs/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>q+NPeHiBJ2ipX/KBNeHX36SkvQRJFNLnvatXUEU/XSs=</string>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSAppleEventsUsageDescription</key>
-	<string>HotSlot necesita enviar ⌘V a la app activa para pegar el contenido que elegiste desde un slot o el historial.</string>
+	<string>Slots necesita enviar ⌘V a la app activa para pegar el contenido que elegiste desde un slot o el historial.</string>
 	<key>NSAccessibilityUsageDescription</key>
-	<string>HotSlot necesita acceso de accesibilidad para simular ⌘V y pegar automáticamente en la app donde estabas trabajando.</string>
+	<string>Slots necesita acceso de accesibilidad para simular ⌘V y pegar automáticamente en la app donde estabas trabajando.</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>© 2026 HotSlot</string>
+	<string>© 2026 Slots</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>UTExportedTypeDeclarations</key>

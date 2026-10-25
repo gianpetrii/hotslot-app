@@ -1,6 +1,8 @@
 import AppKit
+import Carbon
 import KeyboardShortcuts
 import ServiceManagement
+import Sparkle
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     var statusBarController: StatusBarController?
@@ -8,9 +10,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     var appState: AppState?
     let settingsWindowController = SettingsWindowController()
     let onboardingWindowController = OnboardingWindowController()
+    private var updaterController: SPUStandardUpdaterController?
+    private var shouldReopenPanelAfterUtility = false
+    private var shouldPresentPanelAfterLaunch = false
 
     func applicationWillFinishLaunching(_ notification: Notification) {
         terminateOtherInstances()
+        if let event = NSAppleEventManager.shared().currentAppleEvent,
+           event.eventClass == AEEventClass(kCoreEventClass),
+           event.eventID == AEEventID(kAEOpenApplication) {
+            shouldPresentPanelAfterLaunch = true
+        }
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -23,7 +33,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         AppSupportDirectory.migrateUnsandboxedIfNeeded()
         let state = AppState()
         let panel = PanelController(appState: state)
-        let statusBar = StatusBarController(appState: state, panelController: panel)
+        let statusBar = StatusBarController(
+            appState: state,
+            panelController: panel,
+            onCheckForUpdates: { [weak self] in
+                self?.checkForUpdates()
+            }
+        )
 
         self.appState = state
         self.panelController = panel
@@ -47,28 +63,73 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         state.bootstrap(panelController: panel)
         applyLaunchAtLoginSetting()
+        updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
 
         if !AppSettings.load().hasCompletedOnboarding {
             DispatchQueue.main.async { [weak self] in
                 self?.appState?.openOnboarding?()
             }
+        } else if shouldPresentPanelAfterLaunch {
+            DispatchQueue.main.async { [weak self] in
+                self?.presentPanelFromUserLaunchIfAppropriate()
+            }
+        }
+    }
+
+    /// Doble clic en Aplicaciones o reabrir la app: mostrar el panel (no al iniciar sesión en segundo plano).
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        presentPanelFromUserLaunchIfAppropriate()
+        return true
+    }
+
+    @MainActor
+    private func presentPanelFromUserLaunchIfAppropriate() {
+        guard let panel = panelController, let state = appState else { return }
+        guard AppSettings.load().hasCompletedOnboarding else { return }
+        guard !panel.isVisible else { return }
+
+        let isFrontmost = NSWorkspace.shared.frontmostApplication?.bundleIdentifier == Bundle.main.bundleIdentifier
+        guard isFrontmost || shouldPresentPanelAfterLaunch else { return }
+
+        shouldPresentPanelAfterLaunch = false
+        state.focusTracker.captureForUpcomingPaste()
+        panel.show()
+        state.isPanelVisible = true
+    }
+
+    @MainActor
+    func openSettingsFromAppMenu() {
+        guard let state = appState else { return }
+        presentUtilityWindow { [self] reopen in
+            settingsWindowController.show(appState: state, onDismiss: reopen)
         }
     }
 
     @MainActor
+    func checkForUpdates() {
+        updaterController?.checkForUpdates(nil)
+    }
+
+    @MainActor
     private func presentUtilityWindow(show: @escaping (@escaping () -> Void) -> Void) {
-        let reopenPanel = { [weak self] in
+        shouldReopenPanelAfterUtility = panelController?.isVisible == true
+
+        let finishUtility = { [weak self] in
             guard let self else { return }
+            NSApp.setActivationPolicy(.accessory)
+            guard self.shouldReopenPanelAfterUtility else { return }
             self.appState?.focusTracker.capture()
             self.panelController?.show()
-            NSApp.setActivationPolicy(.accessory)
+            self.appState?.isPanelVisible = true
         }
-        if panelController?.isVisible == true {
+
+        if shouldReopenPanelAfterUtility {
             panelController?.hide(animated: true) {
-                show(reopenPanel)
+                self.appState?.isPanelVisible = false
+                show(finishUtility)
             }
         } else {
-            show(reopenPanel)
+            show(finishUtility)
         }
     }
 

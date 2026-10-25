@@ -7,6 +7,8 @@ struct PanelSearchHeader: View {
     let onOpenSettings: () -> Void
     let onOpenTour: () -> Void
     let onClose: () -> Void
+    @State private var isEditingPanelShortcut = false
+    @State private var isBadgeHovering = false
 
     var body: some View {
         HStack(spacing: 10) {
@@ -15,12 +17,23 @@ struct PanelSearchHeader: View {
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(.secondary)
 
-                TextField("HotSlot", text: $searchText)
+                TextField("Buscar en el historial", text: $searchText)
                     .textFieldStyle(.plain)
                     .font(HotSlotTypography.searchField)
                     .focused($isSearchFocused)
 
-                ShortcutBadge(name: .togglePanel)
+                Button {
+                    isEditingPanelShortcut = true
+                } label: {
+                    ShortcutBadge(name: .togglePanel, emphasized: isBadgeHovering)
+                }
+                .buttonStyle(.plain)
+                .frame(width: HotSlotDesign.shortcutBadgeWidthRegular)
+                .help("Clic para cambiar el atajo de abrir/cerrar el panel")
+                .onHover { isBadgeHovering = $0 }
+                .popover(isPresented: $isEditingPanelShortcut, arrowEdge: .bottom) {
+                    PanelToggleShortcutPopover()
+                }
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -30,7 +43,7 @@ struct PanelSearchHeader: View {
             }
 
             Menu {
-                Button("Cómo usar HotSlot") { onOpenTour() }
+                Button("Cómo usar \(BrandDisplay.name)") { onOpenTour() }
                 Button("Ajustes…") { onOpenSettings() }
                 Divider()
                 Button("Cerrar panel") { onClose() }

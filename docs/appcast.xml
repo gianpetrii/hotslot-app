@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>HotSlot</title>
+    <link>https://hotslot-app-docs.vercel.app/</link>
+    <description>Actualizaciones de HotSlot</description>
+    <language>es</language>
+    <!-- Rellenar con `generate_appcast` de Sparkle al publicar cada release (ver README). -->
+  </channel>
+</rss>

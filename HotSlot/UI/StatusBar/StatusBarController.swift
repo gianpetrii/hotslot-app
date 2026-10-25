@@ -7,10 +7,12 @@ final class StatusBarController {
     private let statusItem: NSStatusItem
     private let appState: AppState
     private let panelController: PanelController
+    private let onCheckForUpdates: () -> Void
 
-    init(appState: AppState, panelController: PanelController) {
+    init(appState: AppState, panelController: PanelController, onCheckForUpdates: @escaping () -> Void) {
         self.appState = appState
         self.panelController = panelController
+        self.onCheckForUpdates = onCheckForUpdates
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
 
         configureButton()
@@ -19,15 +21,27 @@ final class StatusBarController {
     private func configureButton() {
         guard let button = statusItem.button else { return }
 
-        if let image = NSImage(named: "MenuBarIcon") {
+        button.imagePosition = .imageOnly
+        button.title = ""
+        button.appearsDisabled = false
+
+        let symbolConfig = NSImage.SymbolConfiguration(pointSize: 15, weight: .semibold)
+        let baseSymbol = NSImage(systemSymbolName: "command", accessibilityDescription: BrandDisplay.name)
+        if let configured = baseSymbol?.withSymbolConfiguration(symbolConfig) {
+            let template = (configured.copy() as? NSImage) ?? configured
+            template.isTemplate = true
+            button.image = template
+        } else if let asset = NSImage(named: "MenuBarIcon"),
+                  let image = asset.copy() as? NSImage {
             image.isTemplate = true
+            image.size = NSSize(width: 18, height: 18)
             button.image = image
-            button.image?.size = NSSize(width: 18, height: 18)
-        } else if let image = NSImage(systemSymbolName: "doc.on.clipboard", accessibilityDescription: "HotSlot") {
-            image.isTemplate = true
-            button.image = image
+        } else {
+            button.title = "⌘"
+            button.font = NSFont.systemFont(ofSize: 14, weight: .semibold)
         }
-        button.toolTip = "HotSlot — ⌘⇧V para abrir el panel"
+        statusItem.isVisible = true
+        button.toolTip = "\(BrandDisplay.name) — atajo para abrir el panel (editable en Ajustes)"
         button.action = #selector(statusBarClicked)
         button.target = self
         button.sendAction(on: [.leftMouseUp, .rightMouseUp])
@@ -46,13 +60,17 @@ final class StatusBarController {
         settingsItem.target = self
         menu.addItem(settingsItem)
 
-        let tourItem = NSMenuItem(title: "Cómo usar HotSlot", action: #selector(openTour), keyEquivalent: "")
+        let tourItem = NSMenuItem(title: "Cómo usar \(BrandDisplay.name)", action: #selector(openTour), keyEquivalent: "")
         tourItem.target = self
         menu.addItem(tourItem)
 
+        let updatesItem = NSMenuItem(title: "Buscar actualizaciones…", action: #selector(checkForUpdates), keyEquivalent: "")
+        updatesItem.target = self
+        menu.addItem(updatesItem)
+
         menu.addItem(.separator())
 
-        let quitItem = NSMenuItem(title: "Salir de HotSlot", action: #selector(quit), keyEquivalent: "q")
+        let quitItem = NSMenuItem(title: "Salir de \(BrandDisplay.name)", action: #selector(quit), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
 
@@ -90,6 +108,10 @@ final class StatusBarController {
 
     @objc private func openTour() {
         appState.openOnboarding?()
+    }
+
+    @objc private func checkForUpdates() {
+        onCheckForUpdates()
     }
 
     @objc private func quit() {

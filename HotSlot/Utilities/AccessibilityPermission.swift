@@ -13,10 +13,27 @@ enum AccessibilityPermission {
         return AXIsProcessTrustedWithOptions(options)
     }
 
-    static func openSettings() {
-        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
-            NSWorkspace.shared.open(url)
+    /// Diálogo del sistema (si aparece) + abre el panel de Accesibilidad en Ajustes.
+    static func guideUserToGrantAccess() {
+        requestTrust(prompt: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            openSettings()
         }
+    }
+
+    /// Deep link al panel Accesibilidad (Ventura / Sonoma / Sequoia).
+    static func openSettings() {
+        let candidates = [
+            "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_Accessibility",
+            "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility",
+        ]
+        for string in candidates {
+            guard let url = URL(string: string) else { continue }
+            if NSWorkspace.shared.open(url) { return }
+        }
+        NSWorkspace.shared.open(
+            URL(fileURLWithPath: "/System/Applications/System Settings.app")
+        )
     }
 }
 

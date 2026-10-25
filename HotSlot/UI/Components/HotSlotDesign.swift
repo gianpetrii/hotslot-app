@@ -31,6 +31,9 @@ enum HotSlotDesign {
     static let slotOverlayControlSize: CGFloat = 22
     static let slotOverlayIconSize: CGFloat = 10
     static let slotOverlayCornerRadius: CGFloat = 6
+    /// Ancho fijo del badge de atajo (evita que el popover se mueva al grabar/borrar).
+    static let shortcutBadgeWidthCompact: CGFloat = 50
+    static let shortcutBadgeWidthRegular: CGFloat = 56
     static let onboardingWidth: CGFloat = 460
     static let onboardingHeight: CGFloat = 560
 

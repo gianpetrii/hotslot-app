@@ -20,10 +20,11 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
                 backing: .buffered,
                 defer: false
             )
-            settingsWindow.title = "Ajustes de HotSlot"
+            settingsWindow.title = "Ajustes de \(BrandDisplay.name)"
             settingsWindow.isReleasedWhenClosed = false
             settingsWindow.delegate = self
-            settingsWindow.level = .floating
+            // Por encima del panel flotante (`floating + 1` en `PanelController`).
+            settingsWindow.level = NSWindow.Level(rawValue: NSWindow.Level.floating.rawValue + 2)
             settingsWindow.collectionBehavior = [.moveToActiveSpace]
             settingsWindow.animationBehavior = .none
             window = settingsWindow
@@ -37,7 +38,9 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         installContent(in: window)
 
         if window.isVisible {
+            window.orderFrontRegardless()
             window.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
             return
         }
 
@@ -75,10 +78,12 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     }
 
     private func installContent(in window: NSWindow) {
-        guard window.contentViewController == nil, let appState else { return }
-        let hosting = NSHostingController(rootView: SettingsView(appState: appState))
-        hosting.safeAreaRegions = []
-        window.contentViewController = hosting
+        guard let appState else { return }
+        if window.contentViewController == nil {
+            let hosting = NSHostingController(rootView: SettingsView(appState: appState))
+            hosting.safeAreaRegions = []
+            window.contentViewController = hosting
+        }
     }
 
     private func teardownContent(in window: NSWindow) {

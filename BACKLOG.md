@@ -4,6 +4,15 @@ Prioridad: **P0** urgente · **P1** importante · **P2** mejora · **P3** futuro
 
 Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 
+## Decisiones de producto (alineación Oct 2025)
+
+- **Monetización:** gratis para siempre + donación opcional (sin cuentas ni licencias en v1).
+- **Mensaje público:** **slots fijos** como lead (“el slot 2 siempre es el slot 2”); historial + búsqueda como complemento.
+- **Objetivo:** portfolio / visibilidad / masa de usuarios; marca personal de los desarrolladores.
+- **Distribución:** DMG notarizado + GitHub Releases; repo **público** recomendado.
+- **Analytics (sin tocar el clipboard):** descargas GitHub + visitas Vercel; telemetría anónima opcional (versión, build, macOS major) para mejorar la app; actualizar política de privacidad si se activa.
+- **Fuera de v1:** ⌘C+número, píldora notch / modo blur, pago único, freemium.
+
 ---
 
 ## Crítico / Funcionalidad
@@ -66,11 +75,36 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [ ] | P2 | Modo depuración clipboard más pulido |
 | [ ] | P3 | Localización ES/EN completa |
 | [x] | P1 | Ícono de app: `docs/portapapeles.png` (Magnific / Flaticon) → AppIcon + menu bar |
-| [~] | P1 | Archive + App Store (v0.15.0 build 16 subido; ficha + capturas listas) |
+| [x] | P1 | Distribución directa v0.16 (Developer ID, notarización, landing, GitHub Release) |
 
 ---
 
-## Siguiente oleada (orden de implementación)
+## Oleada actual (feedback testers + producto)
+
+| Estado | Pri | Tarea |
+|--------|-----|-------|
+| [~] | P1 | **Sparkle** — integrado; falta `SUPublicEDKey` + `generate_appcast` en cada release |
+| [x] | P1 | **Ícono menu bar más visible** — `clipboard.fill` semibold 15 pt |
+| [x] | P1 | **Editar atajos desde el panel** — clic en badge → popover pegar/guardar |
+| [x] | P1 | **Un solo flujo de Ajustes** — escena SwiftUI vacía + ⌘,; ventana sobre el panel; panel solo se reabre si estaba abierto |
+| [x] | P1 | **Badges de atajos en vivo** — `applyStoredShortcuts` + `shortcutEpoch` al cambiar atajo |
+| [ ] | P2 | **Sonido al guardar** — documentar toggle “Sonidos de acciones”; opcional sonido distinto guardar vs pegar si confunden |
+| [ ] | P3 | Atajo clicable extra en barra (además del icono) — evaluar si aporta o satura la menu bar |
+| [ ] | P3 | “Slots libres” en UI tipo Dynamic Island — **no aplica en Mac**; en iPhone sería otro producto |
+| [ ] | P1 | **Landing:** copy slots-first + enlace donación + créditos desarrolladores |
+| [ ] | P1 | **Donación:** link en Ajustes → General / Acerca de (Ko-fi o similar) |
+| [ ] | P1 | **Analytics:** contador descargas (GitHub) en web; Vercel Analytics en docs; ping anónimo in-app acordado en privacidad |
+
+### Propuesta rápida (cómo resolver)
+
+- **Sparkle:** integrar framework; `appcast.xml` en GitHub Releases o CDN; firmar updates con clave EdDSA; `SUFeedURL` en Info.plist; post-release: generar appcast en script junto al `.dmg`.
+- **Ícono barra:** rediseñar `MenuBarIcon` (PDF/PNG template, trazo más bold); en código probar `NSStatusItem.variableLength` + padding; fallback SF Symbol `clipboard.fill` si el asset sigue tenue.
+- **Atajos en panel:** badge del overlay ya muestra el atajo → hacerlo botón; `Popover` + recorder por `pasteSlotN` / `copyToSlotN`; validar conflictos con `ShortcutConflict` inline.
+- **Ajustes / testers:** `HotSlotApp` sin escena `Settings` duplicada o redirigir a `SettingsWindowController`; `presentUtilityWindow` siempre; subir `window.level` de Ajustes > panel.
+
+---
+
+## Siguiente oleada (histórico — orden de implementación)
 
 1. **P0 — Drag de slots vs mover el panel.** ~~Hecho.~~
 2. **P0 — Overlay de slot.** ~~Hecho.~~

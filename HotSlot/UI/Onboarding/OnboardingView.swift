@@ -147,9 +147,8 @@ struct OnboardingView: View {
                     .font(HotSlotTypography.rowSecondary)
                     .foregroundStyle(.secondary)
             } else {
-                OnboardingChromeButton(title: "Conceder Accesibilidad…", emphasized: false) {
-                    AccessibilityPermission.requestTrust(prompt: true)
-                    accessibilityTrusted = AccessibilityPermission.isTrusted
+                OnboardingChromeButton(title: "Abrir Accesibilidad en Ajustes…", emphasized: false) {
+                    AccessibilityPermission.guideUserToGrantAccess()
                 }
             }
         }

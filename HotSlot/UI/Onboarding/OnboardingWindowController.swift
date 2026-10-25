@@ -28,7 +28,7 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
                 backing: .buffered,
                 defer: false
             )
-            onboardingWindow.title = "Cómo usar HotSlot"
+            onboardingWindow.title = "Cómo usar \(BrandDisplay.name)"
             onboardingWindow.isReleasedWhenClosed = false
             onboardingWindow.delegate = self
             onboardingWindow.level = .floating

@@ -75,7 +75,8 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         // Ventana ya del tamaño final y transparente: el redondeo lo dibuja la tarjeta.
         window.setFrame(targetFrame, display: true)
         window.alphaValue = 0
-        window.orderFrontRegardless()
+        NSApp.activate(ignoringOtherApps: true)
+        window.makeKeyAndOrderFront(nil)
 
         isAnimating = true
         appState.isPanelVisible = true
@@ -156,8 +157,8 @@ final class PanelController: NSWindowController, NSWindowDelegate {
 
     private func setupKeyMonitor() {
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            guard let self, self.isVisible, self.window?.isKeyWindow == true else { return event }
-            if event.keyCode == 53 { // Esc
+            guard let self, self.isVisible else { return event }
+            if event.keyCode == 53 { // Esc — mismo cierre que clic fuera del panel
                 self.hide(animated: true)
                 return nil
             }

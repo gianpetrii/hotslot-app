@@ -12,6 +12,7 @@ EXPORT_OPTIONS="$ROOT/scripts/ExportOptions-developer-id.plist"
 TEAM_ID="${DEVELOPMENT_TEAM:-53M8KYX8G4}"
 
 MARKETING_VERSION="$(grep MARKETING_VERSION project.yml | head -1 | sed 's/.*"\(.*\)".*/\1/')"
+APP_PRODUCT_NAME="$(grep 'PRODUCT_NAME:' project.yml | head -1 | sed 's/.*"\(.*\)".*/\1/')"
 
 resolve_developer_id() {
   local from_keychain
@@ -19,7 +20,7 @@ resolve_developer_id() {
   if [[ -z "$from_keychain" ]]; then
     echo "❌ No hay certificado «Developer ID Application» en el llavero." >&2
     echo "   Xcode → Settings → Accounts → Manage Certificates → + → Developer ID Application" >&2
-    echo "   Guía: docs/RELEASE_FIRST_TIME.md" >&2
+    echo "   Ver README.md → Release (mantenedor)" >&2
     exit 1
   fi
   if [[ -n "${DEVELOPER_ID:-}" && "$DEVELOPER_ID" != *"…"* && "$DEVELOPER_ID" != *"..."* ]]; then
@@ -58,13 +59,13 @@ xcodebuild -exportArchive \
   -exportPath "$EXPORT_DIR" \
   -exportOptionsPlist "$EXPORT_OPTIONS"
 
-APP="$EXPORT_DIR/HotSlot.app"
+APP="$EXPORT_DIR/${APP_PRODUCT_NAME}.app"
 if [[ ! -d "$APP" ]]; then
   echo "❌ No se encontró $APP" >&2
   exit 1
 fi
 
-ZIP="$EXPORT_DIR/HotSlot-notarize.zip"
+ZIP="$EXPORT_DIR/${APP_PRODUCT_NAME}-notarize.zip"
 ditto -c -k --keepParent "$APP" "$ZIP"
 
 if [[ -n "${NOTARY_APPLE_ID:-}" && -n "${NOTARY_PASSWORD:-}" && -n "${NOTARY_TEAM_ID:-}" ]]; then
@@ -76,20 +77,20 @@ if [[ -n "${NOTARY_APPLE_ID:-}" && -n "${NOTARY_PASSWORD:-}" && -n "${NOTARY_TEA
     --wait
   echo "→ Staple"
   xcrun stapler staple "$APP"
-  if [[ -f "$EXPORT_DIR/HotSlot-${MARKETING_VERSION}.dmg" ]]; then
-    xcrun stapler staple "$EXPORT_DIR/HotSlot-${MARKETING_VERSION}.dmg" 2>/dev/null || true
+  if [[ -f "$EXPORT_DIR/${APP_PRODUCT_NAME}-${MARKETING_VERSION}.dmg" ]]; then
+    xcrun stapler staple "$EXPORT_DIR/${APP_PRODUCT_NAME}-${MARKETING_VERSION}.dmg" 2>/dev/null || true
   fi
 else
   echo "⚠️  Sin notarización: export NOTARY_APPLE_ID, NOTARY_PASSWORD, NOTARY_TEAM_ID"
-  echo "   Ver docs/RELEASE_FIRST_TIME.md"
+  echo "   Ver README.md → Release (mantenedor)"
 fi
 
-DMG="$EXPORT_DIR/HotSlot-${MARKETING_VERSION}.dmg"
+DMG="$EXPORT_DIR/${APP_PRODUCT_NAME}-${MARKETING_VERSION}.dmg"
 if command -v create-dmg >/dev/null; then
   echo "→ create-dmg"
   rm -f "$DMG"
   create-dmg \
-    --volname "HotSlot" \
+    --volname "$APP_PRODUCT_NAME" \
     --window-pos 200 120 \
     --window-size 540 380 \
     --icon-size 128 \
