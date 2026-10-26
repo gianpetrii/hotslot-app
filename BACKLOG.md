@@ -4,14 +4,15 @@ Prioridad: **P0** urgente · **P1** importante · **P2** mejora · **P3** futuro
 
 Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 
-## Decisiones de producto (alineación Oct 2025)
+## Decisiones de producto (alineación Oct 2025 — actualizado)
 
-- **Monetización:** gratis para siempre + donación opcional (sin cuentas ni licencias en v1).
+- **Monetización:** **90 días** de prueba desde la **instalación** → luego **USD 10** pago único (web + clave). Sin licencia: **solo slot 1**; historial y slots 2–5 bloqueados.
 - **Mensaje público:** **slots fijos** como lead (“el slot 2 siempre es el slot 2”); historial + búsqueda como complemento.
-- **Objetivo:** portfolio / visibilidad / masa de usuarios; marca personal de los desarrolladores.
 - **Distribución:** DMG notarizado + GitHub Releases; repo **público** recomendado.
-- **Analytics (sin tocar el clipboard):** descargas GitHub + visitas Vercel; telemetría anónima opcional (versión, build, macOS major) para mejorar la app; actualizar política de privacidad si se activa.
-- **Fuera de v1:** ⌘C+número, píldora notch / modo blur, pago único, freemium.
+- **Docs:** `docs/MONETIZATION.md`, `docs/purchase.html`; código en `Entitlements.swift`.
+- **Pendiente monetización:** pasarela (Lemon Squeezy / Gumroad), generación real de claves, endpoint de validación.
+- **Analytics (sin tocar el clipboard):** descargas GitHub + visitas Vercel; telemetría anónima opcional; actualizar privacidad si se activa.
+- **Fuera de v1:** ⌘C+número, píldora notch / modo blur.
 
 ---
 

@@ -7,18 +7,21 @@ enum AccessibilityPermission {
         AXIsProcessTrusted()
     }
 
+    /// Muestra el diálogo del sistema (“¿Permitir controlar la Mac?”) si aún no hay permiso.
     @discardableResult
     static func requestTrust(prompt: Bool = true) -> Bool {
         let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: prompt] as CFDictionary
         return AXIsProcessTrustedWithOptions(options)
     }
 
-    /// Diálogo del sistema (si aparece) + abre el panel de Accesibilidad en Ajustes.
+    /// Al pegar: primero el diálogo nativo; no abrimos Ajustes solos (el usuario elige desde el alert).
+    static func requestAccessForPaste() {
+        _ = requestTrust(prompt: true)
+    }
+
+    /// Solo si el usuario ya pasó por el diálogo o necesita el interruptor manual.
     static func guideUserToGrantAccess() {
-        requestTrust(prompt: true)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-            openSettings()
-        }
+        requestAccessForPaste()
     }
 
     /// Deep link al panel Accesibilidad (Ventura / Sonoma / Sequoia).
@@ -78,7 +81,6 @@ enum AccessibilityFocus {
     }
 
     /// Si el foco de esa app puede recibir un pegado de texto.
-    /// Chrome/Cursor son AXWebArea: hay que dejar pasar ⌘V. Solo bloqueamos controles claramente no editables.
     static func canAcceptPaste(in app: NSRunningApplication) -> Bool {
         guard AccessibilityPermission.isTrusted else { return true }
         guard let node = focusedElement(in: app) else { return true }

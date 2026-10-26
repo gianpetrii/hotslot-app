@@ -20,7 +20,7 @@ struct SlotsSettingsView: View {
                     HStack {
                         Button("Guardar clipboard actual") {
                             if let content = appState.clipboardService.currentContent() {
-                                appState.slotStore.saveContent(index: slot.index, content: content)
+                                appState.saveToSlot(index: slot.index, content: content)
                             }
                         }
                         if slot.content != nil {

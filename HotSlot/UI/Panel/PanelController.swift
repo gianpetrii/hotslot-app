@@ -89,6 +89,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         }, completionHandler: { [weak self] in
             guard let self, generation == self.openGeneration else { return }
             self.isAnimating = false
+            MenuBarHint.presentIfNeeded()
         })
     }
 

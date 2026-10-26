@@ -13,5 +13,10 @@ Package.resolved
 # macOS
 .DS_Store
 
+# Release / notarización (secretos locales)
+scripts/release.env.local
+scripts/release.env
+.env.local
+
 # XcodeGen (opcional regenerar)
 # HotSlot.xcodeproj

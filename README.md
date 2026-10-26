@@ -77,13 +77,14 @@ La versión completa se distribuye con **Developer ID + notarización** (no Mac 
 Certificado **Developer ID Application** en el llavero. El script autodetecta el certificado si no pasás `DEVELOPER_ID`.
 
 ```bash
-export NOTARY_APPLE_ID="tu@email.com"
-export NOTARY_TEAM_ID="53M8KYX8G4"
-export NOTARY_PASSWORD="app-specific-password"
+cp scripts/release.env.example scripts/release.env.local
+# Editá release.env.local (o usá NOTARY_KEYCHAIN_PROFILE — ver el ejemplo)
 brew install create-dmg   # opcional, para .dmg
 ./scripts/release-direct.sh
-# Subir: gh release upload vX.Y.Z build/release/HotSlot-X.Y.Z.dmg build/release/SHA256.txt
+# Subir: gh release upload vX.Y.Z build/release/Slots-X.Y.Z.dmg build/release/SHA256.txt
 ```
+
+Las variables en `release.env.local` se cargan solas. **Recomendado:** guardar la app-specific password en el Llavero con `xcrun notarytool store-credentials` y poner solo `NOTARY_KEYCHAIN_PROFILE="Slots-Notary"` en el archivo local.
 
 **Sparkle (actualizaciones in-app):** una vez por máquina de release, generar claves con el binario `generate_keys` del paquete Sparkle y añadir `SUPublicEDKey` a `Info.plist`. Tras el `.dmg`, actualizar `docs/appcast.xml` con `generate_appcast` y commitear. Feed: `SUFeedURL` en Info.plist.
 

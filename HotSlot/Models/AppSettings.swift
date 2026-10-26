@@ -7,13 +7,21 @@ struct AppSettings: Codable, Equatable {
     var playSoundOnPaste: Bool
     var debugClipboard: Bool
     var hasCompletedOnboarding: Bool
+    var hasSeenMenuBarHint: Bool
+    var firstInstallDate: Date?
+    var licenseKey: String?
+    var isLicensed: Bool
 
     static let `default` = AppSettings(
         historyLimit: 50,
         launchAtLogin: false,
         playSoundOnPaste: true,
         debugClipboard: false,
-        hasCompletedOnboarding: false
+        hasCompletedOnboarding: false,
+        hasSeenMenuBarHint: false,
+        firstInstallDate: nil,
+        licenseKey: nil,
+        isLicensed: false
     )
 
     private enum Keys {
@@ -21,7 +29,8 @@ struct AppSettings: Codable, Equatable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case historyLimit, launchAtLogin, playSoundOnPaste, debugClipboard, hasCompletedOnboarding
+        case historyLimit, launchAtLogin, playSoundOnPaste, debugClipboard, hasCompletedOnboarding, hasSeenMenuBarHint
+        case firstInstallDate, licenseKey, isLicensed
     }
 
     init(
@@ -29,13 +38,21 @@ struct AppSettings: Codable, Equatable {
         launchAtLogin: Bool,
         playSoundOnPaste: Bool,
         debugClipboard: Bool,
-        hasCompletedOnboarding: Bool
+        hasCompletedOnboarding: Bool,
+        hasSeenMenuBarHint: Bool = false,
+        firstInstallDate: Date? = nil,
+        licenseKey: String? = nil,
+        isLicensed: Bool = false
     ) {
         self.historyLimit = historyLimit
         self.launchAtLogin = launchAtLogin
         self.playSoundOnPaste = playSoundOnPaste
         self.debugClipboard = debugClipboard
         self.hasCompletedOnboarding = hasCompletedOnboarding
+        self.hasSeenMenuBarHint = hasSeenMenuBarHint
+        self.firstInstallDate = firstInstallDate
+        self.licenseKey = licenseKey
+        self.isLicensed = isLicensed
     }
 
     init(from decoder: Decoder) throws {
@@ -45,6 +62,10 @@ struct AppSettings: Codable, Equatable {
         playSoundOnPaste = try container.decodeIfPresent(Bool.self, forKey: .playSoundOnPaste) ?? true
         debugClipboard = try container.decodeIfPresent(Bool.self, forKey: .debugClipboard) ?? false
         hasCompletedOnboarding = try container.decodeIfPresent(Bool.self, forKey: .hasCompletedOnboarding) ?? false
+        hasSeenMenuBarHint = try container.decodeIfPresent(Bool.self, forKey: .hasSeenMenuBarHint) ?? false
+        firstInstallDate = try container.decodeIfPresent(Date.self, forKey: .firstInstallDate)
+        licenseKey = try container.decodeIfPresent(String.self, forKey: .licenseKey)
+        isLicensed = try container.decodeIfPresent(Bool.self, forKey: .isLicensed) ?? false
     }
 
     static func load() -> AppSettings {

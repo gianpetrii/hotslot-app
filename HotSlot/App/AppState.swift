@@ -35,6 +35,7 @@ final class AppState {
     }
 
     func bootstrap(panelController: PanelController) {
+        Entitlements.recordFirstLaunchIfNeeded()
         clipboardService.configure(historyStore: historyStore)
         pasteService.configure(clipboardService: clipboardService, focusTracker: focusTracker)
 
@@ -56,6 +57,8 @@ final class AppState {
 
         hotkeyManager.onPasteSlot = { [weak self] index in
             guard let self else { return }
+            guard self.ensureCanUseSlot(index) else { return }
+            guard self.ensureAccessibilityForPaste() else { return }
             self.focusTracker.capture()
             self.pasteService.pasteFromSlot(
                 index: index,
@@ -67,6 +70,7 @@ final class AppState {
         hotkeyManager.onCopyToSlot = { [weak self] index in
             Task { @MainActor in
                 guard let self else { return }
+                guard self.ensureCanUseSlot(index) else { return }
                 self.focusTracker.capture()
                 if let content = await self.clipboardService.captureSelection() {
                     self.slotStore.saveContent(index: index, content: content)
@@ -103,11 +107,8 @@ final class AppState {
     }
 
     func pasteItem(_ item: ClipItem, panelController: PanelController) {
-        guard AccessibilityPermission.isTrusted else {
-            showToast("Ajustes → Permisos → Abrir Accesibilidad en Ajustes del Sistema")
-            FeedbackSound.play(.pasteFailed)
-            return
-        }
+        guard ensureCanUseHistory() else { return }
+        guard ensureAccessibilityForPaste() else { return }
         let target = focusTracker.pasteDestination()
         let content = item.content
         panelController.hide(animated: true) {
@@ -118,11 +119,8 @@ final class AppState {
     }
 
     func pasteSlot(index: Int, panelController: PanelController) {
-        guard AccessibilityPermission.isTrusted else {
-            showToast("Ajustes → Permisos → Abrir Accesibilidad en Ajustes del Sistema")
-            FeedbackSound.play(.pasteFailed)
-            return
-        }
+        guard ensureCanUseSlot(index) else { return }
+        guard ensureAccessibilityForPaste() else { return }
         guard let content = slotStore.content(at: index) else {
             FeedbackSound.play(.pasteFailed)
             showToast("El slot \(index) está vacío")
@@ -142,6 +140,53 @@ final class AppState {
             if self?.toastMessage == message {
                 self?.toastMessage = nil
             }
+        }
+    }
+
+    @discardableResult
+    func ensureAccessibilityForPaste() -> Bool {
+        guard AccessibilityPermission.isTrusted else {
+            AccessibilityPermission.requestAccessForPaste()
+            showToast("Permití el control en el diálogo del sistema (Accesibilidad)")
+            FeedbackSound.play(.pasteFailed)
+            return false
+        }
+        return true
+    }
+
+    @discardableResult
+    func ensureCanUseSlot(_ index: Int) -> Bool {
+        guard Entitlements.canUseSlot(index: index) else {
+            promptUpgrade(feature: "slots 2–5")
+            return false
+        }
+        return true
+    }
+
+    @discardableResult
+    func ensureCanUseHistory() -> Bool {
+        guard Entitlements.canUseHistoryAndExtraSlots else {
+            promptUpgrade(feature: "historial y pegado desde el panel")
+            return false
+        }
+        return true
+    }
+
+    func promptUpgrade(feature: String) {
+        FeedbackSound.play(.pasteFailed)
+        showToast("Prueba terminada — \(feature). Comprá Slots (USD 10) en Ajustes → Licencia")
+    }
+
+    func openPurchasePage() {
+        NSWorkspace.shared.open(Entitlements.purchaseURL)
+    }
+
+    func saveToSlot(index: Int, content: ClipContent, announce: Bool = true) {
+        guard ensureCanUseSlot(index) else { return }
+        slotStore.saveContent(index: index, content: content)
+        if announce {
+            FeedbackSound.play(.saved)
+            showToast("Guardado en slot \(index)")
         }
     }
 }

@@ -199,7 +199,7 @@ private struct OnboardingPage {
     static let all: [OnboardingPage] = [
         OnboardingPage(
             title: "El panel",
-            caption: "Clic en el ícono de la barra o el atajo del buscador.",
+            caption: "El ⌘ vive arriba a la derecha en la barra de menú (si no lo ves, liberá espacio quitando otros iconos). También ⌘⇧V.",
             demo: .panel,
             hint: "Slots a la izquierda · historial a la derecha"
         ),

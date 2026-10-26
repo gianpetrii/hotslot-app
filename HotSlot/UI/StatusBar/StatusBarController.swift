@@ -14,6 +14,7 @@ final class StatusBarController {
         self.panelController = panelController
         self.onCheckForUpdates = onCheckForUpdates
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        statusItem.autosaveName = "com.hotslot.app.menuBarIcon"
 
         configureButton()
     }

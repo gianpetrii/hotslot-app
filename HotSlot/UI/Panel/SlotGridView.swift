@@ -20,16 +20,12 @@ struct SlotGridView: View {
                         },
                         onSaveFromClipboard: {
                             if let content = appState.clipboardService.currentContent() {
-                                appState.slotStore.saveContent(index: slot.index, content: content)
-                                FeedbackSound.play(.saved)
-                                appState.showToast("Guardado en slot \(slot.index)")
+                                appState.saveToSlot(index: slot.index, content: content)
                             }
                         },
                         onSaveHistoryItem: { itemID in
                             guard let content = appState.historyStore.item(id: itemID)?.content else { return }
-                            appState.slotStore.saveContent(index: slot.index, content: content)
-                            FeedbackSound.play(.saved)
-                            appState.showToast("Guardado en slot \(slot.index)")
+                            appState.saveToSlot(index: slot.index, content: content)
                         },
                         onClear: {
                             appState.slotStore.clearSlot(index: slot.index)

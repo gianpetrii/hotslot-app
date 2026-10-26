@@ -11,6 +11,8 @@ struct SettingsView: View {
     @State private var debugClipboard = AppSettings.load().debugClipboard
     @State private var accessibilityTrusted = AccessibilityPermission.isTrusted
     @State private var selectedTab: SettingsTab = .general
+    @State private var licenseKeyInput = AppSettings.load().licenseKey ?? ""
+    @State private var licensed = Entitlements.hasFullAccess
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -30,7 +32,7 @@ struct SettingsView: View {
                 .tabItem { Label("Permisos", systemImage: "lock.shield") }
                 .tag(SettingsTab.permissions)
         }
-        .frame(width: 520, height: 420)
+        .frame(width: 520, height: 480)
         .onAppear {
             if let pending = appState.pendingSettingsTab {
                 selectedTab = pending
@@ -46,9 +48,43 @@ struct SettingsView: View {
                     .onChange(of: launchAtLogin) { _, newValue in
                         updateLaunchAtLogin(newValue)
                     }
-                Text("\(BrandDisplay.name) vive en la barra de menú (⌘ arriba a la derecha). Si el atajo del panel falla, hacé clic ahí o abrí Slots desde Aplicaciones para ver el panel.")
+                Text("\(BrandDisplay.name) vive en la barra de menú (⌘ arriba a la derecha). Si no aparece, la barra está llena: mové ítems del sistema a Centro de control o reordená con ⌘+arrastrar. Atajo ⌘⇧V; también podés abrir desde Aplicaciones.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+            }
+
+            Section("Licencia") {
+                if Entitlements.hasFullAccess {
+                    if AppSettings.load().isLicensed {
+                        Label("Compra activa", systemImage: "checkmark.seal.fill")
+                            .foregroundStyle(.green)
+                    } else if let end = Entitlements.trialEndsAt {
+                        Text("Prueba gratuita hasta \(end.formatted(date: .abbreviated, time: .omitted))")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                    }
+                } else {
+                    Text("La prueba terminó. Comprá una licencia (USD 10, pago único) o seguí usando solo el slot 1.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+
+                TextField("Clave SLOTS-XXXX-XXXX-XXXX", text: $licenseKeyInput)
+                    .textFieldStyle(.roundedBorder)
+
+                HStack {
+                    Button("Activar licencia") {
+                        if Entitlements.activateLicenseKey(licenseKeyInput) {
+                            licensed = true
+                            appState.showToast("Licencia activada — gracias")
+                        } else {
+                            appState.showToast("Clave inválida")
+                        }
+                    }
+                    Button("Comprar…") {
+                        appState.openPurchasePage()
+                    }
+                }
             }
 
             Section("Historial") {
@@ -144,10 +180,13 @@ struct SettingsView: View {
                         AccessibilityPermission.openSettings()
                     }
                 } else {
-                    Button("Abrir Accesibilidad en Ajustes del Sistema…") {
-                        AccessibilityPermission.guideUserToGrantAccess()
+                    Button("Permitir Accesibilidad (diálogo del sistema)") {
+                        AccessibilityPermission.requestAccessForPaste()
                     }
-                    Text("Activá el interruptor junto a \(BrandDisplay.name). Si hay varias entradas, probá con la de la build actual (Xcode o la de Aplicaciones).")
+                    Button("Abrir panel de Accesibilidad en Ajustes…") {
+                        AccessibilityPermission.openSettings()
+                    }
+                    Text("Primero usá el botón de arriba: macOS muestra un aviso para abrir Ajustes. Activá el interruptor junto a \(BrandDisplay.name).")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

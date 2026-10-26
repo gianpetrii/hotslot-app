@@ -9,10 +9,23 @@ SCHEME="HotSlot"
 ARCHIVE_PATH="$ROOT/build/HotSlot.xcarchive"
 EXPORT_DIR="$ROOT/build/release"
 EXPORT_OPTIONS="$ROOT/scripts/ExportOptions-developer-id.plist"
-TEAM_ID="${DEVELOPMENT_TEAM:-53M8KYX8G4}"
 
-MARKETING_VERSION="$(grep MARKETING_VERSION project.yml | head -1 | sed 's/.*"\(.*\)".*/\1/')"
-APP_PRODUCT_NAME="$(grep 'PRODUCT_NAME:' project.yml | head -1 | sed 's/.*"\(.*\)".*/\1/')"
+# Credenciales locales: scripts/release.env.local (ver release.env.example)
+RELEASE_ENV_LOCAL="$ROOT/scripts/release.env.local"
+if [[ -f "$RELEASE_ENV_LOCAL" ]]; then
+  echo "→ Cargando $(basename "$RELEASE_ENV_LOCAL")"
+  set -a
+  # shellcheck disable=SC1090
+  source "$RELEASE_ENV_LOCAL"
+  set +a
+fi
+
+TEAM_ID="${DEVELOPMENT_TEAM:-$(grep DEVELOPMENT_TEAM project.yml | head -1 | awk '{print $2}')}"
+TEAM_ID="${TEAM_ID:-53M8KYX8G4}"
+NOTARY_TEAM_ID="${NOTARY_TEAM_ID:-$TEAM_ID}"
+
+MARKETING_VERSION="$(awk -F': *' '/MARKETING_VERSION:/ { gsub(/"/, "", $2); print $2; exit }' project.yml)"
+APP_PRODUCT_NAME="$(awk '/PRODUCT_NAME:/ && !/FULL_PRODUCT_NAME/ { print $2; exit }' project.yml)"
 
 resolve_developer_id() {
   local from_keychain
@@ -68,7 +81,16 @@ fi
 ZIP="$EXPORT_DIR/${APP_PRODUCT_NAME}-notarize.zip"
 ditto -c -k --keepParent "$APP" "$ZIP"
 
-if [[ -n "${NOTARY_APPLE_ID:-}" && -n "${NOTARY_PASSWORD:-}" && -n "${NOTARY_TEAM_ID:-}" ]]; then
+DID_NOTARIZE=0
+if [[ -n "${NOTARY_KEYCHAIN_PROFILE:-}" ]]; then
+  echo "→ Notarize (perfil «${NOTARY_KEYCHAIN_PROFILE}», puede tardar unos minutos)"
+  xcrun notarytool submit "$ZIP" \
+    --keychain-profile "$NOTARY_KEYCHAIN_PROFILE" \
+    --wait
+  echo "→ Staple"
+  xcrun stapler staple "$APP"
+  DID_NOTARIZE=1
+elif [[ -n "${NOTARY_APPLE_ID:-}" && -n "${NOTARY_PASSWORD:-}" && -n "${NOTARY_TEAM_ID:-}" ]]; then
   echo "→ Notarize (puede tardar unos minutos)"
   xcrun notarytool submit "$ZIP" \
     --apple-id "$NOTARY_APPLE_ID" \
@@ -77,12 +99,10 @@ if [[ -n "${NOTARY_APPLE_ID:-}" && -n "${NOTARY_PASSWORD:-}" && -n "${NOTARY_TEA
     --wait
   echo "→ Staple"
   xcrun stapler staple "$APP"
-  if [[ -f "$EXPORT_DIR/${APP_PRODUCT_NAME}-${MARKETING_VERSION}.dmg" ]]; then
-    xcrun stapler staple "$EXPORT_DIR/${APP_PRODUCT_NAME}-${MARKETING_VERSION}.dmg" 2>/dev/null || true
-  fi
+  DID_NOTARIZE=1
 else
-  echo "⚠️  Sin notarización: export NOTARY_APPLE_ID, NOTARY_PASSWORD, NOTARY_TEAM_ID"
-  echo "   Ver README.md → Release (mantenedor)"
+  echo "⚠️  Sin notarización: creá scripts/release.env.local (ver scripts/release.env.example)"
+  echo "   o exportá NOTARY_* / NOTARY_KEYCHAIN_PROFILE"
 fi
 
 DMG="$EXPORT_DIR/${APP_PRODUCT_NAME}-${MARKETING_VERSION}.dmg"
@@ -99,6 +119,11 @@ if command -v create-dmg >/dev/null; then
     "$APP"
 else
   echo "⚠️  Instalá create-dmg para generar .dmg: brew install create-dmg"
+fi
+
+# Notarizamos el .app (zip); el ticket va en Slots.app. El .dmg es solo contenedor — no hace falta staple en el DMG.
+if [[ "$DID_NOTARIZE" -eq 1 && -f "$DMG" ]]; then
+  echo "→ DMG listo (app dentro ya notarizada y stapleada)"
 fi
 
 if command -v shasum >/dev/null; then

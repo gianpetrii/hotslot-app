@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.18.1] — 2026-10-26
+
+### UX
+
+- Al pegar sin Accesibilidad: **diálogo nativo del sistema** primero (sin abrir Ajustes automáticamente).
+- Aviso único si el ⌘ no cabe en la barra de menú; `autosaveName` en el ítem.
+
+### Producto (base)
+
+- **Trial 90 días** desde primera instalación; después solo **slot 1** sin licencia.
+- Activación de clave en Ajustes; `docs/purchase.html` y `docs/MONETIZATION.md`.
+- Script de release: `release.env.local`, perfil `notarytool` en Llavero.
+
 ## [0.18.0] — 2026-10-25
 
 ### Marca y UX
