@@ -37,13 +37,53 @@ enum SampleDataFixture {
             )
         }
 
+        let presupuesto = """
+        Hola, gracias por escribir. Te paso el presupuesto actualizado con plazos y entregables. \
+        Cualquier duda avisame y lo vemos en una call breve esta semana.
+        """
+
         var slots: [SlotRecord] = [
-            makeSlot(libraryId: trabajo, order: 1, title: "Mi portfolio", kind: .link, text: "https://behance.net/gallery/ejemplo", meta: "Link · behance.net"),
-            makeSlot(libraryId: trabajo, order: 2, title: "Respuesta presupuesto", kind: .text, text: String(repeating: "Gracias por escribir. ", count: 12), meta: "Texto · 84 palabras"),
-            makeSlot(libraryId: trabajo, order: 3, title: "Link reunión", kind: .link, text: "https://meet.google.com/abc-defg-hij", meta: "Link · meet.google.com"),
-            makeSlot(libraryId: trabajo, order: 4, title: "Slot 4", kind: .text),
+            makeSlot(
+                libraryId: trabajo,
+                order: 1,
+                title: "Mi portfolio",
+                kind: .link,
+                text: "https://behance.net/gallery/ejemplo",
+                meta: "Link · behance.net"
+            ),
+            makeSlot(
+                libraryId: trabajo,
+                order: 2,
+                title: "Link de la reunión",
+                kind: .link,
+                text: "https://meet.google.com/abc-defg-hij",
+                meta: "Link · meet.google.com"
+            ),
+            makeSlot(
+                libraryId: trabajo,
+                order: 3,
+                title: "Respuesta presupuesto",
+                kind: .text,
+                text: presupuesto,
+                meta: "Texto · 36 palabras"
+            ),
+            makeSlot(
+                libraryId: trabajo,
+                order: 4,
+                title: "#E2501D",
+                kind: .color,
+                text: "#E2501D",
+                meta: "Color"
+            ),
             makeSlot(libraryId: trabajo, order: 5, title: "Slot 5", kind: .text),
-            makeSlot(libraryId: personal, order: 1, title: "Dirección estudio", kind: .text, text: "Av. Corrientes 1234, CABA", meta: "Texto · 6 palabras"),
+            makeSlot(
+                libraryId: personal,
+                order: 1,
+                title: "Dirección estudio",
+                kind: .text,
+                text: "Av. Corrientes 1234, CABA",
+                meta: "Texto · 6 palabras"
+            ),
             makeSlot(libraryId: personal, order: 2, title: "Slot 2", kind: .text),
             makeSlot(libraryId: personal, order: 3, title: "Slot 3", kind: .text),
             makeSlot(libraryId: clientes, order: 1, title: "Slot 1", kind: .text),
@@ -63,16 +103,23 @@ enum SampleDataFixture {
         historyStore.clear()
         historyStore.add(
             ClipItem(
-                content: .text("calendly.com/estudio/30min"),
-                createdAt: now.addingTimeInterval(-3600),
+                content: .text("macroled.com.ar/catalogo/arq"),
+                createdAt: now.addingTimeInterval(-120),
                 sourceAppName: "Safari"
             )
         )
         historyStore.add(
             ClipItem(
-                content: .text("Hola, ¿tenés disponibilidad el jueves?"),
-                createdAt: now.addingTimeInterval(-7200),
+                content: .text("Hola, te paso el presupuesto actualizado…"),
+                createdAt: now.addingTimeInterval(-120 * 60),
                 sourceAppName: "Mail"
+            )
+        )
+        historyStore.add(
+            ClipItem(
+                content: .text("calendly.com/estudio/30min"),
+                createdAt: now.addingTimeInterval(-3600),
+                sourceAppName: "Safari"
             )
         )
 

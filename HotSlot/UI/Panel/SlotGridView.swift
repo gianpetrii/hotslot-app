@@ -134,7 +134,11 @@ private struct SlotCardView: View {
                         suppressPeekForBadges = true
                         isEditingShortcuts = true
                     } label: {
-                        SlotHandoffShortcutChip(name: pasteShortcut, emphasized: isHovering)
+                        SlotHandoffShortcutChip(
+                            name: pasteShortcut,
+                            emphasized: isHovering,
+                            onMediaBackground: isImageContent && hasContent
+                        )
                     }
                     .buttonStyle(.plain)
                     .help("Clic para cambiar atajo de pegar")

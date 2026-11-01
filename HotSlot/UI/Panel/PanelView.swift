@@ -21,56 +21,57 @@ struct PanelView: View {
     private let listAnimation = Animation.spring(response: 0.34, dampingFraction: 0.82)
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            PanelChrome(revealWidth: revealWidth, revealHeight: revealHeight) {
-                VStack(spacing: HotSlotDesign.panelSectionGap) {
-                    PanelHeaderBlock(
-                        appState: appState,
-                        panelController: panelController,
-                        searchText: $searchText,
-                        isSearchFocused: $isSearchFocused
-                    )
-
-                    HStack(alignment: .top, spacing: HotSlotDesign.panelBodyGap) {
-                        SlotGridView(
+        VStack(spacing: HotSlotDesign.panelHintOutsideGap) {
+            ZStack(alignment: .topLeading) {
+                PanelChrome(revealWidth: revealWidth, revealHeight: revealHeight) {
+                    VStack(spacing: HotSlotDesign.panelSectionGap) {
+                        PanelHeaderBlock(
                             appState: appState,
                             panelController: panelController,
-                            searchText: searchText
+                            searchText: $searchText,
+                            isSearchFocused: $isSearchFocused
                         )
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                        HistoryListView(
-                            historyStore: appState.historyStore,
-                            items: filteredItems,
-                            isSearching: !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-                            onPaste: { item in
-                                appState.pasteItem(item, panelController: panelController)
-                            },
-                            keyboardHighlightIndex: $keyboardHighlightIndex
-                        )
-                        .frame(width: HotSlotDesign.historyColumnWidth)
+                        HStack(alignment: .top, spacing: HotSlotDesign.panelBodyGap) {
+                            SlotGridView(
+                                appState: appState,
+                                panelController: panelController,
+                                searchText: searchText
+                            )
+                            .padding(.top, HotSlotDesign.panelColumnTopInset)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                            HistoryListView(
+                                historyStore: appState.historyStore,
+                                items: filteredItems,
+                                isSearching: !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                                onPaste: { item in
+                                    appState.pasteItem(item, panelController: panelController)
+                                },
+                                keyboardHighlightIndex: $keyboardHighlightIndex
+                            )
+                            .padding(.top, HotSlotDesign.panelColumnTopInset)
+                            .frame(width: HotSlotDesign.historyColumnWidth)
+                        }
+                        .padding(.horizontal, HotSlotDesign.horizontalPadding)
+                        .frame(maxHeight: .infinity)
+                        .opacity(appState.panelBodyRevealed ? 1 : 0.35)
+
+                        PanelLibraryBar(appState: appState)
                     }
-                    .padding(.horizontal, HotSlotDesign.horizontalPadding)
-                    .frame(maxHeight: .infinity)
-                    .opacity(appState.panelBodyRevealed ? 1 : 0.35)
-
-                    PanelLibraryBar(appState: appState)
-
-                    Text("Clic para pegar · Arrastrá para guardar · Esc para cerrar")
-                        .font(SlotsFont.textoUI)
-                        .foregroundStyle(SlotsColor.textoTerciario)
-                        .frame(maxWidth: .infinity)
-                        .padding(.bottom, SlotsSpace.s)
+                    .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .top)
+                    .clipped()
                 }
-                .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .top)
-                .clipped()
             }
+            .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .topLeading)
+
+            panelShortcutHint
         }
-        .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .topLeading)
+        .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelWindowHeight, alignment: .top)
         .overlay(alignment: .bottom) {
             if let toast = appState.toastMessage {
                 ToastView(message: toast)
-                    .padding(.bottom, 18)
+                    .padding(.bottom, HotSlotDesign.panelHintOutsideHeight + 8)
                     .transition(.asymmetric(
                         insertion: .move(edge: .bottom).combined(with: .opacity),
                         removal: .opacity
@@ -132,6 +133,13 @@ struct PanelView: View {
         .environment(appState)
     }
 
+    private var panelShortcutHint: some View {
+        Text("Clic para pegar · Arrastrá para guardar · Esc para cerrar")
+            .font(SlotsFont.textoUI)
+            .foregroundStyle(SlotsColor.textoTerciario)
+            .frame(maxWidth: .infinity, minHeight: HotSlotDesign.panelHintOutsideHeight)
+    }
+
     private func playOpenAnimation() {
         unfoldGeneration += 1
         let generation = unfoldGeneration
@@ -156,7 +164,6 @@ struct PanelView: View {
             isSearchFocused = true
         }
 
-        // Si el spring no llega a disparar el segundo paso, el panel no puede quedar vacío.
         DispatchQueue.main.asyncAfter(deadline: .now() + HotSlotDesign.openRightDuration + 0.8) {
             guard generation == unfoldGeneration else { return }
             revealWidth = HotSlotDesign.panelWidth

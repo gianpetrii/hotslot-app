@@ -22,7 +22,8 @@ struct HistoryListView: View {
                     .font(SlotsFont.textoUI)
                     .foregroundStyle(SlotsColor.textoSecundario)
             }
-            .padding(.bottom, SlotsSpace.m)
+            .frame(minHeight: 28, alignment: .bottomLeading)
+            .padding(.bottom, SlotsSpace.s)
 
             if isSearching {
                 Text("\(items.count) resultados")

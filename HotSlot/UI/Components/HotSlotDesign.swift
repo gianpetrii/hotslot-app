@@ -7,7 +7,12 @@ enum HotSlotDesign {
     static let panelWidth: CGFloat = 1060
     static let panelHeight: CGFloat = 664
     static let panelFooterHeight: CGFloat = SlotsRadius.controlAlto
-    static let panelHintHeight: CGFloat = 30
+    /// Pista bajo el panel (handoff: fuera de la tarjeta de vidrio).
+    static let panelHintOutsideGap: CGFloat = 12
+    static let panelHintOutsideHeight: CGFloat = 22
+    static var panelWindowHeight: CGFloat {
+        panelHeight + panelHintOutsideGap + panelHintOutsideHeight
+    }
     /// Separación vertical entre cabecera, cuerpo y barra (handoff `Main.html` gap 24).
     static let panelSectionGap: CGFloat = SlotsSpace.l
     static let panelBodyGap: CGFloat = SlotsSpace.l
@@ -19,9 +24,10 @@ enum HotSlotDesign {
         panelHeight
             - panelHeaderHeight
             - panelFooterHeight
-            - panelHintHeight
             - panelSectionGap * 2
     }
+    /// Alineación óptica entre grilla e historial (misma línea superior de columna).
+    static let panelColumnTopInset: CGFloat = 2
     static let panelSearchFieldWidth: CGFloat = 300
     static let cornerRadius: CGFloat = SlotsRadius.ventana
     static let cardCornerRadius: CGFloat = SlotsRadius.card

@@ -46,6 +46,7 @@ struct ShortcutBadge: View {
 struct SlotHandoffShortcutChip: View {
     let name: KeyboardShortcuts.Name
     var emphasized: Bool = false
+    var onMediaBackground: Bool = false
     @Environment(AppState.self) private var appState
 
     private var shortcutLabel: String {
@@ -69,7 +70,12 @@ struct SlotHandoffShortcutChip: View {
     }
 
     private var chipBackground: Color {
-        if shortcutLabel == "—" { return SlotsColor.teclaFondo.opacity(0.6) }
+        if shortcutLabel == "—" {
+            return onMediaBackground ? Color.white.opacity(0.45) : SlotsColor.teclaFondo.opacity(0.6)
+        }
+        if onMediaBackground {
+            return Color.white.opacity(emphasized ? 0.88 : 0.75)
+        }
         return emphasized ? Color.white.opacity(0.92) : SlotsColor.teclaFondo
     }
 }

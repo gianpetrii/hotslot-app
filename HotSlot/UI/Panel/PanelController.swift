@@ -26,7 +26,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         self.appState = appState
 
         let panel = FloatingPanel(
-            contentRect: NSRect(x: 0, y: 0, width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight),
+            contentRect: NSRect(x: 0, y: 0, width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelWindowHeight),
             styleMask: [.nonactivatingPanel, .fullSizeContentView],
             backing: .buffered,
             defer: false
@@ -71,7 +71,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         guard let screen else { return }
 
         targetFrame = WindowPlacement.centeredFrame(
-            size: NSSize(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight),
+            size: NSSize(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelWindowHeight),
             on: screen
         )
         backdrop.show(on: screen) { [weak self] in
