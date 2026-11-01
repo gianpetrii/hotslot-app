@@ -45,3 +45,4 @@ Reemplazo **incremental** del panel actual (no big-bang en un solo PR): tokens �
 - Fuente de verdad de comportamiento: `01-docs/flujos.md` dentro del zip del handoff.
 - Medidas y copy: HTML en `05-flujos/html/` y `02-diseno/html-referencia/`.
 - Tokens Swift del handoff → `HotSlot/Design/SlotsTheme.swift`.
+- **Desvíos intencionales sobre el mock (para validar con Dante):** `docs/DESVIOS-DISENO-DANTE.md`.

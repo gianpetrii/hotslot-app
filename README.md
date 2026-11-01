@@ -116,3 +116,19 @@ HotSlot/
 ```
 
 Roadmap: `BACKLOG.md`
+
+## Documentación en el repo
+
+| Archivo | Uso |
+|---------|-----|
+| `README.md` | Entrada al proyecto, desarrollo y release |
+| `BACKLOG.md` | Etapas del rediseño y tareas |
+| `CHANGELOG.md` | Historial de versiones publicadas |
+| `docs/HANDOFF-README.md` | Dónde está el zip de Dante (Drive) |
+| `docs/DECISIONES-REDISENO.md` | Alcance macOS, monetización pausada, TCC, atajos |
+| `docs/DESVIOS-DISENO-DANTE.md` | Diferencias vs handoff para validar con Dante |
+| `docs/PRUEBA-MAC-REDISENO.md` | Checklist de humo antes del DMG |
+| `docs/MONETIZATION.md` | Lemon / licencia (referencia; gating pausado) |
+| `.cursor/rules/base-rules.md` | Reglas para el agente en Cursor |
+
+El handoff completo (`slots-handoff/`) **no** va en Git; ver `docs/HANDOFF-README.md`.

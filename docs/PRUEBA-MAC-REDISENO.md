@@ -42,8 +42,7 @@ Si falla: documentar build, bundle ID y si instalaste desde DerivedData vs `/App
 
 ## Desvíos conocidos aceptables en este build
 
-- Panel/historial: look aún híbrido vs HTML Dante en detalle fino.
-- TCC sin resolver.
-- iOS / monetización activa: fuera de alcance.
+Ver lista para Dante: **`docs/DESVIOS-DISENO-DANTE.md`** (actualizar estados tras su feedback).
 
-EOF
+- TCC Accesibilidad sin resolver (P0).
+- iOS / monetización activa: fuera de alcance.

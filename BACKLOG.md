@@ -69,7 +69,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 
 ## Rediseño Slots (handoff Dante · ver `docs/HANDOFF-README.md`)
 
-Objetivo: **build de prueba de usabilidad en Mac**. Decisiones: `docs/DECISIONES-REDISENO.md`.
+Objetivo: **build de prueba de usabilidad en Mac**. Decisiones: `docs/DECISIONES-REDISENO.md`. Desvíos de diseño para Dante: `docs/DESVIOS-DISENO-DANTE.md`.
 
 | Estado | Etapa | Alcance (macOS primero) |
 |--------|-------|-------------------------|
