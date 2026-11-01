@@ -61,6 +61,14 @@ final class StatusBarController {
         settingsItem.target = self
         menu.addItem(settingsItem)
 
+        let licenseItem = NSMenuItem(title: "Licencia…", action: #selector(openLicense), keyEquivalent: "")
+        licenseItem.target = self
+        menu.addItem(licenseItem)
+
+        let purchaseItem = NSMenuItem(title: "Comprar licencia…", action: #selector(openPurchase), keyEquivalent: "")
+        purchaseItem.target = self
+        menu.addItem(purchaseItem)
+
         let tourItem = NSMenuItem(title: "Cómo usar \(BrandDisplay.name)", action: #selector(openTour), keyEquivalent: "")
         tourItem.target = self
         menu.addItem(tourItem)
@@ -105,6 +113,14 @@ final class StatusBarController {
 
     @objc private func openSettings() {
         appState.openSettings?()
+    }
+
+    @objc private func openLicense() {
+        appState.openLicenseSettings()
+    }
+
+    @objc private func openPurchase() {
+        appState.openPurchasePage()
     }
 
     @objc private func openTour() {

@@ -56,8 +56,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self.presentUtilityWindow { reopen in
                 self.onboardingWindowController.show(appState: state) { openPanel in
                     NSApp.setActivationPolicy(.accessory)
-                    guard openPanel else { return }
-                    reopen()
+                    guard openPanel else {
+                        reopen()
+                        return
+                    }
+                    if self.shouldReopenPanelAfterUtility {
+                        reopen()
+                    } else {
+                        state.focusTracker.captureForUpcomingPaste()
+                        self.panelController?.show()
+                        state.isPanelVisible = true
+                    }
                 }
             }
         }

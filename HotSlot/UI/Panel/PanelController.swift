@@ -60,10 +60,13 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         if isVisible { return }
         isAnimating = false
 
-        let screen = screenForMouse() ?? NSScreen.main
+        let screen = WindowPlacement.screenForMouse() ?? NSScreen.main
         guard let screen else { return }
 
-        targetFrame = centeredFrame(on: screen)
+        targetFrame = WindowPlacement.centeredFrame(
+            size: NSSize(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight),
+            on: screen
+        )
         backdrop.show(on: screen) { [weak self] in
             self?.hide(animated: true)
         }
@@ -138,22 +141,6 @@ final class PanelController: NSWindowController, NSWindowDelegate {
 
     func windowDidResignKey(_ notification: Notification) {
         // Cerrar solo si el clic fue fuera (backdrop maneja eso); evitar cierre al interactuar con menú bar
-    }
-
-    private func screenForMouse() -> NSScreen? {
-        let mouse = NSEvent.mouseLocation
-        return NSScreen.screens.first { NSMouseInRect(mouse, $0.frame, false) } ?? NSScreen.main
-    }
-
-    private func centeredFrame(on screen: NSScreen) -> NSRect {
-        let visible = screen.visibleFrame
-        let size = NSSize(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight)
-        return NSRect(
-            x: visible.midX - size.width / 2,
-            y: visible.midY - size.height / 2,
-            width: size.width,
-            height: size.height
-        )
     }
 
     private func setupKeyMonitor() {

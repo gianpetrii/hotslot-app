@@ -1,13 +1,13 @@
 import Foundation
 
 /// Trial 90 días desde la primera instalación; después solo slot 1 sin licencia.
-/// Pago único USD 10 vía web + clave (ver `docs/MONETIZATION.md`).
+/// Pago único USD 10 vía Lemon Squeezy (ver `docs/MONETIZATION.md`).
 enum Entitlements {
     static let trialDurationDays = 90
     static let freeSlotIndexAfterTrial = 1
 
-    /// URL de compra (Lemon Squeezy / Gumroad / página propia). Actualizar al activar cobros.
-    static let purchaseURL = URL(string: "https://hotslot-app-docs.vercel.app/purchase.html")!
+    /// Checkout publicado en Lemon Squeezy.
+    static let purchaseURL = URL(string: "https://slots.lemonsqueezy.com/checkout/buy/a2e83610-199d-4d93-91f4-32d63f57d05d")!
 
     static func recordFirstLaunchIfNeeded() {
         var settings = AppSettings.load()
@@ -37,21 +37,47 @@ enum Entitlements {
         hasFullAccess
     }
 
+    /// Clave local de desarrollo (sin Lemon).
     @discardableResult
     static func activateLicenseKey(_ raw: String) -> Bool {
         let key = raw.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
-        guard LicenseKeyFormat.isValid(key) else { return false }
+        guard LicenseKeyFormat.isLegacySlotsKey(key) else { return false }
         var settings = AppSettings.load()
         settings.licenseKey = key
         settings.isLicensed = true
         settings.save()
         return true
     }
+
+    @MainActor
+    static func activateLicenseKeyOnline(_ raw: String) async -> String? {
+        let key = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        if LicenseKeyFormat.isLegacySlotsKey(key.uppercased()) {
+            activateLicenseKey(key)
+            return nil
+        }
+
+        let result = await LemonLicenseService.activate(licenseKey: key)
+        if result.success {
+            var settings = AppSettings.load()
+            settings.licenseKey = key
+            settings.isLicensed = true
+            settings.save()
+            return nil
+        }
+        return result.message
+    }
 }
 
-/// Formato provisional `SLOTS-XXXX-XXXX-XXXX` (checksum simple; reemplazar por validación server-side).
 enum LicenseKeyFormat {
-    static func isValid(_ key: String) -> Bool {
+    /// Formato Lemon Squeezy (UUID).
+    static func isLemonKey(_ key: String) -> Bool {
+        let pattern = #"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"#
+        return key.range(of: pattern, options: .regularExpression) != nil
+    }
+
+    /// Solo para pruebas locales / QA.
+    static func isLegacySlotsKey(_ key: String) -> Bool {
         let parts = key.split(separator: "-")
         guard parts.count == 4, parts[0] == "SLOTS" else { return false }
         return parts.dropFirst().allSatisfy { part in

@@ -36,6 +36,9 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
 
         guard let window else { return }
         installContent(in: window)
+        MainActor.assumeIsolated {
+            appState.accessibilityPresentingWindow = window
+        }
 
         if window.isVisible {
             window.orderFrontRegardless()
@@ -44,19 +47,17 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             return
         }
 
-        window.center()
+        let screen = WindowPlacement.screenForMouse() ?? NSScreen.main
+        if let screen {
+            window.setFrame(WindowPlacement.centeredFrame(size: window.frame.size, on: screen), display: true)
+        }
         window.alphaValue = 0
         window.makeKeyAndOrderFront(nil)
 
         isAnimating = true
-        NSAnimationContext.runAnimationGroup({ context in
-            context.duration = 0.16
-            context.timingFunction = CAMediaTimingFunction(name: .easeOut)
-            context.allowsImplicitAnimation = false
-            window.animator().alphaValue = 1
-        }, completionHandler: { [weak self] in
+        WindowPlacement.fadeIn(window) { [weak self] in
             self?.isAnimating = false
-        })
+        }
     }
 
     /// El TabView/Recorder de Ajustes usa ViewBridge. Achicar o `close()` tira una excepción
@@ -80,7 +81,9 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     private func installContent(in window: NSWindow) {
         guard let appState else { return }
         if window.contentViewController == nil {
-            let hosting = NSHostingController(rootView: SettingsView(appState: appState))
+            let hosting = NSHostingController(
+                rootView: SettingsView(appState: appState).environment(appState)
+            )
             hosting.safeAreaRegions = []
             window.contentViewController = hosting
         }
@@ -99,6 +102,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         MainActor.assumeIsolated {
             appState?.hotkeyManager.applyStoredShortcuts()
             appState?.noteShortcutsChanged()
+            appState?.accessibilityPresentingWindow = nil
             let reopen = onDismiss
             onDismiss = nil
             reopen?()

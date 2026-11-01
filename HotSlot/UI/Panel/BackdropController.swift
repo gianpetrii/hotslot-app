@@ -8,8 +8,8 @@ final class BackdropController {
 
     var isVisible: Bool { window?.isVisible == true }
 
-    func show(on screen: NSScreen, onClick: @escaping () -> Void) {
-        clickHandler = onClick
+    func show(on screen: NSScreen, passThroughClicks: Bool = false, onClick: @escaping () -> Void = {}) {
+        clickHandler = passThroughClicks ? nil : onClick
         let frame = screen.frame
 
         if window == nil {
@@ -26,7 +26,6 @@ final class BackdropController {
             panel.isOpaque = false
             panel.hasShadow = false
             panel.isReleasedWhenClosed = false
-            panel.ignoresMouseEvents = false
 
             let container = BackdropView(frame: frame)
             container.onClick = { [weak self] in self?.clickHandler?() }
@@ -34,6 +33,7 @@ final class BackdropController {
             window = panel
         }
 
+        window?.ignoresMouseEvents = passThroughClicks
         window?.setFrame(frame, display: true)
         window?.alphaValue = 0
         window?.orderFrontRegardless()

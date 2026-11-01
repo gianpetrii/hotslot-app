@@ -29,6 +29,13 @@ final class AppState {
     /// Sube cuando cambia un atajo grabado, para refrescar badges sin relanzar.
     var shortcutEpoch = 0
 
+    /// Ventana delante de la cual mostrar el aviso de Accesibilidad (onboarding / ajustes).
+    weak var accessibilityPresentingWindow: NSWindow?
+
+    /// Ocultar / restaurar el tour sin cerrarlo (otra app activa o aviso del sistema).
+    var onboardingHideChrome: (() -> Void)?
+    var onboardingRestoreChrome: (() -> Void)?
+
     var settings: AppSettings {
         get { AppSettings.load() }
         set { newValue.save() }
@@ -179,6 +186,11 @@ final class AppState {
 
     func openPurchasePage() {
         NSWorkspace.shared.open(Entitlements.purchaseURL)
+    }
+
+    func openLicenseSettings() {
+        pendingSettingsTab = .general
+        openSettings?()
     }
 
     func saveToSlot(index: Int, content: ClipContent, announce: Bool = true) {

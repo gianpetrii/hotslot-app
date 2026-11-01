@@ -14,14 +14,25 @@ enum AccessibilityPermission {
         return AXIsProcessTrustedWithOptions(options)
     }
 
-    /// Al pegar: primero el diálogo nativo; no abrimos Ajustes solos (el usuario elige desde el alert).
-    static func requestAccessForPaste() {
+    /// Diálogo nativo de macOS (una vez por firma/bundle). Menú bar (`accessory`) a veces no lo muestra.
+    static func requestAccessForPaste(prepareForSystemPrompt: (() -> Void)? = nil) {
+        guard !isTrusted else { return }
+
+        prepareForSystemPrompt?()
+        activateForSystemPrompt()
         _ = requestTrust(prompt: true)
     }
 
-    /// Solo si el usuario ya pasó por el diálogo o necesita el interruptor manual.
-    static func guideUserToGrantAccess() {
-        requestAccessForPaste()
+    /// Slots es LSUIElement; el aviso de Accesibilidad suele requerir app “normal” activa.
+    private static func activateForSystemPrompt() {
+        if NSApp.activationPolicy() == .accessory {
+            NSApp.setActivationPolicy(.regular)
+        }
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    static func guideUserToGrantAccess(prepareForSystemPrompt: (() -> Void)? = nil) {
+        requestAccessForPaste(prepareForSystemPrompt: prepareForSystemPrompt)
     }
 
     /// Deep link al panel Accesibilidad (Ventura / Sonoma / Sequoia).

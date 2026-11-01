@@ -53,6 +53,15 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
             }
 
+            Section("Barra de menú") {
+                Text("macOS no permite fijar el icono ⌘ por código. Arrastralo con ⌘ hacia la derecha (junto al reloj) para que no lo reemplacen otros iconos.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                Button("Cómo mantener \(BrandDisplay.name) visible…") {
+                    MenuBarGuide.present()
+                }
+            }
+
             Section("Licencia") {
                 if Entitlements.hasFullAccess {
                     if AppSettings.load().isLicensed {
@@ -69,16 +78,18 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                TextField("Clave SLOTS-XXXX-XXXX-XXXX", text: $licenseKeyInput)
+                TextField("Clave del email de compra (UUID)", text: $licenseKeyInput)
                     .textFieldStyle(.roundedBorder)
 
                 HStack {
                     Button("Activar licencia") {
-                        if Entitlements.activateLicenseKey(licenseKeyInput) {
-                            licensed = true
-                            appState.showToast("Licencia activada — gracias")
-                        } else {
-                            appState.showToast("Clave inválida")
+                        Task {
+                            if let error = await Entitlements.activateLicenseKeyOnline(licenseKeyInput) {
+                                appState.showToast(error)
+                            } else {
+                                licensed = true
+                                appState.showToast("Licencia activada — gracias")
+                            }
                         }
                     }
                     Button("Comprar…") {
@@ -175,21 +186,7 @@ struct SettingsView: View {
                     .font(.callout)
                     .foregroundStyle(.secondary)
 
-                if accessibilityTrusted {
-                    Button("Administrar en Ajustes del Sistema") {
-                        AccessibilityPermission.openSettings()
-                    }
-                } else {
-                    Button("Permitir Accesibilidad (diálogo del sistema)") {
-                        AccessibilityPermission.requestAccessForPaste()
-                    }
-                    Button("Abrir panel de Accesibilidad en Ajustes…") {
-                        AccessibilityPermission.openSettings()
-                    }
-                    Text("Primero usá el botón de arriba: macOS muestra un aviso para abrir Ajustes. Activá el interruptor junto a \(BrandDisplay.name).")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+                AccessibilityGrantSection(isTrusted: $accessibilityTrusted, style: .settingsForm)
             }
         }
         .formStyle(.grouped)

@@ -6,7 +6,8 @@ struct PanelSearchHeader: View {
     @FocusState.Binding var isSearchFocused: Bool
     let onOpenSettings: () -> Void
     let onOpenTour: () -> Void
-    let onClose: () -> Void
+    let onOpenLicense: () -> Void
+    let onQuit: () -> Void
     @State private var isEditingPanelShortcut = false
     @State private var isBadgeHovering = false
 
@@ -44,9 +45,10 @@ struct PanelSearchHeader: View {
 
             Menu {
                 Button("Cómo usar \(BrandDisplay.name)") { onOpenTour() }
+                Button("Licencia…") { onOpenLicense() }
                 Button("Ajustes…") { onOpenSettings() }
                 Divider()
-                Button("Cerrar panel") { onClose() }
+                Button("Salir de \(BrandDisplay.name)") { onQuit() }
             } label: {
                 Image(systemName: "ellipsis")
                     .font(.system(size: 13, weight: .semibold))

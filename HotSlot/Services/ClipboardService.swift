@@ -85,7 +85,27 @@ final class ClipboardService {
         )
 
         logDebug("Monitor iniciado (changeCount: \(pasteboard.changeCount))")
+        seedCurrentPasteboardIfHistoryEmpty()
         poll()
+    }
+
+    /// macOS no expone el historial interno del portapapeles; solo el clip actual. Si el historial está vacío (instalación nueva), lo agregamos una vez.
+    func seedCurrentPasteboardIfHistoryEmpty() {
+        guard historyStore?.items.isEmpty == true else { return }
+        guard !PasteboardHelper.shouldIgnore(pasteboard: pasteboard) else { return }
+        guard let content = PasteboardHelper.readContent(from: pasteboard) else { return }
+
+        lastCapturedChangeCount = pasteboard.changeCount
+        lastCapturedContent = content
+        let sourceApp = NSWorkspace.shared.frontmostApplication
+        let item = ClipItem(
+            content: content,
+            createdAt: Date(),
+            sourceAppName: sourceApp?.localizedName,
+            sourceAppBundleID: sourceApp?.bundleIdentifier
+        )
+        historyStore?.add(item)
+        logDebug("Historial inicial: clip actual del portapapeles")
     }
 
     func stop() {

@@ -112,14 +112,16 @@ struct OnboardingView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 340)
 
-            if item.demo != .accessibility {
+            if item.demo == .accessibility {
+                AccessibilityGrantSection(isTrusted: $accessibilityTrusted, style: .onboarding)
+            } else if item.demo == .menuBar {
+                menuBarBlock
+            } else {
                 onboardingDemo(for: item.demo)
                     .padding(.horizontal, 4)
-            } else {
-                accessibilityBlock
             }
 
-            if item.hint != nil {
+            if item.hint != nil, item.demo != .accessibility {
                 Text(item.hint!)
                     .font(HotSlotTypography.rowSecondary)
                     .foregroundStyle(.tertiary)
@@ -131,10 +133,10 @@ struct OnboardingView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
-    private var accessibilityBlock: some View {
+    private var menuBarBlock: some View {
         VStack(spacing: 14) {
-            Image(systemName: "lock.shield")
-                .font(.system(size: 36, weight: .medium))
+            Image(systemName: "menubar.rectangle")
+                .font(.system(size: 32, weight: .medium))
                 .foregroundStyle(.secondary)
                 .frame(width: 64, height: 64)
                 .background {
@@ -142,17 +144,11 @@ struct OnboardingView: View {
                         .fill(Color.primary.opacity(0.07))
                 }
 
-            if accessibilityTrusted {
-                Label("Accesibilidad concedida", systemImage: "checkmark.circle.fill")
-                    .font(HotSlotTypography.rowSecondary)
-                    .foregroundStyle(.secondary)
-            } else {
-                OnboardingChromeButton(title: "Abrir Accesibilidad en Ajustes…", emphasized: false) {
-                    AccessibilityPermission.guideUserToGrantAccess()
-                }
+            OnboardingChromeButton(title: "Cómo mantener ⌘ visible", emphasized: true) {
+                MenuBarGuide.present()
             }
         }
-        .padding(.top, 24)
+        .padding(.top, 16)
     }
 
     private func go(to index: Int) {
@@ -204,6 +200,12 @@ private struct OnboardingPage {
             hint: "Slots a la izquierda · historial a la derecha"
         ),
         OnboardingPage(
+            title: "Icono en la barra",
+            caption: "El ⌘ queda arriba a la derecha. Con ⌘+arrastrá movelo hacia el reloj: ahí no lo reemplazan otros iconos cuando la barra se llena.",
+            demo: .menuBar,
+            hint: "Tocá el botón para ver cómo evitar que se oculte"
+        ),
+        OnboardingPage(
             title: "Cinco slots",
             caption: "Pasá el mouse sobre el slot — el popover es igual al panel.",
             demo: .slot,
@@ -224,7 +226,7 @@ private struct OnboardingPage {
             title: "Pegado automático",
             caption: "Con Accesibilidad, un clic pega solo. Sin permiso, usás ⌘V.",
             demo: .accessibility,
-            hint: "Al tocar Empezar abrimos Ajustes → Permisos si aún no lo diste"
+            hint: "Usá el botón del diálogo del sistema antes de ir a Ajustes"
         ),
     ]
 }

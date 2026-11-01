@@ -25,7 +25,8 @@ struct PanelView: View {
                         isSearchFocused: $isSearchFocused,
                         onOpenSettings: { appState.openSettings?() },
                         onOpenTour: { appState.openOnboarding?() },
-                        onClose: { panelController.hide(animated: true) }
+                        onOpenLicense: { appState.openLicenseSettings() },
+                        onQuit: { NSApp.terminate(nil) }
                     )
 
                     HStack(alignment: .top, spacing: 0) {
