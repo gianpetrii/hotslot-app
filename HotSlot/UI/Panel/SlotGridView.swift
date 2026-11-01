@@ -6,6 +6,11 @@ import UniformTypeIdentifiers
 struct SlotGridView: View {
     @Bindable var appState: AppState
     let panelController: PanelController
+    var searchText: String = ""
+
+    private var isSearching: Bool {
+        !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -47,12 +52,18 @@ struct SlotGridView: View {
                         }
                     )
                     .frame(maxHeight: .infinity)
+                    .opacity(slotSearchOpacity(for: slot))
                 }
             }
             .padding(.horizontal, HotSlotDesign.horizontalPadding)
             .padding(.bottom, 4)
         }
         .frame(maxHeight: .infinity, alignment: .top)
+    }
+
+    private func slotSearchOpacity(for slot: Slot) -> Double {
+        guard isSearching else { return 1 }
+        return slot.matchesSearch(searchText) ? 1 : 0.3
     }
 }
 

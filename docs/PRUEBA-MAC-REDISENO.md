@@ -4,9 +4,8 @@ Usar **al final** del tramo Etapa 4–5 (no hace falta validar cada commit). TCC
 
 ## Antes
 
-- Run desde Xcode o DMG de prueba.
+- **Validá con Run en Xcode** (Debug) usando `docs/PRUEBA-MAC-REDISENO.md`. El **DMG notarizado** va después, cuando el humo local esté OK.
 - Opcional: ⌥ + clic en menú bar → **Cargar ejemplo**.
-- Handoff en Drive: [carpeta compartida](https://drive.google.com/drive/folders/1sNJnRxqazawSPMFkRs3up5D1INZxSpJB?usp=sharing).
 
 ## Flujo rápido (~15 min)
 

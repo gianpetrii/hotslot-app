@@ -14,6 +14,10 @@ struct PanelView: View {
         appState.historyStore.items.filter { $0.matchesSearch(searchText) }
     }
 
+    private var isSearching: Bool {
+        !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
     private let listAnimation = Animation.spring(response: 0.34, dampingFraction: 0.82)
 
     var body: some View {
@@ -28,7 +32,11 @@ struct PanelView: View {
                     )
 
                     HStack(alignment: .top, spacing: 0) {
-                        SlotGridView(appState: appState, panelController: panelController)
+                        SlotGridView(
+                            appState: appState,
+                            panelController: panelController,
+                            searchText: searchText
+                        )
                             .frame(width: HotSlotDesign.slotsColumnWidth)
 
                         Rectangle()
@@ -85,11 +93,24 @@ struct PanelView: View {
             return .handled
         }
         .onKeyPress(.return) {
-            pasteKeyboardHighlightedItem()
+            pasteFirstSearchResult()
             return .handled
         }
-        .onExitCommand {
+        .onKeyPress(.escape) {
+            if isSearching {
+                searchText = ""
+                keyboardHighlightIndex = nil
+                isSearchFocused = true
+                return .handled
+            }
             panelController.hide(animated: true)
+            appState.isPanelVisible = false
+            return .handled
+        }
+        .onKeyPress(keys: [.init("f")], phases: .down) { press in
+            guard press.modifiers.contains(.command) else { return .ignored }
+            isSearchFocused = true
+            return .handled
         }
         .onChange(of: appState.isPanelVisible) { _, visible in
             if visible {
@@ -159,5 +180,24 @@ struct PanelView: View {
         guard let index = keyboardHighlightIndex,
               index < filteredItems.count else { return }
         appState.pasteItem(filteredItems[index], panelController: panelController)
+    }
+
+    private func pasteFirstSearchResult() {
+        if let index = keyboardHighlightIndex, index < filteredItems.count {
+            appState.pasteItem(filteredItems[index], panelController: panelController)
+            return
+        }
+        if isSearching {
+            if let slot = appState.slotStore.slots.first(where: { $0.matchesSearch(searchText) && $0.content != nil }) {
+                appState.pasteSlot(index: slot.index, panelController: panelController)
+                return
+            }
+            if let first = filteredItems.first {
+                appState.pasteItem(first, panelController: panelController)
+                return
+            }
+            return
+        }
+        pasteKeyboardHighlightedItem()
     }
 }

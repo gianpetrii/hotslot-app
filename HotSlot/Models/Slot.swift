@@ -13,4 +13,12 @@ struct Slot: Codable, Identifiable, Equatable, Sendable {
             Slot(index: index, label: "Slot \(index)", content: nil)
         }
     }
+
+    func matchesSearch(_ query: String) -> Bool {
+        let q = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !q.isEmpty else { return true }
+        if label.localizedCaseInsensitiveContains(q) { return true }
+        if let content { return content.matchesSearch(q) }
+        return false
+    }
 }
