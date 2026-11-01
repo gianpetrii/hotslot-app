@@ -6,13 +6,11 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 
 ## Decisiones de producto (alineación Oct 2025 — actualizado)
 
-- **Monetización:** **90 días** de prueba desde la **instalación** → luego **USD 10** pago único (web + clave). Sin licencia: **solo slot 1**; historial y slots 2–5 bloqueados.
-- **Mensaje público:** **slots fijos** como lead (“el slot 2 siempre es el slot 2”); historial + búsqueda como complemento.
-- **Distribución:** DMG notarizado + GitHub Releases; repo **público** recomendado.
-- **Docs:** `docs/MONETIZATION.md`, `docs/purchase.html`; código en `Entitlements.swift`.
-- **Pendiente monetización:** pasarela (Lemon Squeezy / Gumroad), generación real de claves, endpoint de validación.
-- **Analytics (sin tocar el clipboard):** descargas GitHub + visitas Vercel; telemetría anónima opcional; actualizar privacidad si se activa.
-- **Fuera de v1:** ⌘C+número, píldora notch / modo blur.
+- **Monetización:** **90 días** de prueba → **USD 10** pago único (Lemon, `Entitlements.swift`). **UI de licencia visible**; no retomar cambios de gating/compra hasta cerrar el rediseño (ver `docs/DECISIONES-REDISENO.md`).
+- **Mensaje público:** **slots fijos** como lead; historial + búsqueda como complemento.
+- **Distribución:** DMG notarizado + GitHub Releases.
+- **Rediseño (nov 2026):** handoff Dante **fuera del repo** — enlace en `docs/HANDOFF-README.md`; **solo macOS primero**, iOS después.
+- **Fuera del build de usabilidad:** Sync, compras visibles, modo oscuro, iPad.
 
 ---
 
@@ -20,6 +18,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 
 | Estado | Pri | Tarea |
 |--------|-----|-------|
+| [ ] | P0 | **Accesibilidad (TCC):** aviso del sistema no aparece en 0.18.4 (DMG + `tccutil reset`); pegado solo vía **+** manual en Ajustes → Accesibilidad. Revisar sandbox, identidad del bundle, alternativa de onboarding y regresión vs builds antiguos. |
 | [x] | P0 | Fix pegado al clic en historial (Button + paste tras cerrar panel) |
 | [x] | P0 | Fix ventana de Ajustes (hotkeys, slots, general) |
 | [x] | P0 | Quitar highlight automático del ítem más reciente |
@@ -67,6 +66,23 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P2 | Expand/collapse de filas: texto animado; imagen crece desde arriba sin el “bajón” |
 | [x] | P2 | Onboarding de primera vez (tour saltables, repetible) |
 | [ ] | P3 | Grabar referencia del Clipboard nativo y afinar timing |
+
+## Rediseño Slots (handoff Dante · ver `docs/HANDOFF-README.md`)
+
+Objetivo: **build de prueba de usabilidad en Mac**. Decisiones: `docs/DECISIONES-REDISENO.md`.
+
+| Estado | Etapa | Alcance (macOS primero) |
+|--------|-------|-------------------------|
+| [x] | **0** | Diagnóstico — OK nov 2026 |
+| [x] | **1** | Tokens, fuentes, ícono, modelo Library/Slot/HistoryItem, fixture, eventos |
+| [ ] | **2** | ~~iOS 00–13~~ **pausado** hasta validar Mac |
+| [~] | **3** | Núcleo Mac: notch ✓, historial oculto (concealed) ✓, sync workspace ✓, atajos (existentes) |
+| [~] | **4** | Pantallas Mac: panel 1060×664 + pills bibliotecas ✓; onboarding/ajustes/rediseño visual pendiente |
+| [ ] | **5** | Humo Mac, versión, DMG, lista de desvíos (TestFlight cuando haya iOS) |
+
+| Estado | Pri | Tarea post-usabilidad |
+|--------|-----|------------------------|
+| [ ] | P1 | **Reactivar monetización** (trial, Lemon, compra, gating slots 2–5) |
 
 ## Otros
 

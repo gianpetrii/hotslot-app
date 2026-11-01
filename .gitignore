@@ -18,7 +18,8 @@ scripts/release.env.local
 scripts/release.env
 .env.local
 
-# Handoff / assets locales (no versionar)
+# Handoff: fuera del repo (ver docs/HANDOFF-README.md)
+docs/slots-handoff/
 docs/slots-handoff*.zip
 
 # XcodeGen (opcional regenerar)
