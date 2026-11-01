@@ -6,15 +6,21 @@ import SwiftUI
 enum HotSlotDesign {
     static let panelWidth: CGFloat = 1060
     static let panelHeight: CGFloat = 664
-    /// Título + buscador en una fila + separación al cuerpo (handoff Main.html).
-    static let panelHeaderHeight: CGFloat = 120
     static let panelFooterHeight: CGFloat = SlotsRadius.controlAlto
     static let panelHintHeight: CGFloat = 30
+    /// Separación vertical entre cabecera, cuerpo y barra (handoff `Main.html` gap 24).
+    static let panelSectionGap: CGFloat = SlotsSpace.l
     static let panelBodyGap: CGFloat = SlotsSpace.l
     static let historyColumnWidth: CGFloat = 330
-    /// Reservado para layout; el cuerpo usa el espacio flexible restante dentro de `panelHeight`.
+    /// Altura aproximada de cabecera (animación de apertura); el layout usa tamaño intrínseco + `panelSectionGap`.
+    static let panelHeaderHeight: CGFloat = 112
+    /// Referencia para demos; el panel usa `maxHeight: .infinity` entre secciones.
     static var panelBodyHeight: CGFloat {
-        panelHeight - panelHeaderHeight - panelFooterHeight - panelHintHeight
+        panelHeight
+            - panelHeaderHeight
+            - panelFooterHeight
+            - panelHintHeight
+            - panelSectionGap * 2
     }
     static let panelSearchFieldWidth: CGFloat = 300
     static let cornerRadius: CGFloat = SlotsRadius.ventana

@@ -23,14 +23,13 @@ struct PanelView: View {
     var body: some View {
         ZStack(alignment: .topLeading) {
             PanelChrome(revealWidth: revealWidth, revealHeight: revealHeight) {
-                VStack(spacing: 0) {
+                VStack(spacing: HotSlotDesign.panelSectionGap) {
                     PanelHeaderBlock(
                         appState: appState,
                         panelController: panelController,
                         searchText: $searchText,
                         isSearchFocused: $isSearchFocused
                     )
-                    .frame(height: HotSlotDesign.panelHeaderHeight, alignment: .top)
 
                     HStack(alignment: .top, spacing: HotSlotDesign.panelBodyGap) {
                         SlotGridView(
@@ -52,16 +51,16 @@ struct PanelView: View {
                         .frame(width: HotSlotDesign.historyColumnWidth)
                     }
                     .padding(.horizontal, HotSlotDesign.horizontalPadding)
-                    .frame(height: HotSlotDesign.panelBodyHeight)
+                    .frame(maxHeight: .infinity)
                     .opacity(appState.panelBodyRevealed ? 1 : 0.35)
 
                     PanelLibraryBar(appState: appState)
-                        .frame(height: HotSlotDesign.panelFooterHeight)
 
                     Text("Clic para pegar · Arrastrá para guardar · Esc para cerrar")
                         .font(SlotsFont.textoUI)
                         .foregroundStyle(SlotsColor.textoTerciario)
-                        .frame(maxWidth: .infinity, maxHeight: HotSlotDesign.panelHintHeight)
+                        .frame(maxWidth: .infinity)
+                        .padding(.bottom, SlotsSpace.s)
                 }
                 .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .top)
                 .clipped()

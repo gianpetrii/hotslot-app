@@ -120,7 +120,7 @@ private struct SlotCardView: View {
 
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top, spacing: 8) {
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 4) {
                         Text(SlotCardCopy.metaPrimary(for: slot))
                             .font(SlotsFont.etiqueta)
                         Text(SlotCardCopy.metaSecondary(for: slot))
@@ -134,7 +134,7 @@ private struct SlotCardView: View {
                         suppressPeekForBadges = true
                         isEditingShortcuts = true
                     } label: {
-                        ShortcutBadge(name: pasteShortcut, compact: false, emphasized: isHovering)
+                        SlotHandoffShortcutChip(name: pasteShortcut, emphasized: isHovering)
                     }
                     .buttonStyle(.plain)
                     .help("Clic para cambiar atajo de pegar")

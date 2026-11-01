@@ -28,7 +28,7 @@ struct PanelLibraryBar: View {
             saveClipboardButton
         }
         .padding(.horizontal, HotSlotDesign.horizontalPadding)
-        .frame(height: HotSlotDesign.panelFooterHeight)
+        .padding(.vertical, SlotsSpace.xs)
         .sheet(isPresented: $appState.isSaveClipboardSlotPickerPresented) {
             SaveClipboardSlotPickerSheet(appState: appState)
         }

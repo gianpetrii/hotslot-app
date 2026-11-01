@@ -22,7 +22,7 @@ struct HistoryListView: View {
                     .font(SlotsFont.textoUI)
                     .foregroundStyle(SlotsColor.textoSecundario)
             }
-            .padding(.bottom, SlotsSpace.s)
+            .padding(.bottom, SlotsSpace.m)
 
             if isSearching {
                 Text("\(items.count) resultados")
@@ -72,7 +72,7 @@ struct HistoryListView: View {
                                 )
                             }
                         }
-                        .padding(.bottom, 8)
+                        .padding(.bottom, SlotsSpace.m)
                     }
                     .scrollIndicators(.hidden)
                     .animation(listAnimation, value: items.map(\.id))

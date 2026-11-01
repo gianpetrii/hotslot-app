@@ -12,12 +12,13 @@ struct PanelHeaderBlock: View {
     }
 
     var body: some View {
-        HStack(alignment: .lastTextBaseline, spacing: SlotsSpace.l) {
+        HStack(alignment: .top, spacing: SlotsSpace.l) {
             Text(libraryName)
                 .font(SlotsFont.tituloPantalla(false))
                 .foregroundStyle(SlotsColor.tinta)
                 .lineLimit(1)
                 .minimumScaleFactor(0.55)
+                .padding(.top, 4)
 
             Spacer(minLength: 8)
 
@@ -43,7 +44,6 @@ struct PanelHeaderBlock: View {
         }
         .padding(.horizontal, HotSlotDesign.horizontalPadding)
         .padding(.top, SlotsSpace.xl)
-        .padding(.bottom, SlotsSpace.l)
         .background(WindowDragHandle())
     }
 

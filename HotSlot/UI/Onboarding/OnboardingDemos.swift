@@ -198,7 +198,7 @@ struct OnboardingHistoryDemo: View {
             isDemo: true
         )
         .frame(width: historyColumnWidth)
-        .frame(maxHeight: HotSlotDesign.panelBodyHeight - 24)
+        .frame(maxHeight: HotSlotDesign.panelBodyHeight)
     }
 }
 
