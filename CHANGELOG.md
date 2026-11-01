@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.18.2] — 2026-11-01
+
+### UX
+
+- Onboarding centrado, fondo no bloqueante, se oculta al cambiar de app.
+- Accesibilidad unificada (onboarding + Ajustes); menú barra: Licencia / Comprar; panel ⋯ Salir.
+- Semilla del clip actual al instalar; guía barra de menú.
+
+### Producto
+
+- Activación de licencia **Lemon Squeezy** (UUID); checkout en `purchase.html`.
+
 ## [0.18.1] — 2026-10-26
 
 ### UX
