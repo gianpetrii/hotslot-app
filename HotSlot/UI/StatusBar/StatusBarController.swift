@@ -58,9 +58,26 @@ final class StatusBarController {
     private func buildContextMenu(includeDeveloperItems: Bool) -> NSMenu {
         let menu = NSMenu()
 
-        let openItem = NSMenuItem(title: "Abrir panel", action: #selector(togglePanel), keyEquivalent: "")
+        let openItem = NSMenuItem(title: "Ver todo", action: #selector(togglePanel), keyEquivalent: "")
         openItem.target = self
         menu.addItem(openItem)
+
+        let libraryItem = NSMenuItem(title: "Biblioteca", action: nil, keyEquivalent: "")
+        let libraryMenu = NSMenu()
+        let libraries = appState.libraryWorkspace.workspace.libraries.sorted { $0.order < $1.order }
+        let activeId = appState.libraryWorkspace.workspace.activeLibraryId
+        for library in libraries {
+            let item = NSMenuItem(
+                title: library.id == activeId ? "✓ \(library.name)" : library.name,
+                action: #selector(selectLibrary(_:)),
+                keyEquivalent: ""
+            )
+            item.target = self
+            item.representedObject = library.id
+            libraryMenu.addItem(item)
+        }
+        libraryItem.submenu = libraryMenu
+        menu.addItem(libraryItem)
 
         menu.addItem(.separator())
 
@@ -130,6 +147,11 @@ final class StatusBarController {
             panelController.show()
             appState.isPanelVisible = true
         }
+    }
+
+    @objc private func selectLibrary(_ sender: NSMenuItem) {
+        guard let id = sender.representedObject as? UUID else { return }
+        appState.switchLibrary(to: id)
     }
 
     @objc private func openSettings() {

@@ -108,9 +108,9 @@ struct SectionHeader: View {
 
     var body: some View {
         Text(title.uppercased())
-            .font(HotSlotTypography.sectionTitle)
-            .foregroundStyle(.tertiary)
-            .tracking(0.4)
+            .font(SlotsFont.etiqueta)
+            .foregroundStyle(SlotsColor.textoSecundario)
+            .tracking(0.6)
             .padding(.horizontal, HotSlotDesign.horizontalPadding)
     }
 }

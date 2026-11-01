@@ -14,6 +14,10 @@ struct HistoryListView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             SectionHeader(title: "Historial")
+            Text("Arrastrá a un slot")
+                .font(SlotsFont.etiqueta)
+                .foregroundStyle(SlotsColor.textoSecundario)
+                .padding(.horizontal, HotSlotDesign.horizontalPadding)
 
             if items.isEmpty {
                 EmptyStateView(

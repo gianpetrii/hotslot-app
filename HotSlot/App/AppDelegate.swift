@@ -13,6 +13,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var updaterController: SPUStandardUpdaterController?
     private var shouldReopenPanelAfterUtility = false
     private var shouldPresentPanelAfterLaunch = false
+    private let launchSplash = LaunchSplashController()
 
     func applicationWillFinishLaunching(_ notification: Notification) {
         terminateOtherInstances()
@@ -83,11 +84,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         applyLaunchAtLoginSetting()
         updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
 
-        if !AppSettings.load().hasCompletedOnboarding {
+        let onboardingPending = !AppSettings.load().hasCompletedOnboarding
+        let userOpened = shouldPresentPanelAfterLaunch
+        let backgroundLaunch = LaunchSplashPolicy.isBackgroundSessionLaunch(userOpenedApp: userOpened)
+
+        if backgroundLaunch {
+            continueMainFlow(onboardingPending: onboardingPending, userOpened: userOpened)
+        } else if LaunchSplashPolicy.shouldPresent(userOpenedApp: userOpened, onboardingPending: onboardingPending) {
+            Task { @MainActor in
+                self.launchSplash.show { [weak self] in
+                    self?.continueMainFlow(onboardingPending: onboardingPending, userOpened: userOpened)
+                }
+            }
+        } else {
+            continueMainFlow(onboardingPending: onboardingPending, userOpened: userOpened)
+        }
+    }
+
+    @MainActor
+    private func continueMainFlow(onboardingPending: Bool, userOpened: Bool) {
+        if onboardingPending {
             DispatchQueue.main.async { [weak self] in
                 self?.appState?.openOnboarding?()
             }
-        } else if shouldPresentPanelAfterLaunch {
+        } else if userOpened {
             DispatchQueue.main.async { [weak self] in
                 self?.presentPanelFromUserLaunchIfAppropriate()
             }
