@@ -101,6 +101,14 @@ final class StatusBarController {
     }
 
     @objc private func togglePanel() {
+        if appState.isSettingsWindowVisible {
+            if !panelController.isVisible {
+                appState.focusTracker.captureForUpcomingPaste()
+                panelController.show()
+                appState.isPanelVisible = true
+            }
+            return
+        }
         if panelController.isVisible {
             panelController.hide()
             appState.isPanelVisible = false

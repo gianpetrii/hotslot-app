@@ -212,6 +212,13 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
 
                 AccessibilityGrantSection(isTrusted: $accessibilityTrusted, style: .settingsForm)
+
+                if !AccessibilityPermission.lastDiagnostic.isEmpty {
+                    Text(AccessibilityPermission.lastDiagnostic)
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                        .textSelection(.enabled)
+                }
             }
         }
         .formStyle(.grouped)

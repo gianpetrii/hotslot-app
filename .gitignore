@@ -18,5 +18,8 @@ scripts/release.env.local
 scripts/release.env
 .env.local
 
+# Handoff / assets locales (no versionar)
+docs/slots-handoff*.zip
+
 # XcodeGen (opcional regenerar)
 # HotSlot.xcodeproj

@@ -47,13 +47,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         state.openSettings = { [weak self] in
             guard let self, let state = self.appState else { return }
-            self.presentUtilityWindow {
-                self.settingsWindowController.show(appState: state, onDismiss: $0)
+            let anchor = self.panelController?.anchorFrameForUtilityWindows
+            self.presentUtilityWindow(hidePanelFirst: true) {
+                self.settingsWindowController.show(
+                    appState: state,
+                    panelAnchorFrame: anchor,
+                    onDismiss: $0
+                )
             }
         }
         state.openOnboarding = { [weak self] in
             guard let self, let state = self.appState else { return }
-            self.presentUtilityWindow { reopen in
+            self.presentUtilityWindow(hidePanelFirst: true) { reopen in
                 self.onboardingWindowController.show(appState: state) { openPanel in
                     NSApp.setActivationPolicy(.accessory)
                     guard openPanel else {
@@ -109,8 +114,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @MainActor
     func openSettingsFromAppMenu() {
         guard let state = appState else { return }
-        presentUtilityWindow { [self] reopen in
-            settingsWindowController.show(appState: state, onDismiss: reopen)
+        let anchor = panelController?.anchorFrameForUtilityWindows
+        presentUtilityWindow(hidePanelFirst: true) { [self] reopen in
+            settingsWindowController.show(
+                appState: state,
+                panelAnchorFrame: anchor,
+                onDismiss: reopen
+            )
         }
     }
 
@@ -120,8 +130,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @MainActor
-    private func presentUtilityWindow(show: @escaping (@escaping () -> Void) -> Void) {
-        shouldReopenPanelAfterUtility = panelController?.isVisible == true
+    private func presentUtilityWindow(
+        hidePanelFirst: Bool,
+        show: @escaping (@escaping () -> Void) -> Void
+    ) {
+        shouldReopenPanelAfterUtility = hidePanelFirst && panelController?.isVisible == true
 
         let finishUtility = { [weak self] in
             guard let self else { return }

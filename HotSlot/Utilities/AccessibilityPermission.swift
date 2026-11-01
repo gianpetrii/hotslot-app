@@ -1,36 +1,77 @@
 import ApplicationServices
 import AppKit
+import os.log
 
 /// Permiso de Accesibilidad, necesario para sintetizar ⌘V.
 enum AccessibilityPermission {
+    private static let logger = Logger(subsystem: "com.hotslot.app", category: "Accessibility")
+
+    /// Último intento (visible en Ajustes → Permisos para depuración).
+    private(set) static var lastDiagnostic: String = ""
+
+    /// Evita que el tour se oculte al resignar foco mientras macOS muestra el aviso TCC.
+    static var isAccessibilityPromptInFlight: Bool {
+        Date() < promptGraceUntil
+    }
+
+    private static var promptGraceUntil = Date.distantPast
+
     static var isTrusted: Bool {
         AXIsProcessTrusted()
     }
 
     @discardableResult
     static func requestTrust(prompt: Bool = true) -> Bool {
-        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: prompt] as CFDictionary
-        return AXIsProcessTrustedWithOptions(options)
+        let key = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String
+        let options = NSDictionary(dictionary: [
+            key: prompt ? kCFBooleanTrue as Any : kCFBooleanFalse as Any,
+        ])
+        return AXIsProcessTrustedWithOptions(options as CFDictionary)
     }
 
-    /// Igual que en 0.18.1: diálogo TCC; menú bar pasa a `.regular` y ventana clave antes del aviso.
     static func requestAccessForPaste(focusWindow: NSWindow? = nil) {
-        guard !isTrusted else { return }
+        guard !isTrusted else {
+            recordDiagnostic("omitido: ya concedido")
+            return
+        }
 
         if NSApp.activationPolicy() == .accessory {
             NSApp.setActivationPolicy(.regular)
         }
         NSApp.activate(ignoringOtherApps: true)
         focusWindow?.makeKeyAndOrderFront(nil)
+        focusWindow?.makeMain()
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-            guard !isTrusted else { return }
-            _ = requestTrust(prompt: true)
+        promptGraceUntil = Date().addingTimeInterval(3)
+
+        let trustedBefore = isTrusted
+        let bundlePath = Bundle.main.bundleURL.path
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+            let promptReturnedTrusted = requestTrust(prompt: true)
+            let trustedAfter = isTrusted
+
+            var lines = [
+                "before=\(trustedBefore) after=\(trustedAfter)",
+                "AXWithOptions=\(promptReturnedTrusted)",
+                "policy=\(NSApp.activationPolicy().rawValue)",
+                "bundle=\(Bundle.main.bundleURL.lastPathComponent)",
+                "path=\(bundlePath)",
+            ]
+            if bundlePath.contains("DerivedData") {
+                lines.append("nota=Run desde DerivedData: probá /Applications/Slots.app (DMG) para el aviso TCC.")
+            }
+            recordDiagnostic(lines.joined(separator: " "))
+
+            if !trustedAfter && !promptReturnedTrusted {
+                logger.notice("TCC: si no hubo aviso, macOS ya lo mostró antes o hay que activar en Ajustes → Accesibilidad.")
+            }
+
+            if !trustedAfter {
+                promptGraceUntil = Date().addingTimeInterval(1)
+            } else {
+                promptGraceUntil = Date.distantPast
+            }
         }
-    }
-
-    static func guideUserToGrantAccess(focusWindow: NSWindow? = nil) {
-        requestAccessForPaste(focusWindow: focusWindow)
     }
 
     static func openSettings() {
@@ -45,6 +86,14 @@ enum AccessibilityPermission {
         NSWorkspace.shared.open(
             URL(fileURLWithPath: "/System/Applications/System Settings.app")
         )
+    }
+
+    private static func recordDiagnostic(_ message: String) {
+        lastDiagnostic = message
+        logger.info("\(message, privacy: .public)")
+        #if DEBUG
+        print("[Slots Accessibility] \(message)")
+        #endif
     }
 }
 

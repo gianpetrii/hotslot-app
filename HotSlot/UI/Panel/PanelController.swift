@@ -15,6 +15,13 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         window?.isVisible == true
     }
 
+    /// Posición del panel para colocar Ajustes al lado (frame en pantalla si está visible).
+    var anchorFrameForUtilityWindows: NSRect? {
+        if let window, window.isVisible { return window.frame }
+        guard targetFrame.width > 1, targetFrame.height > 1 else { return nil }
+        return targetFrame
+    }
+
     init(appState: AppState) {
         self.appState = appState
 
@@ -68,7 +75,9 @@ final class PanelController: NSWindowController, NSWindowDelegate {
             on: screen
         )
         backdrop.show(on: screen) { [weak self] in
-            self?.hide(animated: true)
+            guard let self else { return }
+            guard !self.appState.isSettingsWindowVisible else { return }
+            self.hide(animated: true)
         }
 
         openGeneration += 1

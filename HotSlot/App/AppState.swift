@@ -32,9 +32,8 @@ final class AppState {
     /// Ventana delante de la cual mostrar el aviso de Accesibilidad (onboarding / ajustes).
     weak var accessibilityPresentingWindow: NSWindow?
 
-    /// Ocultar / restaurar el tour sin cerrarlo (otra app activa o aviso del sistema).
-    var onboardingHideChrome: (() -> Void)?
-    var onboardingRestoreChrome: (() -> Void)?
+    /// Ajustes abiertos: el icono de menú bar no cierra el panel flotante al tocarlo.
+    var isSettingsWindowVisible = false
 
     var settings: AppSettings {
         get { AppSettings.load() }

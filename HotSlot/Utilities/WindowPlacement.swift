@@ -7,6 +7,10 @@ enum WindowPlacement {
         return NSScreen.screens.first { NSMouseInRect(mouse, $0.frame, false) } ?? NSScreen.main
     }
 
+    static func screenContaining(_ frame: NSRect) -> NSScreen? {
+        NSScreen.screens.first { $0.frame.intersects(frame) } ?? NSScreen.main
+    }
+
     static func centeredFrame(size: NSSize, on screen: NSScreen?) -> NSRect {
         let screen = screen ?? NSScreen.main
         let visible = screen?.visibleFrame ?? NSScreen.main?.visibleFrame ?? .zero
@@ -16,6 +20,31 @@ enum WindowPlacement {
             width: size.width,
             height: size.height
         )
+    }
+
+    /// Ajustes tras cerrar el panel: ocupa el mismo lugar que el panel, desplazado un poco arriba-derecha.
+    static let settingsWindowSize = NSSize(width: 520, height: 540)
+
+    static func utilityWindowFrame(
+        size: NSSize = settingsWindowSize,
+        beside panelFrame: NSRect?,
+        diagonalRight: CGFloat = 28,
+        diagonalUp: CGFloat = 36,
+        on screen: NSScreen?
+    ) -> NSRect {
+        let screen = screen ?? NSScreen.main
+        let visible = screen?.visibleFrame ?? NSScreen.main?.visibleFrame ?? .zero
+        guard let panelFrame, panelFrame.width > 1, panelFrame.height > 1 else {
+            return centeredFrame(size: size, on: screen)
+        }
+
+        var origin = NSPoint(
+            x: panelFrame.midX - size.width / 2 + diagonalRight,
+            y: panelFrame.midY - size.height / 2 + diagonalUp
+        )
+        origin.x = max(visible.minX + 8, min(origin.x, visible.maxX - size.width - 8))
+        origin.y = max(visible.minY + 8, min(origin.y, visible.maxY - size.height - 8))
+        return NSRect(origin: origin, size: size)
     }
 
     static func fadeIn(_ window: NSWindow, duration: TimeInterval = 0.16, completion: (() -> Void)? = nil) {

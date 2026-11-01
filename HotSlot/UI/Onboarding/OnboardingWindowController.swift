@@ -7,13 +7,11 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
     private var window: NSWindow?
     private var appState: AppState?
     private var backdrop: BackdropController?
-    private var sessionObservers: [NSObjectProtocol] = []
     /// `true` = el usuario tocó «Empezar» y conviene reabrir el panel al cerrar.
     private var onDismiss: ((Bool) -> Void)?
     private var isAnimating = false
     private var reopenPanelOnDismiss = false
     private var sessionActive = false
-    private var chromeHiddenForBackground = false
     /// Posición elegida por el usuario (no recentrar al restaurar).
     private var savedChromeFrame: NSRect?
 
@@ -22,7 +20,6 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
         self.onDismiss = onDismiss
         reopenPanelOnDismiss = false
         sessionActive = true
-        chromeHiddenForBackground = false
 
         if window == nil {
             let onboardingWindow = NSWindow(
@@ -47,11 +44,7 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
 
         MainActor.assumeIsolated {
             appState.accessibilityPresentingWindow = window
-            appState.onboardingHideChrome = { [weak self] in self?.hideChrome() }
-            appState.onboardingRestoreChrome = { [weak self] in self?.restoreChrome() }
         }
-
-        registerSessionObservers()
 
         KeyboardShortcuts.disable(KeyboardShortcuts.Name.allShortcutNames)
         NSApp.setActivationPolicy(.regular)
@@ -66,30 +59,6 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
     func windowDidMove(_ notification: Notification) {
         guard let window, window.isVisible, sessionActive else { return }
         savedChromeFrame = window.frame
-    }
-
-    /// Oculta tour y fondo sin terminar la sesión (otra app o aviso del sistema).
-    func hideChrome() {
-        guard sessionActive, let window else { return }
-        guard window.isVisible else {
-            chromeHiddenForBackground = true
-            MainActor.assumeIsolated { backdrop?.hide() }
-            return
-        }
-        savedChromeFrame = window.frame
-        window.orderOut(nil)
-        MainActor.assumeIsolated { backdrop?.hide() }
-        chromeHiddenForBackground = true
-    }
-
-    /// Vuelve a mostrar el tour si la sesión sigue abierta.
-    func restoreChrome() {
-        guard sessionActive, !isAnimating else { return }
-        guard let window else { return }
-        guard AppSettings.load().hasCompletedOnboarding == false else { return }
-        guard chromeHiddenForBackground || !window.isVisible else { return }
-        chromeHiddenForBackground = false
-        presentChrome(animated: true, recenter: false)
     }
 
     private func presentChrome(animated: Bool, recenter: Bool) {
@@ -118,36 +87,6 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
         WindowPlacement.fadeIn(window) { [weak self] in
             self?.isAnimating = false
         }
-    }
-
-    private func registerSessionObservers() {
-        removeSessionObservers()
-        let center = NotificationCenter.default
-        sessionObservers.append(
-            center.addObserver(
-                forName: NSApplication.didResignActiveNotification,
-                object: NSApp,
-                queue: .main
-            ) { [weak self] _ in
-                self?.hideChrome()
-            }
-        )
-        sessionObservers.append(
-            center.addObserver(
-                forName: NSApplication.didBecomeActiveNotification,
-                object: NSApp,
-                queue: .main
-            ) { [weak self] _ in
-                self?.restoreChrome()
-            }
-        )
-    }
-
-    private func removeSessionObservers() {
-        for observer in sessionObservers {
-            NotificationCenter.default.removeObserver(observer)
-        }
-        sessionObservers.removeAll()
     }
 
     private func alignOnScreen(_ window: NSWindow) {
@@ -179,8 +118,6 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
     private func beginDismiss(_ sender: NSWindow) {
         isAnimating = true
         sessionActive = false
-        chromeHiddenForBackground = false
-        removeSessionObservers()
         teardownContent(in: sender)
         MainActor.assumeIsolated { backdrop?.hide() }
 
@@ -224,8 +161,6 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
 
             appState?.hotkeyManager.applyStoredShortcuts()
             appState?.accessibilityPresentingWindow = nil
-            appState?.onboardingHideChrome = nil
-            appState?.onboardingRestoreChrome = nil
             let reopen = onDismiss
             let openPanel = reopenPanelOnDismiss
             onDismiss = nil

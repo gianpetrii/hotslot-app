@@ -80,6 +80,13 @@ private final class BackdropView: NSView {
     }
 
     override func mouseDown(with event: NSEvent) {
+        let mouse = NSEvent.mouseLocation
+        let screen = window?.screen
+            ?? NSScreen.screens.first { NSMouseInRect(mouse, $0.frame, false) }
+            ?? NSScreen.main
+        if let screen, mouse.y > screen.visibleFrame.maxY {
+            return
+        }
         onClick?()
     }
 }

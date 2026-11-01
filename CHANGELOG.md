@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.18.4] — 2026-11-01
+
+### UX
+
+- Panel se cierra al abrir Ajustes/Licencia; misma posición diagonal; vuelve al cerrar Ajustes.
+- Ajustes flotante sin ocultarse al usar otra app o la barra de menú; barra de menú no cierra el panel con Ajustes abiertos.
+- Fondo del panel ignora clics en la barra de menú; scroll a Licencia sin mover la ventana.
+
+### Accesibilidad
+
+- TCC: `kCFBooleanTrue`, ventana principal, reintento de posición; diagnóstico en Permisos.
+
 ## [0.18.3] — 2026-11-01
 
 ### UX

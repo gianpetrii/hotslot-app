@@ -8,14 +8,20 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     private var appState: AppState?
     private var onDismiss: (() -> Void)?
     private var isAnimating = false
+    /// Misma posición para Ajustes, Licencia, etc. mientras el panel siga en esa pantalla.
+    private var lockedPlacementFrame: NSRect?
 
-    func show(appState: AppState, onDismiss: @escaping () -> Void) {
+    func show(
+        appState: AppState,
+        panelAnchorFrame: NSRect? = nil,
+        onDismiss: @escaping () -> Void
+    ) {
         self.appState = appState
         self.onDismiss = onDismiss
 
         if window == nil {
             let settingsWindow = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 520, height: 540),
+                contentRect: NSRect(origin: .zero, size: WindowPlacement.settingsWindowSize),
                 styleMask: [.titled, .closable, .miniaturizable],
                 backing: .buffered,
                 defer: false
@@ -23,9 +29,11 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             settingsWindow.title = "Ajustes de \(BrandDisplay.name)"
             settingsWindow.isReleasedWhenClosed = false
             settingsWindow.delegate = self
-            settingsWindow.level = .normal
-            settingsWindow.collectionBehavior = [.moveToActiveSpace]
+            settingsWindow.level = NSWindow.Level(rawValue: NSWindow.Level.floating.rawValue + 2)
+            settingsWindow.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
             settingsWindow.animationBehavior = .none
+            settingsWindow.contentMinSize = WindowPlacement.settingsWindowSize
+            settingsWindow.contentMaxSize = WindowPlacement.settingsWindowSize
             window = settingsWindow
         }
 
@@ -37,33 +45,63 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         installContent(in: window)
         MainActor.assumeIsolated {
             appState.accessibilityPresentingWindow = window
+            appState.isSettingsWindowVisible = true
+        }
+
+        let screen = panelAnchorFrame.flatMap { WindowPlacement.screenContaining($0) }
+            ?? WindowPlacement.screenForMouse()
+            ?? NSScreen.main
+        if let screen {
+            let frame: NSRect
+            if let panelAnchorFrame {
+                frame = WindowPlacement.utilityWindowFrame(beside: panelAnchorFrame, on: screen)
+                lockedPlacementFrame = frame
+            } else if let lockedPlacementFrame {
+                frame = lockedPlacementFrame
+            } else {
+                frame = WindowPlacement.centeredFrame(
+                    size: WindowPlacement.settingsWindowSize,
+                    on: screen
+                )
+            }
+            applyLockedPlacement(frame, to: window)
         }
 
         if window.isVisible {
             window.makeKeyAndOrderFront(nil)
             NSApp.activate(ignoringOtherApps: true)
+            schedulePlacementReassertion()
             return
         }
 
-        let screen = WindowPlacement.screenForMouse() ?? NSScreen.main
-        if let screen {
-            window.setFrame(WindowPlacement.centeredFrame(size: window.frame.size, on: screen), display: true)
-        }
         window.alphaValue = 0
         window.makeKeyAndOrderFront(nil)
 
         isAnimating = true
         WindowPlacement.fadeIn(window) { [weak self] in
             self?.isAnimating = false
+            self?.schedulePlacementReassertion()
         }
     }
 
-    func windowDidResignKey(_ notification: Notification) {
-        window?.orderBack(nil)
+    private func applyLockedPlacement(_ frame: NSRect, to window: NSWindow) {
+        window.setFrame(frame, display: true)
     }
 
-    /// El TabView/Recorder de Ajustes usa ViewBridge.
-    /// y Xcode frena en `(lldb)` con la ventana clavada.
+    /// El scroll a Licencia puede mover el layout; volvemos a la misma posición que Ajustes.
+    private func schedulePlacementReassertion() {
+        guard let lockedPlacementFrame, let window else { return }
+        let frame = lockedPlacementFrame
+        DispatchQueue.main.async { [weak self] in
+            self?.applyLockedPlacement(frame, to: window)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { [weak self] in
+            self?.applyLockedPlacement(frame, to: window)
+        }
+    }
+
+    /// Sin `orderBack`: la ventana sigue visible aunque otra app o el menú bar tomen el foco.
+    /// El TabView/Recorder de Ajustes usa ViewBridge; `windowShouldClose` anima el cierre para que Xcode no quede en `(lldb)` con la ventana clavada.
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         guard !isAnimating else { return false }
         isAnimating = true
@@ -105,6 +143,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             appState?.hotkeyManager.applyStoredShortcuts()
             appState?.noteShortcutsChanged()
             appState?.accessibilityPresentingWindow = nil
+            appState?.isSettingsWindowVisible = false
             let reopen = onDismiss
             onDismiss = nil
             reopen?()
