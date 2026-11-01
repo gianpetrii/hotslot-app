@@ -153,7 +153,7 @@ final class AppState {
     @discardableResult
     func ensureAccessibilityForPaste() -> Bool {
         guard AccessibilityPermission.isTrusted else {
-            AccessibilityPermission.requestAccessForPaste()
+            AccessibilityPermission.requestAccessForPaste(focusWindow: accessibilityPresentingWindow)
             showToast("Permití el control en el diálogo del sistema (Accesibilidad)")
             FeedbackSound.play(.pasteFailed)
             return false
@@ -188,8 +188,12 @@ final class AppState {
         NSWorkspace.shared.open(Entitlements.purchaseURL)
     }
 
+    /// Al abrir Licencia desde el panel: ir a General y scroll a la sección.
+    var pendingScrollToLicense = false
+
     func openLicenseSettings() {
         pendingSettingsTab = .general
+        pendingScrollToLicense = true
         openSettings?()
     }
 

@@ -64,10 +64,12 @@ struct AccessibilityGrantSection: View {
     }
 
     private func requestAccessibilityFromUI() {
-        AccessibilityPermission.requestAccessForPaste()
-        isTrusted = AccessibilityPermission.isTrusted
-        guard !isTrusted else { return }
-        appState.showToast("Si no aparece el aviso, abrí Accesibilidad en Ajustes y activá Slots (o agregá la app con +).")
+        AccessibilityPermission.requestAccessForPaste(focusWindow: appState.accessibilityPresentingWindow)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            isTrusted = AccessibilityPermission.isTrusted
+        }
+        guard !AccessibilityPermission.isTrusted else { return }
+        appState.showToast("Si no ves un aviso del sistema, usá el botón de Abrir Accesibilidad en Ajustes.")
     }
 }
 

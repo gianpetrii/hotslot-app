@@ -7,35 +7,32 @@ enum AccessibilityPermission {
         AXIsProcessTrusted()
     }
 
-    /// Muestra el diálogo del sistema (“¿Permitir controlar la Mac?”) si aún no hay permiso.
     @discardableResult
     static func requestTrust(prompt: Bool = true) -> Bool {
         let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: prompt] as CFDictionary
         return AXIsProcessTrustedWithOptions(options)
     }
 
-    /// Diálogo nativo de macOS (una vez por firma/bundle). Menú bar (`accessory`) a veces no lo muestra.
-    static func requestAccessForPaste(prepareForSystemPrompt: (() -> Void)? = nil) {
+    /// Igual que en 0.18.1: diálogo TCC; menú bar pasa a `.regular` y ventana clave antes del aviso.
+    static func requestAccessForPaste(focusWindow: NSWindow? = nil) {
         guard !isTrusted else { return }
 
-        prepareForSystemPrompt?()
-        activateForSystemPrompt()
-        _ = requestTrust(prompt: true)
-    }
-
-    /// Slots es LSUIElement; el aviso de Accesibilidad suele requerir app “normal” activa.
-    private static func activateForSystemPrompt() {
         if NSApp.activationPolicy() == .accessory {
             NSApp.setActivationPolicy(.regular)
         }
         NSApp.activate(ignoringOtherApps: true)
+        focusWindow?.makeKeyAndOrderFront(nil)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            guard !isTrusted else { return }
+            _ = requestTrust(prompt: true)
+        }
     }
 
-    static func guideUserToGrantAccess(prepareForSystemPrompt: (() -> Void)? = nil) {
-        requestAccessForPaste(prepareForSystemPrompt: prepareForSystemPrompt)
+    static func guideUserToGrantAccess(focusWindow: NSWindow? = nil) {
+        requestAccessForPaste(focusWindow: focusWindow)
     }
 
-    /// Deep link al panel Accesibilidad (Ventura / Sonoma / Sequoia).
     static func openSettings() {
         let candidates = [
             "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_Accessibility",
@@ -76,7 +73,6 @@ enum AccessibilityFocus {
         "AXBusyIndicator",
     ]
 
-    /// Texto seleccionado en la app (o en el foco del sistema). Vacío = no hay selección.
     static func selectedText(in app: NSRunningApplication? = nil) -> String? {
         guard AccessibilityPermission.isTrusted else { return nil }
         guard var node = focusedElement(in: app) else { return nil }
@@ -91,7 +87,6 @@ enum AccessibilityFocus {
         return nil
     }
 
-    /// Si el foco de esa app puede recibir un pegado de texto.
     static func canAcceptPaste(in app: NSRunningApplication) -> Bool {
         guard AccessibilityPermission.isTrusted else { return true }
         guard let node = focusedElement(in: app) else { return true }

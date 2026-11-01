@@ -15,7 +15,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
 
         if window == nil {
             let settingsWindow = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 520, height: 420),
+                contentRect: NSRect(x: 0, y: 0, width: 520, height: 540),
                 styleMask: [.titled, .closable, .miniaturizable],
                 backing: .buffered,
                 defer: false
@@ -23,8 +23,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             settingsWindow.title = "Ajustes de \(BrandDisplay.name)"
             settingsWindow.isReleasedWhenClosed = false
             settingsWindow.delegate = self
-            // Por encima del panel flotante (`floating + 1` en `PanelController`).
-            settingsWindow.level = NSWindow.Level(rawValue: NSWindow.Level.floating.rawValue + 2)
+            settingsWindow.level = .normal
             settingsWindow.collectionBehavior = [.moveToActiveSpace]
             settingsWindow.animationBehavior = .none
             window = settingsWindow
@@ -41,7 +40,6 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         }
 
         if window.isVisible {
-            window.orderFrontRegardless()
             window.makeKeyAndOrderFront(nil)
             NSApp.activate(ignoringOtherApps: true)
             return
@@ -60,7 +58,11 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         }
     }
 
-    /// El TabView/Recorder de Ajustes usa ViewBridge. Achicar o `close()` tira una excepción
+    func windowDidResignKey(_ notification: Notification) {
+        window?.orderBack(nil)
+    }
+
+    /// El TabView/Recorder de Ajustes usa ViewBridge.
     /// y Xcode frena en `(lldb)` con la ventana clavada.
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         guard !isAnimating else { return false }

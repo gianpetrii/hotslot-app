@@ -22,7 +22,7 @@
   --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.08);
   --blur: 24px;
   --max-width: 980px;
-  --release-dmg: Slots-0.18.2.dmg;
+  --release-dmg: Slots-0.18.3.dmg;
 }
 
 @media (prefers-color-scheme: dark) {

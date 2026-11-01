@@ -32,7 +32,7 @@ struct SettingsView: View {
                 .tabItem { Label("Permisos", systemImage: "lock.shield") }
                 .tag(SettingsTab.permissions)
         }
-        .frame(width: 520, height: 480)
+        .frame(width: 520, height: 520)
         .onAppear {
             if let pending = appState.pendingSettingsTab {
                 selectedTab = pending
@@ -42,136 +42,161 @@ struct SettingsView: View {
     }
 
     private var generalTab: some View {
-        Form {
-            Section("Inicio") {
-                Toggle("Abrir al iniciar sesión", isOn: $launchAtLogin)
-                    .onChange(of: launchAtLogin) { _, newValue in
-                        updateLaunchAtLogin(newValue)
-                    }
-                Text("\(BrandDisplay.name) vive en la barra de menú (⌘ arriba a la derecha). Si no aparece, la barra está llena: mové ítems del sistema a Centro de control o reordená con ⌘+arrastrar. Atajo ⌘⇧V; también podés abrir desde Aplicaciones.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Section("Barra de menú") {
-                Text("macOS no permite fijar el icono ⌘ por código. Arrastralo con ⌘ hacia la derecha (junto al reloj) para que no lo reemplacen otros iconos.")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                Button("Cómo mantener \(BrandDisplay.name) visible…") {
-                    MenuBarGuide.present()
-                }
-            }
-
-            Section("Licencia") {
-                if Entitlements.hasFullAccess {
-                    if AppSettings.load().isLicensed {
-                        Label("Compra activa", systemImage: "checkmark.seal.fill")
-                            .foregroundStyle(.green)
-                    } else if let end = Entitlements.trialEndsAt {
-                        Text("Prueba gratuita hasta \(end.formatted(date: .abbreviated, time: .omitted))")
-                            .font(.callout)
+        ScrollViewReader { proxy in
+            ScrollView {
+                Form {
+                    Section("Inicio") {
+                        Toggle("Abrir al iniciar sesión", isOn: $launchAtLogin)
+                            .onChange(of: launchAtLogin) { _, newValue in
+                                updateLaunchAtLogin(newValue)
+                            }
+                        Text("\(BrandDisplay.name) vive en la barra de menú (⌘ arriba a la derecha). Si no aparece, la barra está llena: mové ítems del sistema a Centro de control o reordená con ⌘+arrastrar. Atajo ⌘⇧V; también podés abrir desde Aplicaciones.")
+                            .font(.caption)
                             .foregroundStyle(.secondary)
                     }
-                } else {
-                    Text("La prueba terminó. Comprá una licencia (USD 10, pago único) o seguí usando solo el slot 1.")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                }
 
-                TextField("Clave del email de compra (UUID)", text: $licenseKeyInput)
-                    .textFieldStyle(.roundedBorder)
+                    Section("Licencia") {
+                        licenseSectionBody
+                    }
+                    .id("settings-license")
 
-                HStack {
-                    Button("Activar licencia") {
-                        Task {
-                            if let error = await Entitlements.activateLicenseKeyOnline(licenseKeyInput) {
-                                appState.showToast(error)
-                            } else {
-                                licensed = true
-                                appState.showToast("Licencia activada — gracias")
+                    Section("Barra de menú") {
+                        Text("macOS no permite fijar el icono ⌘ por código. Arrastralo con ⌘ hacia la derecha (junto al reloj) para que no lo reemplacen otros iconos.")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                        Button("Cómo mantener \(BrandDisplay.name) visible…") {
+                            MenuBarGuide.present()
+                        }
+                    }
+
+                    Section("Historial") {
+                        Stepper("Límite: \(historyLimit) ítems", value: $historyLimit, in: 10...500, step: 10)
+                            .onChange(of: historyLimit) { _, newValue in
+                                var settings = AppSettings.load()
+                                settings.historyLimit = newValue
+                                settings.save()
+                                appState.historyStore.historyLimit = newValue
+                            }
+
+                        Button("Vaciar historial", role: .destructive) {
+                            appState.historyStore.clear()
+                        }
+                    }
+
+                    Section("Sonido") {
+                        Toggle("Sonidos de acciones", isOn: $playSound)
+                            .onChange(of: playSound) { _, newValue in
+                                var settings = AppSettings.load()
+                                settings.playSoundOnPaste = newValue
+                                settings.save()
+                            }
+                        Text("Pegar, guardar en un slot o cuando no se puede completar la acción.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Section("Depuración") {
+                        Toggle("Modo depuración del portapapeles", isOn: $debugClipboard)
+                            .onChange(of: debugClipboard) { _, newValue in
+                                var settings = AppSettings.load()
+                                settings.debugClipboard = newValue
+                                settings.save()
+                            }
+
+                        if debugClipboard {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(appState.clipboardService.debugStatus)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .textSelection(.enabled)
+                                Text("Ítems en historial: \(appState.historyStore.items.count)")
+                                    .font(.caption2)
+                                    .foregroundStyle(.tertiary)
+                                Button("Forzar lectura ahora") {
+                                    appState.clipboardService.pollNow()
+                                }
                             }
                         }
                     }
-                    Button("Comprar…") {
-                        appState.openPurchasePage()
-                    }
-                }
-            }
 
-            Section("Historial") {
-                Stepper("Límite: \(historyLimit) ítems", value: $historyLimit, in: 10...500, step: 10)
-                    .onChange(of: historyLimit) { _, newValue in
-                        var settings = AppSettings.load()
-                        settings.historyLimit = newValue
-                        settings.save()
-                        appState.historyStore.historyLimit = newValue
-                    }
-
-                Button("Vaciar historial", role: .destructive) {
-                    appState.historyStore.clear()
-                }
-            }
-
-            Section("Sonido") {
-                Toggle("Sonidos de acciones", isOn: $playSound)
-                    .onChange(of: playSound) { _, newValue in
-                        var settings = AppSettings.load()
-                        settings.playSoundOnPaste = newValue
-                        settings.save()
-                    }
-                Text("Pegar, guardar en un slot o cuando no se puede completar la acción.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Section("Depuración") {
-                Toggle("Modo depuración del portapapeles", isOn: $debugClipboard)
-                    .onChange(of: debugClipboard) { _, newValue in
-                        var settings = AppSettings.load()
-                        settings.debugClipboard = newValue
-                        settings.save()
-                    }
-
-                if debugClipboard {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(appState.clipboardService.debugStatus)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .textSelection(.enabled)
-                        Text("Ítems en historial: \(appState.historyStore.items.count)")
-                            .font(.caption2)
-                            .foregroundStyle(.tertiary)
-                        Button("Forzar lectura ahora") {
-                            appState.clipboardService.pollNow()
+                    Section("Ayuda") {
+                        Button("Cómo usar \(BrandDisplay.name)") {
+                            appState.openOnboarding?()
                         }
                     }
-                }
-            }
 
-            Section("Ayuda") {
-                Button("Cómo usar \(BrandDisplay.name)") {
-                    appState.openOnboarding?()
+                    Section {
+                        LabeledContent("Versión", value: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
+                    } header: {
+                        Text("Acerca de")
+                    } footer: {
+                        Link(destination: Self.iconAttributionURL) {
+                            Text("Reporte iconos creados por Magnific - Flaticon")
+                                .font(.caption)
+                                .foregroundStyle(.tertiary)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .buttonStyle(.plain)
+                        .focusable(false)
+                    }
                 }
+                .formStyle(.grouped)
             }
-
-            Section {
-                LabeledContent("Versión", value: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
-            } header: {
-                Text("Acerca de")
-            } footer: {
-                Link(destination: Self.iconAttributionURL) {
-                    Text("Reporte iconos creados por Magnific - Flaticon")
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
-                        .multilineTextAlignment(.leading)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .buttonStyle(.plain)
-                .focusable(false)
+            .onAppear { scrollToLicenseIfNeeded(using: proxy) }
+            .onChange(of: selectedTab) { _, tab in
+                guard tab == .general else { return }
+                scrollToLicenseIfNeeded(using: proxy)
             }
         }
-        .formStyle(.grouped)
         .padding()
+    }
+
+    @ViewBuilder
+    private var licenseSectionBody: some View {
+        if Entitlements.hasFullAccess {
+            if AppSettings.load().isLicensed {
+                Label("Compra activa", systemImage: "checkmark.seal.fill")
+                    .foregroundStyle(.green)
+            } else if let end = Entitlements.trialEndsAt {
+                Text("Prueba gratuita hasta \(end.formatted(date: .abbreviated, time: .omitted))")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
+        } else {
+            Text("La prueba terminó. Comprá una licencia (USD 10, pago único) o seguí usando solo el slot 1.")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+        }
+
+        TextField("Clave del email de compra (UUID)", text: $licenseKeyInput)
+            .textFieldStyle(.roundedBorder)
+
+        HStack {
+            Button("Activar licencia") {
+                Task {
+                    if let error = await Entitlements.activateLicenseKeyOnline(licenseKeyInput) {
+                        appState.showToast(error)
+                    } else {
+                        licensed = true
+                        appState.showToast("Licencia activada — gracias")
+                    }
+                }
+            }
+            Button("Comprar…") {
+                appState.openPurchasePage()
+            }
+        }
+    }
+
+    private func scrollToLicenseIfNeeded(using proxy: ScrollViewProxy) {
+        guard appState.pendingScrollToLicense else { return }
+        appState.pendingScrollToLicense = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            withAnimation(.easeOut(duration: 0.25)) {
+                proxy.scrollTo("settings-license", anchor: .top)
+            }
+        }
     }
 
     private var permissionsTab: some View {

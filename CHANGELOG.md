@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.3] — 2026-11-01
+
+### UX
+
+- Ajustes en ventana normal (no flota sobre otras apps); scroll a Licencia desde el panel.
+- Accesibilidad: activación más fiable antes del aviso TCC (ventana clave + `.regular`).
+
 ## [0.18.2] — 2026-11-01
 
 ### UX
