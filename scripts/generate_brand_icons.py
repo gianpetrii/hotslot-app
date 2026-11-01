@@ -14,6 +14,7 @@ except ImportError:
 ROOT = Path(__file__).resolve().parents[1]
 APP_ICON_DIR = ROOT / "HotSlot/Resources/Assets.xcassets/AppIcon.appiconset"
 MENU_ICON_DIR = ROOT / "HotSlot/Resources/Assets.xcassets/MenuBarIcon.imageset"
+HANDOFF_MENU_SOURCE = ROOT / "docs/slots-handoff/03-marca/logo/slots-icono-negro.png"
 
 
 def _font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
@@ -94,7 +95,26 @@ def render_app_icon(size: int) -> Image.Image:
 
 
 def render_menu_icon(size: int) -> Image.Image:
-    """Barra de menú: solo glifo (template → gris del sistema)."""
+    """Barra de menú: logo Slots handoff (template → gris del sistema)."""
+    if HANDOFF_MENU_SOURCE.is_file():
+        src = Image.open(HANDOFF_MENU_SOURCE).convert("RGBA")
+        # Escala con padding para legibilidad en 18/36 pt.
+        pad = int(size * 0.12)
+        inner = size - 2 * pad
+        src.thumbnail((inner, inner), Image.Resampling.LANCZOS)
+        canvas = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+        ox = (size - src.width) // 2
+        oy = (size - src.height) // 2
+        canvas.paste(src, (ox, oy), src)
+        # Template: negro sólido, alpha del PNG.
+        pixels = canvas.load()
+        for y in range(size):
+            for x in range(size):
+                r, g, b, a = pixels[x, y]
+                if a:
+                    pixels[x, y] = (0, 0, 0, a)
+        return canvas
+
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
     font = _font(int(size * 0.88))

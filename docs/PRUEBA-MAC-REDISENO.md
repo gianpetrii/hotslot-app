@@ -4,8 +4,18 @@ Usar **al final** del tramo Etapa 4–5 (no hace falta validar cada commit). TCC
 
 ## Antes
 
-- **Validá con Run en Xcode** (Debug) usando `docs/PRUEBA-MAC-REDISENO.md`. El **DMG notarizado** va después, cuando el humo local esté OK.
-- Opcional: ⌥ + clic en menú bar → **Cargar ejemplo**.
+- **Validá con Run en Xcode** (Debug) usando esta checklist. El **DMG notarizado** va después.
+- **Datos de ejemplo:** ⌥ + **clic derecho** en el icono de la barra → **Cargar ejemplo**.
+- **Onboarding otra vez:** ⌥ + **clic derecho** → **Empezar de cero** (borra datos y abre los 3 pasos).
+- **Splash / abrir desde Aplicaciones:** en Xcode, **Product → Show Build Folder in Finder** → `Products/Debug/Slots.app` → arrastrá a `/Applications` **o** abrí esa app una vez (no hace falta para el resto del flujo).
+
+Reset manual (si hace falta):
+
+```bash
+defaults delete com.hotslot.app com.hotslot.appSettings 2>/dev/null; true
+```
+
+Luego volvé a Run en Xcode.
 
 ## Flujo rápido (~15 min)
 

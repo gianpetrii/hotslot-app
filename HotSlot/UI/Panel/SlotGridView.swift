@@ -16,9 +16,10 @@ struct SlotGridView: View {
         VStack(alignment: .leading, spacing: 8) {
             SectionHeader(title: "Slots")
 
-            VStack(spacing: 8) {
-                ForEach(appState.slotStore.slots) { slot in
-                    SlotCardView(
+            ScrollView {
+                VStack(spacing: SlotsSpace.entreCards) {
+                    ForEach(appState.slotStore.slots) { slot in
+                        SlotCardView(
                         slot: slot,
                         otherLibraries: appState.libraryWorkspace.workspace.libraries
                             .filter { $0.id != appState.libraryWorkspace.workspace.activeLibraryId }
@@ -50,13 +51,15 @@ struct SlotGridView: View {
                         onMoveToLibrary: { libraryId in
                             appState.moveSlotToLibrary(slotIndex: slot.index, libraryId: libraryId)
                         }
-                    )
-                    .frame(maxHeight: .infinity)
-                    .opacity(slotSearchOpacity(for: slot))
+                        )
+                        .frame(minHeight: 92)
+                        .opacity(slotSearchOpacity(for: slot))
+                    }
                 }
+                .padding(.horizontal, HotSlotDesign.horizontalPadding)
+                .padding(.bottom, 4)
             }
-            .padding(.horizontal, HotSlotDesign.horizontalPadding)
-            .padding(.bottom, 4)
+            .scrollIndicators(.hidden)
         }
         .frame(maxHeight: .infinity, alignment: .top)
     }

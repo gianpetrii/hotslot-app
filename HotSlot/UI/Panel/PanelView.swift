@@ -30,6 +30,7 @@ struct PanelView: View {
                         searchText: $searchText,
                         isSearchFocused: $isSearchFocused
                     )
+                    .frame(height: HotSlotDesign.panelHeaderHeight, alignment: .top)
 
                     HStack(alignment: .top, spacing: 0) {
                         SlotGridView(
@@ -37,12 +38,11 @@ struct PanelView: View {
                             panelController: panelController,
                             searchText: searchText
                         )
-                            .frame(width: HotSlotDesign.slotsColumnWidth)
+                        .frame(width: HotSlotDesign.slotsColumnWidth)
 
                         Rectangle()
-                            .fill(SlotsColor.linea.opacity(0.8))
+                            .fill(SlotsColor.linea)
                             .frame(width: 1)
-                            .padding(.vertical, 10)
 
                         HistoryListView(
                             historyStore: appState.historyStore,
@@ -56,18 +56,20 @@ struct PanelView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                     .frame(height: HotSlotDesign.panelBodyHeight)
-                    .padding(.bottom, 4)
+                    .background(SlotsColor.papel)
                     .opacity(appState.panelBodyRevealed ? 1 : 0.35)
 
                     PanelLibraryBar(appState: appState)
+                        .frame(height: HotSlotDesign.panelFooterHeight)
 
                     Text("Clic para pegar · Arrastrá para guardar · Esc para cerrar")
                         .font(SlotsFont.etiqueta)
                         .foregroundStyle(SlotsColor.textoSecundario)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
-                        .background(SlotsColor.papel.opacity(0.85))
+                        .frame(maxWidth: .infinity, maxHeight: HotSlotDesign.panelHintHeight)
+                        .background(SlotsColor.papel)
                 }
+                .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .top)
+                .clipped()
             }
         }
         .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .topLeading)

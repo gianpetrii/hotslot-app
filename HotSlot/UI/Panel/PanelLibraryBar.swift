@@ -44,14 +44,7 @@ struct PanelLibraryBar: View {
         }
         .padding(.horizontal, HotSlotDesign.horizontalPadding)
         .frame(height: HotSlotDesign.panelFooterHeight)
-        .background {
-            SlotsColor.papel.opacity(0.92)
-                .overlay(alignment: .top) {
-                    Rectangle()
-                        .fill(SlotsColor.linea)
-                        .frame(height: 1)
-                }
-        }
+        .background(SlotsColor.papel)
         .sheet(isPresented: $appState.isSaveClipboardSlotPickerPresented) {
             SaveClipboardSlotPickerSheet(appState: appState)
         }

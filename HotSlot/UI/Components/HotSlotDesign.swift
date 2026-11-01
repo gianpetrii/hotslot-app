@@ -6,10 +6,13 @@ import SwiftUI
 enum HotSlotDesign {
     static let panelWidth: CGFloat = 1060
     static let panelHeight: CGFloat = 664
-    static let panelHeaderHeight: CGFloat = 120
-    static let panelFooterHeight: CGFloat = 52
-    static let panelHintHeight: CGFloat = 28
-    static let panelBodyHeight: CGFloat = panelHeight - panelHeaderHeight - panelFooterHeight - panelHintHeight
+    static let panelHeaderHeight: CGFloat = 148
+    static let panelFooterHeight: CGFloat = 58
+    static let panelHintHeight: CGFloat = 30
+    /// Reservado para layout; el cuerpo usa el espacio flexible restante dentro de `panelHeight`.
+    static var panelBodyHeight: CGFloat {
+        panelHeight - panelHeaderHeight - panelFooterHeight - panelHintHeight
+    }
     static let slotsColumnWidth: CGFloat = 400
     static let cornerRadius: CGFloat = SlotsRadius.ventana
     static let cardCornerRadius: CGFloat = SlotsRadius.card
@@ -79,11 +82,15 @@ struct PanelChrome<Content: View>: View {
         let shape = RoundedRectangle(cornerRadius: HotSlotDesign.cornerRadius, style: .continuous)
 
         ZStack(alignment: .topLeading) {
-            VisualEffectBackground(
-                material: .hudWindow,
-                blendingMode: .behindWindow,
-                cornerRadius: HotSlotDesign.cornerRadius
-            )
+            ZStack {
+                SlotsColor.papel
+                VisualEffectBackground(
+                    material: .hudWindow,
+                    blendingMode: .withinWindow,
+                    cornerRadius: HotSlotDesign.cornerRadius
+                )
+                .opacity(0.72)
+            }
             content()
                 .frame(
                     width: HotSlotDesign.panelWidth,
