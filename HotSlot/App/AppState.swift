@@ -34,6 +34,9 @@ final class AppState {
     /// Ventana delante de la cual mostrar el aviso de Accesibilidad (onboarding / ajustes).
     weak var accessibilityPresentingWindow: NSWindow?
 
+    /// Sheet del panel: elegir slot cuando «Guardar portapapeles» y no hay vacíos.
+    var isSaveClipboardSlotPickerPresented = false
+
     /// Ajustes abiertos: el icono de menú bar no cierra el panel flotante al tocarlo.
     var isSettingsWindowVisible = false
 
@@ -220,13 +223,55 @@ final class AppState {
         openSettings?()
     }
 
-    func saveToSlot(index: Int, content: ClipContent, announce: Bool = true) {
+    func saveToSlot(index: Int, content: ClipContent, announce: Bool = true, archivePreviousToHistory: Bool = false) {
         guard ensureCanUseSlot(index) else { return }
+        if archivePreviousToHistory, let previous = slotStore.content(at: index) {
+            historyStore.add(
+                ClipItem(
+                    content: previous,
+                    createdAt: Date(),
+                    sourceAppName: BrandDisplay.name,
+                    sourceAppBundleID: Bundle.main.bundleIdentifier
+                )
+            )
+        }
         slotStore.saveContent(index: index, content: content)
         if announce {
             FeedbackSound.play(.saved)
             presentNotch(.saved(slotIndex: index, title: slotDisplayTitle(at: index)))
         }
+    }
+
+    func firstEmptySlotIndex() -> Int? {
+        (1 ... SlotStore.slotCount).first { slotStore.content(at: $0) == nil }
+    }
+
+    func saveClipboardFromPanel() {
+        guard clipboardService.currentContent() != nil else {
+            showToast("Nada en el portapapeles")
+            FeedbackSound.play(.pasteFailed)
+            return
+        }
+        if let empty = firstEmptySlotIndex() {
+            guard let content = clipboardService.currentContent() else { return }
+            saveToSlot(index: empty, content: content)
+            UsageEventLog.shared.record("guardar_portapapeles", screen: "mac_panel")
+            return
+        }
+        isSaveClipboardSlotPickerPresented = true
+    }
+
+    func saveClipboardToSlot(_ index: Int, replaceExisting: Bool) {
+        guard ensureCanUseSlot(index) else { return }
+        guard let content = clipboardService.currentContent() else {
+            showToast("Nada en el portapapeles")
+            return
+        }
+        let occupied = slotStore.content(at: index) != nil
+        if occupied, !replaceExisting { return }
+        saveToSlot(index: index, content: content, archivePreviousToHistory: occupied)
+        isSaveClipboardSlotPickerPresented = false
+        UsageEventLog.shared.record("guardar_portapapeles", screen: "mac_panel", detail: "slot_\(index)")
     }
 
     func presentNotch(_ kind: NotchNoticeKind) {

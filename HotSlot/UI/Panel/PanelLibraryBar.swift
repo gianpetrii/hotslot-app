@@ -15,7 +15,7 @@ struct PanelLibraryBar: View {
     }
 
     var body: some View {
-        HStack(spacing: SlotsSpace.s) {
+        HStack(spacing: SlotsSpace.m) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: SlotsSpace.s) {
                     ForEach(libraries) { library in
@@ -26,7 +26,21 @@ struct PanelLibraryBar: View {
                 .padding(.vertical, 4)
             }
 
-            Spacer(minLength: 0)
+            Button {
+                appState.saveClipboardFromPanel()
+            } label: {
+                Text("Guardar portapapeles")
+                    .font(SlotsFont.etiqueta)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 9)
+                    .background {
+                        Capsule(style: .continuous)
+                            .fill(SlotsColor.tinta)
+                    }
+            }
+            .buttonStyle(.plain)
+            .help("Guarda el portapapeles en el primer slot vacío")
         }
         .padding(.horizontal, HotSlotDesign.horizontalPadding)
         .frame(height: HotSlotDesign.panelFooterHeight)
@@ -37,6 +51,9 @@ struct PanelLibraryBar: View {
                         .fill(SlotsColor.linea)
                         .frame(height: 1)
                 }
+        }
+        .sheet(isPresented: $appState.isSaveClipboardSlotPickerPresented) {
+            SaveClipboardSlotPickerSheet(appState: appState)
         }
         .sheet(isPresented: $showNewLibrarySheet) {
             newLibrarySheet

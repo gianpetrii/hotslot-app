@@ -2,7 +2,9 @@
 
 El paquete **no está en Git**. Los assets viven en Google Drive:
 
-**Carpeta compartida:** [slots-handoff (Drive)](https://drive.google.com/drive/folders/1sNJnRxqazawSPMFkRs3up5D1INZxSpJB?usp=sharing)
+**Carpeta compartida (link estable):** [slots-handoff (Drive)](https://drive.google.com/drive/folders/1sNJnRxqazawSPMFkRs3up5D1INZxSpJB?usp=sharing)
+
+El repo **solo referencia esta carpeta**. Si Dante manda un handoff nuevo, subís otro zip acá (mismo nombre `slots-handoff.zip` o `slots-handoff-2026-11.zip`) **sin cambiar el link** en Git.
 
 ## Qué subir a esa carpeta (Gianluca)
 
@@ -24,13 +26,13 @@ Opcional en la misma carpeta: un **`LEEME.txt`** de una línea: “Descomprimí 
 
 ## Uso local (desarrollo / Cursor)
 
+1. Abrí la carpeta de Drive y descargá el zip más reciente (`slots-handoff.zip` o el que subas).
+2. Descomprimí en `docs/`:
+
 ```bash
 cd docs
-curl -L -o slots-handoff.zip '<enlace directo de descarga del zip en Drive, cuando exista>'
-unzip -q slots-handoff.zip
+unzip -q ~/Downloads/slots-handoff.zip
 ```
-
-O descargá el zip desde Drive con el navegador y descomprimilo en `docs/`.
 
 Xcode **no** necesita el handoff para compilar; sirve para copy, medidas y pantallas durante el rediseño.
 

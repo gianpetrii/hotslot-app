@@ -19,6 +19,13 @@ struct HistoryListView: View {
                 .foregroundStyle(SlotsColor.textoSecundario)
                 .padding(.horizontal, HotSlotDesign.horizontalPadding)
 
+            if isSearching {
+                Text("\(items.count) resultados")
+                    .font(SlotsFont.etiqueta)
+                    .foregroundStyle(SlotsColor.naranja)
+                    .padding(.horizontal, HotSlotDesign.horizontalPadding)
+            }
+
             if items.isEmpty {
                 EmptyStateView(
                     title: isSearching ? "Sin resultados" : "Sin historial",

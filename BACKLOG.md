@@ -77,8 +77,8 @@ Objetivo: **build de prueba de usabilidad en Mac**. Decisiones: `docs/DECISIONES
 | [x] | **1** | Tokens, fuentes, ícono, modelo Library/Slot/HistoryItem, fixture, eventos |
 | [ ] | **2** | ~~iOS 00–13~~ **pausado** hasta validar Mac |
 | [x] | **3** | Núcleo Mac: notch, historial oculto (concealed), sync workspace, atajos |
-| [~] | **4** | Arranque 00, cards de slots, menú Biblioteca; filas historial + Guardar portapapeles pendiente |
-| [ ] | **5** | Humo Mac, versión, DMG, lista de desvíos (TestFlight cuando haya iOS) |
+| [x] | **4** | Panel Mac handoff (header, bibliotecas, guardar portapapeles, onboarding 3, ajustes sidebar, arranque) |
+| [~] | **5** | Humo Mac, versión, DMG, guía de prueba final |
 
 | Estado | Pri | Tarea post-usabilidad |
 |--------|-----|------------------------|

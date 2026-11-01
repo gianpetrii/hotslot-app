@@ -32,11 +32,17 @@ struct ClipRowView: View {
                     ))
             }
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
         .background {
-            RoundedRectangle(cornerRadius: HotSlotDesign.rowCornerRadius, style: .continuous)
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .fill(backgroundFill)
+                .overlay {
+                    if isHovering || isKeyboardHighlighted {
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .strokeBorder(SlotsColor.linea, lineWidth: 1)
+                    }
+                }
         }
         .onHover { hovering in
             isHovering = hovering
@@ -76,8 +82,8 @@ struct ClipRowView: View {
             case .text(let string):
                 let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
                 Text(trimmed)
-                    .font(HotSlotTypography.rowPrimary)
-                    .foregroundStyle(.primary)
+                    .font(SlotsFont.textoUI)
+                    .foregroundStyle(SlotsColor.tinta)
                     .lineLimit(isExpanded ? 12 : 3)
                     .truncationMode(.tail)
                     .multilineTextAlignment(.leading)
@@ -90,8 +96,8 @@ struct ClipRowView: View {
             }
 
             Text(item.metadataLine())
-                .font(HotSlotTypography.rowSecondary)
-                .foregroundStyle(.secondary)
+                .font(SlotsFont.etiqueta)
+                .foregroundStyle(SlotsColor.textoSecundario)
                 .lineLimit(1)
         }
     }
@@ -107,10 +113,10 @@ struct ClipRowView: View {
     }
 
     private var backgroundFill: Color {
-        if isKeyboardHighlighted { return Color.accentColor.opacity(0.12) }
-        if item.isPinned { return Color.accentColor.opacity(0.05) }
-        if isHovering { return Color.primary.opacity(0.05) }
-        return Color.clear
+        if isKeyboardHighlighted { return SlotsColor.naranja.opacity(0.12) }
+        if item.isPinned { return SlotsColor.teclaFondo }
+        if isHovering { return Color.white.opacity(0.92) }
+        return SlotsColor.papel.opacity(0.5)
     }
 }
 
