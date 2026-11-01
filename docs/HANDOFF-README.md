@@ -1,22 +1,37 @@
 # Handoff de diseño (Dante)
 
-El paquete **no está en Git** (pesa ~66 MB y ralentiza clone/push). Guardalo en Drive u otro almacenamiento y compartí el enlace acá.
+El paquete **no está en Git**. Los assets viven en Google Drive:
 
-## Descarga
+**Carpeta compartida:** [slots-handoff (Drive)](https://drive.google.com/drive/folders/1sNJnRxqazawSPMFkRs3up5D1INZxSpJB?usp=sharing)
 
-| | |
-|---|---|
-| **Enlace** | _Pendiente — Gianluca: pegar URL de Google Drive / Dropbox_ |
-| **Archivo** | `slots-handoff.zip` |
-| **Contenido** | `01-docs/flujos.md`, HTML de referencia, PNG, videos, fuentes, íconos |
+## Qué subir a esa carpeta (Gianluca)
+
+Subí **un solo archivo** para mantenerlo simple:
+
+| Archivo | Origen local | Notas |
+|---------|----------------|--------|
+| **`slots-handoff.zip`** | Comprimí la carpeta `docs/slots-handoff/` de tu Mac (la que descomprimiste del paquete de Dante) | ~66 MB. Debe contener `01-docs/`, `02-diseno/`, `03-marca/`, `04-marketing/`, `05-flujos/`, `LEEME.md`, `PROMPT-CURSOR.md`. |
+
+Comando para generar el zip (desde la raíz del repo, si tenés la carpeta descomprimida):
+
+```bash
+cd docs && ditto -c -k --sequesterRsrc --keepParent slots-handoff slots-handoff.zip
+```
+
+Subí **`slots-handoff.zip`** a la carpeta de Drive (no hace falta subir cientos de PNG sueltos).
+
+Opcional en la misma carpeta: un **`LEEME.txt`** de una línea: “Descomprimí `slots-handoff.zip` en `docs/` del repo para consultar flujos y HTML.”
 
 ## Uso local (desarrollo / Cursor)
 
 ```bash
 cd docs
-unzip -q /ruta/a/slots-handoff.zip
+curl -L -o slots-handoff.zip '<enlace directo de descarga del zip en Drive, cuando exista>'
+unzip -q slots-handoff.zip
 ```
 
-Eso crea `docs/slots-handoff/`. Xcode **no** necesita esa carpeta para compilar; sirve para copy, medidas y pantallas durante el rediseño.
+O descargá el zip desde Drive con el navegador y descomprimilo en `docs/`.
 
-`docs/slots-handoff/` y `docs/slots-handoff*.zip` están en `.gitignore`.
+Xcode **no** necesita el handoff para compilar; sirve para copy, medidas y pantallas durante el rediseño.
+
+`docs/slots-handoff/` y `docs/slots-handoff*.zip` locales están en `.gitignore`.
