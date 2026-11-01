@@ -185,7 +185,7 @@ struct OnboardingHistoryDemo: View {
     @State private var keyboardHighlightIndex: Int?
 
     private var historyColumnWidth: CGFloat {
-        HotSlotDesign.panelWidth - HotSlotDesign.slotsColumnWidth - 1
+        HotSlotDesign.historyColumnWidth
     }
 
     var body: some View {

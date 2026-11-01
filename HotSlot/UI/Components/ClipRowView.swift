@@ -1,7 +1,13 @@
 import SwiftUI
 
+enum ClipRowLayout {
+    case standard
+    case panelHandoff(isFirst: Bool)
+}
+
 struct ClipRowView: View {
     let item: ClipItem
+    var layout: ClipRowLayout = .standard
     var isKeyboardHighlighted: Bool = false
     var isDemo: Bool = false
     let onPaste: () -> Void
@@ -13,6 +19,15 @@ struct ClipRowView: View {
     private let expandAnimation = Animation.spring(response: 0.32, dampingFraction: 0.92)
 
     var body: some View {
+        switch layout {
+        case .panelHandoff(let isFirst):
+            panelHandoffRow(isFirst: isFirst)
+        case .standard:
+            standardRow
+        }
+    }
+
+    private var standardRow: some View {
         HStack(alignment: .top, spacing: 8) {
             ZStack(alignment: .topLeading) {
                 rowBody
@@ -44,33 +59,90 @@ struct ClipRowView: View {
                     }
                 }
         }
-        .onHover { hovering in
-            isHovering = hovering
-            expandTask?.cancel()
-            if hovering {
-                expandTask = Task { @MainActor in
-                    try? await Task.sleep(nanoseconds: UInt64(HotSlotDesign.hoverExpandDelay * 1_000_000_000))
-                    guard !Task.isCancelled else { return }
-                    withAnimation(expandAnimation) {
-                        isExpanded = true
-                    }
-                }
-            } else {
-                withAnimation(expandAnimation) {
-                    isExpanded = false
-                }
-            }
-        }
+        .onHover(perform: handleStandardHover)
         .animation(.easeOut(duration: 0.12), value: isHovering)
         .animation(.easeOut(duration: 0.12), value: isKeyboardHighlighted)
         .animation(.easeOut(duration: 0.15), value: item.isPinned)
-        .onDisappear {
-            expandTask?.cancel()
-            isExpanded = false
-            isHovering = false
-        }
+        .onDisappear(perform: resetHoverState)
         .accessibilityAddTraits(.isButton)
         .accessibilityHint("Clic para pegar. Arrastrá para guardar en un slot.")
+    }
+
+    private func panelHandoffRow(isFirst: Bool) -> some View {
+        HStack(alignment: .center, spacing: 12) {
+            panelHandoffBody
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .modifier(ClipRowInteractionModifier(isDemo: isDemo, item: item, onPaste: onPaste))
+
+            if isFirst || isHovering {
+                Image(systemName: "arrow.up.right")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(SlotsColor.textoSecundario)
+            }
+        }
+        .padding(.horizontal, SlotsSpace.m)
+        .padding(.vertical, 12)
+        .background {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(panelHandoffBackground(isFirst: isFirst))
+                .shadow(
+                    color: isFirst ? Color(slotsHex: 0x462D14).opacity(0.08) : .clear,
+                    radius: 9,
+                    y: 4
+                )
+        }
+        .overlay {
+            if isKeyboardHighlighted {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(SlotsColor.naranja.opacity(0.5), lineWidth: 1.5)
+            }
+        }
+        .onHover { isHovering = $0 }
+        .animation(.easeOut(duration: 0.12), value: isHovering)
+        .animation(.easeOut(duration: 0.12), value: isKeyboardHighlighted)
+        .onDisappear(perform: resetHoverState)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityHint("Clic para pegar. Arrastrá para guardar en un slot.")
+    }
+
+    @ViewBuilder
+    private var panelHandoffBody: some View {
+        switch item.content {
+        case .image(let fileName):
+            HStack(spacing: 12) {
+                ClipThumbnailView(fileName: fileName, style: .row, isExpanded: false)
+                    .frame(width: 40, height: 40)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(item.handoffPanelMetaLine())
+                        .font(SlotsFont.etiqueta)
+                        .foregroundStyle(SlotsColor.textoSecundario)
+                        .lineLimit(1)
+                    Text(item.handoffPanelPrimaryLine())
+                        .font(SlotsFont.textoUI)
+                        .foregroundStyle(SlotsColor.tinta)
+                        .lineLimit(1)
+                }
+            }
+        case .text:
+            VStack(alignment: .leading, spacing: 3) {
+                Text(item.handoffPanelMetaLine())
+                    .font(SlotsFont.etiqueta)
+                    .foregroundStyle(SlotsColor.textoSecundario)
+                    .lineLimit(1)
+                Text(item.handoffPanelPrimaryLine())
+                    .font(SlotsFont.textoUI)
+                    .foregroundStyle(SlotsColor.tinta)
+                    .lineLimit(1)
+            }
+        }
+    }
+
+    private func panelHandoffBackground(isFirst: Bool) -> Color {
+        if isKeyboardHighlighted { return Color.white.opacity(0.95) }
+        if isFirst { return Color.white.opacity(0.92) }
+        if isHovering { return Color.white.opacity(0.72) }
+        return Color.white.opacity(0.55)
     }
 
     @ViewBuilder
@@ -100,6 +172,30 @@ struct ClipRowView: View {
                 .foregroundStyle(SlotsColor.textoSecundario)
                 .lineLimit(1)
         }
+    }
+
+    private func handleStandardHover(_ hovering: Bool) {
+        isHovering = hovering
+        expandTask?.cancel()
+        if hovering {
+            expandTask = Task { @MainActor in
+                try? await Task.sleep(nanoseconds: UInt64(HotSlotDesign.hoverExpandDelay * 1_000_000_000))
+                guard !Task.isCancelled else { return }
+                withAnimation(expandAnimation) {
+                    isExpanded = true
+                }
+            }
+        } else {
+            withAnimation(expandAnimation) {
+                isExpanded = false
+            }
+        }
+    }
+
+    private func resetHoverState() {
+        expandTask?.cancel()
+        isExpanded = false
+        isHovering = false
     }
 
     private var textUsesExpand: Bool {

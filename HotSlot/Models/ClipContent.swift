@@ -86,4 +86,35 @@ extension ClipItem {
         return content.matchesSearch(q)
             || (sourceAppName?.localizedCaseInsensitiveContains(q) ?? false)
     }
+
+    func handoffPanelMetaLine() -> String {
+        let appName = sourceAppName?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let app = (appName?.isEmpty == false) ? appName! : "Clipboard"
+        return "\(app) · \(handoffRelativeTime())"
+    }
+
+    func handoffPanelPrimaryLine() -> String {
+        switch content {
+        case .text(let string):
+            let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
+            if trimmed.isEmpty { return "Texto vacío" }
+            let singleLine = trimmed.replacingOccurrences(of: "\n", with: " ")
+            if singleLine.count > 72 {
+                return String(singleLine.prefix(72)) + "…"
+            }
+            return singleLine
+        case .image:
+            return content.displayTitle
+        }
+    }
+
+    private func handoffRelativeTime() -> String {
+        let seconds = max(0, Date().timeIntervalSince(createdAt))
+        if seconds < 45 { return "ahora" }
+        let minutes = Int(seconds / 60)
+        if minutes < 60 { return "hace \(minutes) min" }
+        let hours = minutes / 60
+        if hours < 24 { return "hace \(hours) h" }
+        return "hace \(hours / 24) d"
+    }
 }

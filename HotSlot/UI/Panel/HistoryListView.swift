@@ -12,18 +12,22 @@ struct HistoryListView: View {
     private let listAnimation = Animation.spring(response: 0.34, dampingFraction: 0.82)
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            SectionHeader(title: "Historial")
-            Text("Arrastrá a un slot")
-                .font(SlotsFont.etiqueta)
-                .foregroundStyle(SlotsColor.textoSecundario)
-                .padding(.horizontal, HotSlotDesign.horizontalPadding)
+        VStack(alignment: .leading, spacing: SlotsSpace.s) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("Historial")
+                    .font(SlotsFont.tituloHistorial)
+                    .foregroundStyle(SlotsColor.tinta)
+                Spacer(minLength: 8)
+                Text("Arrastrá a un slot")
+                    .font(SlotsFont.textoUI)
+                    .foregroundStyle(SlotsColor.textoSecundario)
+            }
+            .padding(.bottom, SlotsSpace.s)
 
             if isSearching {
                 Text("\(items.count) resultados")
                     .font(SlotsFont.etiqueta)
                     .foregroundStyle(SlotsColor.naranja)
-                    .padding(.horizontal, HotSlotDesign.horizontalPadding)
             }
 
             if items.isEmpty {
@@ -38,11 +42,11 @@ struct HistoryListView: View {
             } else {
                 ScrollViewReader { proxy in
                     ScrollView {
-                        LazyVStack(alignment: .leading, spacing: 2) {
-                            ForEach(items) { item in
-                                let offset = items.firstIndex(where: { $0.id == item.id }) ?? 0
+                        LazyVStack(alignment: .leading, spacing: SlotsSpace.s) {
+                            ForEach(Array(items.enumerated()), id: \.element.id) { offset, item in
                                 ClipRowView(
                                     item: item,
+                                    layout: .panelHandoff(isFirst: offset == 0),
                                     isKeyboardHighlighted: keyboardHighlightIndex == offset,
                                     isDemo: isDemo,
                                     onPaste: { onPaste(item) },
@@ -53,7 +57,6 @@ struct HistoryListView: View {
                                     }
                                 )
                                 .id(item.id)
-                                .padding(.horizontal, 8)
                                 .modifier(HistoryRowChromeModifier(
                                     isDemo: isDemo,
                                     item: item,

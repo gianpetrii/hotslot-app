@@ -13,55 +13,72 @@ struct SlotGridView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            SectionHeader(title: "Slots")
+        GeometryReader { geometry in
+            let gap = SlotsSpace.entreCards
+            let columnWidth = (geometry.size.width - gap * 2) / 3
+            let rowHeight = (geometry.size.height - gap) / 2
 
-            ScrollView {
-                VStack(spacing: SlotsSpace.entreCards) {
-                    ForEach(appState.slotStore.slots) { slot in
-                        SlotCardView(
-                        slot: slot,
-                        otherLibraries: appState.libraryWorkspace.workspace.libraries
-                            .filter { $0.id != appState.libraryWorkspace.workspace.activeLibraryId }
-                            .sorted { $0.order < $1.order },
-                        onPaste: {
-                            appState.pasteSlot(index: slot.index, panelController: panelController)
-                        },
-                        onSaveFromClipboard: {
-                            if let content = appState.clipboardService.currentContent() {
-                                appState.saveToSlot(index: slot.index, content: content)
-                            }
-                        },
-                        onSaveHistoryItem: { itemID in
-                            guard let content = appState.historyStore.item(id: itemID)?.content else { return }
-                            appState.saveToSlot(index: slot.index, content: content)
-                        },
-                        onClear: {
-                            appState.slotStore.clearSlot(index: slot.index)
-                        },
-                        onSwapFrom: { sourceIndex in
-                            appState.slotStore.swapContents(from: sourceIndex, to: slot.index)
-                        },
-                        onRename: { title in
-                            appState.slotStore.updateLabel(index: slot.index, label: title)
-                        },
-                        onReplaceFromClipboard: {
-                            appState.replaceSlotFromClipboard(index: slot.index)
-                        },
-                        onMoveToLibrary: { libraryId in
-                            appState.moveSlotToLibrary(slotIndex: slot.index, libraryId: libraryId)
-                        }
-                        )
-                        .frame(minHeight: 92)
-                        .opacity(slotSearchOpacity(for: slot))
+            HStack(spacing: gap) {
+                slotCell(index: 1)
+                    .frame(width: columnWidth, height: rowHeight * 2 + gap)
+
+                VStack(spacing: gap) {
+                    HStack(spacing: gap) {
+                        slotCell(index: 2)
+                            .frame(width: columnWidth, height: rowHeight)
+                        slotCell(index: 3)
+                            .frame(width: columnWidth, height: rowHeight)
+                    }
+                    HStack(spacing: gap) {
+                        slotCell(index: 4)
+                            .frame(width: columnWidth, height: rowHeight)
+                        slotCell(index: 5)
+                            .frame(width: columnWidth, height: rowHeight)
                     }
                 }
-                .padding(.horizontal, HotSlotDesign.horizontalPadding)
-                .padding(.bottom, 4)
             }
-            .scrollIndicators(.hidden)
         }
-        .frame(maxHeight: .infinity, alignment: .top)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    @ViewBuilder
+    private func slotCell(index: Int) -> some View {
+        if let slot = appState.slotStore.slots.first(where: { $0.index == index }) {
+            SlotCardView(
+                slot: slot,
+                otherLibraries: appState.libraryWorkspace.workspace.libraries
+                    .filter { $0.id != appState.libraryWorkspace.workspace.activeLibraryId }
+                    .sorted { $0.order < $1.order },
+                onPaste: {
+                    appState.pasteSlot(index: slot.index, panelController: panelController)
+                },
+                onSaveFromClipboard: {
+                    if let content = appState.clipboardService.currentContent() {
+                        appState.saveToSlot(index: slot.index, content: content)
+                    }
+                },
+                onSaveHistoryItem: { itemID in
+                    guard let content = appState.historyStore.item(id: itemID)?.content else { return }
+                    appState.saveToSlot(index: slot.index, content: content)
+                },
+                onClear: {
+                    appState.slotStore.clearSlot(index: slot.index)
+                },
+                onSwapFrom: { sourceIndex in
+                    appState.slotStore.swapContents(from: sourceIndex, to: slot.index)
+                },
+                onRename: { title in
+                    appState.slotStore.updateLabel(index: slot.index, label: title)
+                },
+                onReplaceFromClipboard: {
+                    appState.replaceSlotFromClipboard(index: slot.index)
+                },
+                onMoveToLibrary: { libraryId in
+                    appState.moveSlotToLibrary(slotIndex: slot.index, libraryId: libraryId)
+                }
+            )
+            .opacity(slotSearchOpacity(for: slot))
+        }
     }
 
     private func slotSearchOpacity(for slot: Slot) -> Double {
@@ -93,46 +110,88 @@ private struct SlotCardView: View {
 
     private var hasContent: Bool { slot.content != nil }
 
+    private var pasteShortcut: KeyboardShortcuts.Name {
+        KeyboardShortcuts.Name.pasteSlotNames[slot.index - 1]
+    }
+
     var body: some View {
         ZStack(alignment: .topLeading) {
             cardChrome
 
-            VStack(alignment: .leading, spacing: 6) {
-                Text(SlotCardCopy.metaLine(for: slot))
-                    .font(SlotsFont.etiqueta)
-                    .foregroundStyle(isImageContent && hasContent ? Color.white.opacity(0.85) : SlotsColor.textoSecundario)
-                    .padding(.top, hasContent ? 36 : 12)
-                    .padding(.horizontal, 12)
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .top, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(SlotCardCopy.metaPrimary(for: slot))
+                            .font(SlotsFont.etiqueta)
+                        Text(SlotCardCopy.metaSecondary(for: slot))
+                            .font(SlotsFont.etiqueta)
+                    }
+                    .foregroundStyle(metaForeground)
 
-                Text(SlotCardCopy.displayTitle(for: slot))
-                    .font(SlotsFont.tituloCard)
-                    .foregroundStyle(titleColor)
-                    .lineLimit(2)
-                    .padding(.horizontal, 12)
+                    Spacer(minLength: 0)
 
-                if hasContent, !isImageContent {
-                    slotBodyPreview
-                        .padding(.horizontal, 12)
-                        .padding(.bottom, 10)
-                } else if !hasContent {
-                    Text(SlotCardCopy.emptyHint(slotIndex: slot.index))
+                    Button {
+                        suppressPeekForBadges = true
+                        isEditingShortcuts = true
+                    } label: {
+                        ShortcutBadge(name: pasteShortcut, compact: false, emphasized: isHovering)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Clic para cambiar atajo de pegar")
+                    .popover(isPresented: $isEditingShortcuts, arrowEdge: .leading) {
+                        SlotShortcutEditorPopover(slotIndex: slot.index)
+                    }
+                }
+
+                Spacer(minLength: 0)
+
+                HStack(alignment: .bottom, spacing: 8) {
+                    Text(SlotCardCopy.displayTitle(for: slot))
+                        .font(SlotsFont.tituloCard)
+                        .foregroundStyle(titleColor)
+                        .lineLimit(3)
+                        .multilineTextAlignment(.leading)
+
+                    Spacer(minLength: 0)
+
+                    if let swatch = colorSwatch {
+                        Circle()
+                            .fill(swatch)
+                            .frame(width: 40, height: 40)
+                    }
+                }
+
+                if !hasContent, let sub = SlotCardCopy.emptySubhint(slotIndex: slot.index) {
+                    Text(sub)
                         .font(SlotsFont.textoUI)
                         .foregroundStyle(SlotsColor.textoSecundario)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding(.horizontal, 10)
-                        .padding(.bottom, 12)
-                } else {
-                    Spacer(minLength: 0)
+                        .padding(.top, SlotsSpace.s)
                 }
             }
+            .padding(SlotsSpace.m)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
             .onTapGesture { onPaste() }
 
-            overlayControls
+            if hasContent, isHovering {
+                VStack {
+                    HStack {
+                        PanelGlyphButton(
+                            systemImage: "xmark",
+                            help: "Vaciar slot \(slot.index)",
+                            size: HotSlotDesign.slotOverlayControlSize,
+                            iconSize: HotSlotDesign.slotOverlayIconSize,
+                            cornerRadius: HotSlotDesign.slotOverlayCornerRadius,
+                            action: onClear
+                        )
+                        Spacer()
+                    }
+                    Spacer()
+                }
+                .padding(6)
+            }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
         .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
         .onHover { hovering in
@@ -212,6 +271,30 @@ private struct SlotCardView: View {
         }
     }
 
+    private var metaForeground: Color {
+        if isDarkCard { return SlotsColor.textoSobreOscuro }
+        if isImageContent, hasContent { return SlotsColor.textoTerciario }
+        return SlotsColor.textoSecundario
+    }
+
+    private var titleColor: Color {
+        if !hasContent {
+            return slot.index == 5 ? SlotsColor.textoSecundario : SlotsColor.tinta
+        }
+        if isDarkCard || isImageContent { return .white }
+        return SlotsColor.tinta
+    }
+
+    private var colorSwatch: Color? {
+        guard case .text(let string) = slot.content else { return nil }
+        return SlotCardCopy.colorFromHex(string.trimmingCharacters(in: .whitespacesAndNewlines))
+    }
+
+    private var isDarkCard: Bool {
+        guard case .text(let string) = slot.content else { return false }
+        return SlotCardCopy.isHexColor(string.trimmingCharacters(in: .whitespacesAndNewlines))
+    }
+
     private func schedulePeek(hovering: Bool) {
         peekTask?.cancel()
         guard hasContent, !isDropTarget, !suppressPeekForBadges, !isEditingShortcuts else {
@@ -251,83 +334,47 @@ private struct SlotCardView: View {
         return true
     }
 
-    private var titleColor: Color {
-        if !hasContent { return SlotsColor.tinta }
-        if isImageContent { return .white }
-        return SlotsColor.tinta
-    }
-
     @ViewBuilder
     private var cardChrome: some View {
         ZStack {
             if isImageContent, case .image(let fileName) = slot.content {
                 ClipThumbnailView(fileName: fileName, style: .slot)
                 LinearGradient(
-                    colors: [Color.black.opacity(0.55), Color.black.opacity(0.15)],
-                    startPoint: .top,
-                    endPoint: .bottom
+                    colors: [SlotsColor.naranja.opacity(0.35), Color.black.opacity(0.45)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
                 )
+            } else if isDarkCard {
+                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
+                    .fill(SlotsColor.cardOscura)
+            } else if hasContent {
+                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
+                    .fill(Color.white)
             } else {
                 RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
-                    .fill(hasContent ? Color.white : SlotsColor.papel)
+                    .fill(Color.white.opacity(0.28))
                     .overlay {
                         RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
-                            .stroke(
-                                strokeColor,
-                                style: StrokeStyle(lineWidth: isDropTarget ? 2 : 1, dash: hasContent ? [] : [6, 4])
+                            .strokeBorder(
+                                Color.black.opacity(0.22),
+                                style: StrokeStyle(lineWidth: 1.5, dash: [7, 5])
                             )
                     }
             }
         }
-    }
-
-    private var overlayControls: some View {
-        HStack(alignment: .top, spacing: 4) {
-            if hasContent {
-                PanelGlyphButton(
-                    systemImage: "xmark",
-                    help: "Vaciar slot \(slot.index)",
-                    size: HotSlotDesign.slotOverlayControlSize,
-                    iconSize: HotSlotDesign.slotOverlayIconSize,
-                    cornerRadius: HotSlotDesign.slotOverlayCornerRadius,
-                    action: onClear
-                )
-                .opacity(isHovering ? 1 : 0)
-                .allowsHitTesting(isHovering)
+        .overlay {
+            if isDropTarget {
+                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
+                    .strokeBorder(SlotsColor.naranja, lineWidth: 2)
+            } else if isHovering, hasContent {
+                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
+                    .strokeBorder(SlotsColor.naranja.opacity(0.35), lineWidth: 1)
             }
-            Spacer(minLength: 0)
-            SlotShortcutBadges(
-                slotIndex: slot.index,
-                isEditing: $isEditingShortcuts,
-                suppressPeek: $suppressPeekForBadges
-            )
-            .popover(isPresented: $isEditingShortcuts, arrowEdge: .leading) {
-                SlotShortcutEditorPopover(slotIndex: slot.index)
-            }
-        }
-        .padding(6)
-    }
-
-    @ViewBuilder
-    private var slotBodyPreview: some View {
-        if case .text(let string) = slot.content {
-            Text(string.trimmingCharacters(in: .whitespacesAndNewlines))
-                .font(SlotsFont.textoUI)
-                .lineLimit(3)
-                .foregroundStyle(SlotsColor.textoTerciario)
-                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
     private var isImageContent: Bool {
         if case .image = slot.content { return true }
         return false
-    }
-
-    private var strokeColor: Color {
-        if isDropTarget { return SlotsColor.naranja }
-        if isHovering, hasContent { return SlotsColor.naranja.opacity(0.45) }
-        if hasContent { return SlotsColor.linea }
-        return SlotsColor.linea
     }
 }

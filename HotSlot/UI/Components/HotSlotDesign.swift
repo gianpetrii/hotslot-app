@@ -6,14 +6,17 @@ import SwiftUI
 enum HotSlotDesign {
     static let panelWidth: CGFloat = 1060
     static let panelHeight: CGFloat = 664
-    static let panelHeaderHeight: CGFloat = 148
-    static let panelFooterHeight: CGFloat = 58
+    /// Título + buscador en una fila + separación al cuerpo (handoff Main.html).
+    static let panelHeaderHeight: CGFloat = 120
+    static let panelFooterHeight: CGFloat = SlotsRadius.controlAlto
     static let panelHintHeight: CGFloat = 30
+    static let panelBodyGap: CGFloat = SlotsSpace.l
+    static let historyColumnWidth: CGFloat = 330
     /// Reservado para layout; el cuerpo usa el espacio flexible restante dentro de `panelHeight`.
     static var panelBodyHeight: CGFloat {
         panelHeight - panelHeaderHeight - panelFooterHeight - panelHintHeight
     }
-    static let slotsColumnWidth: CGFloat = 400
+    static let panelSearchFieldWidth: CGFloat = 300
     static let cornerRadius: CGFloat = SlotsRadius.ventana
     static let cardCornerRadius: CGFloat = SlotsRadius.card
     static let rowCornerRadius: CGFloat = 10
@@ -83,13 +86,13 @@ struct PanelChrome<Content: View>: View {
 
         ZStack(alignment: .topLeading) {
             ZStack {
-                SlotsColor.papel
+                SlotsColor.vidrioTinte
                 VisualEffectBackground(
                     material: .hudWindow,
                     blendingMode: .withinWindow,
                     cornerRadius: HotSlotDesign.cornerRadius
                 )
-                .opacity(0.72)
+                .opacity(0.85)
             }
             content()
                 .frame(
@@ -101,9 +104,9 @@ struct PanelChrome<Content: View>: View {
         .frame(width: revealWidth, height: revealHeight, alignment: .topLeading)
         .clipShape(shape)
         .overlay {
-            shape.strokeBorder(Color.white.opacity(0.14), lineWidth: 0.5)
+            shape.strokeBorder(Color.white.opacity(0.75), lineWidth: 1)
         }
-        .shadow(color: .black.opacity(0.2), radius: 14, y: 8)
+        .shadow(color: Color(slotsHex: 0x462D14).opacity(0.22), radius: 45, y: 20)
         .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .topLeading)
         .contentShape(shape)
     }

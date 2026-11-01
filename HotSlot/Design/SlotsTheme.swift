@@ -32,6 +32,7 @@ enum SlotsFont {
         .custom("InterTight-Medium", size: compacto ? 44 : 64)
     }
 
+    static let tituloHistorial = Font.custom("InterTight-Medium", size: 22)
     static let tituloCard = Font.custom("InterTight-Medium", size: 26)
     static let textoUI = Font.custom("InterTight-Regular", size: 15)
     static let etiqueta = Font.custom("InterTight-Medium", size: 12)

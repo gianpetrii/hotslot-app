@@ -32,17 +32,13 @@ struct PanelView: View {
                     )
                     .frame(height: HotSlotDesign.panelHeaderHeight, alignment: .top)
 
-                    HStack(alignment: .top, spacing: 0) {
+                    HStack(alignment: .top, spacing: HotSlotDesign.panelBodyGap) {
                         SlotGridView(
                             appState: appState,
                             panelController: panelController,
                             searchText: searchText
                         )
-                        .frame(width: HotSlotDesign.slotsColumnWidth)
-
-                        Rectangle()
-                            .fill(SlotsColor.linea)
-                            .frame(width: 1)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                         HistoryListView(
                             historyStore: appState.historyStore,
@@ -53,20 +49,19 @@ struct PanelView: View {
                             },
                             keyboardHighlightIndex: $keyboardHighlightIndex
                         )
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .frame(width: HotSlotDesign.historyColumnWidth)
                     }
+                    .padding(.horizontal, HotSlotDesign.horizontalPadding)
                     .frame(height: HotSlotDesign.panelBodyHeight)
-                    .background(SlotsColor.papel)
                     .opacity(appState.panelBodyRevealed ? 1 : 0.35)
 
                     PanelLibraryBar(appState: appState)
                         .frame(height: HotSlotDesign.panelFooterHeight)
 
                     Text("Clic para pegar · Arrastrá para guardar · Esc para cerrar")
-                        .font(SlotsFont.etiqueta)
-                        .foregroundStyle(SlotsColor.textoSecundario)
+                        .font(SlotsFont.textoUI)
+                        .foregroundStyle(SlotsColor.textoTerciario)
                         .frame(maxWidth: .infinity, maxHeight: HotSlotDesign.panelHintHeight)
-                        .background(SlotsColor.papel)
                 }
                 .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .top)
                 .clipped()
