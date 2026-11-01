@@ -76,8 +76,8 @@ Objetivo: **build de prueba de usabilidad en Mac**. Decisiones: `docs/DECISIONES
 | [x] | **0** | Diagnóstico — OK nov 2026 |
 | [x] | **1** | Tokens, fuentes, ícono, modelo Library/Slot/HistoryItem, fixture, eventos |
 | [ ] | **2** | ~~iOS 00–13~~ **pausado** hasta validar Mac |
-| [~] | **3** | Núcleo Mac: notch ✓, historial oculto (concealed) ✓, sync workspace ✓, atajos (existentes) |
-| [~] | **4** | Pantallas Mac: panel 1060×664 + pills bibliotecas ✓; onboarding/ajustes/rediseño visual pendiente |
+| [x] | **3** | Núcleo Mac: notch, historial oculto (concealed), sync workspace, atajos |
+| [~] | **4** | Panel header + onboarding 3 pasos + Ajustes sidebar + menú slot; arranque 00 y cards rediseño pendiente |
 | [ ] | **5** | Humo Mac, versión, DMG, lista de desvíos (TestFlight cuando haya iOS) |
 
 | Estado | Pri | Tarea post-usabilidad |

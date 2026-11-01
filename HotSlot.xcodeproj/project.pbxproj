@@ -78,6 +78,7 @@
 		F5876299FFE1C74613AB4747 /* MenuBarHint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA75780C3AA9A0FD9726A77 /* MenuBarHint.swift */; };
 		F5B44D9C82D3CB4398737ED5 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B4D0B6EDEEE5D11496E08B /* ToastView.swift */; };
 		F9163EACFBBA158DB5AE7001 /* ShortcutRecorderPopoverLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B3E4B4A9B27D5894373219 /* ShortcutRecorderPopoverLayout.swift */; };
+		F956A4D89D12BE17B6D6BB23 /* PanelHeaderBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBEB360BA0C811221C1D6DE1 /* PanelHeaderBlock.swift */; };
 		FBF94D623D607AB7DEA87A6B /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22F605BFD20A8EF2DA9C242 /* OnboardingView.swift */; };
 /* End PBXBuildFile section */
 
@@ -145,6 +146,7 @@
 		BD36EA0DCFD93B6DFACE95B8 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		C6A2713A93781D6CF0A531E1 /* SlotsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsSettingsView.swift; sourceTree = "<group>"; };
 		CB00CAB33F7731154F7391F1 /* FeedbackSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackSound.swift; sourceTree = "<group>"; };
+		CBEB360BA0C811221C1D6DE1 /* PanelHeaderBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelHeaderBlock.swift; sourceTree = "<group>"; };
 		CFB47B1DB3239FAF3E7E19E6 /* InterTight-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InterTight-SemiBold.ttf"; sourceTree = "<group>"; };
 		D1A146B669DE65CF68ECF5A0 /* HotSlot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HotSlot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D22F605BFD20A8EF2DA9C242 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -348,6 +350,7 @@
 				5705E3CE6DEACE6C0251D749 /* HistoryListView.swift */,
 				EBD50D3AD7653F5FCEE0C092 /* PanelController.swift */,
 				73024E80E174C79983E6A25D /* PanelDragPayload.swift */,
+				CBEB360BA0C811221C1D6DE1 /* PanelHeaderBlock.swift */,
 				2DCFDD565B98C8B5733679A0 /* PanelLibraryBar.swift */,
 				A911DBA98261441FF883EE51 /* PanelView.swift */,
 				0F806ECE71FCC38E52033D0F /* SlotGridView.swift */,
@@ -630,6 +633,7 @@
 				5A14D5F57B0B72252A3272D1 /* OnboardingWindowController.swift in Sources */,
 				8A1E4F5E452F9201228BA817 /* PanelController.swift in Sources */,
 				1EB231A326C88DBB560DCA62 /* PanelDragPayload.swift in Sources */,
+				F956A4D89D12BE17B6D6BB23 /* PanelHeaderBlock.swift in Sources */,
 				9973A44BCB5E1A715BC15A84 /* PanelLibraryBar.swift in Sources */,
 				95DD54393C0079F7466465F7 /* PanelSearchHeader.swift in Sources */,
 				0406A938ED357E36FF7439CC /* PanelToggleShortcutPopover.swift in Sources */,

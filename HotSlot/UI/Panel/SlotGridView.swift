@@ -15,6 +15,9 @@ struct SlotGridView: View {
                 ForEach(appState.slotStore.slots) { slot in
                     SlotCardView(
                         slot: slot,
+                        otherLibraries: appState.libraryWorkspace.workspace.libraries
+                            .filter { $0.id != appState.libraryWorkspace.workspace.activeLibraryId }
+                            .sorted { $0.order < $1.order },
                         onPaste: {
                             appState.pasteSlot(index: slot.index, panelController: panelController)
                         },
@@ -32,6 +35,15 @@ struct SlotGridView: View {
                         },
                         onSwapFrom: { sourceIndex in
                             appState.slotStore.swapContents(from: sourceIndex, to: slot.index)
+                        },
+                        onRename: { title in
+                            appState.slotStore.updateLabel(index: slot.index, label: title)
+                        },
+                        onReplaceFromClipboard: {
+                            appState.replaceSlotFromClipboard(index: slot.index)
+                        },
+                        onMoveToLibrary: { libraryId in
+                            appState.moveSlotToLibrary(slotIndex: slot.index, libraryId: libraryId)
                         }
                     )
                     .frame(maxHeight: .infinity)
@@ -46,11 +58,15 @@ struct SlotGridView: View {
 
 private struct SlotCardView: View {
     let slot: Slot
+    let otherLibraries: [Library]
     let onPaste: () -> Void
     let onSaveFromClipboard: () -> Void
     let onSaveHistoryItem: (UUID) -> Void
     let onClear: () -> Void
     let onSwapFrom: (Int) -> Void
+    let onRename: (String) -> Void
+    let onReplaceFromClipboard: () -> Void
+    let onMoveToLibrary: (UUID) -> Void
     @State private var isHovering = false
     @State private var isDropTarget = false
     @State private var isPeeking = false
@@ -58,6 +74,8 @@ private struct SlotCardView: View {
     @State private var peekTask: Task<Void, Never>?
     @State private var isEditingShortcuts = false
     @State private var suppressPeekForBadges = false
+    @State private var showRenameAlert = false
+    @State private var renameDraft = ""
 
     private var hasContent: Bool { slot.content != nil }
 
@@ -147,10 +165,33 @@ private struct SlotCardView: View {
         .animation(.easeOut(duration: 0.12), value: isHovering)
         .animation(.easeOut(duration: 0.12), value: isDropTarget)
         .contextMenu {
+            Button("Renombrar…") {
+                renameDraft = slot.label
+                showRenameAlert = true
+            }
+            Button("Reemplazar con el portapapeles") {
+                onReplaceFromClipboard()
+            }
+            if !otherLibraries.isEmpty {
+                Menu("Mover a…") {
+                    ForEach(otherLibraries) { library in
+                        Button(library.name) {
+                            onMoveToLibrary(library.id)
+                        }
+                    }
+                }
+            }
+            Divider()
             Button("Pegar") { onPaste() }
-            Button("Guardar clipboard") { onSaveFromClipboard() }
             if hasContent {
-                Button("Vaciar", role: .destructive) { onClear() }
+                Button("Vaciar slot", role: .destructive) { onClear() }
+            }
+        }
+        .alert("Renombrar slot \(slot.index)", isPresented: $showRenameAlert) {
+            TextField("Título", text: $renameDraft)
+            Button("Cancelar", role: .cancel) {}
+            Button("Guardar") {
+                onRename(renameDraft.trimmingCharacters(in: .whitespacesAndNewlines))
             }
         }
         .help("Pegar slot \(slot.index). Arrastrá para intercambiar o soltá un clip del historial.")

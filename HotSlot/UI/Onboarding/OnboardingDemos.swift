@@ -9,6 +9,7 @@ enum OnboardingDemoKind {
     case drag
     case accessibility
     case menuBar
+    case shortcutsSummary
 }
 
 // MARK: - Contenedor común
@@ -345,5 +346,6 @@ func onboardingDemo(for kind: OnboardingDemoKind) -> some View {
     case .drag: OnboardingDragDemo()
     case .accessibility: EmptyView()
     case .menuBar: EmptyView()
+    case .shortcutsSummary: EmptyView()
     }
 }

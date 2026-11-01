@@ -69,8 +69,7 @@ struct PanelSearchHeader: View {
             .help("Más opciones")
         }
         .padding(.horizontal, HotSlotDesign.horizontalPadding)
-        .padding(.top, 14)
-        .padding(.bottom, 10)
-        .background(WindowDragHandle())
+        .padding(.top, 4)
+        .padding(.bottom, 6)
     }
 }

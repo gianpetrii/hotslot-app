@@ -247,6 +247,26 @@ final class AppState {
         UsageEventLog.shared.record("biblioteca_crear", detail: name)
     }
 
+    func replaceSlotFromClipboard(index: Int) {
+        guard ensureCanUseSlot(index) else { return }
+        guard let content = clipboardService.currentContent() else {
+            showToast("Nada en el portapapeles")
+            return
+        }
+        saveToSlot(index: index, content: content)
+    }
+
+    func moveSlotToLibrary(slotIndex: Int, libraryId: UUID) {
+        guard ensureCanUseSlot(slotIndex) else { return }
+        libraryWorkspace.syncFromLegacySlotStore(slotStore)
+        guard libraryWorkspace.moveSlotContent(order: slotIndex, toLibraryId: libraryId) else {
+            showToast("No hay slot vacío en esa biblioteca")
+            return
+        }
+        libraryWorkspace.applyActiveLibrary(to: slotStore)
+        UsageEventLog.shared.record("slot_mover_biblioteca", detail: "\(slotIndex)")
+    }
+
     private func slotDisplayTitle(at index: Int) -> String? {
         let label = slotStore.slot(at: index)?.label.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let label, !label.isEmpty else { return nil }

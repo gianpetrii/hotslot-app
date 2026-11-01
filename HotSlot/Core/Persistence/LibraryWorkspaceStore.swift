@@ -114,6 +114,41 @@ final class LibraryWorkspaceStore {
         save()
     }
 
+    /// Mueve el contenido del slot `order` de la biblioteca activa al primer slot vacío de `toLibraryId`.
+    @discardableResult
+    func moveSlotContent(order: Int, toLibraryId: UUID) -> Bool {
+        let fromId = workspace.activeLibraryId
+        guard fromId != toLibraryId else { return false }
+        guard let fromIdx = workspace.slots.firstIndex(where: { $0.libraryId == fromId && $0.order == order }),
+              workspace.slots[fromIdx].clipContent() != nil else { return false }
+        guard let toIdx = workspace.slots.firstIndex(where: { $0.libraryId == toLibraryId && $0.clipContent() == nil }) else {
+            return false
+        }
+
+        let now = Date()
+        var source = workspace.slots[fromIdx]
+        var dest = workspace.slots[toIdx]
+        dest.title = source.title
+        dest.kind = source.kind
+        dest.textPayload = source.textPayload
+        dest.imageFileName = source.imageFileName
+        dest.linkURL = source.linkURL
+        dest.meta = source.meta
+        dest.updatedAt = now
+
+        source.textPayload = nil
+        source.imageFileName = nil
+        source.linkURL = nil
+        source.kind = .text
+        source.meta = nil
+        source.updatedAt = now
+
+        workspace.slots[fromIdx] = source
+        workspace.slots[toIdx] = dest
+        save()
+        return true
+    }
+
     func syncFromLegacySlotStore(_ slotStore: SlotStore) {
         let libraryId = workspace.activeLibraryId
         let now = Date()

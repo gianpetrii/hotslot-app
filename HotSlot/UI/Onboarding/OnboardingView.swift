@@ -16,7 +16,7 @@ struct OnboardingView: View {
     var body: some View {
         ZStack {
             VisualEffectBackground(
-                material: .menu,
+                material: .hudWindow,
                 blendingMode: .behindWindow,
                 cornerRadius: HotSlotDesign.cornerRadius
             )
@@ -50,8 +50,8 @@ struct OnboardingView: View {
         HStack {
             Button("Saltar") { onCancel() }
                 .buttonStyle(.plain)
-                .font(HotSlotTypography.rowSecondary)
-                .foregroundStyle(.secondary)
+                .font(SlotsFont.textoUI)
+                .foregroundStyle(SlotsColor.textoSecundario)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 5)
                 .background {
@@ -103,17 +103,19 @@ struct OnboardingView: View {
     private func pageContent(_ item: OnboardingPage) -> some View {
         VStack(spacing: 12) {
             Text(item.title)
-                .font(HotSlotTypography.searchField.weight(.semibold))
-                .foregroundStyle(.primary)
+                .font(SlotsFont.tituloCard)
+                .foregroundStyle(SlotsColor.tinta)
 
             Text(item.caption)
-                .font(HotSlotTypography.rowSecondary)
-                .foregroundStyle(.secondary)
+                .font(SlotsFont.textoUI)
+                .foregroundStyle(SlotsColor.textoSecundario)
                 .multilineTextAlignment(.center)
-                .frame(maxWidth: 340)
+                .frame(maxWidth: 400)
 
             if item.demo == .accessibility {
                 AccessibilityGrantSection(isTrusted: $accessibilityTrusted, style: .onboarding)
+            } else if item.demo == .shortcutsSummary {
+                onboardingShortcutsSummary
             } else if item.demo == .menuBar {
                 menuBarBlock
             } else {
@@ -131,6 +133,37 @@ struct OnboardingView: View {
         }
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+    }
+
+    private var onboardingShortcutsSummary: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            shortcutRow("⌘⌃A", "Guardar en slot 1")
+            shortcutRow("⌘⇧A", "Pegar slot 1")
+            shortcutRow("⌘⇧V", "Ver todos")
+            Text("A · S · D · Q · W = slots 1 a 5")
+                .font(SlotsFont.etiqueta)
+                .foregroundStyle(SlotsColor.textoSecundario)
+                .padding(.top, 4)
+        }
+        .padding(SlotsSpace.m)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background {
+            RoundedRectangle(cornerRadius: SlotsRadius.card, style: .continuous)
+                .fill(SlotsColor.teclaFondo)
+        }
+        .padding(.top, 8)
+    }
+
+    private func shortcutRow(_ keys: String, _ action: String) -> some View {
+        HStack {
+            Text(keys)
+                .font(SlotsFont.etiqueta)
+                .foregroundStyle(SlotsColor.tinta)
+                .frame(width: 72, alignment: .leading)
+            Text(action)
+                .font(SlotsFont.textoUI)
+                .foregroundStyle(SlotsColor.textoTerciario)
+        }
     }
 
     private var menuBarBlock: some View {
@@ -194,39 +227,22 @@ private struct OnboardingPage {
 
     static let all: [OnboardingPage] = [
         OnboardingPage(
-            title: "El panel",
-            caption: "El ⌘ vive arriba a la derecha en la barra de menú (si no lo ves, liberá espacio quitando otros iconos). También ⌘⇧V.",
-            demo: .panel,
-            hint: "Slots a la izquierda · historial a la derecha"
+            title: "Tus slots",
+            caption: "Guardá links, textos, imágenes o colores en un slot y pegalos con un atajo, sin abrir nada.",
+            demo: .shortcutsSummary,
+            hint: "Guardar ⌘⌃ A·S·D·Q·W · Pegar ⌘⇧ A·S·D·Q·W · Ver todo ⌘⇧V"
         ),
         OnboardingPage(
-            title: "Icono en la barra",
-            caption: "El ⌘ queda arriba a la derecha. Con ⌘+arrastrá movelo hacia el reloj: ahí no lo reemplazan otros iconos cuando la barra se llena.",
-            demo: .menuBar,
-            hint: "Tocá el botón para ver cómo evitar que se oculte"
-        ),
-        OnboardingPage(
-            title: "Cinco slots",
-            caption: "Pasá el mouse sobre el slot — el popover es igual al panel.",
-            demo: .slot,
-            hint: "Clickear o usar el atajo indicado pega | X en el hover vacía el slot | comando del atajo editable en Ajustes → Atajos"
-        ),
-        OnboardingPage(
-            title: "Historial",
-            caption: "Pasá el mouse en las filas — texto e imagen se expanden igual que en el panel.",
-            demo: .history,
-            hint: "Clic pega · pin fija arriba · buscador filtra"
-        ),
-        OnboardingPage(
-            title: "Arrastrar",
-            caption: "Mantené apretado y arrastrá, como en el panel real.",
-            demo: .drag
-        ),
-        OnboardingPage(
-            title: "Pegado automático",
-            caption: "Con Accesibilidad, un clic pega solo. Sin permiso, usás ⌘V.",
+            title: "Un permiso y listo",
+            caption: "Para pegar en cualquier app sin abrir Slots, macOS te pide habilitar Accesibilidad.",
             demo: .accessibility,
-            hint: "Usá el botón del diálogo del sistema antes de ir a Ajustes"
+            hint: "Slots solo usa este permiso para pegar lo que elegís en la app que tenés abierta."
+        ),
+        OnboardingPage(
+            title: "Tus atajos",
+            caption: "Vienen listos para usar. Podés cambiarlos cuando quieras en Ajustes › Atajos.",
+            demo: .shortcutsSummary,
+            hint: "¿Algún atajo ya lo usás para otra cosa? Cambialo en Ajustes."
         ),
     ]
 }

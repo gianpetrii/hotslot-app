@@ -23,7 +23,7 @@ enum WindowPlacement {
     }
 
     /// Ajustes tras cerrar el panel: ocupa el mismo lugar que el panel, desplazado un poco arriba-derecha.
-    static let settingsWindowSize = NSSize(width: 520, height: 540)
+    static let settingsWindowSize = NSSize(width: 720, height: 540)
 
     static func utilityWindowFrame(
         size: NSSize = settingsWindowSize,

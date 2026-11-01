@@ -6,9 +6,10 @@ import SwiftUI
 enum HotSlotDesign {
     static let panelWidth: CGFloat = 1060
     static let panelHeight: CGFloat = 664
-    static let panelHeaderHeight: CGFloat = 72
+    static let panelHeaderHeight: CGFloat = 120
     static let panelFooterHeight: CGFloat = 52
-    static let panelBodyHeight: CGFloat = panelHeight - panelHeaderHeight - panelFooterHeight
+    static let panelHintHeight: CGFloat = 28
+    static let panelBodyHeight: CGFloat = panelHeight - panelHeaderHeight - panelFooterHeight - panelHintHeight
     static let slotsColumnWidth: CGFloat = 400
     static let cornerRadius: CGFloat = SlotsRadius.ventana
     static let cardCornerRadius: CGFloat = SlotsRadius.card

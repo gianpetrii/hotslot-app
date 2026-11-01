@@ -20,13 +20,11 @@ struct PanelView: View {
         ZStack(alignment: .topLeading) {
             PanelChrome(revealWidth: revealWidth, revealHeight: revealHeight) {
                 VStack(spacing: 0) {
-                    PanelSearchHeader(
+                    PanelHeaderBlock(
+                        appState: appState,
+                        panelController: panelController,
                         searchText: $searchText,
-                        isSearchFocused: $isSearchFocused,
-                        onOpenSettings: { appState.openSettings?() },
-                        onOpenTour: { appState.openOnboarding?() },
-                        onOpenLicense: { appState.openLicenseSettings() },
-                        onQuit: { NSApp.terminate(nil) }
+                        isSearchFocused: $isSearchFocused
                     )
 
                     HStack(alignment: .top, spacing: 0) {
@@ -54,6 +52,13 @@ struct PanelView: View {
                     .opacity(appState.panelBodyRevealed ? 1 : 0.35)
 
                     PanelLibraryBar(appState: appState)
+
+                    Text("Clic para pegar · Arrastrá para guardar · Esc para cerrar")
+                        .font(SlotsFont.etiqueta)
+                        .foregroundStyle(SlotsColor.textoSecundario)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 6)
+                        .background(SlotsColor.papel.opacity(0.85))
                 }
             }
         }

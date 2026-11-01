@@ -34,16 +34,16 @@ final class StatusBarController {
         button.appearsDisabled = false
 
         let symbolConfig = NSImage.SymbolConfiguration(pointSize: 15, weight: .semibold)
-        let baseSymbol = NSImage(systemSymbolName: "command", accessibilityDescription: BrandDisplay.name)
-        if let configured = baseSymbol?.withSymbolConfiguration(symbolConfig) {
-            let template = (configured.copy() as? NSImage) ?? configured
-            template.isTemplate = true
-            button.image = template
-        } else if let asset = NSImage(named: "MenuBarIcon"),
-                  let image = asset.copy() as? NSImage {
+        if let asset = NSImage(named: "MenuBarIcon"),
+           let image = asset.copy() as? NSImage {
             image.isTemplate = true
             image.size = NSSize(width: 18, height: 18)
             button.image = image
+        } else if let baseSymbol = NSImage(systemSymbolName: "command", accessibilityDescription: BrandDisplay.name),
+                  let configured = baseSymbol.withSymbolConfiguration(symbolConfig) {
+            let template = (configured.copy() as? NSImage) ?? configured
+            template.isTemplate = true
+            button.image = template
         } else {
             button.title = "⌘"
             button.font = NSFont.systemFont(ofSize: 14, weight: .semibold)

@@ -16,24 +16,38 @@ struct SettingsView: View {
     @State private var licensed = Entitlements.hasFullAccess
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            HotkeysSettingsView()
-                .tabItem { Label("Atajos", systemImage: "keyboard") }
-                .tag(SettingsTab.hotkeys)
-
-            SlotsSettingsView(appState: appState)
-                .tabItem { Label("Slots", systemImage: "square.grid.2x2") }
-                .tag(SettingsTab.slots)
-
-            generalTab
-                .tabItem { Label("General", systemImage: "gearshape") }
-                .tag(SettingsTab.general)
-
-            permissionsTab
-                .tabItem { Label("Permisos", systemImage: "lock.shield") }
-                .tag(SettingsTab.permissions)
+        NavigationSplitView {
+            List(selection: $selectedTab) {
+                Label("General", systemImage: "gearshape")
+                    .tag(SettingsTab.general)
+                Label("Atajos", systemImage: "keyboard")
+                    .tag(SettingsTab.hotkeys)
+                Label("Permisos", systemImage: "lock.shield")
+                    .tag(SettingsTab.permissions)
+                Label("Slots", systemImage: "square.grid.2x2")
+                    .tag(SettingsTab.slots)
+            }
+            .listStyle(.sidebar)
+            .navigationSplitViewColumnWidth(min: 168, ideal: 188, max: 220)
+        } detail: {
+            Group {
+                switch selectedTab {
+                case .general:
+                    generalTab
+                case .hotkeys:
+                    HotkeysSettingsView()
+                        .padding()
+                case .slots:
+                    SlotsSettingsView(appState: appState)
+                        .padding()
+                case .permissions:
+                    permissionsTab
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(SlotsColor.papel.opacity(0.35))
         }
-        .frame(width: 520, height: 520)
+        .frame(width: 720, height: 540)
         .onAppear {
             if let pending = appState.pendingSettingsTab {
                 selectedTab = pending
