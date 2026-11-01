@@ -31,11 +31,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         migrateHotkeysIfNeeded()
         AppSupportDirectory.migrateUnsandboxedIfNeeded()
+        NSApp.appearance = NSAppearance(named: .aqua)
         let state = AppState()
         let panel = PanelController(appState: state)
+        let developerActions = StatusBarDeveloperActions()
+        developerActions.appState = state
         let statusBar = StatusBarController(
             appState: state,
             panelController: panel,
+            developerActions: developerActions,
             onCheckForUpdates: { [weak self] in
                 self?.checkForUpdates()
             }

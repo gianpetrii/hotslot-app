@@ -7,6 +7,7 @@ struct SettingsView: View {
     @Bindable var appState: AppState
     @State private var launchAtLogin = AppSettings.load().launchAtLogin
     @State private var playSound = AppSettings.load().playSoundOnPaste
+    @State private var showNotchNotice = AppSettings.load().showNotchNotice
     @State private var historyLimit = AppSettings.load().historyLimit
     @State private var debugClipboard = AppSettings.load().debugClipboard
     @State private var accessibilityTrusted = AccessibilityPermission.isTrusted
@@ -49,6 +50,12 @@ struct SettingsView: View {
                         Toggle("Abrir al iniciar sesión", isOn: $launchAtLogin)
                             .onChange(of: launchAtLogin) { _, newValue in
                                 updateLaunchAtLogin(newValue)
+                            }
+                        Toggle("Mostrar aviso en el notch", isOn: $showNotchNotice)
+                            .onChange(of: showNotchNotice) { _, newValue in
+                                var settings = AppSettings.load()
+                                settings.showNotchNotice = newValue
+                                settings.save()
                             }
                         Text("\(BrandDisplay.name) vive en la barra de menú (⌘ arriba a la derecha). Si no aparece, la barra está llena: mové ítems del sistema a Centro de control o reordená con ⌘+arrastrar. Atajo ⌘⇧V; también podés abrir desde Aplicaciones.")
                             .font(.caption)

@@ -8,6 +8,9 @@ final class SlotStore {
 
     private(set) var slots: [Slot] = Slot.defaultSlots()
 
+    /// Llamado tras cada persistencia en disco (sync workspace, analytics, etc.).
+    var onPersist: (() -> Void)?
+
     init() {
         load()
     }
@@ -61,6 +64,7 @@ final class SlotStore {
     private func save() {
         guard let data = try? JSONEncoder().encode(slots) else { return }
         try? data.write(to: AppSupportDirectory.slotsFile, options: .atomic)
+        onPersist?()
     }
 
     // MARK: - Testing helpers

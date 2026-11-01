@@ -15,6 +15,7 @@ final class PasteService {
     private weak var focusTracker: FocusTracker?
     private let logger = Logger(subsystem: "com.hotslot.app", category: "Paste")
     var onShowToast: ((String?) -> Void)?
+    var onPasteSucceeded: ((Int?) -> Void)?
 
     func configure(clipboardService: ClipboardService, focusTracker: FocusTracker) {
         self.clipboardService = clipboardService
@@ -22,7 +23,7 @@ final class PasteService {
     }
 
     @discardableResult
-    func paste(content: ClipContent, targetApp: NSRunningApplication?) -> PasteResult {
+    func paste(content: ClipContent, targetApp: NSRunningApplication?, slotIndex: Int? = nil) -> PasteResult {
         let changeCount = PasteboardHelper.copyContentToPasteboard(content)
         clipboardService?.suppressUntilChangeCount = changeCount
 
@@ -36,13 +37,13 @@ final class PasteService {
 
         logger.debug("Pegando en \(target.bundleIdentifier ?? "?", privacy: .public)")
         target.activate()
-        schedulePaste(into: target, attempt: 0)
+        schedulePaste(into: target, attempt: 0, slotIndex: slotIndex)
 
         return .pastedAutomatically
     }
 
     /// Espera a que la app destino esté al frente y manda ⌘V una sola vez (si se manda dos, pega doble).
-    private func schedulePaste(into target: NSRunningApplication, attempt: Int) {
+    private func schedulePaste(into target: NSRunningApplication, attempt: Int, slotIndex: Int?) {
         let maxAttempts = 5
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) { [weak self] in
             guard let self else { return }
@@ -72,6 +73,7 @@ final class PasteService {
                 }
                 FeedbackSound.play(.pasteSuccess)
                 self.onShowToast?(nil)
+                self.onPasteSucceeded?(slotIndex)
                 return
             }
 
@@ -82,7 +84,7 @@ final class PasteService {
             }
 
             target.activate()
-            self.schedulePaste(into: target, attempt: attempt + 1)
+            self.schedulePaste(into: target, attempt: attempt + 1, slotIndex: slotIndex)
         }
     }
 
@@ -99,7 +101,7 @@ final class PasteService {
             onShowToast?("El slot \(index) está vacío")
             return .failed("Slot vacío")
         }
-        return paste(content: content, targetApp: focusTracker.pasteDestination())
+        return paste(content: content, targetApp: focusTracker.pasteDestination(), slotIndex: index)
     }
 
     func pasteFromHistory(item: ClipItem, focusTracker: FocusTracker) -> PasteResult {

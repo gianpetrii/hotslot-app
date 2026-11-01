@@ -34,7 +34,7 @@ struct PanelView: View {
                             .frame(width: HotSlotDesign.slotsColumnWidth)
 
                         Rectangle()
-                            .fill(Color.primary.opacity(0.1))
+                            .fill(SlotsColor.linea.opacity(0.8))
                             .frame(width: 1)
                             .padding(.vertical, 10)
 
@@ -49,8 +49,11 @@ struct PanelView: View {
                         )
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
-                    .padding(.bottom, 8)
+                    .frame(height: HotSlotDesign.panelBodyHeight)
+                    .padding(.bottom, 4)
                     .opacity(appState.panelBodyRevealed ? 1 : 0.35)
+
+                    PanelLibraryBar(appState: appState)
                 }
             }
         }

@@ -5,6 +5,7 @@ struct AppSettings: Codable, Equatable {
     var historyLimit: Int
     var launchAtLogin: Bool
     var playSoundOnPaste: Bool
+    var showNotchNotice: Bool
     var debugClipboard: Bool
     var hasCompletedOnboarding: Bool
     var hasSeenMenuBarHint: Bool
@@ -16,6 +17,7 @@ struct AppSettings: Codable, Equatable {
         historyLimit: 50,
         launchAtLogin: false,
         playSoundOnPaste: true,
+        showNotchNotice: true,
         debugClipboard: false,
         hasCompletedOnboarding: false,
         hasSeenMenuBarHint: false,
@@ -29,7 +31,7 @@ struct AppSettings: Codable, Equatable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case historyLimit, launchAtLogin, playSoundOnPaste, debugClipboard, hasCompletedOnboarding, hasSeenMenuBarHint
+        case historyLimit, launchAtLogin, playSoundOnPaste, showNotchNotice, debugClipboard, hasCompletedOnboarding, hasSeenMenuBarHint
         case firstInstallDate, licenseKey, isLicensed
     }
 
@@ -37,6 +39,7 @@ struct AppSettings: Codable, Equatable {
         historyLimit: Int,
         launchAtLogin: Bool,
         playSoundOnPaste: Bool,
+        showNotchNotice: Bool = true,
         debugClipboard: Bool,
         hasCompletedOnboarding: Bool,
         hasSeenMenuBarHint: Bool = false,
@@ -47,6 +50,7 @@ struct AppSettings: Codable, Equatable {
         self.historyLimit = historyLimit
         self.launchAtLogin = launchAtLogin
         self.playSoundOnPaste = playSoundOnPaste
+        self.showNotchNotice = showNotchNotice
         self.debugClipboard = debugClipboard
         self.hasCompletedOnboarding = hasCompletedOnboarding
         self.hasSeenMenuBarHint = hasSeenMenuBarHint
@@ -60,6 +64,7 @@ struct AppSettings: Codable, Equatable {
         historyLimit = try container.decodeIfPresent(Int.self, forKey: .historyLimit) ?? 50
         launchAtLogin = try container.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? false
         playSoundOnPaste = try container.decodeIfPresent(Bool.self, forKey: .playSoundOnPaste) ?? true
+        showNotchNotice = try container.decodeIfPresent(Bool.self, forKey: .showNotchNotice) ?? true
         debugClipboard = try container.decodeIfPresent(Bool.self, forKey: .debugClipboard) ?? false
         hasCompletedOnboarding = try container.decodeIfPresent(Bool.self, forKey: .hasCompletedOnboarding) ?? false
         hasSeenMenuBarHint = try container.decodeIfPresent(Bool.self, forKey: .hasSeenMenuBarHint) ?? false

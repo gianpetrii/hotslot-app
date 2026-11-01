@@ -32,6 +32,14 @@ enum AppSupportDirectory {
         root.appendingPathComponent("slots.json")
     }
 
+    static var workspaceFile: URL {
+        root.appendingPathComponent("libraries-workspace.json")
+    }
+
+    static var usageEventsFile: URL {
+        root.appendingPathComponent("usage-events.json")
+    }
+
     /// Copia historial/slots/imágenes desde `~/Library/Application Support/HotSlot` al contenedor sandbox.
     static func migrateUnsandboxedIfNeeded() {
         guard ProcessInfo.processInfo.environment["APP_SANDBOX_CONTAINER_ID"] != nil else { return }

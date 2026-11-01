@@ -164,6 +164,9 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
             let reopen = onDismiss
             let openPanel = reopenPanelOnDismiss
             onDismiss = nil
+            if openPanel {
+                appState?.presentNotch(.ready)
+            }
             reopenPanelOnDismiss = false
             reopen?(openPanel)
         }

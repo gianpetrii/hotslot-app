@@ -8,10 +8,17 @@ final class StatusBarController {
     private let appState: AppState
     private let panelController: PanelController
     private let onCheckForUpdates: () -> Void
+    private let developerActions: StatusBarDeveloperActions
 
-    init(appState: AppState, panelController: PanelController, onCheckForUpdates: @escaping () -> Void) {
+    init(
+        appState: AppState,
+        panelController: PanelController,
+        developerActions: StatusBarDeveloperActions,
+        onCheckForUpdates: @escaping () -> Void
+    ) {
         self.appState = appState
         self.panelController = panelController
+        self.developerActions = developerActions
         self.onCheckForUpdates = onCheckForUpdates
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         statusItem.autosaveName = "com.hotslot.app.menuBarIcon"
@@ -48,7 +55,7 @@ final class StatusBarController {
         button.sendAction(on: [.leftMouseUp, .rightMouseUp])
     }
 
-    private lazy var contextMenu: NSMenu = {
+    private func buildContextMenu(includeDeveloperItems: Bool) -> NSMenu {
         let menu = NSMenu()
 
         let openItem = NSMenuItem(title: "Abrir panel", action: #selector(togglePanel), keyEquivalent: "")
@@ -83,8 +90,12 @@ final class StatusBarController {
         quitItem.target = self
         menu.addItem(quitItem)
 
+        if includeDeveloperItems {
+            DeveloperMenuBuilder.appendItems(to: menu, target: developerActions)
+        }
+
         return menu
-    }()
+    }
 
     @objc private func statusBarClicked() {
         guard let event = NSApp.currentEvent else {
@@ -93,7 +104,9 @@ final class StatusBarController {
         }
         if event.type == .rightMouseUp {
             if let button = statusItem.button {
-                contextMenu.popUp(positioning: nil, at: NSPoint(x: 0, y: button.bounds.height), in: button)
+                let optionHeld = event.modifierFlags.contains(.option)
+                buildContextMenu(includeDeveloperItems: optionHeld)
+                    .popUp(positioning: nil, at: NSPoint(x: 0, y: button.bounds.height), in: button)
             }
         } else {
             togglePanel()

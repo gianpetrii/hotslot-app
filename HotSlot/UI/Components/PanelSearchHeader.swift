@@ -18,7 +18,7 @@ struct PanelSearchHeader: View {
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(.secondary)
 
-                TextField("Buscar en el historial", text: $searchText)
+                TextField("Buscar en slots e historial", text: $searchText)
                     .textFieldStyle(.plain)
                     .font(HotSlotTypography.searchField)
                     .focused($isSearchFocused)

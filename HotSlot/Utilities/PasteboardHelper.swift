@@ -24,9 +24,8 @@ enum PasteboardHelper {
 
     static func shouldIgnore(pasteboard: NSPasteboard = .general) -> Bool {
         let types = pasteboard.types ?? []
-        // Transient = copias temporales (arrastrar/soltar), ignorar.
         if types.contains(transientType) { return true }
-        // Concealed: lo usan gestores de contraseñas; intentamos leer igual por si hay texto legible.
+        if types.contains(concealedType) { return true }
         return false
     }
 

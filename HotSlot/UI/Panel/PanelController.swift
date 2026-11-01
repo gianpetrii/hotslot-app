@@ -93,6 +93,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         isAnimating = true
         appState.isPanelVisible = true
         appState.clipboardService.pollNow()
+        UsageEventLog.shared.record("panel_abrir", screen: "mac_panel")
 
         NSAnimationContext.runAnimationGroup({ context in
             context.duration = 0.16
@@ -114,6 +115,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         openGeneration += 1
         appState.isPanelVisible = false
         appState.panelBodyRevealed = false
+        UsageEventLog.shared.record("panel_cerrar", screen: "mac_panel")
 
         guard animated else {
             window.orderOut(nil)

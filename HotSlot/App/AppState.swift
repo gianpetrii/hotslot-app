@@ -14,10 +14,12 @@ enum SettingsTab: Int {
 final class AppState {
     let historyStore = HistoryStore()
     let slotStore = SlotStore()
+    let libraryWorkspace = LibraryWorkspaceStore()
     let clipboardService = ClipboardService()
     let pasteService = PasteService()
     let focusTracker = FocusTracker()
     let hotkeyManager = HotkeyManager()
+    let notchNotice = NotchNoticeController()
 
     var toastMessage: String?
     var isPanelVisible = false
@@ -42,11 +44,27 @@ final class AppState {
 
     func bootstrap(panelController: PanelController) {
         Entitlements.recordFirstLaunchIfNeeded()
+        libraryWorkspace.importLegacySlotsIfNeeded(from: slotStore)
+        libraryWorkspace.applyActiveLibrary(to: slotStore)
+        slotStore.onPersist = { [weak self] in
+            guard let self else { return }
+            self.libraryWorkspace.syncFromLegacySlotStore(self.slotStore)
+        }
         clipboardService.configure(historyStore: historyStore)
         pasteService.configure(clipboardService: clipboardService, focusTracker: focusTracker)
 
+        notchNotice.configure {
+            AccessibilityPermission.openSettings()
+        }
+
         pasteService.onShowToast = { [weak self] message in
             if let message { self?.showToast(message) }
+        }
+
+        pasteService.onPasteSucceeded = { [weak self] slotIndex in
+            guard let self else { return }
+            let title = slotIndex.flatMap { self.slotDisplayTitle(at: $0) }
+            self.presentNotch(.pasted(slotIndex: slotIndex, title: title))
         }
 
         hotkeyManager.onTogglePanel = { [weak self, weak panelController] in
@@ -65,6 +83,11 @@ final class AppState {
             guard let self else { return }
             guard self.ensureCanUseSlot(index) else { return }
             guard self.ensureAccessibilityForPaste() else { return }
+            guard self.slotStore.content(at: index) != nil else {
+                FeedbackSound.play(.pasteFailed)
+                self.presentNotch(.emptySlot(index: index))
+                return
+            }
             self.focusTracker.capture()
             self.pasteService.pasteFromSlot(
                 index: index,
@@ -81,7 +104,7 @@ final class AppState {
                 if let content = await self.clipboardService.captureSelection() {
                     self.slotStore.saveContent(index: index, content: content)
                     FeedbackSound.play(.saved)
-                    self.showToast("Guardado en slot \(index)")
+                    self.presentNotch(.saved(slotIndex: index, title: self.slotDisplayTitle(at: index)))
                 } else {
                     FeedbackSound.play(.pasteFailed)
                     self.showToast("Nada seleccionado para guardar")
@@ -119,7 +142,7 @@ final class AppState {
         let content = item.content
         panelController.hide(animated: true) {
             self.isPanelVisible = false
-            self.pasteService.paste(content: content, targetApp: target)
+            self.pasteService.paste(content: content, targetApp: target, slotIndex: nil)
             self.focusTracker.clearPasteDestination()
         }
     }
@@ -129,13 +152,13 @@ final class AppState {
         guard ensureAccessibilityForPaste() else { return }
         guard let content = slotStore.content(at: index) else {
             FeedbackSound.play(.pasteFailed)
-            showToast("El slot \(index) está vacío")
+            presentNotch(.emptySlot(index: index))
             return
         }
         let target = focusTracker.pasteDestination()
         panelController.hide(animated: true) {
             self.isPanelVisible = false
-            self.pasteService.paste(content: content, targetApp: target)
+            self.pasteService.paste(content: content, targetApp: target, slotIndex: index)
             self.focusTracker.clearPasteDestination()
         }
     }
@@ -153,6 +176,7 @@ final class AppState {
     func ensureAccessibilityForPaste() -> Bool {
         guard AccessibilityPermission.isTrusted else {
             AccessibilityPermission.requestAccessForPaste(focusWindow: accessibilityPresentingWindow)
+            presentNotch(.noAccessibility)
             showToast("Permití el control en el diálogo del sistema (Accesibilidad)")
             FeedbackSound.play(.pasteFailed)
             return false
@@ -201,7 +225,31 @@ final class AppState {
         slotStore.saveContent(index: index, content: content)
         if announce {
             FeedbackSound.play(.saved)
-            showToast("Guardado en slot \(index)")
+            presentNotch(.saved(slotIndex: index, title: slotDisplayTitle(at: index)))
         }
+    }
+
+    func presentNotch(_ kind: NotchNoticeKind) {
+        notchNotice.present(kind)
+    }
+
+    func switchLibrary(to id: UUID) {
+        libraryWorkspace.syncFromLegacySlotStore(slotStore)
+        libraryWorkspace.setActiveLibrary(id: id)
+        libraryWorkspace.applyActiveLibrary(to: slotStore)
+        UsageEventLog.shared.record("biblioteca_cambiar", detail: libraryWorkspace.activeLibrary?.name)
+    }
+
+    func createLibrary(named name: String) {
+        libraryWorkspace.syncFromLegacySlotStore(slotStore)
+        libraryWorkspace.createLibrary(named: name)
+        libraryWorkspace.applyActiveLibrary(to: slotStore)
+        UsageEventLog.shared.record("biblioteca_crear", detail: name)
+    }
+
+    private func slotDisplayTitle(at index: Int) -> String? {
+        let label = slotStore.slot(at: index)?.label.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let label, !label.isEmpty else { return nil }
+        return label
     }
 }

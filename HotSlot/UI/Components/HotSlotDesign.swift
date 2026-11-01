@@ -4,15 +4,16 @@ import SwiftUI
 
 /// Constantes de diseño compartidas (estilo Clipboard nativo de macOS).
 enum HotSlotDesign {
-    static let panelWidth: CGFloat = 572
-    static let panelHeight: CGFloat = 520
-    static let panelHeaderHeight: CGFloat = 58
-    static let panelBodyHeight: CGFloat = panelHeight - panelHeaderHeight
-    static let slotsColumnWidth: CGFloat = 176
-    static let cornerRadius: CGFloat = 16
-    static let cardCornerRadius: CGFloat = 10
+    static let panelWidth: CGFloat = 1060
+    static let panelHeight: CGFloat = 664
+    static let panelHeaderHeight: CGFloat = 72
+    static let panelFooterHeight: CGFloat = 52
+    static let panelBodyHeight: CGFloat = panelHeight - panelHeaderHeight - panelFooterHeight
+    static let slotsColumnWidth: CGFloat = 400
+    static let cornerRadius: CGFloat = SlotsRadius.ventana
+    static let cardCornerRadius: CGFloat = SlotsRadius.card
     static let rowCornerRadius: CGFloat = 10
-    static let horizontalPadding: CGFloat = 12
+    static let horizontalPadding: CGFloat = SlotsSpace.paddingPanel
     static let sectionSpacing: CGFloat = 10
     static let thumbnailSize: CGFloat = 44
     static let thumbnailCornerRadius: CGFloat = 8
@@ -32,10 +33,10 @@ enum HotSlotDesign {
     static let slotOverlayIconSize: CGFloat = 10
     static let slotOverlayCornerRadius: CGFloat = 6
     /// Ancho fijo del badge de atajo (evita que el popover se mueva al grabar/borrar).
-    static let shortcutBadgeWidthCompact: CGFloat = 50
-    static let shortcutBadgeWidthRegular: CGFloat = 56
-    static let onboardingWidth: CGFloat = 460
-    static let onboardingHeight: CGFloat = 560
+    static let shortcutBadgeWidthCompact: CGFloat = 54
+    static let shortcutBadgeWidthRegular: CGFloat = 62
+    static let onboardingWidth: CGFloat = 520
+    static let onboardingHeight: CGFloat = 600
 
     static let rowExpandAnimation = Animation.spring(response: 0.32, dampingFraction: 0.92)
 
@@ -78,7 +79,7 @@ struct PanelChrome<Content: View>: View {
 
         ZStack(alignment: .topLeading) {
             VisualEffectBackground(
-                material: .menu,
+                material: .hudWindow,
                 blendingMode: .behindWindow,
                 cornerRadius: HotSlotDesign.cornerRadius
             )
