@@ -28,7 +28,6 @@ struct PanelLibraryBar: View {
             saveClipboardButton
         }
         .padding(.horizontal, HotSlotDesign.horizontalPadding)
-        .padding(.vertical, SlotsSpace.xs)
         .sheet(isPresented: $appState.isSaveClipboardSlotPickerPresented) {
             SaveClipboardSlotPickerSheet(appState: appState)
         }
@@ -97,25 +96,27 @@ struct PanelLibraryBar: View {
         Button {
             appState.saveClipboardFromPanel()
         } label: {
-            HStack(spacing: -6) {
+            HStack(spacing: 0) {
                 Text("Guardar portapapeles")
                     .font(SlotsFont.textoUI)
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 20)
-                    .frame(height: SlotsRadius.controlAlto)
-                    .background {
-                        Capsule(style: .continuous)
-                            .fill(SlotsColor.cardOscura)
-                    }
+                    .padding(.leading, 20)
+                    .padding(.trailing, 14)
 
                 Text("›")
                     .font(.system(size: 18, weight: .medium))
                     .foregroundStyle(.white)
-                    .frame(width: SlotsRadius.controlAlto, height: SlotsRadius.controlAlto)
+                    .frame(width: 36, height: 36)
                     .background {
                         Circle()
-                            .fill(SlotsColor.cardOscura)
+                            .fill(Color.white.opacity(0.12))
                     }
+                    .padding(.trailing, 6)
+            }
+            .frame(height: SlotsRadius.controlAlto)
+            .background {
+                Capsule(style: .continuous)
+                    .fill(SlotsColor.cardOscura)
             }
         }
         .buttonStyle(.plain)

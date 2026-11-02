@@ -30,6 +30,7 @@ Panel 1060×664, grilla 3×2 (slot 1 alto), cabecera con buscador pill + ⌘F + 
 | 8 | Slot 1 del mock = **flyer imagen** | Fixture «Cargar ejemplo»: slot 1 **link** (Behance); sin imagen demo embebida | Falta asset de flyer en fixture | Pendiente |
 | 9 | Apertura panel: escala + fade (~220 ms) | Animación **unfold** (cuadrado → ancho → alto) legacy | Flujo dinámico aún no retocado | A revisar en prueba |
 | 10 | Vidrio / sombra pixel-perfect | Aproximación SwiftUI (`vidrioTinte` + blur) | Limitación material nativo | Pendiente fino |
+| 11 | «Guardar»: pill + círculo **superpuestos** (−6 px) | **Una** cápsula; › en círculo **dentro** (sin pegote con el borde) | Legibilidad; sigue siendo un solo botón | Pendiente |
 
 ---
 

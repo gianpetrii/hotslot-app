@@ -59,6 +59,7 @@ struct PanelView: View {
 
                         PanelLibraryBar(appState: appState)
                     }
+                    .padding(.bottom, SlotsSpace.xl)
                     .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .top)
                     .clipped()
                 }
