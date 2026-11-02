@@ -19,6 +19,14 @@ Luego volvé a Run en Xcode.
 
 ## Flujo rápido (~15 min)
 
+Registro de la última pasada (Gianluca):
+
+| Paso | Resultado |
+|------|-----------|
+| 1 Arranque / onboarding | Splash solo desde `/Applications` (Run en Xcode no aplica). Onboarding 3 pasos OK; mejoras menores pendientes. Panel abre bien. |
+| 2 Panel / ⌘⇧V | OK |
+| 3 Bibliotecas | Cambio de pill OK; **+ nueva biblioteca** fallaba → corregido en 0.19.0 (overlay modal). |
+
 1. **Arranque** — Al abrir desde Aplicaciones: splash naranja ~2 s; primera vez → onboarding 3 pasos; después → panel si abriste la app.
 2. **Panel** — ⌘⇧V: panel grande, título de biblioteca, buscador, slots a la izquierda, historial a la derecha, pills abajo, **Guardar portapapeles**.
 3. **Bibliotecas** — Cambiar pill; ⌥ menú → Biblioteca; slots distintos por biblioteca (con ejemplo cargado).

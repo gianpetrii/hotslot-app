@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.19.0] — 2026-11-02
+
+### Rediseño macOS (handoff Dante)
+
+- Panel principal alineado a `Main`: grilla 3×2, cabecera, historial, footer, vidrio y tokens Inter Tight.
+- Icono de menú desde marca Slots; fixture «Cargar ejemplo» coherente con el mock.
+- Modales del panel vía overlay (nueva biblioteca y elegir slot al guardar); corrige `.sheet` que no abría en `NSPanel`.
+
+### Docs
+
+- `docs/DESVIOS-DISENO-DANTE.md` para validación con diseño.
+
 ## [0.18.4] — 2026-11-01
 
 ### UX

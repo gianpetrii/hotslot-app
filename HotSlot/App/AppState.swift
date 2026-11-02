@@ -36,6 +36,7 @@ final class AppState {
 
     /// Sheet del panel: elegir slot cuando «Guardar portapapeles» y no hay vacíos.
     var isSaveClipboardSlotPickerPresented = false
+    var isNewLibraryFormPresented = false
 
     /// Ajustes abiertos: el icono de menú bar no cierra el panel flotante al tocarlo.
     var isSettingsWindowVisible = false

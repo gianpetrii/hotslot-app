@@ -3,7 +3,6 @@ import SwiftUI
 /// Cuando los 5 slots están llenos: elegir cuál reemplazar (handoff Mac 08).
 struct SaveClipboardSlotPickerSheet: View {
     @Bindable var appState: AppState
-    @Environment(\.dismiss) private var dismiss
     @State private var replaceIndex: Int?
 
     var body: some View {
@@ -21,7 +20,7 @@ struct SaveClipboardSlotPickerSheet: View {
                     Button {
                         if slot.content == nil {
                             appState.saveClipboardToSlot(slot.index, replaceExisting: false)
-                            dismiss()
+                            closePicker()
                         } else {
                             replaceIndex = slot.index
                         }
@@ -54,7 +53,7 @@ struct SaveClipboardSlotPickerSheet: View {
 
             HStack {
                 Spacer()
-                Button("Cancelar") { dismiss() }
+                Button("Cancelar", action: closePicker)
             }
         }
         .padding(SlotsSpace.l)
@@ -71,12 +70,16 @@ struct SaveClipboardSlotPickerSheet: View {
                 if let index = replaceIndex {
                     appState.saveClipboardToSlot(index, replaceExisting: true)
                     replaceIndex = nil
-                    dismiss()
+                    closePicker()
                 }
             }
         } message: {
             Text("Lo que tenía el slot queda en el historial por si lo necesitás.")
         }
+    }
+
+    private func closePicker() {
+        appState.isSaveClipboardSlotPickerPresented = false
     }
 
     private var replaceTitle: String {

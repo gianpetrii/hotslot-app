@@ -8,6 +8,7 @@ struct PanelView: View {
     @State private var revealWidth = HotSlotDesign.panelWidth
     @State private var revealHeight = HotSlotDesign.panelHeight
     @State private var unfoldGeneration = 0
+    @State private var newLibraryName = ""
     @FocusState private var isSearchFocused: Bool
 
     private var filteredItems: [ClipItem] {
@@ -65,6 +66,35 @@ struct PanelView: View {
                 }
             }
             .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .topLeading)
+            .overlay {
+                if appState.isSaveClipboardSlotPickerPresented {
+                    PanelModalOverlay {
+                        appState.isSaveClipboardSlotPickerPresented = false
+                    } content: {
+                        SaveClipboardSlotPickerSheet(appState: appState)
+                    }
+                } else if appState.isNewLibraryFormPresented {
+                    PanelModalOverlay {
+                        appState.isNewLibraryFormPresented = false
+                        newLibraryName = ""
+                    } content: {
+                        NewLibraryFormView(
+                            name: $newLibraryName,
+                            onCancel: {
+                                appState.isNewLibraryFormPresented = false
+                                newLibraryName = ""
+                            },
+                            onCreate: {
+                                appState.createLibrary(named: newLibraryName)
+                                appState.isNewLibraryFormPresented = false
+                                newLibraryName = ""
+                            }
+                        )
+                    }
+                }
+            }
+            .animation(.easeOut(duration: 0.18), value: appState.isSaveClipboardSlotPickerPresented)
+            .animation(.easeOut(duration: 0.18), value: appState.isNewLibraryFormPresented)
 
             panelShortcutHint
         }
@@ -126,6 +156,9 @@ struct PanelView: View {
             withAnimation(listAnimation) {
                 keyboardHighlightIndex = nil
             }
+        }
+        .onChange(of: appState.isNewLibraryFormPresented) { _, presented in
+            if presented { newLibraryName = "" }
         }
         .onDisappear {
             searchText = ""

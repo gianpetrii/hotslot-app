@@ -3,8 +3,6 @@ import SwiftUI
 /// Pills de bibliotecas + «Guardar portapapeles» (handoff `Main.html`).
 struct PanelLibraryBar: View {
     @Bindable var appState: AppState
-    @State private var showNewLibrarySheet = false
-    @State private var newLibraryName = ""
 
     private var libraries: [Library] {
         appState.libraryWorkspace.workspace.libraries.sorted { $0.order < $1.order }
@@ -28,12 +26,6 @@ struct PanelLibraryBar: View {
             saveClipboardButton
         }
         .padding(.horizontal, HotSlotDesign.horizontalPadding)
-        .sheet(isPresented: $appState.isSaveClipboardSlotPickerPresented) {
-            SaveClipboardSlotPickerSheet(appState: appState)
-        }
-        .sheet(isPresented: $showNewLibrarySheet) {
-            newLibrarySheet
-        }
     }
 
     private func libraryPill(_ library: Library) -> some View {
@@ -76,8 +68,7 @@ struct PanelLibraryBar: View {
 
     private var addLibraryButton: some View {
         Button {
-            newLibraryName = ""
-            showNewLibrarySheet = true
+            appState.isNewLibraryFormPresented = true
         } label: {
             Image(systemName: "plus")
                 .font(.system(size: 14, weight: .semibold))
@@ -121,29 +112,5 @@ struct PanelLibraryBar: View {
         }
         .buttonStyle(.plain)
         .help("Guarda el portapapeles en el primer slot vacío")
-    }
-
-    private var newLibrarySheet: some View {
-        VStack(alignment: .leading, spacing: SlotsSpace.m) {
-            Text("Nueva biblioteca")
-                .font(SlotsFont.tituloCard)
-
-            TextField("Nombre", text: $newLibraryName)
-                .textFieldStyle(.roundedBorder)
-                .font(SlotsFont.textoUI)
-
-            HStack {
-                Spacer()
-                Button("Cancelar") { showNewLibrarySheet = false }
-                Button("Crear biblioteca") {
-                    appState.createLibrary(named: newLibraryName)
-                    showNewLibrarySheet = false
-                }
-                .keyboardShortcut(.defaultAction)
-                .disabled(newLibraryName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            }
-        }
-        .padding(SlotsSpace.l)
-        .frame(width: 320)
     }
 }
