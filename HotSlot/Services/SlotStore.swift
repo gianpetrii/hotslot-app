@@ -25,6 +25,12 @@ final class SlotStore {
         save()
     }
 
+    func updateCardBackground(index: Int, hex: String?) {
+        guard let i = slots.firstIndex(where: { $0.index == index }) else { return }
+        slots[i].cardBackgroundHex = hex
+        save()
+    }
+
     func saveContent(index: Int, content: ClipContent) {
         guard let i = slots.firstIndex(where: { $0.index == index }) else { return }
         slots[i].content = content

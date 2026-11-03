@@ -18,13 +18,12 @@ struct ClipThumbnailView: View {
         case .row:
             rowPreview
         case .slot, .peek:
-            imageFill
-                .frame(width: rowPreviewWidth, height: rowPreviewHeight)
-                .frame(
-                    maxWidth: style == .slot || style == .peek ? .infinity : nil,
-                    maxHeight: style == .slot || style == .peek ? .infinity : nil
-                )
-                .clipShape(RoundedRectangle(cornerRadius: clipRadius, style: .continuous))
+            GeometryReader { geo in
+                imageFill
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .clipped()
+            }
+            .clipShape(RoundedRectangle(cornerRadius: clipRadius, style: .continuous))
         }
     }
 

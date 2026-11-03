@@ -22,83 +22,62 @@ struct PanelView: View {
     private let listAnimation = Animation.spring(response: 0.34, dampingFraction: 0.82)
 
     var body: some View {
-        VStack(spacing: HotSlotDesign.panelHintOutsideGap) {
-            ZStack(alignment: .topLeading) {
-                PanelChrome(revealWidth: revealWidth, revealHeight: revealHeight) {
-                    VStack(spacing: HotSlotDesign.panelSectionGap) {
-                        PanelHeaderBlock(
-                            appState: appState,
-                            panelController: panelController,
-                            searchText: $searchText,
-                            isSearchFocused: $isSearchFocused
-                        )
-
-                        HStack(alignment: .top, spacing: HotSlotDesign.panelBodyGap) {
-                            SlotGridView(
+        ZStack {
+            VStack(spacing: HotSlotDesign.panelHintOutsideGap) {
+                ZStack(alignment: .topLeading) {
+                    PanelChrome(revealWidth: revealWidth, revealHeight: revealHeight) {
+                        VStack(spacing: HotSlotDesign.panelSectionGap) {
+                            PanelHeaderBlock(
                                 appState: appState,
                                 panelController: panelController,
-                                searchText: searchText
+                                searchText: $searchText,
+                                isSearchFocused: $isSearchFocused
                             )
-                            .padding(.top, HotSlotDesign.panelColumnTopInset)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                            HistoryListView(
-                                historyStore: appState.historyStore,
-                                items: filteredItems,
-                                isSearching: !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-                                onPaste: { item in
-                                    appState.pasteItem(item, panelController: panelController)
-                                },
-                                keyboardHighlightIndex: $keyboardHighlightIndex
-                            )
-                            .padding(.top, HotSlotDesign.panelColumnTopInset)
-                            .frame(width: HotSlotDesign.historyColumnWidth)
-                        }
-                        .padding(.horizontal, HotSlotDesign.horizontalPadding)
-                        .frame(maxHeight: .infinity)
-                        .opacity(appState.panelBodyRevealed ? 1 : 0.35)
+                            HStack(alignment: .top, spacing: HotSlotDesign.panelBodyGap) {
+                                SlotGridView(
+                                    appState: appState,
+                                    panelController: panelController,
+                                    searchText: searchText
+                                )
+                                .padding(.top, HotSlotDesign.panelColumnTopInset)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                        PanelLibraryBar(appState: appState)
-                    }
-                    .padding(.bottom, SlotsSpace.xl)
-                    .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .top)
-                    .clipped()
-                }
-            }
-            .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .topLeading)
-            .overlay {
-                if appState.isSaveClipboardSlotPickerPresented {
-                    PanelModalOverlay {
-                        appState.isSaveClipboardSlotPickerPresented = false
-                    } content: {
-                        SaveClipboardSlotPickerSheet(appState: appState)
-                    }
-                } else if appState.isNewLibraryFormPresented {
-                    PanelModalOverlay {
-                        appState.isNewLibraryFormPresented = false
-                        newLibraryName = ""
-                    } content: {
-                        NewLibraryFormView(
-                            name: $newLibraryName,
-                            onCancel: {
-                                appState.isNewLibraryFormPresented = false
-                                newLibraryName = ""
-                            },
-                            onCreate: {
-                                appState.createLibrary(named: newLibraryName)
-                                appState.isNewLibraryFormPresented = false
-                                newLibraryName = ""
+                                HistoryListView(
+                                    historyStore: appState.historyStore,
+                                    items: filteredItems,
+                                    isSearching: !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                                    onPaste: { item in
+                                        appState.pasteItem(item, panelController: panelController)
+                                    },
+                                    keyboardHighlightIndex: $keyboardHighlightIndex
+                                )
+                                .padding(.top, HotSlotDesign.panelColumnTopInset)
+                                .frame(width: HotSlotDesign.historyColumnWidth)
                             }
-                        )
+                            .padding(.horizontal, HotSlotDesign.horizontalPadding)
+                            .frame(maxHeight: .infinity)
+                            .opacity(appState.panelBodyRevealed ? 1 : 0.35)
+
+                            PanelLibraryBar(appState: appState)
+                        }
+                        .padding(.bottom, SlotsSpace.xl)
+                        .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .top)
+                        .clipped()
                     }
                 }
-            }
-            .animation(.easeOut(duration: 0.18), value: appState.isSaveClipboardSlotPickerPresented)
-            .animation(.easeOut(duration: 0.18), value: appState.isNewLibraryFormPresented)
+                .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .topLeading)
 
-            panelShortcutHint
+                panelShortcutHint
+            }
+            .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelWindowHeight, alignment: .top)
+
+            panelModalLayer
         }
         .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelWindowHeight, alignment: .top)
+        .animation(.easeOut(duration: 0.18), value: appState.isSaveClipboardSlotPickerPresented)
+        .animation(.easeOut(duration: 0.18), value: appState.isNewLibraryFormPresented)
+        .animation(.easeOut(duration: 0.18), value: appState.deleteLibraryConfirmation != nil)
         .overlay(alignment: .bottom) {
             if let toast = appState.toastMessage {
                 ToastView(message: toast)
@@ -109,7 +88,7 @@ struct PanelView: View {
                     ))
             }
         }
-        .animation(.easeOut(duration: 0.2), value: appState.panelBodyRevealed)
+        .animation(.easeOut(duration: 0.12), value: appState.panelBodyRevealed)
         .animation(.spring(response: 0.3, dampingFraction: 0.88), value: appState.toastMessage)
         .animation(listAnimation, value: filteredItems.map(\.id))
         .onKeyPress(.upArrow) {
@@ -125,6 +104,19 @@ struct PanelView: View {
             return .handled
         }
         .onKeyPress(.escape) {
+            if appState.isNewLibraryFormPresented {
+                appState.isNewLibraryFormPresented = false
+                newLibraryName = ""
+                return .handled
+            }
+            if appState.isSaveClipboardSlotPickerPresented {
+                appState.isSaveClipboardSlotPickerPresented = false
+                return .handled
+            }
+            if appState.deleteLibraryConfirmation != nil {
+                appState.deleteLibraryConfirmation = nil
+                return .handled
+            }
             if isSearching {
                 searchText = ""
                 keyboardHighlightIndex = nil
@@ -167,6 +159,51 @@ struct PanelView: View {
         .environment(appState)
     }
 
+    @ViewBuilder
+    private var panelModalLayer: some View {
+        if appState.isSaveClipboardSlotPickerPresented {
+            PanelModalOverlay {
+                appState.isSaveClipboardSlotPickerPresented = false
+            } content: {
+                SaveClipboardSlotPickerSheet(appState: appState)
+            }
+            .zIndex(100)
+        } else if appState.isNewLibraryFormPresented {
+            PanelModalOverlay {
+                appState.isNewLibraryFormPresented = false
+                newLibraryName = ""
+            } content: {
+                NewLibraryFormView(
+                    name: $newLibraryName,
+                    onCancel: {
+                        appState.isNewLibraryFormPresented = false
+                        newLibraryName = ""
+                    },
+                    onCreate: {
+                        appState.createLibrary(named: newLibraryName)
+                        appState.isNewLibraryFormPresented = false
+                        newLibraryName = ""
+                    }
+                )
+            }
+            .zIndex(100)
+        } else if let library = appState.deleteLibraryConfirmation {
+            PanelModalOverlay {
+                appState.deleteLibraryConfirmation = nil
+            } content: {
+                DeleteLibraryFormView(
+                    libraryName: library.name,
+                    onCancel: { appState.deleteLibraryConfirmation = nil },
+                    onDelete: {
+                        _ = appState.deleteLibrary(id: library.id)
+                        appState.deleteLibraryConfirmation = nil
+                    }
+                )
+            }
+            .zIndex(100)
+        }
+    }
+
     private var panelShortcutHint: some View {
         Text("Clic para pegar · Arrastrá para guardar · Esc para cerrar")
             .font(SlotsFont.textoUI)
@@ -184,21 +221,21 @@ struct PanelView: View {
 
         DispatchQueue.main.async {
             guard generation == unfoldGeneration else { return }
-            withAnimation(.spring(response: 0.42, dampingFraction: 0.78)) {
+            withAnimation(.spring(response: 0.28, dampingFraction: 0.82)) {
                 revealWidth = HotSlotDesign.panelWidth
             }
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + HotSlotDesign.openRightDuration) {
             guard generation == unfoldGeneration else { return }
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+            withAnimation(.spring(response: 0.32, dampingFraction: 0.84)) {
                 revealHeight = HotSlotDesign.panelHeight
                 appState.panelBodyRevealed = true
             }
             isSearchFocused = true
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + HotSlotDesign.openRightDuration + 0.8) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + HotSlotDesign.openRightDuration + 0.42) {
             guard generation == unfoldGeneration else { return }
             revealWidth = HotSlotDesign.panelWidth
             revealHeight = HotSlotDesign.panelHeight

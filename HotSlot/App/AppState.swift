@@ -37,6 +37,7 @@ final class AppState {
     /// Sheet del panel: elegir slot cuando «Guardar portapapeles» y no hay vacíos.
     var isSaveClipboardSlotPickerPresented = false
     var isNewLibraryFormPresented = false
+    var deleteLibraryConfirmation: Library?
 
     /// Ajustes abiertos: el icono de menú bar no cierra el panel flotante al tocarlo.
     var isSettingsWindowVisible = false
@@ -291,6 +292,21 @@ final class AppState {
         libraryWorkspace.createLibrary(named: name)
         libraryWorkspace.applyActiveLibrary(to: slotStore)
         UsageEventLog.shared.record("biblioteca_crear", detail: name)
+    }
+
+    @discardableResult
+    func deleteLibrary(id: UUID) -> Bool {
+        libraryWorkspace.syncFromLegacySlotStore(slotStore)
+        guard libraryWorkspace.deleteLibrary(id: id) else { return false }
+        libraryWorkspace.applyActiveLibrary(to: slotStore)
+        UsageEventLog.shared.record("biblioteca_eliminar")
+        return true
+    }
+
+    func reorderLibrary(draggedId: UUID, before targetId: UUID) {
+        libraryWorkspace.syncFromLegacySlotStore(slotStore)
+        libraryWorkspace.reorderLibrary(draggedId: draggedId, before: targetId)
+        UsageEventLog.shared.record("biblioteca_reordenar")
     }
 
     func replaceSlotFromClipboard(index: Int) {

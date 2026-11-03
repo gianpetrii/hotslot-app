@@ -4,6 +4,9 @@ import SwiftUI
 /// Icono en menu bar con menú contextual.
 @MainActor
 final class StatusBarController {
+    /// Nuevo nombre: si el usuario ocultó el ítem con ⌘+arrastrar, macOS no lo restaura con el mismo `autosaveName`.
+    private static let statusItemAutosaveName = "com.slots.app.menuBarStatus.v2"
+
     private let statusItem: NSStatusItem
     private let appState: AppState
     private let panelController: PanelController
@@ -20,39 +23,54 @@ final class StatusBarController {
         self.panelController = panelController
         self.developerActions = developerActions
         self.onCheckForUpdates = onCheckForUpdates
-        self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-        statusItem.autosaveName = "com.hotslot.app.menuBarIcon"
+        self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
+        configureButton()
+    }
+
+    /// Llamar al volver a `.accessory` (Ajustes/onboarding) por si el sistema ocultó el ítem.
+    func refreshVisibility() {
+        statusItem.isVisible = true
         configureButton()
     }
 
     private func configureButton() {
         guard let button = statusItem.button else { return }
 
+        statusItem.autosaveName = Self.statusItemAutosaveName
+        statusItem.isVisible = true
         button.imagePosition = .imageOnly
         button.title = ""
         button.appearsDisabled = false
 
+        if let image = Self.menuBarImage() {
+            button.image = image
+        } else {
+            button.title = "S"
+            button.font = NSFont.systemFont(ofSize: 13, weight: .bold)
+        }
+
+        button.toolTip = "\(BrandDisplay.name) — atajo para abrir el panel (editable en Ajustes)"
+        button.action = #selector(statusBarClicked)
+        button.target = self
+        button.sendAction(on: [.leftMouseUp, .rightMouseUp])
+    }
+
+    private static func menuBarImage() -> NSImage? {
         let symbolConfig = NSImage.SymbolConfiguration(pointSize: 15, weight: .semibold)
         if let asset = NSImage(named: "MenuBarIcon"),
            let image = asset.copy() as? NSImage {
             image.isTemplate = true
             image.size = NSSize(width: 18, height: 18)
-            button.image = image
-        } else if let baseSymbol = NSImage(systemSymbolName: "command", accessibilityDescription: BrandDisplay.name),
-                  let configured = baseSymbol.withSymbolConfiguration(symbolConfig) {
-            let template = (configured.copy() as? NSImage) ?? configured
-            template.isTemplate = true
-            button.image = template
-        } else {
-            button.title = "⌘"
-            button.font = NSFont.systemFont(ofSize: 14, weight: .semibold)
+            return image
         }
-        statusItem.isVisible = true
-        button.toolTip = "\(BrandDisplay.name) — atajo para abrir el panel (editable en Ajustes)"
-        button.action = #selector(statusBarClicked)
-        button.target = self
-        button.sendAction(on: [.leftMouseUp, .rightMouseUp])
+        if let symbol = NSImage(systemSymbolName: "rectangle.on.rectangle", accessibilityDescription: BrandDisplay.name)?
+            .withSymbolConfiguration(symbolConfig) {
+            let template = (symbol.copy() as? NSImage) ?? symbol
+            template.isTemplate = true
+            return template
+        }
+        return nil
     }
 
     private func buildContextMenu(includeDeveloperItems: Bool) -> NSMenu {

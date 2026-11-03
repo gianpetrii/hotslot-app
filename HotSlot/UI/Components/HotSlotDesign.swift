@@ -59,16 +59,16 @@ enum HotSlotDesign {
 
     static let rowExpandAnimation = Animation.spring(response: 0.32, dampingFraction: 0.92)
 
-    static let openDuration: TimeInterval = 0.4
-    static let closeDuration: TimeInterval = 0.28
+    static let openDuration: TimeInterval = 0.28
+    static let closeDuration: TimeInterval = 0.24
     static let springTiming = CAMediaTimingFunction(controlPoints: 0.22, 1.0, 0.36, 1.0)
     static let closeTiming = CAMediaTimingFunction(controlPoints: 0.4, 0.0, 0.6, 1.0)
     /// Expandir a la derecha (cuadrado → barra de búsqueda).
     static let openRightTiming = CAMediaTimingFunction(controlPoints: 0.16, 1.18, 0.28, 1.0)
     /// Expandir hacia abajo (barra → panel completo).
     static let openDownTiming = CAMediaTimingFunction(controlPoints: 0.2, 1.08, 0.32, 1.0)
-    static let openRightDuration: TimeInterval = 0.42
-    static let openDownDuration: TimeInterval = 0.48
+    static let openRightDuration: TimeInterval = 0.26
+    static let openDownDuration: TimeInterval = 0.30
 
     static let openScaleInset: CGFloat = 20
     static let closeScaleInset: CGFloat = 14

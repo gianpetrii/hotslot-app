@@ -67,8 +67,12 @@ struct SlotGridView: View {
                 onSwapFrom: { sourceIndex in
                     appState.slotStore.swapContents(from: sourceIndex, to: slot.index)
                 },
-                onRename: { title in
+                onUpdateLabel: { title in
                     appState.slotStore.updateLabel(index: slot.index, label: title)
+                    UsageEventLog.shared.record("slot_renombrar", detail: "\(slot.index)")
+                },
+                onSetBackground: { hex in
+                    appState.slotStore.updateCardBackground(index: slot.index, hex: hex)
                 },
                 onReplaceFromClipboard: {
                     appState.replaceSlotFromClipboard(index: slot.index)
@@ -95,18 +99,17 @@ private struct SlotCardView: View {
     let onSaveHistoryItem: (UUID) -> Void
     let onClear: () -> Void
     let onSwapFrom: (Int) -> Void
-    let onRename: (String) -> Void
+    let onUpdateLabel: (String) -> Void
+    let onSetBackground: (String?) -> Void
     let onReplaceFromClipboard: () -> Void
     let onMoveToLibrary: (UUID) -> Void
     @State private var isHovering = false
     @State private var isDropTarget = false
-    @State private var isPeeking = false
-    @State private var isPeekHovered = false
-    @State private var peekTask: Task<Void, Never>?
     @State private var isEditingShortcuts = false
-    @State private var suppressPeekForBadges = false
-    @State private var showRenameAlert = false
-    @State private var renameDraft = ""
+    @State private var isEditingLabel = false
+    @State private var isTitleHovering = false
+    @State private var labelDraft = ""
+    @FocusState private var labelFieldFocused: Bool
 
     private var hasContent: Bool { slot.content != nil }
 
@@ -114,103 +117,56 @@ private struct SlotCardView: View {
         KeyboardShortcuts.Name.pasteSlotNames[slot.index - 1]
     }
 
+    private var copyShortcut: KeyboardShortcuts.Name {
+        KeyboardShortcuts.Name.copyToSlotNames[slot.index - 1]
+    }
+
+    private var visibleShortcut: KeyboardShortcuts.Name {
+        hasContent ? pasteShortcut : copyShortcut
+    }
+
     var body: some View {
         ZStack(alignment: .topLeading) {
             cardChrome
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
 
-            VStack(alignment: .leading, spacing: 0) {
-                HStack(alignment: .top, spacing: 8) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(SlotCardCopy.metaPrimary(for: slot))
-                            .font(SlotsFont.etiqueta)
-                        Text(SlotCardCopy.metaSecondary(for: slot))
-                            .font(SlotsFont.etiqueta)
-                    }
-                    .foregroundStyle(metaForeground)
-
-                    Spacer(minLength: 0)
-
-                    Button {
-                        suppressPeekForBadges = true
-                        isEditingShortcuts = true
-                    } label: {
-                        SlotHandoffShortcutChip(
-                            name: pasteShortcut,
-                            emphasized: isHovering,
-                            onMediaBackground: isImageContent && hasContent
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .help("Clic para cambiar atajo de pegar")
-                    .popover(isPresented: $isEditingShortcuts, arrowEdge: .leading) {
-                        SlotShortcutEditorPopover(slotIndex: slot.index)
-                    }
-                }
+            VStack(alignment: .leading, spacing: SlotsSpace.s) {
+                headerRow
 
                 Spacer(minLength: 0)
 
-                HStack(alignment: .bottom, spacing: 8) {
-                    Text(SlotCardCopy.displayTitle(for: slot))
-                        .font(SlotsFont.tituloCard)
-                        .foregroundStyle(titleColor)
-                        .lineLimit(3)
+                if let preview = SlotCardCopy.contentBodyPreview(for: slot), !isImageContent {
+                    Text(preview)
+                        .font(SlotsFont.textoUI)
+                        .foregroundStyle(bodyTextColor)
+                        .lineLimit(isHovering ? 8 : 3)
                         .multilineTextAlignment(.leading)
-
-                    Spacer(minLength: 0)
-
-                    if let swatch = colorSwatch {
-                        Circle()
-                            .fill(swatch)
-                            .frame(width: 40, height: 40)
-                    }
-                }
-
-                if !hasContent, let sub = SlotCardCopy.emptySubhint(slotIndex: slot.index) {
-                    Text(sub)
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
+                        .animation(.easeOut(duration: 0.15), value: isHovering)
+                } else if !hasContent {
+                    Text(SlotCardCopy.emptyHint(slotIndex: slot.index))
                         .font(SlotsFont.textoUI)
                         .foregroundStyle(SlotsColor.textoSecundario)
-                        .padding(.top, SlotsSpace.s)
+                        .lineLimit(4)
                 }
+
+                titleRow
             }
             .padding(SlotsSpace.m)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
-            .onTapGesture { onPaste() }
-
-            if hasContent, isHovering {
-                VStack {
-                    HStack {
-                        PanelGlyphButton(
-                            systemImage: "xmark",
-                            help: "Vaciar slot \(slot.index)",
-                            size: HotSlotDesign.slotOverlayControlSize,
-                            iconSize: HotSlotDesign.slotOverlayIconSize,
-                            cornerRadius: HotSlotDesign.slotOverlayCornerRadius,
-                            action: onClear
-                        )
-                        Spacer()
-                    }
-                    Spacer()
-                }
-                .padding(6)
-            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
         .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
-        .onHover { hovering in
-            isHovering = hovering
-            schedulePeek(hovering: hovering)
-        }
-        .popover(isPresented: $isPeeking, arrowEdge: .trailing) {
-            if let content = slot.content {
-                SlotPeekView(content: content)
-                    .onHover { hovering in
-                        isPeekHovered = hovering
-                        schedulePeek(hovering: isHovering || hovering)
-                    }
+        .onTapGesture {
+            if isEditingLabel {
+                commitLabelEdit()
+                return
             }
+            onPaste()
         }
+        .onHover { isHovering = $0 }
         .draggable(PanelDragPayload.slot(index: slot.index))
         .onDrop(of: [UTType.hotslotPanelDrag], isTargeted: $isDropTarget) { providers in
             Self.acceptDrop(providers) { payload in
@@ -220,64 +176,178 @@ private struct SlotCardView: View {
                     onSwapFrom(source)
                 case .historyItem(let id):
                     onSaveHistoryItem(id)
+                case .library:
+                    break
                 }
             }
         }
-        .animation(.easeOut(duration: 0.12), value: isHovering)
+        .animation(.spring(response: 0.28, dampingFraction: 0.86), value: isHovering)
         .animation(.easeOut(duration: 0.12), value: isDropTarget)
-        .contextMenu {
-            Button("Renombrar…") {
-                renameDraft = slot.label
-                showRenameAlert = true
-            }
-            Button("Reemplazar con el portapapeles") {
-                onReplaceFromClipboard()
-            }
-            if !otherLibraries.isEmpty {
-                Menu("Mover a…") {
-                    ForEach(otherLibraries) { library in
-                        Button(library.name) {
-                            onMoveToLibrary(library.id)
-                        }
-                    }
+        .contextMenu { slotContextMenu }
+        .help("Clic para pegar · Arrastrá para intercambiar o soltá un clip del historial.")
+        .onChange(of: isEditingLabel) { _, editing in
+            if editing {
+                labelDraft = SlotCardCopy.editableTitle(for: slot)
+                DispatchQueue.main.async {
+                    labelFieldFocused = true
                 }
             }
-            Divider()
-            Button("Pegar") { onPaste() }
-            if hasContent {
-                Button("Vaciar slot", role: .destructive) { onClear() }
-            }
         }
-        .alert("Renombrar slot \(slot.index)", isPresented: $showRenameAlert) {
-            TextField("Título", text: $renameDraft)
-            Button("Cancelar", role: .cancel) {}
-            Button("Guardar") {
-                onRename(renameDraft.trimmingCharacters(in: .whitespacesAndNewlines))
+        .onChange(of: labelFieldFocused) { wasFocused, focused in
+            if wasFocused, !focused, isEditingLabel {
+                commitLabelEdit()
             }
-        }
-        .help("Pegar slot \(slot.index). Arrastrá para intercambiar o soltá un clip del historial.")
-        .onChange(of: isDropTarget) { _, targeted in
-            if targeted {
-                peekTask?.cancel()
-                isPeeking = false
-            }
-        }
-        .onChange(of: isEditingShortcuts) { _, editing in
-            if editing {
-                peekTask?.cancel()
-                isPeeking = false
-            }
-        }
-        .onDisappear {
-            peekTask?.cancel()
-            isPeeking = false
-            isPeekHovered = false
         }
     }
 
+    private var headerRow: some View {
+        HStack(alignment: .center, spacing: 8) {
+            ZStack(alignment: .leading) {
+                Text(SlotCardCopy.metaPrimary(for: slot))
+                    .font(SlotsFont.etiqueta)
+                    .foregroundStyle(metaForeground)
+                    .offset(x: hasContent && isHovering ? 22 : 0)
+
+                if hasContent, isHovering {
+                    Button(action: onClear) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(clearButtonForeground)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Vaciar slot \(slot.index)")
+                    .transition(.opacity)
+                }
+            }
+            .animation(.spring(response: 0.28, dampingFraction: 0.86), value: isHovering)
+
+            Spacer(minLength: 0)
+
+            Button {
+                isEditingShortcuts = true
+            } label: {
+                SlotHandoffShortcutChip(
+                    name: visibleShortcut,
+                    emphasized: isHovering,
+                    onMediaBackground: isImageContent && hasContent
+                )
+            }
+            .buttonStyle(.plain)
+            .help(hasContent ? "Atajo pegar · clic para editar ambos" : "Atajo guardar · clic para editar ambos")
+            .popover(isPresented: $isEditingShortcuts, arrowEdge: .leading) {
+                SlotShortcutEditorPopover(slotIndex: slot.index)
+            }
+        }
+    }
+
+    private var clearButtonForeground: Color {
+        prefersLightContent ? Color.white.opacity(0.92) : SlotsColor.textoSecundario
+    }
+
+    @ViewBuilder
+    private var titleRow: some View {
+        if isEditingLabel {
+            TextField("Título", text: $labelDraft)
+                .textFieldStyle(.plain)
+                .font(SlotsFont.tituloCard)
+                .foregroundStyle(titleColor)
+                .focused($labelFieldFocused)
+                .padding(.vertical, 4)
+                .padding(.horizontal, 6)
+                .background {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(Color.white.opacity(0.85))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .strokeBorder(SlotsColor.naranja.opacity(0.45), lineWidth: 1)
+                        }
+                }
+                .onSubmit { commitLabelEdit() }
+                .onKeyPress(.escape) {
+                    cancelLabelEdit()
+                    return .handled
+                }
+        } else {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(hasContent ? SlotCardCopy.slotLabelDisplay(for: slot) : SlotCardCopy.emptyPlaceholderTitle(for: slot))
+                    .font(SlotsFont.tituloCard)
+                    .foregroundStyle(titleColor)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                if isTitleHovering {
+                    Image(systemName: "pencil")
+                        .font(SlotsFont.tituloCard)
+                        .foregroundStyle(SlotsColor.textoSecundario)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+            .onHover { isTitleHovering = $0 }
+            .highPriorityGesture(
+                TapGesture().onEnded {
+                    labelDraft = SlotCardCopy.slotLabelDisplay(for: slot)
+                    isEditingLabel = true
+                }
+            )
+        }
+    }
+
+    @ViewBuilder
+    private var slotContextMenu: some View {
+        Button("Renombrar…") {
+            labelDraft = SlotCardCopy.slotLabelDisplay(for: slot)
+            isEditingLabel = true
+        }
+        Menu("Color de fondo") {
+            Button("Predeterminado (handoff)") { onSetBackground(nil) }
+            Button("Degradé naranja (marca)") { onSetBackground(SlotsPalette.brandGradientAsset) }
+            ForEach(SlotsPalette.slotBackgrounds.filter { $0.hex != 0xE2501D }, id: \.hex) { entry in
+                Button(entry.name) {
+                    onSetBackground(SlotsPalette.normalizedHex(entry.hex))
+                }
+            }
+        }
+        Button("Reemplazar con el portapapeles") {
+            onReplaceFromClipboard()
+        }
+        if !otherLibraries.isEmpty {
+            Menu("Mover a…") {
+                ForEach(otherLibraries) { library in
+                    Button(library.name) {
+                        onMoveToLibrary(library.id)
+                    }
+                }
+            }
+        }
+        Divider()
+        Button("Pegar") { onPaste() }
+        if hasContent {
+            Button("Vaciar slot", role: .destructive) { onClear() }
+        }
+    }
+
+    private func commitLabelEdit() {
+        let trimmed = labelDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            cancelLabelEdit()
+            return
+        }
+        onUpdateLabel(trimmed)
+        isEditingLabel = false
+        labelFieldFocused = false
+    }
+
+    private func cancelLabelEdit() {
+        isEditingLabel = false
+        labelFieldFocused = false
+    }
+
+    private var bodyTextColor: Color {
+        prefersLightContent ? .white : SlotsColor.tinta
+    }
+
     private var metaForeground: Color {
-        if isDarkCard { return SlotsColor.textoSobreOscuro }
-        if isImageContent, hasContent { return SlotsColor.textoTerciario }
+        if prefersLightContent { return Color.white.opacity(0.85) }
         return SlotsColor.textoSecundario
     }
 
@@ -285,7 +355,7 @@ private struct SlotCardView: View {
         if !hasContent {
             return slot.index == 5 ? SlotsColor.textoSecundario : SlotsColor.tinta
         }
-        if isDarkCard || isImageContent { return .white }
+        if prefersLightContent { return .white }
         return SlotsColor.tinta
     }
 
@@ -299,25 +369,13 @@ private struct SlotCardView: View {
         return SlotCardCopy.isHexColor(string.trimmingCharacters(in: .whitespacesAndNewlines))
     }
 
-    private func schedulePeek(hovering: Bool) {
-        peekTask?.cancel()
-        guard hasContent, !isDropTarget, !suppressPeekForBadges, !isEditingShortcuts else {
-            isPeeking = false
-            return
-        }
-        if hovering {
-            peekTask = Task { @MainActor in
-                try? await Task.sleep(nanoseconds: UInt64(HotSlotDesign.hoverExpandDelay * 1_000_000_000))
-                guard !Task.isCancelled, (isHovering || isPeekHovered), !isDropTarget else { return }
-                isPeeking = true
-            }
-        } else {
-            peekTask = Task { @MainActor in
-                try? await Task.sleep(nanoseconds: UInt64(HotSlotDesign.slotPeekHideDelay * 1_000_000_000))
-                guard !Task.isCancelled, !isHovering, !isPeekHovered else { return }
-                isPeeking = false
-            }
-        }
+    private var prefersLightContent: Bool {
+        isDarkCard || (isImageContent && hasContent) || isDarkCustomBackground
+    }
+
+    private var isDarkCustomBackground: Bool {
+        guard let hex = slot.cardBackgroundHex?.uppercased() else { return false }
+        return hex.contains("1C1C1C") || hex.contains("111111")
     }
 
     private static func acceptDrop(
@@ -341,13 +399,20 @@ private struct SlotCardView: View {
     @ViewBuilder
     private var cardChrome: some View {
         ZStack {
-            if isImageContent, case .image(let fileName) = slot.content {
+            if SlotsPalette.isBrandGradient(slot.cardBackgroundHex) {
+                Image("DegradeNaranja")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } else if isImageContent, case .image(let fileName) = slot.content {
                 ClipThumbnailView(fileName: fileName, style: .slot)
                 LinearGradient(
-                    colors: [SlotsColor.naranja.opacity(0.35), Color.black.opacity(0.45)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
+                    colors: [Color.black.opacity(0.12), Color.black.opacity(0.55)],
+                    startPoint: .top,
+                    endPoint: .bottom
                 )
+            } else if let custom = SlotsPalette.color(hexString: slot.cardBackgroundHex) {
+                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
+                    .fill(custom)
             } else if isDarkCard {
                 RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
                     .fill(SlotsColor.cardOscura)
@@ -366,6 +431,9 @@ private struct SlotCardView: View {
                     }
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .clipped()
+        .clipShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
         .overlay {
             if isDropTarget {
                 RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)

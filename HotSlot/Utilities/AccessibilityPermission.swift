@@ -29,6 +29,7 @@ enum AccessibilityPermission {
         return AXIsProcessTrustedWithOptions(options as CFDictionary)
     }
 
+    /// Activa la app, muestra el diálogo TCC (si macOS lo permite) y registra diagnóstico.
     static func requestAccessForPaste(focusWindow: NSWindow? = nil) {
         guard !isTrusted else {
             recordDiagnostic("omitido: ya concedido")
@@ -42,36 +43,32 @@ enum AccessibilityPermission {
         focusWindow?.makeKeyAndOrderFront(nil)
         focusWindow?.makeMain()
 
-        promptGraceUntil = Date().addingTimeInterval(3)
+        promptGraceUntil = Date().addingTimeInterval(4)
 
         let trustedBefore = isTrusted
         let bundlePath = Bundle.main.bundleURL.path
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
-            let promptReturnedTrusted = requestTrust(prompt: true)
-            let trustedAfter = isTrusted
+        let promptReturnedTrusted = requestTrust(prompt: true)
+        let trustedAfter = isTrusted
 
-            var lines = [
-                "before=\(trustedBefore) after=\(trustedAfter)",
-                "AXWithOptions=\(promptReturnedTrusted)",
-                "policy=\(NSApp.activationPolicy().rawValue)",
-                "bundle=\(Bundle.main.bundleURL.lastPathComponent)",
-                "path=\(bundlePath)",
-            ]
-            if bundlePath.contains("DerivedData") {
-                lines.append("nota=Run desde DerivedData: probá /Applications/Slots.app (DMG) para el aviso TCC.")
-            }
-            recordDiagnostic(lines.joined(separator: " "))
-
-            if !trustedAfter && !promptReturnedTrusted {
-                logger.notice("TCC: si no hubo aviso, macOS ya lo mostró antes o hay que activar en Ajustes → Accesibilidad.")
-            }
-
-            if !trustedAfter {
-                promptGraceUntil = Date().addingTimeInterval(1)
-            } else {
-                promptGraceUntil = Date.distantPast
-            }
+        var lines = [
+            "before=\(trustedBefore) after=\(trustedAfter)",
+            "AXWithOptions=\(promptReturnedTrusted)",
+            "policy=\(NSApp.activationPolicy().rawValue)",
+            "bundle=\(Bundle.main.bundleURL.lastPathComponent)",
+            "path=\(bundlePath)",
+        ]
+        if DevelopmentAppInstall.runsFromDerivedData {
+            lines.append("nota=Run desde DerivedData → usá «Instalar en Aplicaciones» en Permisos y abrí /Applications/Slots.app.")
+        } else if !DevelopmentAppInstall.runsFromApplications {
+            lines.append("nota=Path fuera de /Applications; si no hay aviso TCC, activá el interruptor manualmente.")
         }
+        recordDiagnostic(lines.joined(separator: " "))
+
+        if !trustedAfter && !promptReturnedTrusted {
+            logger.notice("TCC: si no hubo aviso, macOS ya lo mostró antes o hay que activar en Ajustes → Accesibilidad.")
+        }
+
+        promptGraceUntil = trustedAfter ? .distantPast : Date().addingTimeInterval(2)
     }
 
     static func openSettings() {

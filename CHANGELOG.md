@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.20.0] — 2026-11-03
+
+### Panel UX (handoff + mejoras Gianluca)
+
+- Historial: pin al hover (sin fondo); peek de imagen y expansión de texto largo.
+- Slots: título abajo, renombrar inline, cruz vaciar a la izquierda, contenido real en card, imagen recortada al marco.
+- Atajos: chip contextual guardar/pegar; popover compacto de grabación.
+- Bibliotecas: reorden por drag, tacho al arrastrar, eliminar con confirmación; fondos de slot (handoff + degradé naranja).
+- Apertura del panel más rápida; cabecera alineada; modales overlay (eliminar biblioteca).
+
+### Otros
+
+- Notch aviso en AppKit; menú barra y TCC dev (copiar a Aplicaciones); guía `docs/PRUEBA-MAC-REDISENO.md` y `docs/DECISIONES-UX-PANEL.md`.
+
 ## [0.19.0] — 2026-11-02
 
 ### Rediseño macOS (handoff Dante)

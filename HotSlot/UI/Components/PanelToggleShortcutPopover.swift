@@ -7,22 +7,24 @@ struct PanelToggleShortcutPopover: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        ShortcutRecorderPopoverLayout(width: 300, height: 220) {
-            VStack(alignment: .leading, spacing: 14) {
-                Text("Este atajo funciona aunque el panel esté cerrado. Si otra app (p. ej. Cursor) usa el mismo, elegí otro o abrí el panel desde el ⌘ en la barra de menú.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+        ShortcutRecorderPopoverLayout(width: 268) {
+            VStack(alignment: .leading, spacing: SlotsSpace.s) {
+                Text("Este atajo funciona con el panel cerrado. Si choca con otra app, elegí otro o usá el ⌘ en la barra.")
+                    .font(SlotsFont.etiqueta)
+                    .foregroundStyle(SlotsColor.textoSecundario)
                     .fixedSize(horizontal: false, vertical: true)
 
-                ShortcutRecorderRow(title: "Abrir / cerrar panel", name: .togglePanel)
+                ShortcutRecorderRow(title: "Panel", name: .togglePanel)
 
                 Button("Todos los atajos en Ajustes…") {
                     dismiss()
                     appState.pendingSettingsTab = .hotkeys
                     appState.openSettings?()
                 }
-                .buttonStyle(.link)
-                .padding(.top, 4)
+                .font(SlotsFont.etiqueta)
+                .foregroundStyle(SlotsColor.naranja)
+                .buttonStyle(.plain)
+                .padding(.top, 2)
             }
         }
         .onAppear {

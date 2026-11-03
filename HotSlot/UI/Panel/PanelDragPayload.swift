@@ -10,6 +10,7 @@ extension UTType {
 enum PanelDragPayload: Codable, Transferable {
     case slot(index: Int)
     case historyItem(id: UUID)
+    case library(id: UUID)
 
     static var transferRepresentation: some TransferRepresentation {
         CodableRepresentation(contentType: .hotslotPanelDrag)

@@ -1,5 +1,4 @@
 import AppKit
-import SwiftUI
 
 enum NotchNoticeKind: Equatable {
     case saved(slotIndex: Int, title: String?)
@@ -46,45 +45,90 @@ enum NotchNoticeKind: Equatable {
     }
 }
 
-struct NotchNoticePill: View {
-    let kind: NotchNoticeKind
-    let onAction: () -> Void
+/// Vista AppKit (evita bucle de constraints de `NSHostingView` en panel flotante).
+private final class NotchPillView: NSView {
+    var onAction: (() -> Void)?
 
-    var body: some View {
-        Group {
-            if kind.isActionable {
-                Button(action: onAction) {
-                    pillLabel
-                }
-                .buttonStyle(.plain)
-            } else {
-                pillLabel
-            }
-        }
-        .accessibilityLabel(kind.line)
+    private let pill = NSView()
+    private let label = NSTextField(labelWithString: "")
+    private var trackingArea: NSTrackingArea?
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        wantsLayer = true
+        layer?.backgroundColor = NSColor.clear.cgColor
+
+        pill.wantsLayer = true
+        pill.layer?.backgroundColor = NSColor(calibratedRed: 0.11, green: 0.11, blue: 0.11, alpha: 1).cgColor
+        pill.layer?.cornerRadius = 18
+        pill.layer?.cornerCurve = .continuous
+
+        label.font = NSFont.systemFont(ofSize: 11, weight: .medium)
+        label.textColor = .white
+        label.lineBreakMode = .byWordWrapping
+        label.maximumNumberOfLines = 2
+        label.alignment = .center
+        label.isEditable = false
+        label.isSelectable = false
+        label.backgroundColor = .clear
+        label.isBezeled = false
+
+        addSubview(pill)
+        pill.addSubview(label)
     }
 
-    private var pillLabel: some View {
-        Text(kind.line)
-            .font(SlotsFont.etiqueta)
-            .foregroundStyle(.white)
-            .lineLimit(2)
-            .multilineTextAlignment(.center)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
-            .background {
-                Capsule(style: .continuous)
-                    .fill(SlotsColor.cardOscura)
-            }
-            .shadow(color: .black.opacity(0.25), radius: 12, y: 6)
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) no soportado")
+    }
+
+    func configure(line: String, actionable: Bool, action: (() -> Void)?) {
+        label.stringValue = line
+        onAction = actionable ? action : nil
+        needsLayout = true
+    }
+
+    override func layout() {
+        super.layout()
+        let paddingH: CGFloat = 14
+        let paddingV: CGFloat = 8
+        let maxTextWidth: CGFloat = min(420, bounds.width) - paddingH * 2
+        let textSize = label.sizeThatFits(NSSize(width: maxTextWidth, height: 200))
+        let pillWidth = min(max(textSize.width + paddingH * 2, 120), bounds.width)
+        let pillHeight = max(textSize.height + paddingV * 2, 36)
+        pill.frame = NSRect(x: (bounds.width - pillWidth) / 2, y: (bounds.height - pillHeight) / 2, width: pillWidth, height: pillHeight)
+        label.frame = NSRect(x: paddingH, y: paddingV, width: pillWidth - paddingH * 2, height: pillHeight - paddingV * 2)
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        onAction?()
+    }
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        if let trackingArea { removeTrackingArea(trackingArea) }
+        let area = NSTrackingArea(
+            rect: bounds,
+            options: [.mouseEnteredAndExited, .activeAlways, .inVisibleRect],
+            owner: self,
+            userInfo: nil
+        )
+        addTrackingArea(area)
+        trackingArea = area
+    }
+
+    override func resetCursorRects() {
+        if onAction != nil {
+            addCursorRect(bounds, cursor: .pointingHand)
+        }
     }
 }
 
-/// Píldora negra bajo el notch o la barra de menú (flujos Mac › aviso en el notch).
+/// Píldora negra bajo el notch o la barra de menú.
 @MainActor
 final class NotchNoticeController {
     private var panel: NSPanel?
-    private var hosting: NSHostingController<NotchNoticePill>?
+    private var pillView: NotchPillView?
     private var hideWorkItem: DispatchWorkItem?
     private var onOpenAccessibilitySettings: (() -> Void)?
 
@@ -97,96 +141,72 @@ final class NotchNoticeController {
 
         hideWorkItem?.cancel()
         ensurePanel()
+        guard let panel, let pillView else { return }
 
-        hosting?.rootView = NotchNoticePill(kind: kind) { [weak self] in
-            if kind.isActionable {
-                self?.onOpenAccessibilitySettings?()
-            }
+        let actionable = kind.isActionable
+        pillView.configure(line: kind.line, actionable: actionable) { [weak self] in
+            self?.onOpenAccessibilitySettings?()
         }
-        relayoutPanel()
 
-        panel?.alphaValue = 0
-        panel?.orderFrontRegardless()
+        let screen = NSScreen.main ?? NSScreen.screens.first!
+        let maxWidth = min(420, screen.visibleFrame.width - 32)
+        let measured = Self.measurePill(line: kind.line, maxWidth: maxWidth)
+        pillView.frame = NSRect(origin: .zero, size: measured)
+        panel.contentView?.frame = NSRect(origin: .zero, size: measured)
 
-        let reduceMotion = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
-        if reduceMotion {
-            panel?.alphaValue = 1
+        let topInset = screen.safeAreaInsets.top
+        let x = screen.frame.midX - measured.width / 2
+        let y: CGFloat = if topInset > 20 {
+            screen.frame.maxY - topInset - measured.height - 6
         } else {
-            NSAnimationContext.runAnimationGroup { ctx in
-                ctx.duration = 0.3
-                ctx.timingFunction = CAMediaTimingFunction(name: .easeOut)
-                panel?.animator().alphaValue = 1
-            }
+            screen.frame.maxY - NSStatusBar.system.thickness - measured.height - 10
         }
 
-        let work = DispatchWorkItem { [weak self] in self?.dismissAnimated() }
+        panel.setFrame(NSRect(x: x, y: y, width: measured.width, height: measured.height), display: true)
+        panel.alphaValue = 1
+        panel.orderFront(nil)
+
+        let work = DispatchWorkItem { [weak self] in self?.dismiss() }
         hideWorkItem = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: work)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.6, execute: work)
+    }
+
+    private func dismiss() {
+        panel?.orderOut(nil)
+        panel?.alphaValue = 0
     }
 
     private func ensurePanel() {
         guard panel == nil else { return }
-        let rect = CGRect(x: 0, y: 0, width: 320, height: 44)
+        let pill = NotchPillView(frame: .zero)
         let p = NSPanel(
-            contentRect: rect,
+            contentRect: NSRect(x: 0, y: 0, width: 320, height: 44),
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
         )
         p.isOpaque = false
         p.backgroundColor = .clear
-        p.hasShadow = false
+        p.hasShadow = true
         p.level = .statusBar
         p.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .ignoresCycle]
         p.hidesOnDeactivate = false
         p.isFloatingPanel = true
-        p.becomesKeyOnlyIfNeeded = true
-
-        let host = NSHostingController(
-            rootView: NotchNoticePill(kind: .plain("")) {}
-        )
-        host.safeAreaRegions = []
-        host.view.wantsLayer = true
-        host.view.layer?.backgroundColor = NSColor.clear.cgColor
-        p.contentViewController = host
-
+        p.contentView = pill
         panel = p
-        hosting = host
+        pillView = pill
     }
 
-    private func relayoutPanel() {
-        guard let panel, let hosting else { return }
-        let screen = panel.screen ?? NSScreen.main ?? NSScreen.screens.first!
-
-        let maxWidth = min(420, screen.visibleFrame.width - 32)
-        let size = hosting.sizeThatFits(in: NSSize(width: maxWidth, height: 200))
-        let width = min(max(size.width, 120), maxWidth)
-        let height = max(size.height, 36)
-
-        let topInset = screen.safeAreaInsets.top
-        let x = screen.frame.midX - width / 2
-        let y: CGFloat = if topInset > 20 {
-            screen.frame.maxY - topInset - height - 6
-        } else {
-            screen.frame.maxY - NSStatusBar.system.thickness - height - 10
-        }
-
-        panel.setFrame(NSRect(x: x, y: y, width: width, height: height), display: true)
-    }
-
-    private func dismissAnimated() {
-        guard let panel else { return }
-        let reduceMotion = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
-        if reduceMotion {
-            panel.orderOut(nil)
-            panel.alphaValue = 0
-            return
-        }
-        NSAnimationContext.runAnimationGroup({ ctx in
-            ctx.duration = 0.22
-            panel.animator().alphaValue = 0
-        }, completionHandler: {
-            panel.orderOut(nil)
-        })
+    private static func measurePill(line: String, maxWidth: CGFloat) -> NSSize {
+        let font = NSFont.systemFont(ofSize: 11, weight: .medium)
+        let textMax = maxWidth - 28
+        let rect = (line as NSString).boundingRect(
+            with: NSSize(width: textMax, height: 200),
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            attributes: [.font: font]
+        )
+        let width = min(max(ceil(rect.width) + 28, 120), maxWidth)
+        let height = max(ceil(rect.height) + 16, 36)
+        return NSSize(width: width, height: height)
     }
 }

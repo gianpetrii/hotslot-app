@@ -71,6 +71,14 @@ struct SettingsView: View {
                                 settings.showNotchNotice = newValue
                                 settings.save()
                             }
+                        Text("Píldora negra ~1,5 s arriba al centro (bajo la cámara o la barra de menú). No es la Dynamic Island de iPhone.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Button("Probar aviso ahora") {
+                            guard showNotchNotice else { return }
+                            appState.presentNotch(.ready)
+                        }
+                        .disabled(!showNotchNotice)
                         Text("\(BrandDisplay.name) vive en la barra de menú (⌘ arriba a la derecha). Si no aparece, la barra está llena: mové ítems del sistema a Centro de control o reordená con ⌘+arrastrar. Atajo ⌘⇧V; también podés abrir desde Aplicaciones.")
                             .font(.caption)
                             .foregroundStyle(.secondary)

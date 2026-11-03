@@ -12,15 +12,13 @@ struct PanelHeaderBlock: View {
     }
 
     var body: some View {
-        HStack(alignment: .top, spacing: SlotsSpace.l) {
+        HStack(alignment: .center, spacing: SlotsSpace.l) {
             Text(libraryName)
                 .font(SlotsFont.tituloPantalla(false))
                 .foregroundStyle(SlotsColor.tinta)
                 .lineLimit(1)
                 .minimumScaleFactor(0.55)
-                .padding(.top, 4)
-
-            Spacer(minLength: 8)
+                .frame(maxWidth: .infinity, minHeight: SlotsRadius.controlAlto, alignment: .leading)
 
             HStack(spacing: SlotsSpace.s) {
                 panelSearchField

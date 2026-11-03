@@ -15,6 +15,8 @@ struct ClipRowView: View {
     @State private var isHovering = false
     @State private var isExpanded = false
     @State private var expandTask: Task<Void, Never>?
+    @State private var isPeeking = false
+    @State private var peekTask: Task<Void, Never>?
 
     private let expandAnimation = Animation.spring(response: 0.32, dampingFraction: 0.92)
 
@@ -74,10 +76,15 @@ struct ClipRowView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .modifier(ClipRowInteractionModifier(isDemo: isDemo, item: item, onPaste: onPaste))
 
-            if isFirst || isHovering {
-                Image(systemName: "arrow.up.right")
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(SlotsColor.textoSecundario)
+            if isHovering {
+                Button(action: onTogglePin) {
+                    Image(systemName: item.isPinned ? "pin.fill" : "pin")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(SlotsColor.textoSecundario)
+                }
+                .buttonStyle(.plain)
+                .help(item.isPinned ? "Desfijar" : "Fijar arriba")
+                .allowsHitTesting(!isDemo)
             }
         }
         .padding(.horizontal, SlotsSpace.m)
@@ -97,7 +104,15 @@ struct ClipRowView: View {
                     .strokeBorder(SlotsColor.naranja.opacity(0.5), lineWidth: 1.5)
             }
         }
-        .onHover { isHovering = $0 }
+        .onHover { hovering in
+            isHovering = hovering
+            schedulePanelHandoffHover(hovering: hovering)
+        }
+        .popover(isPresented: $isPeeking, arrowEdge: .trailing) {
+            if case .image(let fileName) = item.content {
+                ClipThumbnailView(fileName: fileName, style: .peek)
+            }
+        }
         .animation(.easeOut(duration: 0.12), value: isHovering)
         .animation(.easeOut(duration: 0.12), value: isKeyboardHighlighted)
         .onDisappear(perform: resetHoverState)
@@ -133,9 +148,42 @@ struct ClipRowView: View {
                 Text(item.handoffPanelPrimaryLine())
                     .font(SlotsFont.textoUI)
                     .foregroundStyle(SlotsColor.tinta)
-                    .lineLimit(1)
+                    .lineLimit(isExpanded ? 8 : 1)
+                    .animation(expandAnimation, value: isExpanded)
             }
         }
+    }
+
+    private func schedulePanelHandoffHover(hovering: Bool) {
+        expandTask?.cancel()
+        peekTask?.cancel()
+        guard hovering else {
+            withAnimation(expandAnimation) { isExpanded = false }
+            isPeeking = false
+            return
+        }
+        if case .text = item.content {
+            expandTask = Task { @MainActor in
+                try? await Task.sleep(nanoseconds: UInt64(HotSlotDesign.hoverExpandDelay * 1_000_000_000))
+                guard !Task.isCancelled, isHovering else { return }
+                withAnimation(expandAnimation) { isExpanded = true }
+            }
+        }
+        if case .image = item.content {
+            peekTask = Task { @MainActor in
+                try? await Task.sleep(nanoseconds: UInt64(HotSlotDesign.hoverExpandDelay * 1_000_000_000))
+                guard !Task.isCancelled, isHovering else { return }
+                isPeeking = true
+            }
+        }
+    }
+
+    private func resetHoverState() {
+        expandTask?.cancel()
+        peekTask?.cancel()
+        isExpanded = false
+        isPeeking = false
+        isHovering = false
     }
 
     private func panelHandoffBackground(isFirst: Bool) -> Color {
@@ -190,12 +238,6 @@ struct ClipRowView: View {
                 isExpanded = false
             }
         }
-    }
-
-    private func resetHoverState() {
-        expandTask?.cancel()
-        isExpanded = false
-        isHovering = false
     }
 
     private var textUsesExpand: Bool {

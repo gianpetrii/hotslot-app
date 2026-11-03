@@ -66,6 +66,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self.presentUtilityWindow(hidePanelFirst: true) { reopen in
                 self.onboardingWindowController.show(appState: state) { openPanel in
                     NSApp.setActivationPolicy(.accessory)
+                    self.statusBarController?.refreshVisibility()
                     guard openPanel else {
                         reopen()
                         return
@@ -99,6 +100,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         } else {
             continueMainFlow(onboardingPending: onboardingPending, userOpened: userOpened)
         }
+
+        statusBar.refreshVisibility()
     }
 
     @MainActor
@@ -163,6 +166,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let finishUtility = { [weak self] in
             guard let self else { return }
             NSApp.setActivationPolicy(.accessory)
+            self.statusBarController?.refreshVisibility()
             guard self.shouldReopenPanelAfterUtility else { return }
             self.appState?.focusTracker.capture()
             self.panelController?.show()

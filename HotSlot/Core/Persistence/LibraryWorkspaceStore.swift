@@ -70,6 +70,46 @@ final class LibraryWorkspaceStore {
         save()
     }
 
+    /// Elimina una biblioteca si queda al menos otra; reasigna activa si hace falta.
+    @discardableResult
+    func deleteLibrary(id: UUID) -> Bool {
+        guard workspace.libraries.count > 1 else { return false }
+        guard workspace.libraries.contains(where: { $0.id == id }) else { return false }
+        workspace.slots.removeAll { $0.libraryId == id }
+        workspace.libraries.removeAll { $0.id == id }
+        if workspace.activeLibraryId == id {
+            workspace.activeLibraryId = workspace.libraries.sorted { $0.order < $1.order }.first!.id
+        }
+        normalizeLibraryOrders()
+        save()
+        return true
+    }
+
+    func reorderLibrary(draggedId: UUID, before targetId: UUID) {
+        guard draggedId != targetId else { return }
+        var sorted = workspace.libraries.sorted { $0.order < $1.order }
+        guard let fromIdx = sorted.firstIndex(where: { $0.id == draggedId }),
+              let toIdx = sorted.firstIndex(where: { $0.id == targetId }) else { return }
+        let item = sorted.remove(at: fromIdx)
+        let insertIdx = fromIdx < toIdx ? toIdx - 1 : toIdx
+        sorted.insert(item, at: insertIdx)
+        for (offset, library) in sorted.enumerated() {
+            if let idx = workspace.libraries.firstIndex(where: { $0.id == library.id }) {
+                workspace.libraries[idx].order = offset
+            }
+        }
+        save()
+    }
+
+    private func normalizeLibraryOrders() {
+        let sorted = workspace.libraries.sorted { $0.order < $1.order }
+        for (offset, library) in sorted.enumerated() {
+            if let idx = workspace.libraries.firstIndex(where: { $0.id == library.id }) {
+                workspace.libraries[idx].order = offset
+            }
+        }
+    }
+
     /// Sincroniza los 5 slots legacy (`SlotStore`) con la biblioteca activa.
     func applyActiveLibrary(to slotStore: SlotStore) {
         let records = activeSlots()

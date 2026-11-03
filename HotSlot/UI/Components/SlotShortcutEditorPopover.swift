@@ -16,23 +16,34 @@ struct SlotShortcutEditorPopover: View {
     }
 
     var body: some View {
-        ShortcutRecorderPopoverLayout(width: 320, height: 300) {
-            VStack(alignment: .leading, spacing: 14) {
-                Text("Al cerrar este panel los atajos globales se activan de nuevo.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
+        ShortcutRecorderPopoverLayout(width: 268) {
+            VStack(alignment: .leading, spacing: SlotsSpace.s) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Atajos del slot \(slotIndex)")
+                        .font(SlotsFont.textoUI.weight(.semibold))
+                        .foregroundStyle(SlotsColor.tinta)
 
-                ShortcutRecorderRow(title: "Pegar slot \(slotIndex)", name: pasteName)
-                ShortcutRecorderRow(title: "Guardar en slot \(slotIndex)", name: copyName)
+                    Text("Al cerrar el panel vuelven los atajos globales.")
+                        .font(SlotsFont.etiqueta)
+                        .foregroundStyle(SlotsColor.textoSecundario)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                VStack(spacing: SlotsSpace.s) {
+                    ShortcutRecorderRow(title: "Pegar", name: pasteName)
+                    ShortcutRecorderRow(title: "Guardar", name: copyName)
+                }
+                .padding(.top, 2)
 
                 Button("Todos los atajos en Ajustes…") {
                     dismiss()
                     appState.pendingSettingsTab = .hotkeys
                     appState.openSettings?()
                 }
-                .buttonStyle(.link)
-                .padding(.top, 4)
+                .font(SlotsFont.etiqueta)
+                .foregroundStyle(SlotsColor.naranja)
+                .buttonStyle(.plain)
+                .padding(.top, 2)
             }
         }
         .onAppear {

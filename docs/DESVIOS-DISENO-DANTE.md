@@ -24,8 +24,8 @@ Panel 1060×664, grilla 3×2 (slot 1 alto), cabecera con buscador pill + ⌘F + 
 | 2 | Botón **filtros** (sliders) | Abre **Ajustes** (no hay UI de filtros aún) | Reutilizar control hasta definir filtros | Pendiente |
 | 3 | Buscador sin menú ⋯ | Tour / licencia / salir solo desde **Ajustes** y menú bar | Menos ruido en cabecera | Pendiente |
 | 4 | Card: un chip de **pegar** | Igual en grilla; **guardar** se edita en popover del chip o menú contextual | Handoff muestra un chip; guardar sigue existiendo | OK alineado |
-| 5 | Historial sin pin visible | **Fijar** solo en clic derecho (comportamiento previo de la app) | No pierde función; visual más limpio | Pendiente |
-| 6 | Hover / peek en slots | Popover al pasar el mouse (delay ~0,4 s) | Heredado; no está en el mock estático | A revisar en prueba |
+| 5 | Historial sin pin visible | **Pin** al hover / fijado (sin flecha decorativa) | Comportamiento previo restaurado | OK Dante (nov 2026) |
+| 6 | Hover / peek en slots | **Sin popover** al hover; borde naranja suave + controles en card | Alineado al mock estático | OK Dante (nov 2026) |
 | 7 | Filas historial expanden texto largo | En panel usamos filas **tipo handoff**; expand al hover en otros contextos | Legibilidad vs densidad | A revisar en prueba |
 | 8 | Slot 1 del mock = **flyer imagen** | Fixture «Cargar ejemplo»: slot 1 **link** (Behance); sin imagen demo embebida | Falta asset de flyer en fixture | Pendiente |
 | 9 | Apertura panel: escala + fade (~220 ms) | Animación **unfold** (cuadrado → ancho → alto) legacy | Flujo dinámico aún no retocado | A revisar en prueba |

@@ -30,6 +30,40 @@ enum SlotCardCopy {
         "\(metaPrimary(for: slot))\n\(metaSecondary(for: slot))"
     }
 
+    /// Texto inicial al renombrar (lo que ve el usuario en la card, en una línea).
+    static func editableTitle(for slot: Slot) -> String {
+        displayTitle(for: slot)
+            .replacingOccurrences(of: "\n", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    static func slotLabelDisplay(for slot: Slot) -> String {
+        let label = slot.label.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !label.isEmpty, label != "Slot \(slot.index)" {
+            return label
+        }
+        return "Slot \(slot.index)"
+    }
+
+    static func emptyPlaceholderTitle(for slot: Slot) -> String {
+        if slot.index == 5 { return "Soltá algo acá" }
+        if slot.index == 1 { return "Tu primer slot" }
+        return "Slot \(slot.index)"
+    }
+
+    /// Texto del cuerpo de la card (contenido real, no metadatos).
+    static func contentBodyPreview(for slot: Slot) -> String? {
+        guard let content = slot.content else { return nil }
+        switch content {
+        case .text(let string):
+            let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
+            if isHexColor(trimmed) { return normalizedHex(trimmed) }
+            return trimmed
+        case .image:
+            return nil
+        }
+    }
+
     static func displayTitle(for slot: Slot) -> String {
         let label = slot.label.trimmingCharacters(in: .whitespacesAndNewlines)
         if !label.isEmpty, label != "Slot \(slot.index)" {

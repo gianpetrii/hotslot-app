@@ -96,7 +96,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         UsageEventLog.shared.record("panel_abrir", screen: "mac_panel")
 
         NSAnimationContext.runAnimationGroup({ context in
-            context.duration = 0.16
+            context.duration = 0.11
             context.timingFunction = CAMediaTimingFunction(name: .easeOut)
             window.animator().alphaValue = 1
         }, completionHandler: { [weak self] in
@@ -157,7 +157,19 @@ final class PanelController: NSWindowController, NSWindowDelegate {
     private func setupKeyMonitor() {
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             guard let self, self.isVisible else { return event }
-            if event.keyCode == 53 { // Esc — mismo cierre que clic fuera del panel
+            if event.keyCode == 53 { // Esc — cerrar modal del panel antes que la ventana
+                if self.appState.isNewLibraryFormPresented {
+                    self.appState.isNewLibraryFormPresented = false
+                    return nil
+                }
+                if self.appState.isSaveClipboardSlotPickerPresented {
+                    self.appState.isSaveClipboardSlotPickerPresented = false
+                    return nil
+                }
+                if self.appState.deleteLibraryConfirmation != nil {
+                    self.appState.deleteLibraryConfirmation = nil
+                    return nil
+                }
                 self.hide(animated: true)
                 return nil
             }

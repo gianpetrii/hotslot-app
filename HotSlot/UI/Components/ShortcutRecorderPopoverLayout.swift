@@ -1,16 +1,36 @@
 import KeyboardShortcuts
 import SwiftUI
 
-/// Contenedor de popover con tamaño fijo para que el grabador no mueva el panel al borrar o grabar.
+/// Contenedor de popover con ancho fijo; alto opcional (si es nil, crece con el contenido).
 struct ShortcutRecorderPopoverLayout<Content: View>: View {
     let width: CGFloat
-    let height: CGFloat
+    var height: CGFloat?
     @ViewBuilder var content: () -> Content
 
+    init(width: CGFloat, height: CGFloat? = nil, @ViewBuilder content: @escaping () -> Content) {
+        self.width = width
+        self.height = height
+        self.content = content
+    }
+
     var body: some View {
-        content()
-            .frame(width: width, height: height, alignment: .topLeading)
-            .padding(14)
+        Group {
+            if let height {
+                content()
+                    .frame(width: width, height: height, alignment: .topLeading)
+            } else {
+                content()
+                    .frame(width: width, alignment: .topLeading)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(.horizontal, SlotsSpace.m)
+        .padding(.vertical, SlotsSpace.s)
+        .background {
+            RoundedRectangle(cornerRadius: SlotsRadius.card, style: .continuous)
+                .fill(SlotsColor.papel)
+                .shadow(color: .black.opacity(0.1), radius: 12, y: 6)
+        }
     }
 }
 
@@ -19,12 +39,23 @@ struct ShortcutRecorderRow: View {
     let name: KeyboardShortcuts.Name
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        HStack(alignment: .center, spacing: SlotsSpace.s) {
             Text(title)
-                .font(.subheadline.weight(.semibold))
+                .font(SlotsFont.etiqueta)
+                .foregroundStyle(SlotsColor.textoSecundario)
+                .lineLimit(2)
+                .frame(width: 92, alignment: .leading)
+
             KeyboardShortcuts.Recorder(for: name)
-                .frame(maxWidth: .infinity, minHeight: 28, alignment: .trailing)
+                .frame(width: HotSlotDesign.shortcutBadgeWidthRegular + 36, alignment: .trailing)
+                .frame(minHeight: 28)
+                .padding(.horizontal, SlotsSpace.s)
+                .padding(.vertical, 3)
+                .background {
+                    RoundedRectangle(cornerRadius: SlotsRadius.chip, style: .continuous)
+                        .fill(SlotsColor.teclaFondo)
+                }
         }
-        .frame(maxWidth: .infinity, minHeight: 52, alignment: .topLeading)
+        .frame(maxWidth: .infinity, minHeight: 36, alignment: .leading)
     }
 }

@@ -5,12 +5,14 @@ struct Slot: Codable, Identifiable, Equatable, Sendable {
     let index: Int
     var label: String
     var content: ClipContent?
+    /// Fondo opcional de la card (hex paleta Slots).
+    var cardBackgroundHex: String?
 
     var id: Int { index }
 
     static func defaultSlots() -> [Slot] {
         (1...SlotStore.slotCount).map { index in
-            Slot(index: index, label: "Slot \(index)", content: nil)
+            Slot(index: index, label: "Slot \(index)", content: nil, cardBackgroundHex: nil)
         }
     }
 

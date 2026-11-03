@@ -8,7 +8,8 @@ struct PanelModalOverlay<Content: View>: View {
     var body: some View {
         ZStack {
             Color.black.opacity(0.22)
-                .ignoresSafeArea()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .contentShape(Rectangle())
                 .onTapGesture(perform: onDismiss)
 
             content()

@@ -18,7 +18,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 
 | Estado | Pri | Tarea |
 |--------|-----|-------|
-| [ ] | P0 | **Accesibilidad (TCC):** aviso del sistema no aparece en 0.18.4 (DMG + `tccutil reset`); pegado solo vía **+** manual en Ajustes → Accesibilidad. Revisar sandbox, identidad del bundle, alternativa de onboarding y regresión vs builds antiguos. |
+| [ ] | P0 | **Accesibilidad (TCC):** aviso del sistema no aparece en 0.18.4 (DMG + `tccutil reset`); pegado solo vía **+** manual en Ajustes → Accesibilidad. Revisar sandbox, identidad del bundle, alternativa de onboarding y regresión vs builds antiguos. **Mitigación dev:** Ajustes → Permisos → «Instalar en Aplicaciones». |
 | [x] | P0 | Fix pegado al clic en historial (Button + paste tras cerrar panel) |
 | [x] | P0 | Fix ventana de Ajustes (hotkeys, slots, general) |
 | [x] | P0 | Quitar highlight automático del ítem más reciente |
@@ -94,6 +94,10 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 | [ ] | P2 | Deploy Vercel tras push; smoke ES/EN, móvil, formulario |
 | [ ] | P3 | Video hero `VIDEO_SRC` cuando exista mp4 liviano |
 | [ ] | P3 | Analytics (Plausible / Vercel) si pautan |
+
+| [x] | P2 | **Bibliotecas:** reorden drag + eliminar (confirmación); renombrar pill pendiente Dante |
+| [x] | P2 | **Panel UX:** pin historial, atajos contextual, contenido en slot, rename inline, fondo paleta, reorder/delete libs — ver `docs/DECISIONES-UX-PANEL.md` |
+| [ ] | P2 | **Grilla slots:** tamaños editables por slot (cuadrado vs alto) — Epic B |
 
 | Estado | Pri | Tarea post-usabilidad |
 |--------|-----|------------------------|
