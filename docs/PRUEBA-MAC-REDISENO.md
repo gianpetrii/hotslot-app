@@ -39,7 +39,7 @@ defaults delete com.hotslot.app com.hotslot.appSettings 2>/dev/null; true
 | Slot imagen | Fill **sin desborde** del marco. |
 | Título slot | Editar abajo → **Enter** o clic en la card → persiste. |
 | Cruz vaciar | Hover → **×** a la izquierda; «Slot N» se corre. |
-| Bibliotecas | Drag reorden + **tacho** al arrastrar; eliminar confirma. |
+| Bibliotecas | Reorden (marca naranja + escala) · **tacho fijo** visible · Renombrar en menú · slot/historial **no** sueltan en pills |
 | Cabecera | Nombre biblioteca alineado con buscador. |
 
 **Profundidad:** no hace falta probar *cada* ítem de menú en 7 y 9. Alcanza **1 acción representativa** por grupo (ver notas abajo).

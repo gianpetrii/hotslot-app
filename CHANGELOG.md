@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.20.1] — 2026-11-03
+
+### Panel (revisión UX — probar antes de dar por cerrado)
+
+- Bibliotecas: reorden con marca de inserción; tacho fijo visible; renombrar en menú contextual; drag de biblioteca separado del de slots.
+- Slot/historial ya no actúan al soltar en pills del footer (solo slots o menú «Mover a…»).
+- Historial/slots: hovers con borde en lugar de sombras recortadas; menos clip agresivo en el panel.
+
+### Docs
+
+- `DECISIONES-UX-PANEL.md` y checklist en estado **en revisión**.
+
 ## [0.20.0] — 2026-11-03
 
 ### Panel UX (handoff + mejoras Gianluca)

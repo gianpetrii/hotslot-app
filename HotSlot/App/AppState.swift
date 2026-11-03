@@ -38,6 +38,7 @@ final class AppState {
     var isSaveClipboardSlotPickerPresented = false
     var isNewLibraryFormPresented = false
     var deleteLibraryConfirmation: Library?
+    var renameLibraryTarget: Library?
 
     /// Ajustes abiertos: el icono de menú bar no cierra el panel flotante al tocarlo.
     var isSettingsWindowVisible = false
@@ -307,6 +308,12 @@ final class AppState {
         libraryWorkspace.syncFromLegacySlotStore(slotStore)
         libraryWorkspace.reorderLibrary(draggedId: draggedId, before: targetId)
         UsageEventLog.shared.record("biblioteca_reordenar")
+    }
+
+    func renameLibrary(id: UUID, name: String) {
+        libraryWorkspace.syncFromLegacySlotStore(slotStore)
+        libraryWorkspace.renameLibrary(id: id, name: name)
+        UsageEventLog.shared.record("biblioteca_renombrar", detail: name)
     }
 
     func replaceSlotFromClipboard(index: Int) {

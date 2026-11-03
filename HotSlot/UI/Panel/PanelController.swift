@@ -170,6 +170,10 @@ final class PanelController: NSWindowController, NSWindowDelegate {
                     self.appState.deleteLibraryConfirmation = nil
                     return nil
                 }
+                if self.appState.renameLibraryTarget != nil {
+                    self.appState.renameLibraryTarget = nil
+                    return nil
+                }
                 self.hide(animated: true)
                 return nil
             }

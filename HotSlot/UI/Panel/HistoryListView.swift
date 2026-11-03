@@ -57,6 +57,8 @@ struct HistoryListView: View {
                                         }
                                     }
                                 )
+                                .padding(.horizontal, 2)
+                                .padding(.vertical, 2)
                                 .id(item.id)
                                 .modifier(HistoryRowChromeModifier(
                                     isDemo: isDemo,

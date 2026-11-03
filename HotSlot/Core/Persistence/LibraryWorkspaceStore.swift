@@ -85,6 +85,15 @@ final class LibraryWorkspaceStore {
         return true
     }
 
+    func renameLibrary(id: UUID, name: String) {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        guard let idx = workspace.libraries.firstIndex(where: { $0.id == id }) else { return }
+        workspace.libraries[idx].name = trimmed
+        workspace.libraries[idx].updatedAt = Date()
+        save()
+    }
+
     func reorderLibrary(draggedId: UUID, before targetId: UUID) {
         guard draggedId != targetId else { return }
         var sorted = workspace.libraries.sorted { $0.order < $1.order }

@@ -28,6 +28,7 @@
 		3A4860090D5B92CEEAEF8713 /* AccessibilityGrantSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC799AE46B9D3C3037098D02 /* AccessibilityGrantSection.swift */; };
 		43D29E4D7E7FF8E4255EFFA2 /* ClipThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C245D2B39A6052D9B218842 /* ClipThumbnailView.swift */; };
 		48FF3AE212D43762C2E8D8DC /* DevelopmentAppInstall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C10887751663046E3AD0188 /* DevelopmentAppInstall.swift */; };
+		4B9572F6AA1ECE0D715425CC /* RenameLibraryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB997A5ED34633E84820B74 /* RenameLibraryFormView.swift */; };
 		4E6D2FEDBE82D87BFE0FC36D /* NotchNotice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6B29BEA4868030AF4ADA383 /* NotchNotice.swift */; };
 		51661401F91CFF3E1F9E5C79 /* LemonLicenseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893CB5382B7CBEF716185C1F /* LemonLicenseService.swift */; };
 		5A14D5F57B0B72252A3272D1 /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3383874D55B3B03906F05B76 /* OnboardingWindowController.swift */; };
@@ -183,6 +184,7 @@
 		F5C2958641416FFA9829EAD4 /* RenameSlotFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenameSlotFormView.swift; sourceTree = "<group>"; };
 		F694AB71C18F22C86D117ACC /* HotkeyName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyName.swift; sourceTree = "<group>"; };
 		F6B29BEA4868030AF4ADA383 /* NotchNotice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchNotice.swift; sourceTree = "<group>"; };
+		FAB997A5ED34633E84820B74 /* RenameLibraryFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenameLibraryFormView.swift; sourceTree = "<group>"; };
 		FB823AC3606502B337159418 /* ClipboardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardService.swift; sourceTree = "<group>"; };
 		FC799AE46B9D3C3037098D02 /* AccessibilityGrantSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityGrantSection.swift; sourceTree = "<group>"; };
 		FEB4689A3F7F6A221FFD94DF /* AppSupportDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSupportDirectory.swift; sourceTree = "<group>"; };
@@ -377,6 +379,7 @@
 				2DCFDD565B98C8B5733679A0 /* PanelLibraryBar.swift */,
 				4BC816C077BA5FF7063ABC6F /* PanelModalOverlay.swift */,
 				A911DBA98261441FF883EE51 /* PanelView.swift */,
+				FAB997A5ED34633E84820B74 /* RenameLibraryFormView.swift */,
 				F5C2958641416FFA9829EAD4 /* RenameSlotFormView.swift */,
 				7F7D2094D67542CF6B99B29B /* SaveClipboardSlotPickerSheet.swift */,
 				5D886AD42BBF26566EF79845 /* SlotCardCopy.swift */,
@@ -680,6 +683,7 @@
 				2666AEEE1C23121AC660B2AC /* PanelView.swift in Sources */,
 				7BF8D66985DA3B637EC97587 /* PasteService.swift in Sources */,
 				C4701F22F4DF19F9D5457B39 /* PasteboardHelper.swift in Sources */,
+				4B9572F6AA1ECE0D715425CC /* RenameLibraryFormView.swift in Sources */,
 				C647F72E936F2AB4EA222FCB /* RenameSlotFormView.swift in Sources */,
 				E9D59B6C31AEA7D35793C698 /* SampleDataFixture.swift in Sources */,
 				67A7DB765E43FE0A8431F019 /* SaveClipboardSlotPickerSheet.swift in Sources */,
@@ -789,7 +793,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 28;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 53M8KYX8G4;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -803,7 +807,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.20.0;
+				MARKETING_VERSION = 0.20.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -884,7 +888,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 28;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 53M8KYX8G4;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -904,7 +908,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.20.0;
+				MARKETING_VERSION = 0.20.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;

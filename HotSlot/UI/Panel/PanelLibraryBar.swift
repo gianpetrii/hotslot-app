@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -6,6 +7,7 @@ struct PanelLibraryBar: View {
     @Bindable var appState: AppState
     @State private var libraryDropTargetId: UUID?
     @State private var libraryBeingDragged: UUID?
+    @State private var isTrashDropTarget = false
 
     private var libraries: [Library] {
         appState.libraryWorkspace.workspace.libraries.sorted { $0.order < $1.order }
@@ -15,136 +17,198 @@ struct PanelLibraryBar: View {
         appState.libraryWorkspace.workspace.activeLibraryId
     }
 
+    private var isLibraryDragActive: Bool {
+        libraryBeingDragged != nil
+    }
+
     var body: some View {
         HStack(spacing: SlotsSpace.m) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: SlotsSpace.s) {
                     ForEach(libraries) { library in
-                        libraryPill(library)
+                        libraryPillRow(library)
                     }
                     addLibraryButton
-
-                    if libraryBeingDragged != nil, libraries.count > 1 {
-                        libraryTrashDropTarget
-                    }
                 }
+                .padding(.vertical, 4)
+                .padding(.horizontal, 2)
+            }
+
+            if libraries.count > 1 {
+                libraryTrashDropTarget
             }
 
             saveClipboardButton
         }
         .padding(.horizontal, HotSlotDesign.horizontalPadding)
+        .onChange(of: libraryDropTargetId) { _, _ in
+            clearLibraryDragIfIdle()
+        }
+        .onChange(of: isTrashDropTarget) { _, _ in
+            clearLibraryDragIfIdle()
+        }
+    }
+
+    private func clearLibraryDragIfIdle() {
+        guard libraryBeingDragged != nil else { return }
+        guard libraryDropTargetId == nil, !isTrashDropTarget else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            if libraryDropTargetId == nil, !isTrashDropTarget {
+                libraryBeingDragged = nil
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func libraryPillRow(_ library: Library) -> some View {
+        let showInsertMark = libraryDropTargetId == library.id
+            && libraryBeingDragged != nil
+            && libraryBeingDragged != library.id
+
+        HStack(spacing: 6) {
+            if showInsertMark {
+                RoundedRectangle(cornerRadius: 2, style: .continuous)
+                    .fill(SlotsColor.naranja)
+                    .frame(width: 3, height: SlotsRadius.controlAlto - 4)
+                    .transition(.opacity.combined(with: .scale(scale: 0.6, anchor: .leading)))
+            }
+            libraryPill(library)
+        }
+        .animation(.easeOut(duration: 0.16), value: showInsertMark)
     }
 
     private func libraryPill(_ library: Library) -> some View {
         let isActive = library.id == activeId
         let count = appState.libraryWorkspace.filledSlotCount(in: library.id)
         let isDropTarget = libraryDropTargetId == library.id
-        let shiftForReorder = isDropTarget && libraryBeingDragged != nil && libraryBeingDragged != library.id
+        let isDragSource = library.id == libraryBeingDragged
 
-        return Button {
+        return HStack(spacing: SlotsSpace.s) {
+            Text(library.name)
+                .font(SlotsFont.textoUI)
+            countBadge(count: count, isActive: isActive)
+        }
+        .padding(.leading, 20)
+        .padding(.trailing, SlotsSpace.s)
+        .frame(height: SlotsRadius.controlAlto)
+        .background {
+            Capsule(style: .continuous)
+                .fill(isActive ? SlotsColor.tinta : Color.white.opacity(0.85))
+        }
+        .overlay {
+            if isDropTarget, isLibraryDragActive {
+                Capsule(style: .continuous)
+                    .strokeBorder(SlotsColor.naranja, lineWidth: 2)
+            } else if isDropTarget {
+                Capsule(style: .continuous)
+                    .strokeBorder(SlotsColor.naranja.opacity(0.45), lineWidth: 1.5)
+            }
+        }
+        .foregroundStyle(isActive ? Color.white : SlotsColor.tinta)
+        .scaleEffect(isDropTarget && isLibraryDragActive ? 1.03 : 1)
+        .opacity(isDragSource ? 0.38 : 1)
+        .animation(.easeOut(duration: 0.14), value: isDropTarget)
+        .animation(.easeOut(duration: 0.12), value: isDragSource)
+        .contentShape(Capsule(style: .continuous))
+        .onTapGesture {
             guard library.id != activeId else { return }
             withAnimation(.easeOut(duration: 0.15)) {
                 appState.switchLibrary(to: library.id)
             }
-        } label: {
-            HStack(spacing: SlotsSpace.s) {
-                Text(library.name)
-                    .font(SlotsFont.textoUI)
-                countBadge(count: count, isActive: isActive)
-            }
-            .padding(.leading, 20)
-            .padding(.trailing, SlotsSpace.s)
-            .frame(height: SlotsRadius.controlAlto)
-            .background {
-                Capsule(style: .continuous)
-                    .fill(isActive ? SlotsColor.tinta : Color.white.opacity(0.85))
-            }
-            .overlay(alignment: .leading) {
-                if isDropTarget {
-                    Capsule(style: .continuous)
-                        .strokeBorder(SlotsColor.naranja, lineWidth: 2)
-                        .padding(-2)
-                }
-            }
-            .foregroundStyle(isActive ? Color.white : SlotsColor.tinta)
-        }
-        .buttonStyle(.plain)
-        .offset(x: shiftForReorder ? 10 : 0)
-        .animation(.spring(response: 0.32, dampingFraction: 0.82), value: shiftForReorder)
-        .draggable(PanelDragPayload.library(id: library.id)) {
-            Text(library.name)
-                .font(SlotsFont.textoUI)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(.ultraThinMaterial, in: Capsule())
-                .onAppear { libraryBeingDragged = library.id }
-        }
-        .onDrop(of: [UTType.hotslotPanelDrag], isTargeted: Binding(
-            get: { libraryDropTargetId == library.id },
-            set: { libraryDropTargetId = $0 ? library.id : nil }
-        )) { providers in
-            libraryBeingDragged = nil
-            return acceptLibraryDrop(providers, targetId: library.id)
         }
         .contextMenu {
+            Button("Renombrar…") {
+                appState.renameLibraryTarget = library
+            }
+            Divider()
             if libraries.count > 1 {
                 Button("Eliminar «\(library.name)»…", role: .destructive) {
                     appState.deleteLibraryConfirmation = library
                 }
             }
         }
+        .help("Clic para cambiar · Arrastrá para reordenar · Clic derecho para renombrar")
+        .onDrag {
+            libraryBeingDragged = library.id
+            let data = (try? JSONEncoder().encode(LibraryDragPayload(id: library.id))) ?? Data()
+            return NSItemProvider(item: data as NSData, typeIdentifier: UTType.hotslotLibraryDrag.identifier)
+        }
+        .onDrop(of: [UTType.hotslotLibraryDrag], isTargeted: Binding(
+            get: { libraryDropTargetId == library.id },
+            set: { targeted in
+                libraryDropTargetId = targeted ? library.id : nil
+                if !targeted, libraryBeingDragged == library.id {
+                    libraryBeingDragged = nil
+                }
+            }
+        )) { providers in
+            defer {
+                libraryBeingDragged = nil
+                libraryDropTargetId = nil
+            }
+            return acceptLibraryReorder(providers, before: library.id)
+        }
     }
 
     private var libraryTrashDropTarget: some View {
-        Image(systemName: "trash")
+        let active = isTrashDropTarget && isLibraryDragActive
+
+        return Image(systemName: "trash")
             .font(.system(size: 14, weight: .semibold))
-            .foregroundStyle(SlotsColor.naranja)
+            .foregroundStyle(active ? Color.white : SlotsColor.naranja)
             .frame(width: SlotsRadius.controlAlto, height: SlotsRadius.controlAlto)
             .background {
                 Circle()
-                    .strokeBorder(SlotsColor.naranja.opacity(0.5), style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
+                    .fill(active ? SlotsColor.naranja : Color.white.opacity(0.85))
+                    .overlay {
+                        Circle()
+                            .strokeBorder(
+                                SlotsColor.naranja.opacity(active ? 1 : 0.45),
+                                lineWidth: active ? 0 : 1.5
+                            )
+                    }
             }
-            .help("Soltá acá para eliminar la biblioteca")
-            .onDrop(of: [UTType.hotslotPanelDrag], isTargeted: nil) { providers in
-                acceptLibraryTrashDrop(providers)
+            .scaleEffect(active ? 1.06 : 1)
+            .animation(.easeOut(duration: 0.12), value: active)
+            .help("Arrastrá una biblioteca acá para eliminarla")
+            .onDrop(of: [UTType.hotslotLibraryDrag], isTargeted: $isTrashDropTarget) { providers in
+                defer {
+                    libraryBeingDragged = nil
+                    isTrashDropTarget = false
+                }
+                return acceptLibraryTrashDrop(providers)
             }
     }
 
-    private func acceptLibraryTrashDrop(_ providers: [NSItemProvider]) -> Bool {
-        let type = UTType.hotslotPanelDrag.identifier
+    private func acceptLibraryReorder(_ providers: [NSItemProvider], before targetId: UUID) -> Bool {
+        let type = UTType.hotslotLibraryDrag.identifier
         guard let provider = providers.first(where: { $0.hasItemConformingToTypeIdentifier(type) }) else {
             return false
         }
         provider.loadDataRepresentation(forTypeIdentifier: type) { data, _ in
             guard let data,
-                  let payload = try? JSONDecoder().decode(PanelDragPayload.self, from: data),
-                  case .library(let draggedId) = payload else { return }
+                  let payload = try? JSONDecoder().decode(LibraryDragPayload.self, from: data),
+                  payload.id != targetId else { return }
             DispatchQueue.main.async {
-                libraryBeingDragged = nil
-                if let library = libraries.first(where: { $0.id == draggedId }) {
-                    appState.deleteLibraryConfirmation = library
+                withAnimation(.spring(response: 0.34, dampingFraction: 0.86)) {
+                    appState.reorderLibrary(draggedId: payload.id, before: targetId)
                 }
             }
         }
         return true
     }
 
-    private func acceptLibraryDrop(_ providers: [NSItemProvider], targetId: UUID) -> Bool {
-        let type = UTType.hotslotPanelDrag.identifier
+    private func acceptLibraryTrashDrop(_ providers: [NSItemProvider]) -> Bool {
+        let type = UTType.hotslotLibraryDrag.identifier
         guard let provider = providers.first(where: { $0.hasItemConformingToTypeIdentifier(type) }) else {
             return false
         }
         provider.loadDataRepresentation(forTypeIdentifier: type) { data, _ in
             guard let data,
-                  let payload = try? JSONDecoder().decode(PanelDragPayload.self, from: data),
-                  case .library(let draggedId) = payload,
-                  draggedId != targetId else { return }
+                  let payload = try? JSONDecoder().decode(LibraryDragPayload.self, from: data),
+                  let library = libraries.first(where: { $0.id == payload.id }) else { return }
             DispatchQueue.main.async {
-                withAnimation(.spring(response: 0.32, dampingFraction: 0.82)) {
-                    appState.reorderLibrary(draggedId: draggedId, before: targetId)
-                }
-                libraryBeingDragged = nil
-                libraryDropTargetId = nil
+                appState.deleteLibraryConfirmation = library
             }
         }
         return true

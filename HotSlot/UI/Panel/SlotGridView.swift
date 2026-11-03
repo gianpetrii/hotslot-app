@@ -156,8 +156,18 @@ private struct SlotCardView: View {
             .padding(SlotsSpace.m)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
+        .padding(2)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
+        .overlay {
+            if isDropTarget {
+                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
+                    .strokeBorder(SlotsColor.naranja, lineWidth: 2)
+            } else if isHovering, hasContent {
+                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
+                    .strokeBorder(SlotsColor.naranja.opacity(0.35), lineWidth: 1)
+            }
+        }
         .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
         .onTapGesture {
             if isEditingLabel {
@@ -176,8 +186,6 @@ private struct SlotCardView: View {
                     onSwapFrom(source)
                 case .historyItem(let id):
                     onSaveHistoryItem(id)
-                case .library:
-                    break
                 }
             }
         }
@@ -434,15 +442,6 @@ private struct SlotCardView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipped()
         .clipShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
-        .overlay {
-            if isDropTarget {
-                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
-                    .strokeBorder(SlotsColor.naranja, lineWidth: 2)
-            } else if isHovering, hasContent {
-                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
-                    .strokeBorder(SlotsColor.naranja.opacity(0.35), lineWidth: 1)
-            }
-        }
     }
 
     private var isImageContent: Bool {

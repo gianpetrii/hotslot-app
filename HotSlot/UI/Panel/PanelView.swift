@@ -9,6 +9,7 @@ struct PanelView: View {
     @State private var revealHeight = HotSlotDesign.panelHeight
     @State private var unfoldGeneration = 0
     @State private var newLibraryName = ""
+    @State private var renameLibraryName = ""
     @FocusState private var isSearchFocused: Bool
 
     private var filteredItems: [ClipItem] {
@@ -63,7 +64,6 @@ struct PanelView: View {
                         }
                         .padding(.bottom, SlotsSpace.xl)
                         .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .top)
-                        .clipped()
                     }
                 }
                 .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .topLeading)
@@ -78,6 +78,7 @@ struct PanelView: View {
         .animation(.easeOut(duration: 0.18), value: appState.isSaveClipboardSlotPickerPresented)
         .animation(.easeOut(duration: 0.18), value: appState.isNewLibraryFormPresented)
         .animation(.easeOut(duration: 0.18), value: appState.deleteLibraryConfirmation != nil)
+        .animation(.easeOut(duration: 0.18), value: appState.renameLibraryTarget != nil)
         .overlay(alignment: .bottom) {
             if let toast = appState.toastMessage {
                 ToastView(message: toast)
@@ -117,6 +118,11 @@ struct PanelView: View {
                 appState.deleteLibraryConfirmation = nil
                 return .handled
             }
+            if appState.renameLibraryTarget != nil {
+                appState.renameLibraryTarget = nil
+                renameLibraryName = ""
+                return .handled
+            }
             if isSearching {
                 searchText = ""
                 keyboardHighlightIndex = nil
@@ -151,6 +157,9 @@ struct PanelView: View {
         }
         .onChange(of: appState.isNewLibraryFormPresented) { _, presented in
             if presented { newLibraryName = "" }
+        }
+        .onChange(of: appState.renameLibraryTarget) { _, library in
+            if let library { renameLibraryName = library.name }
         }
         .onDisappear {
             searchText = ""
@@ -197,6 +206,25 @@ struct PanelView: View {
                     onDelete: {
                         _ = appState.deleteLibrary(id: library.id)
                         appState.deleteLibraryConfirmation = nil
+                    }
+                )
+            }
+            .zIndex(100)
+        } else if let library = appState.renameLibraryTarget {
+            PanelModalOverlay {
+                appState.renameLibraryTarget = nil
+                renameLibraryName = ""
+            } content: {
+                RenameLibraryFormView(
+                    name: $renameLibraryName,
+                    onCancel: {
+                        appState.renameLibraryTarget = nil
+                        renameLibraryName = ""
+                    },
+                    onSave: {
+                        appState.renameLibrary(id: library.id, name: renameLibraryName)
+                        appState.renameLibraryTarget = nil
+                        renameLibraryName = ""
                     }
                 )
             }

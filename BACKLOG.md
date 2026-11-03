@@ -95,7 +95,7 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 | [ ] | P3 | Video hero `VIDEO_SRC` cuando exista mp4 liviano |
 | [ ] | P3 | Analytics (Plausible / Vercel) si pautan |
 
-| [x] | P2 | **Bibliotecas:** reorden drag + eliminar (confirmación); renombrar pill pendiente Dante |
+| [x] | P2 | **Bibliotecas:** reorden drag + eliminar + **renombrar** (confirmación eliminar); dwell slot→pill |
 | [x] | P2 | **Panel UX:** pin historial, atajos contextual, contenido en slot, rename inline, fondo paleta, reorder/delete libs — ver `docs/DECISIONES-UX-PANEL.md` |
 | [ ] | P2 | **Grilla slots:** tamaños editables por slot (cuadrado vs alto) — Epic B |
 

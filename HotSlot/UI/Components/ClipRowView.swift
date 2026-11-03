@@ -92,17 +92,15 @@ struct ClipRowView: View {
         .background {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(panelHandoffBackground(isFirst: isFirst))
-                .shadow(
-                    color: isFirst ? Color(slotsHex: 0x462D14).opacity(0.08) : .clear,
-                    radius: 9,
-                    y: 4
-                )
         }
         .overlay {
-            if isKeyboardHighlighted {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .strokeBorder(SlotsColor.naranja.opacity(0.5), lineWidth: 1.5)
-            }
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(
+                    isKeyboardHighlighted
+                        ? SlotsColor.naranja.opacity(0.5)
+                        : (isHovering ? SlotsColor.linea : (isFirst ? Color(slotsHex: 0x462D14).opacity(0.08) : Color.clear)),
+                    lineWidth: isKeyboardHighlighted ? 1.5 : 1
+                )
         }
         .onHover { hovering in
             isHovering = hovering
