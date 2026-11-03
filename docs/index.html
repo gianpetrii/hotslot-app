@@ -1,193 +1,1256 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Slots — Portapapeles fijos para macOS</title>
-  <meta name="description" content="Cinco slots fijos que no rotan, historial local y pegado automático. Gratis para macOS.">
-  <meta property="og:title" content="Slots — Portapapeles fijos para macOS">
-  <meta property="og:description" content="El slot 2 siempre es el slot 2. Developer ID + notarizado.">
-  <meta property="og:type" content="website">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="hotslot.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta property="og:title" content="Slots · Tu portapapeles, ahora con memoria">
+<meta property="og:description" content="Guardá una vez lo que mandás todos los días y pegalo con un atajo. Para Mac y iPhone. Anotate en la lista de espera.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#F2F2F0">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
-  <div class="page-backdrop" aria-hidden="true"></div>
+<title>Slots</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-1 -4 32 32'%3E%3Cstyle%3E.c%7Bfill:%23111%7D@media (prefers-color-scheme:dark)%7B.c%7Bfill:%23F2F2F0%7D%7D%3C/style%3E%3Crect class='c' x='0' y='0' width='13' height='24' rx='3.5'/%3E%3Crect class='c' x='16' y='0' width='14' height='10.5' rx='3.5'/%3E%3Crect x='16' y='13.5' width='14' height='10.5' rx='3.5' fill='%23E2501D'/%3E%3C/svg%3E">
+<meta name="description" content="Slots: tu portapapeles, ahora con memoria. Para Mac y iPhone. Anotate en la lista de espera.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap">
+<style>
+/* Layout: una sola columna editorial a 1160px; titulares gigantes y apretados, cards de slot como único objeto con borde. Manual de marca Slots. */
+:root{
+  --papel:#F2F2F0; --tinta:#111111; --naranja:#E2501D; --oxido:#A8431A; --arena:#E7DED2;
+  --card:#FFFFFF; --card-osc:#1C1C1C; --sobre-osc:#B9B4AE; --mute:#5E5A56; --linea:#E1DDD8;
+  --tecla:#F1EDE8; --vidrio:rgba(246,241,235,.62); --sombra:0 1px 0 rgba(17,17,17,.04),0 12px 32px -12px rgba(60,30,10,.18);
+  --sobre-naranja:#FFFFFF;
+  --f:"Inter Tight",ui-sans-serif,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --r-card:20px; --r-win:32px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --papel:#0F0E0D; --tinta:#F2F2F0; --naranja:#EE5A26; --oxido:#E08A63; --arena:#2A2420;
+  --card:#1C1B1A; --card-osc:#262422; --sobre-osc:#B9B4AE; --mute:#A9A39C; --linea:#2E2B28;
+  --tecla:#262321; --vidrio:rgba(30,28,26,.66); --sombra:0 1px 0 rgba(0,0,0,.3),0 16px 40px -16px rgba(0,0,0,.6);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --papel:#0F0E0D; --tinta:#F2F2F0; --naranja:#EE5A26; --oxido:#E08A63; --arena:#2A2420;
+  --card:#1C1B1A; --card-osc:#262422; --sobre-osc:#B9B4AE; --mute:#A9A39C; --linea:#2E2B28;
+  --tecla:#262321; --vidrio:rgba(30,28,26,.66); --sombra:0 1px 0 rgba(0,0,0,.3),0 16px 40px -16px rgba(0,0,0,.6);
+  color-scheme:dark}
 
-  <header class="site-header">
-    <div class="site-header-inner">
-      <a class="brand" href="./">
-        <span class="brand-mark" aria-hidden="true">⌘</span>
-        Slots
-      </a>
-      <nav class="nav-links" aria-label="Principal">
-        <a href="#demo">Vista previa</a>
-        <a href="#instalar">Instalar</a>
-        <a href="privacy.html">Privacidad</a>
-        <a class="btn btn-primary" id="nav-download" href="https://github.com/gianpetrii/hotslot-app/releases/latest/download/Slots-0.19.0.dmg">Descargar</a>
-      </nav>
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--papel);color:var(--tinta);font-family:var(--f);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--papel)}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:inherit}
+h1,h2,h3{font-weight:500;letter-spacing:-.04em;line-height:.98;margin:0;text-wrap:balance}
+h1{font-size:clamp(48px,9vw,112px)}
+h2{font-size:clamp(38px,6vw,72px)}
+h3{font-size:24px;letter-spacing:-.03em;line-height:1.1}
+p{margin:0}
+.lead{font-size:clamp(18px,2vw,21px);color:var(--mute);max-width:36ch;line-height:1.45}
+.eyebrow{font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--naranja);box-shadow:0 0 0 4px color-mix(in srgb,var(--naranja) 22%,transparent)}
+kbd,.key{font-family:var(--f);font-size:13px;font-weight:500;background:var(--tecla);color:var(--tinta);border-radius:8px;padding:3px 8px;display:inline-flex;align-items:center;gap:2px;font-variant-numeric:tabular-nums;white-space:nowrap}
+:focus-visible{outline:2px solid var(--naranja);outline-offset:3px}
+
+/* nav */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--papel) 82%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:500;font-size:22px;letter-spacing:-.03em;text-decoration:none}
+.logo svg{width:30px;height:24px;display:block}
+.logo .c{fill:var(--tinta)} .logo .o{fill:var(--naranja)}
+.nav-links{display:flex;align-items:center;gap:24px;font-size:15px}
+.nav-links a:not(.btn){text-decoration:none;color:var(--mute)}
+.nav-links a:not(.btn):hover{color:var(--tinta)}
+@media (max-width:640px){.nav-links a:not(.btn){display:none}}
+
+.btn{height:48px;padding:0 22px;border-radius:999px;border:0;background:var(--tinta);color:var(--papel);font:500 16px/1 var(--f);letter-spacing:-.01em;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;text-decoration:none;white-space:nowrap;transition:transform .15s ease,background .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn.acento{background:var(--naranja);color:var(--sobre-naranja)}
+.btn.chico{height:40px;padding:0 18px;font-size:15px}
+.btn.fantasma{background:transparent;color:var(--tinta);box-shadow:inset 0 0 0 1.5px var(--linea)}
+.btn[disabled]{opacity:.55;cursor:default;transform:none}
+
+/* hero */
+.hero{padding-block:56px 40px;display:grid;gap:40px;grid-template-columns:minmax(0,1fr)}
+.hero>*,.hero-row>*{min-width:0}
+@media (max-width:480px){h1{font-size:clamp(36px,11.2vw,56px)}}
+.hero-top{display:grid;gap:28px}
+.hero h1 .n{color:var(--naranja)}
+.hero-row{display:grid;gap:28px;align-items:end}
+@media (min-width:920px){.hero-row{grid-template-columns:1fr 440px}}
+.quick{display:flex;gap:8px;background:var(--card);border-radius:999px;padding:6px;box-shadow:var(--sombra);max-width:480px}
+.quick input{flex:1;min-width:0;border:0;background:transparent;font:400 17px var(--f);color:var(--tinta);padding:0 16px;height:48px;outline:none}
+.quick input::placeholder{color:var(--mute)}
+.fine{font-size:14px;color:var(--mute);margin-top:12px}
+.estado{font-size:15px;margin-top:12px;min-height:1.5em}
+.estado.ok{color:var(--tinta)} .estado.error{color:var(--oxido)}
+
+/* pantalla (video en loop) */
+.pantalla{position:relative;border-radius:28px;overflow:hidden;aspect-ratio:16/9.4;max-width:100%;background:
+  radial-gradient(120% 90% at 85% 15%,#F07A3E 0%,rgba(240,122,62,0) 55%),
+  radial-gradient(90% 80% at 10% 100%,#7A2E12 0%,rgba(122,46,18,0) 60%),
+  linear-gradient(135deg,#E2501D 0%,#A8431A 55%,#3B1B0E 100%);box-shadow:var(--sombra)}
+.pantalla video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.barra{position:absolute;top:0;left:0;right:0;height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:12px;color:rgba(255,255,255,.85);background:rgba(0,0,0,.08)}
+.isla{position:absolute;top:0;left:50%;transform:translateX(-50%);height:30px;min-width:150px;background:#000;color:#fff;border-radius:0 0 18px 18px;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 16px;font-size:13px;font-weight:500;transition:min-width .45s cubic-bezier(.3,1.4,.5,1),height .45s cubic-bezier(.3,1.4,.5,1),border-radius .45s;z-index:3;white-space:nowrap;overflow:hidden}
+.isla .in{display:flex;align-items:center;gap:10px;opacity:0;transition:opacity .2s}
+.isla.on{min-width:260px;height:46px;border-radius:0 0 24px 24px}
+.isla.on .in{opacity:1}
+.isla .num{width:24px;height:24px;border-radius:7px;background:#E2501D;display:grid;place-items:center;font-size:12px;color:#fff}
+.isla .ok{color:#F5A27D}
+.panel{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);width:min(82%,760px);background:var(--vidrio);backdrop-filter:blur(26px) saturate(1.3);-webkit-backdrop-filter:blur(26px) saturate(1.3);border-radius:clamp(16px,2.6vw,32px);padding:clamp(12px,2.4vw,28px);box-shadow:0 30px 60px -20px rgba(40,10,0,.45);display:grid;gap:clamp(8px,1.4vw,16px)}
+.panel-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.panel-head b{font-weight:500;font-size:clamp(20px,3.6vw,44px);letter-spacing:-.04em;line-height:1}
+.panel-head span{font-size:clamp(10px,1.1vw,13px);color:var(--mute)}
+.panel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(4px,.8vw,8px)}
+.ps{background:var(--card);border-radius:clamp(8px,1.4vw,16px);padding:clamp(6px,1.2vw,14px);display:grid;gap:clamp(2px,.6vw,10px);min-height:clamp(54px,9vw,110px);align-content:space-between;transition:transform .35s cubic-bezier(.3,1.4,.5,1),background .3s}
+.ps small{font-size:clamp(8px,.9vw,11px);color:var(--mute);display:flex;justify-content:space-between;gap:4px}
+.ps strong{font-weight:500;font-size:clamp(11px,1.7vw,20px);letter-spacing:-.03em;line-height:1.05}
+.ps.osc{background:var(--card-osc);color:#F2F2F0}
+.ps.osc small{color:var(--sobre-osc)}
+.ps.img{background:linear-gradient(160deg,#FFD9C2,#E2501D 70%,#A8431A);color:#fff}
+.ps.img small{color:rgba(255,255,255,.85)}
+.ps.vacio{background:transparent;border:1.5px dashed color-mix(in srgb,var(--tinta) 28%,transparent)}
+.ps.vacio strong{color:var(--mute);font-size:clamp(9px,1.1vw,13px)}
+.ps.pulse{transform:scale(1.04);background:var(--naranja);color:#fff}
+.ps.pulse small{color:rgba(255,255,255,.85)}
+.cursor{position:absolute;width:18px;height:18px;z-index:4;transition:left .8s cubic-bezier(.6,0,.2,1),top .8s cubic-bezier(.6,0,.2,1);pointer-events:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+.pantalla-pie{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--mute);margin-top:12px}
+@media (max-width:560px){.pantalla{aspect-ratio:1/1.02}.panel{top:57%;width:88%}.panel-grid{grid-template-columns:repeat(2,1fr)}.ps:nth-child(n+5){display:none}.barra span:last-child{display:none}}
+
+/* secciones */
+section.bloque{padding-block:88px}
+.sec-head{display:grid;gap:18px;margin-bottom:40px}
+@media (min-width:920px){.sec-head{grid-template-columns:1fr 1fr;align-items:end}.sec-head .lead{justify-self:end}}
+
+/* demo */
+.demo{display:grid;gap:16px}
+@media (min-width:920px){.demo{grid-template-columns:1.1fr 1fr}}
+.ventana{background:var(--card);border-radius:24px;box-shadow:var(--sombra);overflow:hidden;position:relative;display:flex;flex-direction:column;min-width:0}
+.ventana-top{height:44px;display:flex;align-items:center;gap:8px;padding:0 16px;border-bottom:1px solid var(--linea);position:relative}
+.ventana-top i{width:11px;height:11px;border-radius:50%;background:var(--linea)}
+.ventana-top .t{margin-left:8px;font-size:13px;color:var(--mute)}
+.ventana .isla{top:0;height:26px;min-width:110px;font-size:12px}
+.ventana .isla:not(.on){opacity:0;min-width:60px;transition:opacity .25s,min-width .45s,height .45s}
+.ventana .isla.on{height:40px;min-width:230px}
+.campos{padding:14px 20px 0;display:grid;gap:6px;font-size:15px;color:var(--mute)}
+.campos div{display:flex;gap:8px;border-bottom:1px solid var(--linea);padding-bottom:8px}
+.campos b{font-weight:500;color:var(--tinta)}
+#doc{flex:1;min-height:260px;border:0;resize:none;background:transparent;color:var(--tinta);font:400 16px/1.6 var(--f);padding:16px 20px 20px;outline:none;width:100%}
+.mini{display:grid;gap:12px;align-content:start}
+.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.slot{all:unset;box-sizing:border-box;cursor:pointer;background:var(--card);border-radius:var(--r-card);padding:16px;display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-content:space-between;min-height:132px;box-shadow:var(--sombra);transition:transform .2s cubic-bezier(.3,1.4,.5,1),background .2s;min-width:0;position:relative}
+.slot:hover{transform:translateY(-2px)}
+.slot:focus-visible{outline:2px solid var(--naranja);outline-offset:3px}
+.slot .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--mute)}
+.slot .meta span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.slot .meta .key{flex:none;overflow:visible}
+.slot strong{font-weight:500;font-size:22px;letter-spacing:-.035em;line-height:1.05;overflow-wrap:anywhere}
+.slot.osc{background:var(--card-osc);color:#F2F2F0}
+.slot.osc .meta{color:var(--sobre-osc)}
+.slot.osc .key{background:#33302D;color:#F2F2F0}
+.slot.color{background:#E2501D;color:#fff}
+.slot.color .meta{color:rgba(255,255,255,.85)}
+.slot.color .key{background:rgba(0,0,0,.18);color:#fff}
+.slot.vacio{background:transparent;box-shadow:none;border:1.5px dashed color-mix(in srgb,var(--tinta) 26%,transparent)}
+.slot.vacio strong{font-size:16px;color:var(--mute);letter-spacing:-.01em;line-height:1.3}
+.slot.flash{animation:flash .5s ease}
+@keyframes flash{0%{transform:scale(1)}40%{transform:scale(.96)}100%{transform:scale(1)}}
+.slot.ancho{grid-column:1/-1;min-height:110px}
+.ayuda{font-size:14px;color:var(--mute);display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.ayuda span{display:inline-flex;align-items:center;gap:6px}
+
+.solo-tactil{display:none}
+@media (hover:none) and (pointer:coarse){
+  .solo-desk{display:none!important}
+  .solo-tactil{display:inline-flex}
+  p.solo-tactil{display:block}
+  #doc{min-height:170px;caret-color:transparent}
+  .slot{min-height:92px;padding:14px;gap:10px}
+  .slot strong{font-size:18px}
+  .slot.ancho{min-height:80px}
+  .slot:hover{transform:none}
+  .slot:active{transform:scale(.97)}
+}
+
+/* cómo funciona */
+.pasos{display:grid;gap:24px}
+@media (min-width:920px){.pasos{grid-template-columns:1fr 1fr;gap:64px}}
+.teclado{position:sticky;top:120px;align-self:start;background:var(--card);border-radius:var(--r-win);padding:32px;box-shadow:var(--sombra);display:grid;gap:10px;justify-items:center}
+@media (max-width:919px){.teclado{position:static;padding:10px;border-radius:24px}.teclado .fila,.teclado p{display:none}}
+/* notch del paso 3 */
+.np-pantalla{width:100%;height:210px;border-radius:18px;position:relative;overflow:hidden;margin-bottom:18px;background:
+  radial-gradient(120% 90% at 85% 10%,#F07A3E 0%,rgba(240,122,62,0) 55%),linear-gradient(135deg,#E2501D 0%,#A8431A 60%,#3B1B0E 100%)}
+@media (max-width:919px){.np-pantalla{margin-bottom:0;height:190px}}
+.np{position:absolute;top:0;left:50%;transform:translateX(-50%);background:#000;color:#fff;border-radius:0 0 16px 16px;width:120px;height:26px;overflow:hidden;cursor:pointer;transition:width .5s cubic-bezier(.3,1.3,.5,1),height .5s cubic-bezier(.3,1.3,.5,1),border-radius .4s}
+.np-pill{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:500;white-space:nowrap;opacity:0;transition:opacity .2s}
+.np-num{width:22px;height:22px;border-radius:7px;background:#E2501D;display:grid;place-items:center;font-size:12px}
+.np-ok{color:#F5A27D}
+.np-guardado,.np-pegado{display:none}
+.np.guardar .np-guardado,.np.pegar .np-pegado{display:inline}
+.np.guardar,.np.pegar{width:min(270px,92%);height:42px;border-radius:0 0 22px 22px}
+.np.guardar .np-pill,.np.pegar .np-pill{opacity:1}
+.np-todo{position:absolute;left:0;right:0;top:0;padding:14px;display:grid;gap:10px;opacity:0;transition:opacity .2s}
+.np.ver,.np:hover{width:94%;height:178px;border-radius:0 0 26px 26px}
+@media (max-width:919px){.np.ver,.np:hover{height:146px}}
+.np.ver .np-pill,.np:hover .np-pill{opacity:0}
+.np.ver .np-todo,.np:hover .np-todo{opacity:1;transition-delay:.15s}
+.np-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.np-s{background:#1C1C1C;border-radius:12px;padding:8px;min-height:92px;display:flex;flex-direction:column;justify-content:space-between;min-width:0}
+.np-s small{font-size:10px;color:#B9B4AE;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np-s b{font-weight:500;font-size:13px;letter-spacing:-.02em;line-height:1.1;-webkit-hyphens:auto;hyphens:auto;overflow-wrap:break-word}
+.np-s.osc{background:#2A2826}
+.np-s.img{background:linear-gradient(160deg,#FFD9C2,#E2501D 70%,#A8431A)}
+.np-s.img small{color:rgba(255,255,255,.85)}
+.np-s.col{background:#E2501D}.np-s.col small{color:rgba(255,255,255,.85)}
+.np-pie{display:flex;justify-content:space-between;font-size:11px;color:#B9B4AE}
+@media (max-width:919px){.np-s{min-height:80px;padding:6px}.np-s b{font-size:10px;letter-spacing:-.01em}.np-s small{font-size:8px}}
+.fila{display:flex;gap:8px}
+.k{width:58px;height:58px;border-radius:12px;background:var(--tecla);display:grid;place-items:center;font-size:20px;font-weight:500;color:var(--mute);box-shadow:inset 0 -3px 0 color-mix(in srgb,var(--tinta) 10%,transparent);transition:background .25s,color .25s,transform .25s}
+.k.w{width:84px}
+.k.on{background:var(--naranja);color:#fff;transform:translateY(2px);box-shadow:none}
+.k.on2{background:var(--tinta);color:var(--papel);transform:translateY(2px);box-shadow:none}
+.teclado p{margin-top:14px;font-size:15px;color:var(--mute);text-align:center;min-height:3em;max-width:30ch}
+.paso{padding-block:28px 56px;border-top:1px solid var(--linea);display:grid;gap:14px;opacity:.45;transition:opacity .3s}
+.paso.activo{opacity:1}
+@media (max-width:919px){.paso{opacity:1;padding-block:24px}}
+.paso .nro{font-size:14px;color:var(--naranja);font-weight:500;font-variant-numeric:tabular-nums}
+.paso h3{font-size:clamp(32px,4vw,48px);letter-spacing:-.04em;line-height:1}
+.paso p{color:var(--mute);max-width:40ch}
+.combo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:15px;color:var(--mute)}
+
+/* atajos personalizables */
+.atajos{display:grid;gap:40px;align-items:start}
+@media (min-width:920px){.atajos{grid-template-columns:1fr 1.05fr;gap:64px}}
+.atajos-txt{display:grid;gap:22px;min-width:0}
+.lead.chico{font-size:16px}
+.ajustes{background:var(--card);border-radius:28px;box-shadow:var(--sombra);padding:20px;display:grid;gap:14px;min-width:0}
+.aj-tabs{display:flex;gap:4px;background:var(--papel);border-radius:999px;padding:4px;justify-self:center}
+.aj-tabs span{font-size:13px;font-weight:500;padding:7px 14px;border-radius:999px;color:var(--mute)}
+.aj-tabs span.on{background:var(--card);color:var(--tinta);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.aj-filas{display:grid}
+.aj-fila{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--linea);font-size:15px;min-width:0}
+.aj-fila span{min-width:0}
+.aj-chip{all:unset;box-sizing:border-box;cursor:pointer;flex:none;min-width:84px;height:36px;padding:0 12px;border-radius:10px;background:var(--tecla);font:500 15px/36px var(--f);text-align:center;letter-spacing:.02em;font-variant-numeric:tabular-nums;transition:background .15s,box-shadow .15s}
+.aj-chip:hover{background:var(--arena)}
+.aj-chip:focus-visible{outline:2px solid var(--naranja);outline-offset:2px}
+.aj-chip.grabando{background:transparent;box-shadow:inset 0 0 0 2px var(--naranja);color:var(--naranja);animation:latido 1.2s ease-in-out infinite}
+.aj-chip.nuevo{background:var(--naranja);color:#fff}
+@keyframes latido{50%{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--naranja) 35%,transparent)}}
+.aj-grabar{display:grid;gap:12px;background:var(--papel);border-radius:20px;padding:16px;justify-items:center}
+.aj-tit{font-size:14px;color:var(--mute);text-align:center}
+.aj-mods{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.aj-mods button{all:unset;cursor:pointer;min-width:52px;height:44px;border-radius:12px;background:var(--card);display:grid;place-items:center;font-size:18px;font-weight:500;box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--tinta) 10%,transparent);transition:background .15s,color .15s}
+.aj-mods button small{display:block;font-size:10px;color:var(--mute);margin-top:-4px}
+.aj-mods button[aria-pressed="true"]{background:var(--tinta);color:var(--papel)}
+.aj-mods button[aria-pressed="true"] small{color:var(--papel);opacity:.7}
+.aj-mods button:focus-visible,.aj-letras button:focus-visible{outline:2px solid var(--naranja);outline-offset:2px}
+.aj-letras{display:grid;gap:5px;justify-items:center;width:100%}
+.aj-letras div{display:flex;gap:5px;justify-content:center;width:100%}
+.aj-letras button{all:unset;box-sizing:border-box;cursor:pointer;flex:0 1 32px;min-width:0;height:36px;border-radius:8px;background:var(--card);display:grid;place-items:center;font-size:14px;font-weight:500;box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--tinta) 10%,transparent)}
+.aj-letras button:hover{background:var(--naranja);color:#fff}
+@media (max-width:480px){.ajustes{padding:14px}.aj-grabar{padding:12px 8px}.aj-letras div{gap:4px}.aj-letras button{height:34px}.aj-mods button{min-width:56px;padding:0 4px}.aj-mods button small{font-size:9px}}
+.aj-msg{font-size:15px;min-height:1.5em;text-align:center}
+.aj-msg.error{color:var(--oxido)}
+.aj-msg.ok{color:var(--tinta)}
+.aj-pie{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--mute)}
+.aj-pie span{flex:1 1 220px;min-width:0}
+
+/* iPhone */
+.ios{display:grid;gap:40px;align-items:center}
+@media (min-width:920px){.ios{grid-template-columns:1fr 400px;gap:72px}}
+.ios-txt{display:grid;gap:22px;min-width:0}
+.telefono{justify-self:center;width:min(100%,360px);aspect-ratio:390/800;border-radius:54px;background:#111;padding:12px;box-shadow:var(--sombra)}
+.tel-pant{position:relative;height:100%;border-radius:43px;background:#F2F2F0;color:#111;overflow:hidden;display:flex;flex-direction:column;padding:56px 14px 14px}
+.tel-isla{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:100px;height:30px;border-radius:20px;background:#000;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px;overflow:hidden;white-space:nowrap;transition:width .45s cubic-bezier(.3,1.4,.5,1),height .45s cubic-bezier(.3,1.4,.5,1)}
+.tel-isla .in{opacity:0;transition:opacity .2s}
+.tel-isla.on{width:230px;height:36px}
+.tel-isla.on .in{opacity:1}
+.tel-isla .ok{color:#F5A27D}
+.tel-head{display:flex;justify-content:space-between;align-items:center;padding:0 4px 12px}
+.tel-head b{font-weight:500;font-size:34px;letter-spacing:-.04em}
+.tel-head span{display:flex;gap:6px}
+.tel-head i{width:32px;height:32px;border-radius:50%;background:#fff;display:grid;place-items:center;font-style:normal;font-size:18px;color:#111}
+.tel-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(0,1fr);gap:8px;min-height:0}
+.tc{all:unset;box-sizing:border-box;cursor:pointer;background:#fff;color:#111;border-radius:18px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .2s cubic-bezier(.3,1.4,.5,1),opacity .25s,background .2s;min-width:0;overflow:hidden}
+.tc small{font-size:11px;color:#5E5A56}
+.tc strong{font-weight:500;font-size:17px;letter-spacing:-.03em;line-height:1.08}
+.tc.osc{background:#1C1C1C;color:#F2F2F0}.tc.osc small{color:#B9B4AE}
+.tc.img{background:linear-gradient(160deg,#FFD9C2,#E2501D 70%,#A8431A);color:#fff}.tc.img small{color:rgba(255,255,255,.85)}
+.tc.alto{grid-row:span 2}
+.tc:active{transform:scale(.97)}
+.tc:focus-visible{outline:2px solid #E2501D;outline-offset:2px}
+.tel-grid.copiando .tc{opacity:.35}
+.tel-grid.copiando .tc.copiado{opacity:1;background:#E2501D;color:#fff}
+.tel-grid.copiando .tc.copiado small{color:rgba(255,255,255,.85)}
+.tel-libs{display:flex;gap:6px;justify-content:center;padding-top:12px}
+.tel-libs button{all:unset;cursor:pointer;height:36px;padding:0 14px;border-radius:999px;background:#fff;font-size:13px;font-weight:500;color:#111;display:inline-flex;align-items:center;gap:6px}
+.tel-libs button[aria-pressed="true"]{background:#111;color:#F2F2F0}
+.tel-libs button:focus-visible{outline:2px solid #E2501D;outline-offset:2px}
+.tel-libs em{font-style:normal;opacity:.6}
+.dedo{position:absolute;left:70%;top:85%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(17,17,17,.18);border:2px solid rgba(255,255,255,.9);box-shadow:0 4px 14px rgba(0,0,0,.25);pointer-events:none;z-index:5;opacity:0;transition:left .7s cubic-bezier(.6,0,.2,1),top .7s cubic-bezier(.6,0,.2,1),opacity .3s,transform .2s}
+.dedo.ver{opacity:1}
+.dedo.toque{transform:scale(.72);background:rgba(226,80,29,.45)}
+
+/* funciones */
+.funcs{display:grid;gap:0;grid-template-columns:1fr;border-top:1px solid var(--linea)}
+@media (min-width:640px){.funcs{grid-template-columns:1fr 1fr}}
+@media (min-width:980px){.funcs{grid-template-columns:repeat(3,1fr)}}
+.fn{padding:28px 24px 32px 0;border-bottom:1px solid var(--linea);display:grid;gap:10px;align-content:start}
+.fn h3{font-size:22px}
+.fn p{color:var(--mute);font-size:16px;max-width:34ch}
+.tipos{display:flex;flex-wrap:wrap;gap:6px}
+.tipos span{font-size:13px;padding:4px 10px;border-radius:999px;background:var(--arena)}
+
+/* lista */
+.lista{background:var(--naranja);color:#fff;border-radius:var(--r-win);padding:clamp(28px,5vw,64px);display:grid;gap:40px}
+@media (min-width:920px){.lista{grid-template-columns:1fr 1fr;gap:64px}}
+.lista h2{color:#fff}
+.lista .lead{color:rgba(255,255,255,.88)}
+.beneficios{display:grid;gap:12px;margin-top:28px;padding:0;list-style:none}
+.beneficios li{display:flex;gap:12px;align-items:baseline;font-size:17px}
+.beneficios li::before{content:"";flex:none;width:10px;height:10px;border-radius:3px;background:#fff;transform:translateY(-1px)}
+form.full{display:grid;gap:20px;background:var(--card);color:var(--tinta);border-radius:24px;padding:24px;min-width:0}
+.campo{display:grid;gap:8px}
+.campo label,.campo legend{font-size:14px;font-weight:500}
+.campo legend{padding:0;margin-bottom:8px}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+.campo input[type=email],.campo textarea{font:400 16px var(--f);color:var(--tinta);background:var(--papel);border:1.5px solid transparent;border-radius:14px;padding:13px 16px;outline:none;width:100%;transition:border-color .15s}
+.campo textarea{min-height:84px;resize:vertical}
+.campo input:focus,.campo textarea:focus{border-color:var(--naranja)}
+.opciones{display:flex;flex-wrap:wrap;gap:6px}
+.opciones label{cursor:pointer}
+.opciones input{position:absolute;opacity:0;pointer-events:none}
+.opciones span{display:inline-flex;align-items:center;height:38px;padding:0 14px;border-radius:999px;background:var(--papel);font-size:14px;font-weight:500;transition:background .15s,color .15s}
+.opciones input:checked+span{background:var(--tinta);color:var(--papel)}
+.opciones input:focus-visible+span{outline:2px solid var(--naranja);outline-offset:2px}
+.opt{font-weight:400;color:var(--mute)}
+.listo{display:grid;gap:10px;align-content:center;text-align:left;padding:12px 4px}
+.listo b{font-size:34px;font-weight:500;letter-spacing:-.04em;line-height:1}
+.listo p{color:var(--mute)}
+
+/* idioma */
+.idioma{display:inline-flex;padding:3px;border-radius:999px;box-shadow:inset 0 0 0 1.5px var(--linea)}
+.idioma button{all:unset;cursor:pointer;height:32px;min-width:38px;padding:0 8px;box-sizing:border-box;border-radius:999px;font:500 13px/32px var(--f);letter-spacing:.04em;text-align:center;color:var(--mute);transition:background .15s,color .15s}
+.idioma button[aria-pressed="true"]{background:var(--tinta);color:var(--papel)}
+.idioma button:focus-visible{outline:2px solid var(--naranja);outline-offset:2px}
+@media (max-width:640px){.nav-links{gap:8px}}
+.tema{all:unset;cursor:pointer;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;box-shadow:inset 0 0 0 1.5px var(--linea);color:var(--tinta);transition:background .15s}
+.tema:hover{background:var(--tecla)}
+.tema:focus-visible{outline:2px solid var(--naranja);outline-offset:2px}
+.tema svg{width:18px;height:18px;grid-area:1/1}
+.tema .luna{fill:currentColor}
+.tema .sol{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.tema .sol circle{fill:currentColor;stroke:none}
+.tema[data-modo="dark"] .luna,.tema[data-modo="light"] .sol{display:none}
+@media (max-width:400px){.idioma button{min-width:32px;padding:0 6px}.nav-links .btn.chico{padding:0 14px}}
+
+/* pop-up */
+dialog#modal{border:0;padding:0;background:var(--card);color:var(--tinta);border-radius:28px;width:min(520px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;box-shadow:0 40px 80px -20px rgba(0,0,0,.45)}
+dialog#modal[open]{animation:subir .35s cubic-bezier(.3,1.3,.5,1)}
+dialog#modal::backdrop{background:rgba(17,12,8,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+@keyframes subir{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:28px 28px 0}
+.modal-head h3{font-size:34px;letter-spacing:-.04em;line-height:1}
+.modal-head p{color:var(--mute);font-size:16px;margin-top:8px}
+.cerrar{all:unset;cursor:pointer;flex:none;width:40px;height:40px;border-radius:50%;background:var(--papel);display:grid;place-items:center;font-size:24px;line-height:1;color:var(--tinta)}
+.cerrar:focus-visible{outline:2px solid var(--naranja);outline-offset:2px}
+#modal-cuerpo form.full{padding:20px 28px 28px;border-radius:0;background:transparent}
+#modal-cuerpo .listo{padding:24px 28px 32px!important;background:transparent!important}
+html.con-modal{overflow:hidden}
+
+/* faq */
+.faq{display:grid;gap:0;border-top:1px solid var(--linea)}
+details{border-bottom:1px solid var(--linea);padding-block:20px}
+summary{cursor:pointer;list-style:none;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;font-size:clamp(19px,2.2vw,24px);font-weight:500;letter-spacing:-.025em}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";display:inline-block;color:var(--naranja);font-weight:400;font-size:28px;line-height:.8;transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:var(--mute);margin-top:12px;max-width:62ch}
+
+/* pie */
+footer{padding-block:72px 48px}
+.firma{font-size:clamp(44px,9vw,120px);font-weight:500;letter-spacing:-.05em;line-height:.92}
+.firma span{color:var(--naranja)}
+.pie{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-top:48px;font-size:14px;color:var(--mute)}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style>
+
+<nav aria-label="Principal">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Slots, inicio">
+      <svg viewBox="0 0 30 24" aria-hidden="true"><rect class="c" x="0" y="0" width="13" height="24" rx="3.5"/><rect class="c" x="16" y="0" width="14" height="10.5" rx="3.5"/><rect class="o" x="16" y="13.5" width="14" height="10.5" rx="3.5"/></svg>
+      Slots
+    </a>
+    <div class="nav-links">
+      <a href="#probalo">Probalo</a>
+      <a href="#como">Cómo funciona</a>
+      <a href="#preguntas">Preguntas</a>
+      <div class="idioma" id="idioma" role="group" aria-label="Idioma"><button type="button" data-lang="es" aria-pressed="true">ES</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>
+      <button class="tema" id="tema" type="button" aria-label="Modo noche"><svg class="luna" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><svg class="sol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg></button>
+      <a class="btn chico" href="#lista" data-abrir-lista>Anotarme</a>
+      <a class="btn chico fantasma" id="nav-beta" href="https://github.com/gianpetrii/hotslot-app/releases/latest">Beta Mac</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+  <header class="wrap hero">
+    <div class="hero-top">
+      <p class="eyebrow"><span class="dot"></span>Para Mac y iPhone · Lista de espera abierta</p>
+      <h1>Tu portapapeles,<br>ahora con <span class="n">memoria.</span></h1>
+    </div>
+    <div class="hero-row">
+      <p class="lead">Guardá una vez lo que mandás todos los días: un link, una respuesta, un flyer, un color. Después lo pegás con un atajo, sin abrir nada.</p>
+      <div>
+        <form class="quick" id="form-rapido" novalidate>
+          <label for="email-rapido" class="sr" hidden>Tu mail</label>
+          <input id="email-rapido" name="email" type="email" autocomplete="email" placeholder="tu@mail.com" aria-label="Tu mail" required>
+          <button class="btn acento" type="submit">Anotarme</button>
+        </form>
+        <p class="estado" id="estado-rapido" aria-live="polite"></p>
+        <p class="fine">Los anotados entran primero y tienen precio de preventa. Te escribimos solo cuando esté lista.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="pantalla" id="pantalla" role="img" aria-label="Animación: se guarda un link en un slot, aparece el aviso en el notch y después se pega con un atajo.">
+        <div class="barra"><span>Slots</span><span>lun 10:49</span></div>
+        <div class="isla" id="isla-hero"><div class="in" id="isla-hero-in"></div></div>
+        <div class="panel" id="panel-hero">
+          <div class="panel-head"><b>Trabajo</b><span>Clic para pegar · Esc para cerrar</span></div>
+          <div class="panel-grid">
+            <div class="ps osc" data-n="1"><small><span>Slot 1</span><span>⌘⇧A</span></small><strong>Mi portfolio</strong></div>
+            <div class="ps" data-n="2"><small><span>Slot 2</span><span>⌘⇧S</span></small><strong>Presupuesto base</strong></div>
+            <div class="ps img" data-n="3"><small><span>Slot 3</span><span>⌘⇧D</span></small><strong>Flyer otoño</strong></div>
+            <div class="ps" data-n="4"><small><span>Slot 4</span><span>⌘⇧Q</span></small><strong>Link de Meet</strong></div>
+            <div class="ps" data-n="5" style="background:#E2501D;color:#fff"><small style="color:rgba(255,255,255,.85)"><span>Slot 5</span><span>⌘⇧W</span></small><strong>#E2501D</strong></div>
+            <div class="ps vacio" data-n="6"><small><span>Historial</span><span></span></small><strong>Arrastrá a un slot</strong></div>
+          </div>
+        </div>
+        <svg class="cursor" id="cursor" viewBox="0 0 18 18" style="left:70%;top:80%" aria-hidden="true"><path d="M2 1l13 7.5-6 1.4L6.3 16z" fill="#fff" stroke="#111" stroke-width="1.2" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="pantalla-pie"><span>Panel abierto con <kbd>⌘⇧V</kbd> sobre cualquier app</span><span>El vidrio toma el color de lo que tenés atrás</span></div>
     </div>
   </header>
 
-  <section class="hero">
-    <div class="hero-copy">
-      <p class="section-label">macOS 14+ · Gratis · Distribución directa</p>
-      <h1>Cinco slots fijos. El 2 siempre es el 2.</h1>
-      <p class="hero-lead">
-        Memoria muscular para lo que copiás todo el día — más historial y búsqueda cuando lo necesitás.
-        Todo local en tu Mac, sin cuentas.
-      </p>
-      <div class="hero-cta">
-        <a class="btn btn-primary" id="hero-download" href="https://github.com/gianpetrii/hotslot-app/releases/latest/download/Slots-0.19.0.dmg">
-          Descargar Slots 0.19.0
-        </a>
-        <a class="btn btn-secondary" href="https://github.com/gianpetrii/hotslot-app/releases/latest">Ver release y SHA-256</a>
+  <section class="bloque" id="probalo" aria-labelledby="t-probalo">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2 id="t-probalo">Probalo acá.<br>Sin instalar nada.</h2>
+        <p class="lead solo-tactil">Escribile a un cliente usando tus slots. Tocá uno y se pega en el mail. En la app lo hacés con un atajo, desde cualquier programa.</p>
+        <p class="lead solo-desk">Escribile a un cliente usando tus slots. Copiá uno con un clic y pegalo, arrastralo al mail o tocá <kbd>⇧</kbd> + su letra mientras escribís. En la app es <kbd>⌘⇧</kbd> + la letra, desde cualquier programa.</p>
       </div>
-      <p class="hero-meta">
-        Atajo del panel editable · <kbd>⌘⇧V</kbd> por defecto · Slots <kbd>⌘⇧</kbd>+ letra · Accesibilidad para pegar
-      </p>
-    </div>
-
-    <div class="hero-panel-wrap">
-      <div class="hero-panel panel-glass">
-        <img
-          class="panel-shot"
-          src="app-store-screenshots/1280x800/01-panel-principal.png"
-          width="1280"
-          height="800"
-          alt="Panel de Slots con historial y slots laterales"
-          loading="eager"
-          decoding="async"
-        >
+      <div class="demo">
+        <div class="ventana">
+          <div class="ventana-top"><i></i><i></i><i></i><span class="t">Nuevo mensaje</span>
+            <div class="isla" id="isla-demo"><div class="in" id="isla-demo-in"></div></div>
+          </div>
+          <div class="campos">
+            <div><span>Para:</span><b>Martina · Estudio Norte</b></div>
+            <div><span>Asunto:</span><b>Propuesta de identidad</b></div>
+          </div>
+          <label for="doc" hidden>Texto del mensaje</label>
+          <textarea id="doc" spellcheck="false"></textarea>
+        </div>
+        <div class="mini">
+          <div class="mini-grid" id="mini-grid"></div>
+          <div class="ayuda">
+            <span class="solo-desk">Clic copia, <kbd class="kbd-pegar">⌘V</kbd> pega</span>
+            <span class="solo-desk"><kbd>⇧A</kbd>…<kbd>⇧W</kbd> pega directo</span>
+            <span class="solo-desk">Arrastrá un slot al mail</span>
+            <span class="solo-tactil">Tocá un slot y se pega en el mail</span>
+            <span>Seleccioná texto y tocá el slot vacío para guardarlo</span>
+            <button class="btn fantasma chico" type="button" id="reiniciar">Empezar de nuevo</button>
+          </div>
+        </div>
       </div>
-      <p class="panel-chrome-caption">Panel flotante — mismo lenguaje visual que la app</p>
     </div>
   </section>
 
-  <div class="content">
-    <p class="section-label">Por qué Slots</p>
-    <div class="features">
-      <article class="feature-card">
-        <div class="feature-icon" aria-hidden="true">📌</div>
-        <h3>Slots que no rotan</h3>
-        <p>Cada ranura guarda lo que vos elegís hasta que la cambiás — no como los ⌘1–9 que se mueven en otras apps.</p>
-      </article>
-      <article class="feature-card">
-        <div class="feature-icon" aria-hidden="true">📋</div>
-        <h3>Historial cuando hace falta</h3>
-        <p>Texto e imágenes recientes, búsqueda y vista previa al pasar el cursor.</p>
-      </article>
-      <article class="feature-card">
-        <div class="feature-icon" aria-hidden="true">⚡</div>
-        <h3>Pegado automático</h3>
-        <p>Volvés a la app anterior y simula ⌘V — Notas, Safari, Cursor y más.</p>
-      </article>
-      <article class="feature-card">
-        <div class="feature-icon" aria-hidden="true">🔒</div>
-        <h3>100 % local</h3>
-        <p>Sin nube ni cuentas. Tus clips viven en tu Mac.</p>
-      </article>
-    </div>
-
-    <div class="demo-block" id="demo">
-      <p class="section-label">Interacción</p>
-      <div class="demo-panel panel-glass">
-        <div class="demo-search" role="presentation">
-          <span class="dot" aria-hidden="true"></span>
-          <span>Buscar en el historial…</span>
-          <span style="margin-left: auto" class="kbd-badge">⌘⇧V</span>
-        </div>
-        <div class="demo-row">
-          <div class="demo-thumb text" aria-hidden="true">Aa</div>
-          <div class="demo-row-body">
-            <p class="demo-row-title">export const API_URL = …</p>
-            <p class="demo-row-sub">Texto · hace 2 min</p>
-            <p class="demo-row-preview">Clic en el badge del atajo para editarlo — panel y slots.</p>
+  <section class="bloque" id="como" aria-labelledby="t-como" style="padding-top:24px">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2 id="t-como">Tres gestos.<br>Nada que abrir.</h2>
+        <p class="lead">Las teclas A, S, D, Q y W quedan bajo la mano izquierda. Si preferís otras, las grabás en Ajustes.</p>
+      </div>
+      <div class="pasos">
+        <div class="teclado" aria-hidden="true">
+          <div class="np-pantalla" id="np-pantalla">
+            <div class="np" id="np">
+              <div class="np-pill">
+                <span class="np-num">1</span><span class="np-nom">Mi portfolio</span>
+                <span class="np-ok np-guardado">Guardado ✓</span><span class="np-ok np-pegado">Pegado</span>
+              </div>
+              <div class="np-todo">
+                <div class="np-grid">
+                  <div class="np-s osc"><small>1 · ⌘⇧A</small><b>Mi portfolio</b></div>
+                  <div class="np-s"><small>2 · ⌘⇧S</small><b>Presupuesto base</b></div>
+                  <div class="np-s img"><small>3 · ⌘⇧D</small><b>Flyer otoño</b></div>
+                  <div class="np-s"><small>4 · ⌘⇧Q</small><b>Link de Meet</b></div>
+                  <div class="np-s col"><small>5 · ⌘⇧W</small><b>#E2501D</b></div>
+                </div>
+                <div class="np-pie"><span>Trabajo</span><span>Abrir panel ⌘⇧V</span></div>
+              </div>
+            </div>
           </div>
+          <div class="fila"><div class="k" data-k="Q">Q</div><div class="k" data-k="W">W</div><div class="k">E</div><div class="k">R</div></div>
+          <div class="fila"><div class="k" data-k="A">A</div><div class="k" data-k="S">S</div><div class="k" data-k="D">D</div><div class="k">F</div></div>
+          <div class="fila"><div class="k w" data-k="shift">⇧</div><div class="k">Z</div><div class="k">X</div><div class="k">C</div><div class="k" data-k="V">V</div></div>
+          <div class="fila"><div class="k w" data-k="ctrl">⌃</div><div class="k w" data-k="cmd">⌘</div></div>
+          <p id="tecla-txt">⌘⌃ + A guarda lo que tenés seleccionado en el slot 1.</p>
         </div>
-        <div class="demo-row">
-          <div class="demo-thumb" aria-hidden="true"></div>
-          <div class="demo-row-body">
-            <p class="demo-row-title">Captura de pantalla</p>
-            <p class="demo-row-sub">Imagen · hace 8 min</p>
-            <p class="demo-row-preview">Dos badges por slot: pegar y guardar.</p>
-          </div>
-        </div>
-        <p class="section-label" style="margin-top: 14px; margin-bottom: 8px;">Slots</p>
-        <div class="slots-row">
-          <div class="slot-chip"><strong>A</strong><span class="kbd-badge">⌘⇧A</span></div>
-          <div class="slot-chip"><strong>S</strong><span class="kbd-badge">⌘⇧S</span></div>
-          <div class="slot-chip"><strong>D</strong><span class="kbd-badge">⌘⇧D</span></div>
-          <div class="slot-chip"><strong>…</strong>5 slots</div>
+        <div>
+          <article class="paso activo" data-paso="0">
+            <span class="nro">1 · Guardá</span>
+            <h3>Seleccionás y lo guardás en un slot.</h3>
+            <p>Un texto, un link, una imagen, un color o un archivo. Queda ahí y no se pisa cuando copiás otra cosa.</p>
+            <div class="combo"><kbd>⌘</kbd><kbd>⌃</kbd>+<kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>Q</kbd><kbd>W</kbd></div>
+          </article>
+          <article class="paso" data-paso="1">
+            <span class="nro">2 · Pegá</span>
+            <h3>Lo pegás donde estés, de memoria.</h3>
+            <p>Mail, Figma, WhatsApp o el CRM. No aparece ningún menú para elegir: el atajo ya sabe qué slot es.</p>
+            <div class="combo"><kbd>⌘</kbd><kbd>⇧</kbd>+<kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>Q</kbd><kbd>W</kbd></div>
+          </article>
+          <article class="paso" data-paso="2">
+            <span class="nro">3 · Mirá todo</span>
+            <h3>Pasás el mouse por el notch y ves tus slots.</h3>
+            <p>Un aviso mínimo sale del notch para confirmar cada guardado y cada pegado. Si querés el panel completo, lo abrís con un atajo.</p>
+            <div class="combo"><kbd>⌘</kbd><kbd>⇧</kbd>+<kbd>V</kbd></div>
+          </article>
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="two-col" id="instalar">
-      <div class="panel-glass glass-section">
-        <p class="section-label">Instalación</p>
-        <h2>Lista en un minuto</h2>
-        <ol class="install-steps">
-          <li>
-            <span class="step-num">1</span>
-            <p><strong>Descargá el .dmg</strong> firmado con Developer ID y notarizado por Apple.</p>
-          </li>
-          <li>
-            <span class="step-num">2</span>
-            <p><strong>Arrastrá Slots a Aplicaciones</strong> y abrila desde ahí la primera vez.</p>
-          </li>
-          <li>
-            <span class="step-num">3</span>
-            <p><strong>Concedé Accesibilidad</strong> en Ajustes del Sistema — solo para ⌘V/⌘C simulados.</p>
-          </li>
-        </ol>
-        <p style="margin-top: 16px; font-size: 13px;">
-          Verificá el checksum en
-          <a href="https://github.com/gianpetrii/hotslot-app/releases/latest">GitHub Releases</a>.
-        </p>
+  <section class="bloque" id="atajos" aria-labelledby="t-atajos" style="padding-top:24px">
+    <div class="wrap atajos">
+      <div class="atajos-txt">
+        <p class="eyebrow">Ajustes › Atajos</p>
+        <h2 id="t-atajos">Tus atajos.<br>Tus reglas.</h2>
+        <p class="lead">Cambiá cualquier atajo por la combinación que te quede cómoda. Si macOS u otra función ya la usa, Slots te avisa antes de guardarla.</p>
+        <p class="lead chico">Probalo: tocá un atajo, elegí las teclas y después una letra. Probá con <kbd>⌘</kbd> + <kbd>Q</kbd> para ver qué pasa.</p>
+      </div>
+      <div class="ajustes" id="ajustes">
+        <div class="aj-tabs" aria-hidden="true"><span>General</span><span class="on">Atajos</span><span>Permisos</span></div>
+        <div class="aj-filas" id="aj-filas"></div>
+        <div class="aj-grabar" id="aj-grabar" hidden>
+          <p class="aj-tit" id="aj-tit"></p>
+          <div class="aj-mods" id="aj-mods"></div>
+          <div class="aj-letras" id="aj-letras"></div>
+          <button type="button" class="btn fantasma chico" id="aj-cancelar">Cancelar</button>
+        </div>
+        <p class="aj-msg" id="aj-msg" aria-live="polite"></p>
+        <div class="aj-pie">
+          <span>Si un atajo no responde, otra app puede estar usándolo. Grabá uno nuevo o restaurá los valores por defecto.</span>
+          <button type="button" class="btn fantasma chico" id="aj-restaurar">Restaurar atajos</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque" aria-labelledby="t-ios" style="padding-top:24px">
+    <div class="wrap ios">
+      <div class="ios-txt">
+        <p class="eyebrow">iPhone</p>
+        <h2 id="t-ios">Tocás la card.<br>Ya está copiado.</h2>
+        <p class="lead">Tus respuestas, tus links y tus flyers en una grilla. Un toque los copia; mantenés presionado para ordenarlos. Probá en el teléfono de al lado.</p>
+      </div>
+      <div class="telefono">
+        <div class="tel-pant">
+          <div class="tel-isla" id="tel-isla"><span class="in" id="tel-isla-in"></span></div>
+          <div class="tel-head"><b id="tel-titulo">Trabajo</b><span><i>+</i><i>✎</i></span></div>
+          <div class="tel-grid" id="tel-grid"></div>
+          <div class="tel-libs" id="tel-libs"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque" aria-labelledby="t-fn" style="padding-top:24px">
+    <div class="wrap">
+      <div class="sec-head"><h2 id="t-fn">Lo que trae.</h2></div>
+      <div class="funcs">
+        <div class="fn"><h3>Bibliotecas</h3><p>Trabajo, Personal y Clientes, cada una con sus slots. Cambiás de biblioteca y los mismos atajos pegan otras cosas.</p></div>
+        <div class="fn"><h3>Historial</h3><p>Lo último que copiaste, con la app de donde salió. Si algo te sirve, lo arrastrás a un slot.</p></div>
+        <div class="fn"><h3>Aviso en el notch</h3><p>Una píldora negra confirma y desaparece. En Macs sin notch sale desde la barra de menú.</p></div>
+        <div class="fn"><h3>Cualquier cosa</h3><p>Guarda lo que copiás, con su formato.</p><div class="tipos"><span>Texto</span><span>Link</span><span>Imagen</span><span>Color</span><span>Archivo</span></div></div>
+        <div class="fn"><h3>Tus atajos</h3><p>Todos se pueden regrabar. Si otra app usa uno, Slots te avisa.</p></div>
+        <div class="fn"><h3>Queda en tu equipo</h3><p>Sin cuenta y sin nube. Lo que guardás vive en tu Mac o en tu iPhone.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque" id="lista" aria-labelledby="t-lista" style="padding-top:24px">
+    <div class="wrap">
+      <div class="lista">
+        <div>
+          <h2 id="t-lista">Anotate en la lista.</h2>
+          <p class="lead" style="margin-top:20px">Estamos terminando Slots. Si te anotás, entrás antes que nadie y pagás menos.</p>
+          <ul class="beneficios">
+            <li>Acceso a la beta antes del lanzamiento</li>
+            <li>Precio de preventa, solo para la lista</li>
+            <li>Un mes gratis para probarla completa</li>
+          </ul>
+        </div>
+        <div id="caja-lista">
+          <form class="full" id="form-full" novalidate>
+            <div class="campo">
+              <label for="email-full">Tu mail</label>
+              <input id="email-full" name="email" type="email" autocomplete="email" placeholder="tu@mail.com" required>
+            </div>
+            <fieldset class="campo">
+              <legend>¿Dónde la usarías?</legend>
+              <div class="opciones">
+                <label><input type="radio" name="equipo" id="eq-mac" value="Mac"><span>Mac</span></label>
+                <label><input type="radio" name="equipo" id="eq-iphone" value="iPhone"><span>iPhone</span></label>
+                <label><input type="radio" name="equipo" id="eq-ambos" value="Los dos" checked><span>Los dos</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="campo">
+              <legend>¿A qué te dedicás? <span class="opt">(opcional)</span></legend>
+              <div class="opciones">
+                <label><input type="radio" name="rol" id="rol-dis" value="Diseño o creatividad"><span>Diseño o creatividad</span></label>
+                <label><input type="radio" name="rol" id="rol-free" value="Freelance"><span>Freelance</span></label>
+                <label><input type="radio" name="rol" id="rol-at" value="Atención al cliente"><span>Atención al cliente</span></label>
+                <label><input type="radio" name="rol" id="rol-ven" value="Ventas"><span>Ventas</span></label>
+                <label><input type="radio" name="rol" id="rol-est" value="Estudio"><span>Estudio</span></label>
+                <label><input type="radio" name="rol" id="rol-otro" value="Otro"><span>Otro</span></label>
+              </div>
+            </fieldset>
+            <div class="campo">
+              <label for="uso">¿Qué es lo que más copiás y pegás? <span class="opt">(opcional)</span></label>
+              <textarea id="uso" name="uso" placeholder="Mi alias de pago, el link del portfolio, la respuesta de envíos…"></textarea>
+            </div>
+            <button class="btn acento" type="submit" id="btn-full">Anotarme en la lista</button>
+            <p class="estado" id="estado-full" aria-live="polite" style="margin-top:0"></p>
+          </form>
+          <div class="full listo" id="listo" hidden style="background:var(--card);color:var(--tinta);border-radius:24px;padding:32px">
+            <b>Listo, estás en la lista.</b>
+            <p id="listo-txt">Te escribimos cuando abra la beta. Mientras tanto, pasale la página a alguien que viva copiando y pegando.</p>
+          </div>
+        </div>
       </div>
 
-      <div class="panel-glass glass-section">
-        <p class="section-label">Distribución</p>
-        <h2>Fuera de la Mac App Store</h2>
-        <p>
-          <strong>Developer ID + notarización</strong> para pegado automático con Accesibilidad.
-        </p>
-        <p>
-          <a class="btn btn-primary" href="https://github.com/gianpetrii/hotslot-app/releases/latest/download/Slots-0.19.0.dmg">Descargar .dmg</a>
-        </p>
-        <ul>
-          <li><a href="privacy.html">Política de privacidad</a></li>
-          <li><a href="https://github.com/gianpetrii/hotslot-app">Código fuente</a></li>
-          <li><a href="mailto:gianluca.petri.98@gmail.com">Soporte</a></li>
-        </ul>
+    </div>
+  </section>
+
+  <section class="bloque" id="preguntas" aria-labelledby="t-faq" style="padding-top:24px">
+    <div class="wrap">
+      <div class="sec-head"><h2 id="t-faq">Preguntas.</h2></div>
+      <div class="faq">
+        <details open><summary>¿Cuándo sale?</summary><p>Estamos probándola con un grupo chico. Los anotados reciben la beta primero y un aviso el día del lanzamiento.</p></details>
+        <details><summary>¿Cuánto va a costar?</summary><p>El primer mes es gratis y completo. Después pagás una sola vez, sin suscripción. La lista tiene precio de preventa.</p></details>
+        <details><summary>¿Funciona en mi Mac?</summary><p>Sí, en Macs con y sin notch. Para pegar en otras apps te pide un único permiso de Accesibilidad, que macOS exige a cualquier app que escriba por vos.</p></details>
+        <details><summary>¿Qué pasa con lo que guardo?</summary><p>Queda en tu dispositivo. Slots no necesita cuenta y no sube tus slots a ningún lado.</p></details>
       </div>
+    </div>
+  </section>
+</main>
+
+<dialog id="modal" aria-labelledby="modal-t">
+  <div class="modal-head">
+    <div>
+      <h3 id="modal-t">Anotate en la lista.</h3>
+      <p>Entrás antes que nadie y con precio de preventa.</p>
+    </div>
+    <button type="button" class="cerrar" id="modal-cerrar" aria-label="Cerrar">×</button>
+  </div>
+  <div id="modal-cuerpo"></div>
+</dialog>
+
+<footer>
+  <div class="wrap">
+    <p class="firma">Copiá una vez.<br><span>Pegá siempre.</span></p>
+    <div class="pie">
+      <a class="logo" href="#top" style="font-size:18px"><svg viewBox="0 0 30 24" aria-hidden="true"><rect class="c" x="0" y="0" width="13" height="24" rx="3.5"/><rect class="c" x="16" y="0" width="14" height="10.5" rx="3.5"/><rect class="o" x="16" y="13.5" width="14" height="10.5" rx="3.5"/></svg>Slots</a>
+      <span><a href="privacy.html">Privacidad</a> · <a id="pie-beta" href="https://github.com/gianpetrii/hotslot-app/releases/latest">Descargar beta</a> · © 2026 Slots · Hecho en Buenos Aires</span>
     </div>
   </div>
+</footer>
 
-  <footer class="site-footer">
-    <span>© 2026 Slots · Hecho para macOS</span>
-    <span>
-      <a href="purchase.html">Licencia</a>
-      ·
-      <a href="privacy.html">Privacidad</a>
-      ·
-      <a href="https://github.com/gianpetrii/hotslot-app/releases/latest">Releases</a>
-    </span>
-  </footer>
+<script>
+/* ===== Configuración =====
+   Cuando la página viva en su propio dominio, pegá acá la URL de tu formulario
+   (Formspree, Tally, Loops, un webhook de Google Sheets…). Recibe un POST JSON. */
+const WAITLIST_ENDPOINT = "";
+const BETA_RELEASE_URL = "https://github.com/gianpetrii/hotslot-app/releases/latest";
+/* Si tenés el video de marca hosteado junto a la página, poné su ruta (ej. "slots-loop.mp4"). */
+const VIDEO_SRC = "";
 
-  <script>
-    (function () {
-      var version = "0.19.0";
-      var dmgName = "Slots-" + version + ".dmg";
-      var base = "https://github.com/gianpetrii/hotslot-app/releases/latest/download/";
-      document.querySelectorAll("#hero-download, #nav-download, .glass-section .btn-primary").forEach(function (el) {
-        var href = el.getAttribute("href");
-        if (href && href.indexOf(".dmg") !== -1) {
-          el.setAttribute("href", base + dmgName);
-        }
-      });
-    })();
-  </script>
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = s => document.querySelector(s);
+const ls = { get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}} };
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function copiar(texto){ try{ navigator.clipboard?.writeText(texto)?.catch(()=>{}); }catch(e){} }
+
+/* ===== Idioma ===== */
+let lang = ls.get("slots-lang") || ((navigator.language || "es").toLowerCase().startsWith("es") ? "es" : "en");
+const L = (es, en) => lang === "en" ? en : es;
+const T = v => Array.isArray(v) ? L(v[0], v[1]) : v;
+const DICT = {
+  "Probalo":"Try it","Cómo funciona":"How it works","Preguntas":"FAQ","Anotarme":"Join",
+  "Para Mac y iPhone · Lista de espera abierta":"For Mac and iPhone · Waitlist open",
+  "Tu portapapeles,":"Your clipboard,","ahora con":"now with","memoria.":"memory.",
+  "Guardá una vez lo que mandás todos los días: un link, una respuesta, un flyer, un color. Después lo pegás con un atajo, sin abrir nada.":"Save the stuff you send every day just once. Links, replies, flyers, colors. Paste any of it with one shortcut, without opening a thing.",
+  "Tu mail":"Your email","tu@mail.com":"you@email.com",
+  "Los anotados entran primero y tienen precio de preventa. Te escribimos solo cuando esté lista.":"Early birds get in first and pay less. We'll only email you when it's ready.",
+  "Animación: se guarda un link en un slot, aparece el aviso en el notch y después se pega con un atajo.":"Animation: a link is saved to a slot, the notch notice appears, and then it's pasted with a shortcut.",
+  "lun 10:49":"Mon 10:49","Trabajo":"Work","Clic para pegar · Esc para cerrar":"Click to paste · Esc to close",
+  "Mi portfolio":"My portfolio","Presupuesto base":"Base quote","Flyer otoño":"Fall flyer","Link de Meet":"Meet link",
+  "Historial":"History","Arrastrá a un slot":"Drag to a slot",
+  "Panel abierto con":"Panel opened with","sobre cualquier app":"over any app",
+  "El vidrio toma el color de lo que tenés atrás":"The glass takes on the color of whatever is behind it",
+  "Probalo acá.":"Take it for a spin.","Sin instalar nada.":"No download.",
+  "Escribile a un cliente usando tus slots. Copiá uno con un clic y pegalo, arrastralo al mail o tocá":"Write to a client using your slots. Click one to copy and paste it, drag it into the email, or press",
+  "Tocá un slot y se pega en el mail":"Tap a slot and it lands in the email",
+  "Escribile a un cliente usando tus slots. Tocá uno y se pega en el mail. En la app lo hacés con un atajo, desde cualquier programa.":"Write to a client using your slots. Tap one and it lands in the email. In the app, it's one shortcut from any program.",
+  "Clic copia,":"Click copies,","pega directo":"pastes instantly","Arrastrá un slot al mail":"Drag a slot into the email",
+  "Modo noche":"Dark mode","Modo día":"Light mode",
+  "Ajustes › Atajos":"Settings › Shortcuts","Tus atajos.":"Your keys.","Tus reglas.":"Your rules.",
+  "Cambiá cualquier atajo por la combinación que te quede cómoda. Si macOS u otra función ya la usa, Slots te avisa antes de guardarla.":"Swap any shortcut for whatever combo feels right. If macOS or another feature already owns it, Slots tells you before saving.",
+  "Probalo: tocá un atajo, elegí las teclas y después una letra. Probá con":"Try it: tap a shortcut, pick your keys, then a letter. Try",
+  "para ver qué pasa.":"and see what happens.",
+  "Atajos":"Shortcuts","Permisos":"Permissions","Cancelar":"Cancel","Restaurar atajos":"Restore shortcuts",
+  "Si un atajo no responde, otra app puede estar usándolo. Grabá uno nuevo o restaurá los valores por defecto.":"If a shortcut doesn't respond, another app may be using it. Record a new one or restore the defaults.",
+  "Guardado ✓":"Saved ✓","Pegado":"Pasted","Abrir panel ⌘⇧V":"Open panel ⌘⇧V",
+  "+ su letra mientras escribís. En la app es":"+ its letter while you type. In the app it's",
+  "+ la letra, desde cualquier programa.":"+ the letter, from any app.",
+  "Nuevo mensaje":"New message","Para:":"To:","Asunto:":"Subject:","Propuesta de identidad":"Brand identity proposal",
+  "Texto del mensaje":"Message text","pega":"pastes",
+  "Seleccioná texto y tocá el slot vacío para guardarlo":"Select text and tap the empty slot to save it",
+  "Empezar de nuevo":"Start over",
+  "Tres gestos.":"Three moves.","Nada que abrir.":"Zero windows.",
+  "Las teclas A, S, D, Q y W quedan bajo la mano izquierda. Si preferís otras, las grabás en Ajustes.":"A, S, D, Q and W sit right under your left hand. Prefer other keys? Record them in Settings.",
+  "1 · Guardá":"1 · Save","Seleccionás y lo guardás en un slot.":"Select. Save. Done.",
+  "Un texto, un link, una imagen, un color o un archivo. Queda ahí y no se pisa cuando copiás otra cosa.":"Text, a link, an image, a color or a file. It stays there and doesn't get replaced when you copy something else.",
+  "2 · Pegá":"2 · Paste","Lo pegás donde estés, de memoria.":"Paste anywhere. On muscle memory.",
+  "Mail, Figma, WhatsApp o el CRM. No aparece ningún menú para elegir: el atajo ya sabe qué slot es.":"Mail, Figma, WhatsApp or your CRM. There's no menu to pick from: the shortcut already knows which slot it is.",
+  "3 · Mirá todo":"3 · Peek","Pasás el mouse por el notch y ves tus slots.":"Hover the notch. See it all.",
+  "Un aviso mínimo sale del notch para confirmar cada guardado y cada pegado. Si querés el panel completo, lo abrís con un atajo.":"A small notice drops from the notch to confirm every save and every paste. Want the full panel? Open it with a shortcut.",
+  "Tocás la card.":"Tap.","Ya está copiado.":"Copied.",
+  "Tus respuestas, tus links y tus flyers en una grilla. Un toque los copia; mantenés presionado para ordenarlos. Probá en el teléfono de al lado.":"Your replies, links and flyers in one grid. A tap copies them; press and hold to rearrange. Try it on the phone next to this.",
+  "Lo que trae.":"The good stuff.","Bibliotecas":"Libraries",
+  "Trabajo, Personal y Clientes, cada una con sus slots. Cambiás de biblioteca y los mismos atajos pegan otras cosas.":"Work, Personal and Clients, each with its own slots. Switch libraries and the same shortcuts paste different things.",
+  "Lo último que copiaste, con la app de donde salió. Si algo te sirve, lo arrastrás a un slot.":"The latest things you copied, with the app they came from. If something's useful, drag it to a slot.",
+  "Aviso en el notch":"The notch pill",
+  "Una píldora negra confirma y desaparece. En Macs sin notch sale desde la barra de menú.":"A black pill confirms and disappears. On Macs without a notch it drops from the menu bar.",
+  "Cualquier cosa":"Anything goes","Guarda lo que copiás, con su formato.":"Keeps what you copy, formatting included.",
+  "Texto":"Text","Imagen":"Image","Archivo":"File",
+  "Tus atajos":"Your keys, your rules","Todos se pueden regrabar. Si otra app usa uno, Slots te avisa.":"You can re-record any of them. If another app is using one, Slots lets you know.",
+  "Queda en tu equipo":"Stays on your device","Sin cuenta y sin nube. Lo que guardás vive en tu Mac o en tu iPhone.":"No account, no cloud. What you save lives on your Mac or your iPhone.",
+  "Anotate en la lista.":"Get in early.",
+  "Estamos terminando Slots. Si te anotás, entrás antes que nadie y pagás menos.":"Slots is almost here. Join the list and you're first in line, for less.",
+  "Acceso a la beta antes del lanzamiento":"Beta access before launch day","Precio de preventa, solo para la lista":"Pre-sale pricing, list only","Un mes gratis para probarla completa":"Your first month on us",
+  "¿Dónde la usarías?":"Where would you use it?","Los dos":"Both","¿A qué te dedicás?":"What do you do?","(opcional)":"(optional)",
+  "Diseño o creatividad":"Design or creative","Atención al cliente":"Customer support","Ventas":"Sales","Estudio":"Student","Otro":"Other",
+  "¿Qué es lo que más copiás y pegás?":"What do you copy and paste the most?",
+  "Mi alias de pago, el link del portfolio, la respuesta de envíos…":"My payment details, my portfolio link, the shipping reply…",
+  "Anotarme en la lista":"Count me in","Listo, estás en la lista.":"You're in.",
+  "Te escribimos cuando abra la beta. Mientras tanto, pasale la página a alguien que viva copiando y pegando.":"We'll ping you when the beta opens. Meanwhile, send this to the friend who copy-pastes for a living.",
+  "Preguntas.":"Good questions.","¿Cuándo sale?":"When does it launch?",
+  "Estamos probándola con un grupo chico. Los anotados reciben la beta primero y un aviso el día del lanzamiento.":"We're testing it with a small group. People on the list get the beta first and a heads-up on launch day.",
+  "¿Cuánto va a costar?":"How much will it cost?",
+  "El primer mes es gratis y completo. Después pagás una sola vez, sin suscripción. La lista tiene precio de preventa.":"The first month is free, with everything included. After that you pay once, no subscription. The list gets a pre-sale price.",
+  "¿Funciona en mi Mac?":"Will it work on my Mac?",
+  "Sí, en Macs con y sin notch. Para pegar en otras apps te pide un único permiso de Accesibilidad, que macOS exige a cualquier app que escriba por vos.":"Yes, on Macs with or without a notch. To paste into other apps it asks for a single Accessibility permission, which macOS requires for any app that types for you.",
+  "¿Qué pasa con lo que guardo?":"What happens to what I save?",
+  "Queda en tu dispositivo. Slots no necesita cuenta y no sube tus slots a ningún lado.":"It stays on your device. Slots doesn't need an account and doesn't upload your slots anywhere.",
+  "Entrás antes que nadie y con precio de preventa.":"First in line, at pre-sale pricing.","Cerrar":"Close",
+  "Copiá una vez.":"Copy once.","Pegá siempre.":"Paste forever.","© 2026 Slots · Hecho en Buenos Aires":"© 2026 Slots · Made in Buenos Aires",
+  "Slots, inicio":"Slots, home","Principal":"Main","Idioma":"Language",
+};
+const origTexto = new WeakMap();
+const DIN = "#mini-grid,#tel-grid,#tel-libs,#tel-titulo,#tecla-txt,#isla-hero-in,#isla-demo-in,#tel-isla-in,.estado,script,style,textarea";
+function traducirDom(){
+  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+    acceptNode: n => n.parentElement?.closest(DIN) ? NodeFilter.FILTER_REJECT : (n.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP)
+  });
+  for (let n; (n = w.nextNode());){
+    if (!origTexto.has(n)) origTexto.set(n, n.nodeValue);
+    const o = origTexto.get(n), k = o.trim();
+    n.nodeValue = (lang === "en" && DICT[k]) ? o.replace(k, DICT[k]) : o;
+  }
+  document.querySelectorAll("[placeholder],[aria-label]").forEach(el => {
+    if (el.closest(DIN)) return;
+    ["placeholder","aria-label"].forEach(a => {
+      if (!el.hasAttribute(a)) return;
+      const key = "es" + a.replace("-","");
+      if (!(key in el.dataset)) el.dataset[key] = el.getAttribute(a);
+      const o = el.dataset[key];
+      el.setAttribute(a, lang === "en" && DICT[o] ? DICT[o] : o);
+    });
+  });
+  document.documentElement.lang = lang;
+}
+const alCambiarIdioma = [];
+function ponerIdioma(nuevo){
+  lang = nuevo; ls.set("slots-lang", lang);
+  document.querySelectorAll("#idioma button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  traducirDom();
+  alCambiarIdioma.forEach(f => f());
+  pintarTema();
+}
+/* ===== Día / noche ===== */
+const raiz = document.documentElement;
+try{ const t = ls.get("slots-tema"); if (t === "dark" || t === "light") raiz.dataset.theme = t; }catch(e){}
+const temaActual = () => raiz.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+function pintarTema(){
+  const b = $("#tema"), m = temaActual();
+  b.dataset.modo = m;
+  b.setAttribute("aria-label", m === "dark" ? L("Modo día","Light mode") : L("Modo noche","Dark mode"));
+}
+$("#tema").addEventListener("click", () => {
+  const nuevo = temaActual() === "dark" ? "light" : "dark";
+  raiz.dataset.theme = nuevo; ls.set("slots-tema", nuevo); pintarTema();
+});
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", pintarTema);
+new MutationObserver(pintarTema).observe(raiz, {attributes:true, attributeFilter:["data-theme"]});
+
+$("#idioma").addEventListener("click", e => { const b = e.target.closest("button"); if (b && b.dataset.lang !== lang) ponerIdioma(b.dataset.lang); });
+
+/* ===== Hero: loop animado (o video) ===== */
+(function(){
+  const pant = $("#pantalla");
+  if (VIDEO_SRC){
+    const v = document.createElement("video");
+    Object.assign(v,{src:VIDEO_SRC,autoplay:true,muted:true,loop:true,playsInline:true});
+    v.setAttribute("muted",""); v.setAttribute("playsinline","");
+    pant.innerHTML = ""; pant.appendChild(v); return;
+  }
+  const isla = $("#isla-hero"), inn = $("#isla-hero-in"), cur = $("#cursor");
+  const cards = [...pant.querySelectorAll(".ps")];
+  const pill = html => { inn.innerHTML = html; isla.classList.add("on"); };
+  const off = () => isla.classList.remove("on");
+  const pulse = n => { cards.forEach(c=>c.classList.toggle("pulse", c.dataset.n==n)); };
+  const mover = (x,y) => { cur.style.left = x+"%"; cur.style.top = y+"%"; };
+  const pasos = [
+    [0,   ()=>{ mover(30,62); pulse(0); off(); }],
+    [1200,()=>{ pulse(1); pill(`<span class="num">1</span>${L("Mi portfolio","My portfolio")} <span class="ok">${L("Guardado","Saved")} ✓</span>`); }],
+    [3000,()=>{ off(); pulse(0); mover(52,62); }],
+    [4000,()=>{ pulse(2); pill(`<span class="num">2</span>${L("Presupuesto base · Pegado","Base quote · Pasted")}`); }],
+    [5800,()=>{ off(); pulse(0); mover(50,8); }],
+    [6800,()=>{ pill(`<span class="num">5</span>#E2501D <span class="ok">${L("Guardado","Saved")} ✓</span>`); pulse(5); }],
+    [8600,()=>{ off(); pulse(0); mover(72,80); }],
+  ];
+  if (reduce){ pulse(1); return; }
+  function ciclo(){ pasos.forEach(([t,f])=>setTimeout(f,t)); setTimeout(ciclo, 10000); }
+  ciclo();
+})();
+
+/* ===== Demo en vivo ===== */
+const docInicial = () => L("Hola Martina,\n\nGracias por escribir. Te dejo mi trabajo acá: \n\n", "Hi Martina,\n\nThanks for reaching out. Here's my work: \n\n");
+const slotsIniciales = () => [
+  {k:"A", nombre:L("Mi portfolio","My portfolio"), fuente:"Link · estudio.ar", contenido:"https://estudio.ar/portfolio", clase:"osc"},
+  {k:"S", nombre:L("Presupuesto base","Base quote"), fuente:L("Texto · 34 palabras","Text · 36 words"), contenido:L("El proyecto completo sale US$ 850 e incluye logo, paleta, tipografías y dos rondas de cambios. Si te sirve, arrancamos el lunes y en tres semanas tenés todo.","The full project is US$ 850 and includes logo, palette, typefaces and two rounds of changes. If that works for you, we start on Monday and you'll have everything in three weeks."), clase:""},
+  {k:"D", nombre:L("Link de Meet","Meet link"), fuente:"meet.google.com", contenido:"https://meet.google.com/xpe-qwrt-mzk", clase:""},
+  {k:"Q", nombre:"#E2501D", fuente:"Color", contenido:"#E2501D", clase:"color"},
+  {k:"W", nombre:"", fuente:"", contenido:"", clase:"vacio"},
+];
+let slots;
+const doc = $("#doc"), grid = $("#mini-grid");
+
+let islaT;
+function avisoDemo(html){
+  const i = $("#isla-demo"); $("#isla-demo-in").innerHTML = html; i.classList.add("on");
+  clearTimeout(islaT); islaT = setTimeout(()=>i.classList.remove("on"), 1800);
+}
+function render(){
+  grid.innerHTML = slots.map((s,i)=>{
+    const vacio = !s.contenido;
+    return `<button type="button" class="slot ${vacio?"vacio":s.clase} ${i===4?"ancho":""}" data-i="${i}" draggable="${!vacio}" aria-label="${vacio?L(`Slot ${i+1} vacío, guardar selección`,`Slot ${i+1} empty, save selection`):L("Copiar ","Copy ")+esc(s.nombre)}">
+      <span class="meta"><span>Slot ${i+1}${vacio?"":" · "+esc(s.fuente)}</span><span class="key">⇧${s.k}</span></span>
+      <strong>${vacio?L("Seleccioná texto del mail y tocá acá para guardarlo","Select text in the email and tap here to save it"):esc(s.nombre)}</strong></button>`;
+  }).join("");
+}
+/* En celulares y tablets no hay ⇧ ni arrastre: tocar un slot lo pega directo y el mail no abre el teclado */
+const tactil = matchMedia("(hover: none) and (pointer: coarse)").matches;
+if (tactil){ doc.readOnly = true; doc.setAttribute("inputmode","none"); }
+let pos = {a:0, b:0};
+const guardarPos = () => { pos = {a: doc.selectionStart, b: doc.selectionEnd}; };
+["click","keyup","select","mouseup","touchend"].forEach(ev => doc.addEventListener(ev, guardarPos));
+function reiniciarDemo(enfocar){
+  slots = slotsIniciales(); doc.value = docInicial(); render();
+  const p = doc.value.length - 2; pos = {a:p, b:p};
+  if (enfocar && !tactil){ doc.focus({preventScroll:true}); doc.setSelectionRange(p, p); }
+}
+function insertar(txt){
+  const activo = document.activeElement === doc;
+  const a = activo ? doc.selectionStart : pos.a, b = activo ? doc.selectionEnd : pos.b;
+  if (a > 0 && !/\s/.test(doc.value[a-1]) && !/^\s/.test(txt)) txt = " " + txt;
+  doc.value = doc.value.slice(0,a) + txt + doc.value.slice(b);
+  const p = a + txt.length; pos = {a:p, b:p};
+  if (!tactil){ doc.focus({preventScroll:true}); doc.setSelectionRange(p,p); }
+  else { doc.scrollTop = doc.scrollHeight; }
+}
+const teclaPegar = /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent) ? "⌘V" : "Ctrl+V";
+document.querySelectorAll(".kbd-pegar").forEach(k => k.textContent = teclaPegar);
+let ultimoCopiado = null, copiaOk = false;
+function usar(i, directo){
+  const s = slots[i], btn = grid.querySelector(`[data-i="${i}"]`);
+  btn?.classList.remove("flash"); void btn?.offsetWidth; btn?.classList.add("flash");
+  if (s.contenido && directo){
+    insertar(s.contenido);
+    avisoDemo(`<span class="num">${i+1}</span>${esc(s.nombre)} · ${L("Pegado","Pasted")}`);
+  } else if (s.contenido){
+    ultimoCopiado = s.contenido; copiaOk = false;
+    try{ navigator.clipboard.writeText(s.contenido).then(()=>{ copiaOk = true; }, ()=>{}); }catch(e){}
+    avisoDemo(`<span class="num">${i+1}</span>${L("Copiado","Copied")} · <span class="ok">${L("pegalo con","paste with")} ${teclaPegar}</span>`);
+    doc.focus();
+  } else {
+    const selA = document.activeElement === doc ? doc.selectionStart : pos.a, selB = document.activeElement === doc ? doc.selectionEnd : pos.b;
+    const sel = doc.value.slice(selA, selB).trim();
+    if (!sel){ avisoDemo(L("Primero seleccioná texto del mail","First select some text in the email")); doc.focus(); return; }
+    const palabras = sel.split(/\s+/), n = palabras.length;
+    slots[i] = {k:s.k, nombre: palabras.slice(0,3).join(" ") + (n>3?"…":""), fuente: L(`Texto · ${n} palabra${n>1?"s":""}`, `Text · ${n} word${n>1?"s":""}`), contenido: sel, clase:""};
+    render();
+    grid.querySelector(`[data-i="${i}"]`).classList.add("flash");
+    avisoDemo(`<span class="num">${i+1}</span>${L("Guardado","Saved")} <span class="ok">✓</span>`);
+    doc.focus();
+  }
+}
+/* El slot vacío no debe robar la selección del mail, así se puede guardar lo seleccionado */
+grid.addEventListener("mousedown", e => { if (e.target.closest(".slot.vacio")) e.preventDefault(); });
+grid.addEventListener("click", e => { const b = e.target.closest(".slot"); if (b) usar(+b.dataset.i, tactil); });
+/* Arrastrar un slot al mail */
+grid.addEventListener("dragstart", e => {
+  const b = e.target.closest(".slot"); const s = b && slots[+b.dataset.i];
+  if (!s || !s.contenido){ e.preventDefault(); return; }
+  e.dataTransfer.setData("text/plain", s.contenido); e.dataTransfer.effectAllowed = "copy";
+  doc.dataset.arrastre = b.dataset.i;
+});
+doc.addEventListener("drop", () => {
+  const i = doc.dataset.arrastre; if (i == null) return;
+  delete doc.dataset.arrastre;
+  setTimeout(()=>avisoDemo(`<span class="num">${+i+1}</span>${esc(slots[+i].nombre)} · ${L("Pegado","Pasted")}`), 0);
+});
+grid.addEventListener("dragend", () => { delete doc.dataset.arrastre; });
+/* ⌘V / Ctrl+V: si el navegador no dejó escribir en el portapapeles, pegamos igual lo último copiado */
+doc.addEventListener("paste", e => {
+  if (!ultimoCopiado) return;
+  const txt = e.clipboardData?.getData("text/plain");
+  if (!copiaOk && txt !== ultimoCopiado){ e.preventDefault(); insertar(ultimoCopiado); }
+  if (copiaOk ? txt === ultimoCopiado : true){
+    const i = slots.findIndex(s => s.contenido === ultimoCopiado);
+    if (i >= 0) avisoDemo(`<span class="num">${i+1}</span>${esc(slots[i].nombre)} · ${L("Pegado","Pasted")}`);
+  }
+});
+doc.addEventListener("keydown", e => {
+  if (!e.shiftKey || e.metaKey || e.ctrlKey || e.altKey) return;
+  const i = slots.findIndex(s => s.k === e.key.toUpperCase());
+  if (i >= 0){ e.preventDefault(); usar(i, true); }
+});
+$("#reiniciar").addEventListener("click", () => reiniciarDemo(true));
+reiniciarDemo(false);
+alCambiarIdioma.push(() => reiniciarDemo(false));
+
+/* ===== Cómo funciona: teclado que sigue el scroll ===== */
+(function(){
+  const estados = [
+    {on:["cmd","ctrl"], on2:["A"], txt:["⌘⌃ + A guarda lo que tenés seleccionado en el slot 1.","⌘⌃ + A saves whatever you have selected to slot 1."]},
+    {on:["cmd","shift"], on2:["A"], txt:["⌘⇧ + A pega el slot 1 en la app donde estés.","⌘⇧ + A pastes slot 1 into whatever app you're in."]},
+    {on:["cmd","shift"], on2:["V"], txt:["⌘⇧ + V abre el panel con todos tus slots.","⌘⇧ + V opens the panel with all your slots."]},
+  ];
+  const keys = [...document.querySelectorAll(".teclado .k")];
+  const pasos = [...document.querySelectorAll(".paso")];
+  let actual = 0;
+  function activar(n){
+    actual = n;
+    pasos.forEach((p,i)=>p.classList.toggle("activo", i===n));
+    const e = estados[n];
+    keys.forEach(k => { k.classList.toggle("on", e.on.includes(k.dataset.k)); k.classList.toggle("on2", e.on2.includes(k.dataset.k)); });
+    $("#tecla-txt").textContent = T(e.txt);
+    const np = $("#np");
+    np.classList.remove("guardar","pegar","ver");
+    void np.offsetWidth;
+    np.classList.add(["guardar","pegar","ver"][n]);
+  }
+  $("#np").addEventListener("click", () => { const np = $("#np"); if (actual !== 2) np.classList.toggle("ver"); });
+  /* En el celular la pantalla del notch queda arriba de los pasos: recorre los tres estados sola */
+  const angosto = matchMedia("(max-width: 919px)");
+  let cicloNp = null;
+  function cicloMovil(){
+    clearInterval(cicloNp); cicloNp = null;
+    if (!angosto.matches || reduce) return;
+    let k = 0;
+    cicloNp = setInterval(() => { k = (k + 1) % 3; activar(k); }, 2600);
+  }
+  cicloMovil(); angosto.addEventListener?.("change", cicloMovil);
+  activar(0);
+  alCambiarIdioma.push(() => activar(actual));
+  if ("IntersectionObserver" in window){
+    const io = new IntersectionObserver(ents => {
+      ents.forEach(en => { if (en.isIntersecting && !cicloNp) activar(+en.target.dataset.paso); });
+    }, {rootMargin:"-45% 0px -45% 0px"});
+    pasos.forEach(p => io.observe(p));
+  }
+})();
+
+/* ===== Atajos personalizables ===== */
+(function(){
+  const MOD = {cmd:"⌘", ctrl:"⌃", alt:"⌥", shift:"⇧"}, ORDEN = ["cmd","ctrl","alt","shift"];
+  const NOM_MOD = {cmd:["Comando","Command"], ctrl:["Control","Control"], alt:["Opción","Option"], shift:["Mayús","Shift"]};
+  const combo = (m,k) => ORDEN.filter(x => m.includes(x)).map(x => MOD[x]).join("") + k;
+  const base = [
+    {id:"panel", n:["Abrir / cerrar panel","Open / close panel"], m:["cmd","shift"], k:"V", ver:true},
+    ...[1,2,3,4,5].map((i,j) => ({id:"pegar"+i, n:[`Pegar desde slot ${i}`,`Paste from slot ${i}`], m:["cmd","shift"], k:"ASDQW"[j], ver:i<=3})),
+    ...[1,2,3,4,5].map((i,j) => ({id:"guardar"+i, n:[`Guardar en slot ${i}`,`Save to slot ${i}`], m:["cmd","ctrl"], k:"ASDQW"[j], ver:i<=2})),
+  ];
+  /* Combinaciones que macOS o casi todas las apps ya usan */
+  const SIS = {
+    "⌘C":["Copiar","Copy"],"⌘V":["Pegar","Paste"],"⌘X":["Cortar","Cut"],"⌘Z":["Deshacer","Undo"],"⌘A":["Seleccionar todo","Select All"],
+    "⌘S":["Guardar, en casi todas las apps","Save, in almost every app"],"⌘Q":["Salir de la app","Quit the app"],"⌘W":["Cerrar la ventana","Close the window"],
+    "⌘H":["Ocultar la app","Hide the app"],"⌘M":["Minimizar la ventana","Minimize the window"],"⌘N":["Nueva ventana o documento","New window or document"],
+    "⌘T":["Nueva pestaña","New tab"],"⌘P":["Imprimir","Print"],"⌘F":["Buscar","Find"],"⌘O":["Abrir","Open"],"⌘R":["Recargar, en navegadores","Reload, in browsers"],
+    "⌘⇧Q":["Cerrar sesión en macOS","Log out of macOS"],"⌘⇧S":["Guardar como","Save As"],"⌘⇧Z":["Rehacer","Redo"],"⌘⇧T":["Reabrir la pestaña cerrada","Reopen closed tab"],
+    "⌘⇧N":["Nueva carpeta en el Finder","New folder in Finder"],"⌘⌃Q":["Bloquear la pantalla","Lock the screen"],"⌘⌃F":["Pantalla completa","Full screen"],
+    "⌘⌥D":["Mostrar u ocultar el Dock","Show or hide the Dock"],"⌘⌥H":["Ocultar las otras apps","Hide other apps"],"⌘⌥M":["Minimizar todas las ventanas","Minimize all windows"],
+    "⌘⌥W":["Cerrar todas las ventanas","Close all windows"],"⌘⌥V":["Mover archivos en el Finder","Move files in Finder"],
+  };
+  let acc = base.map(a => ({...a, m:[...a.m]})), editando = null, mods = [], nuevoT;
+  const filas = $("#aj-filas"), grabar = $("#aj-grabar"), msg = $("#aj-msg");
+  function aviso(txt, tipo){ msg.className = "aj-msg " + (tipo||""); msg.textContent = txt; }
+  function pintar(){
+    filas.innerHTML = acc.filter(a => a.ver).map(a => {
+      const g = editando === a.id;
+      return `<div class="aj-fila"><span>${esc(T(a.n))}</span><button type="button" class="aj-chip ${g?"grabando":""}" data-id="${a.id}" aria-label="${esc(T(a.n))}: ${g?L("grabando","recording"):combo(a.m,a.k)}. ${L("Cambiar","Change")}">${g?L("Grabando…","Recording…"):combo(a.m,a.k)}</button></div>`;
+    }).join("");
+    grabar.hidden = !editando;
+    if (editando){
+      const a = acc.find(x => x.id === editando);
+      $("#aj-tit").textContent = L(`Nuevo atajo para «${T(a.n)}»: elegí las teclas y tocá una letra`, `New shortcut for “${T(a.n)}”: pick your keys and tap a letter`);
+      $("#aj-mods").innerHTML = ORDEN.map(x => `<button type="button" data-mod="${x}" aria-pressed="${mods.includes(x)}"><span>${MOD[x]}<small>${T(NOM_MOD[x])}</small></span></button>`).join("");
+      $("#aj-letras").innerHTML = ["QWERTYUIOP","ASDFGHJKL","ZXCVBNM"].map(f => `<div>${[...f].map(l => `<button type="button" data-letra="${l}">${l}</button>`).join("")}</div>`).join("");
+    }
+  }
+  function elegir(letra){
+    const a = acc.find(x => x.id === editando); if (!a) return;
+    const c = combo(mods, letra);
+    if (!mods.includes("cmd") && !mods.includes("ctrl")){ aviso(L("Sumale ⌘ o ⌃. Con ⇧ o ⌥ solas escribirías una mayúscula o un símbolo.","Add ⌘ or ⌃. With ⇧ or ⌥ alone you'd just type a capital letter or a symbol."), "error"); return; }
+    if (SIS[c]){ aviso(L(`${c} ya está ocupado: ${T(SIS[c])}. Probá otra combinación.`, `${c} is taken: ${T(SIS[c])}. Try another combo.`), "error"); return; }
+    const otro = acc.find(x => x.id !== a.id && combo(x.m,x.k) === c);
+    if (otro){ aviso(L(`${c} ya lo usa «${T(otro.n)}». Probá otra.`, `${c} is already used by “${T(otro.n)}”. Try another.`), "error"); return; }
+    a.m = [...mods]; a.k = letra; editando = null; pintar();
+    aviso(L(`Listo. ${c} ahora es «${T(a.n)}».`, `Done. ${c} is now “${T(a.n)}”.`), "ok");
+    const chip = filas.querySelector(`[data-id="${a.id}"]`);
+    if (chip){ chip.classList.add("nuevo"); clearTimeout(nuevoT); nuevoT = setTimeout(() => chip.classList.remove("nuevo"), 1400); chip.focus({preventScroll:true}); }
+  }
+  filas.addEventListener("click", e => {
+    const b = e.target.closest(".aj-chip"); if (!b) return;
+    if (editando === b.dataset.id){ editando = null; aviso(""); pintar(); return; }
+    editando = b.dataset.id; mods = [...acc.find(x => x.id === editando).m]; aviso(""); pintar();
+  });
+  $("#aj-mods").addEventListener("click", e => {
+    const b = e.target.closest("[data-mod]"); if (!b) return;
+    const x = b.dataset.mod; mods = mods.includes(x) ? mods.filter(y => y !== x) : [...mods, x];
+    b.setAttribute("aria-pressed", String(mods.includes(x)));
+  });
+  $("#aj-letras").addEventListener("click", e => { const b = e.target.closest("[data-letra]"); if (b) elegir(b.dataset.letra); });
+  $("#aj-cancelar").addEventListener("click", () => { editando = null; aviso(""); pintar(); });
+  $("#aj-restaurar").addEventListener("click", () => { acc = base.map(a => ({...a, m:[...a.m]})); editando = null; pintar(); aviso(L("Atajos restaurados.","Shortcuts restored."), "ok"); });
+  /* Con teclado físico: mientras graba, una letra sola elige la letra (los modificadores se marcan en pantalla) */
+  document.addEventListener("keydown", e => {
+    if (!editando || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.target.closest && e.target.closest("input,textarea")) return;
+    if (e.key === "Escape"){ editando = null; aviso(""); pintar(); return; }
+    if (/^[a-z]$/i.test(e.key)){ e.preventDefault(); elegir(e.key.toUpperCase()); }
+  });
+  pintar();
+  alCambiarIdioma.push(() => { pintar(); aviso(""); });
+})();
+
+/* ===== iPhone ===== */
+(function(){
+  const nombresLib = {trabajo:["Trabajo","Work"], personal:["Personal","Personal"], clientes:["Clientes","Clients"]};
+  const libs = {
+    trabajo: [
+      {n:["Mi portfolio","My portfolio"], s:"Link", c:"https://estudio.ar/portfolio", k:"osc alto"},
+      {n:["Presupuesto base","Base quote"], s:["Texto","Text"], c:["El proyecto completo sale US$ 850 e incluye dos rondas de cambios.","The full project is US$ 850 and includes two rounds of changes."], k:""},
+      {n:["Flyer otoño","Fall flyer"], s:["Imagen","Image"], c:"flyer.png", k:"img alto"},
+      {n:["Link de Meet","Meet link"], s:"meet.google.com", c:"https://meet.google.com/xpe-qwrt-mzk", k:""},
+      {n:["Alias de cobro","Payment details"], s:["Texto","Text"], c:"estudio.slots.mp", k:""},
+      {n:["Firma de mail","Email signature"], s:["Texto","Text"], c:["Dante · Diseño industrial","Dante · Industrial design"], k:"osc"},
+    ],
+    personal: [
+      {n:["Dirección de entrega","Delivery address"], s:["Texto","Text"], c:"Echeverría 752, 3° B", k:"osc alto"},
+      {n:["Wifi de casa","Home wifi"], s:["Texto","Text"], c:"casa-5g", k:""},
+      {n:["Mi mail","My email"], s:["Texto","Text"], c:"hola@estudio.ar", k:""},
+      {n:["Foto carnet","ID photo"], s:["Imagen","Image"], c:"photo.jpg", k:"img"},
+    ],
+    clientes: [
+      {n:["Respuesta de envíos","Shipping reply"], s:["Texto","Text"], c:["Hacemos envíos a todo el país. Llegan en 3 a 5 días hábiles.","We ship nationwide. Orders arrive in 3 to 5 business days."], k:"osc alto"},
+      {n:["Horarios","Opening hours"], s:["Texto","Text"], c:["Lunes a viernes de 10 a 18 h.","Monday to Friday, 10 am to 6 pm."], k:""},
+      {n:["Catálogo","Catalog"], s:["Archivo · PDF","File · PDF"], c:"Catalog-2026.pdf", k:""},
+      {n:["Medios de pago","Payment methods"], s:["Texto","Text"], c:["Transferencia, tarjeta o Mercado Pago.","Bank transfer, card or Mercado Pago."], k:""},
+      {n:["Seguimiento","Tracking"], s:"Link", c:"https://envios.ar/seguimiento", k:"img"},
+    ],
+  };
+  let actual = "trabajo", t;
+  const g = $("#tel-grid"), isla = $("#tel-isla");
+  function pintar(){
+    $("#tel-titulo").textContent = T(nombresLib[actual]);
+    g.className = "tel-grid";
+    g.innerHTML = libs[actual].map((x,i)=>`<button type="button" class="tc ${x.k}" data-i="${i}" aria-label="${L("Copiar","Copy")} ${esc(T(x.n))}"><small>${esc(T(x.s))}</small><strong>${esc(T(x.n))}</strong></button>`).join("");
+    $("#tel-libs").innerHTML = Object.keys(libs).map(n=>`<button type="button" aria-pressed="${n===actual}" data-l="${n}">${T(nombresLib[n])}${n===actual?` <em>${libs[n].length}</em>`:""}</button>`).join("");
+  }
+  alCambiarIdioma.push(pintar);
+  /* Dedo que usa la app solo, en loop, hasta que la persona toca algo */
+  const pant = document.querySelector(".tel-pant");
+  const dedo = document.createElement("div"); dedo.className = "dedo"; dedo.setAttribute("aria-hidden","true");
+  pant.appendChild(dedo);
+  let auto = !reduce, pausaT, autoT, paso = 0;
+  const guion = [
+    {l:"trabajo", i:0}, {l:"trabajo", i:3}, {l:"trabajo", i:4},
+    {lib:"clientes"}, {l:"clientes", i:0}, {l:"clientes", i:2},
+    {lib:"personal"}, {l:"personal", i:0}, {lib:"trabajo"},
+  ];
+  function apuntar(el, cb){
+    if (!el) return;
+    const r = el.getBoundingClientRect(), p = pant.getBoundingClientRect();
+    dedo.style.left = (r.left - p.left + r.width*.55) + "px";
+    dedo.style.top = (r.top - p.top + r.height*.55) + "px";
+    dedo.classList.add("ver");
+    setTimeout(()=>{ if(!auto) return; dedo.classList.add("toque"); setTimeout(()=>dedo.classList.remove("toque"),260); cb(); }, 750);
+  }
+  function siguiente(){
+    if (!auto) return;
+    const s = guion[paso++ % guion.length];
+    if (s.lib){ apuntar($("#tel-libs").querySelector(`[data-l="${s.lib}"]`), ()=>{ actual = s.lib; pintar(); }); }
+    else { if (actual !== s.l){ actual = s.l; pintar(); } apuntar(g.querySelector(`[data-i="${s.i}"]`), ()=>tocar(+s.i, true)); }
+    autoT = setTimeout(siguiente, s.lib ? 1700 : 2400);
+  }
+  function pausar(){
+    auto = false; clearTimeout(autoT); dedo.classList.remove("ver");
+    clearTimeout(pausaT); if (!reduce) pausaT = setTimeout(()=>{ auto = true; siguiente(); }, 8000);
+  }
+  pant.addEventListener("pointerdown", e => { if (e.isTrusted) pausar(); });
+  pant.addEventListener("keydown", pausar);
+  if ("IntersectionObserver" in window && !reduce){
+    let iniciado = false;
+    new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting && !iniciado){ iniciado = true; setTimeout(siguiente, 600); } }), {threshold:.4}).observe(pant);
+  }
+  g.addEventListener("click", e => {
+    const b = e.target.closest(".tc"); if (!b) return;
+    tocar(+b.dataset.i, false);
+  });
+  function tocar(idx, simulado){
+    const b = g.querySelector(`[data-i="${idx}"]`); if (!b) return;
+    const x = libs[actual][idx];
+    if (!simulado) copiar(T(x.c));
+    g.querySelectorAll(".tc").forEach(c=>{ c.classList.remove("copiado"); const o = libs[actual][+c.dataset.i]; if (o) c.querySelector("small").textContent = T(o.s); });
+    b.classList.add("copiado"); b.querySelector("small").textContent = L("Copiado ✓","Copied ✓");
+    g.classList.add("copiando");
+    $("#tel-isla-in").innerHTML = `${L("Copiado","Copied")} · <span class="ok">${esc(T(x.n))}</span>`; isla.classList.add("on");
+    clearTimeout(t); t = setTimeout(()=>{ isla.classList.remove("on"); g.classList.remove("copiando"); b.classList.remove("copiado"); b.querySelector("small").textContent = T(x.s); }, 1500);
+  }
+  $("#tel-libs").addEventListener("click", e => { const b = e.target.closest("button"); if (b){ actual = b.dataset.l; pintar(); } });
+  pintar();
+})();
+
+/* ===== Lista de espera ===== */
+const okMail = m => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(m);
+let dbP = null;
+async function servicios(){
+  if (!dbP) dbP = (async () => {
+    if (!window.claude?.use) return null;
+    const [db, user] = await Promise.all([claude.use("db"), claude.use("user")]);
+    if (!db || !user) return null;
+    const id = await user.id();
+    return {db, user, id};
+  })().catch(()=>null);
+  return dbP;
+}
+async function guardar(datos){
+  datos = {...datos, idioma: lang, fecha: new Date().toISOString(), origen: location.hash.slice(1) || "directo"};
+  if (WAITLIST_ENDPOINT){
+    const r = await fetch(WAITLIST_ENDPOINT, {method:"POST", headers:{"Content-Type":"application/json","Accept":"application/json"}, body: JSON.stringify(datos)});
+    if (!r.ok) throw new Error("envio");
+    return;
+  }
+  const s = await servicios();
+  if (!s || !s.id) throw new Error("sin-lista");
+  const ref = s.db.doc("waitlist/" + s.id);
+  const prev = await ref.get().catch(()=>null);
+  const base = prev?.exists ? prev.data() : {};
+  const limpio = Object.fromEntries(Object.entries(datos).filter(([k,v]) => v !== "" && v != null));
+  if (base.fecha) limpio.fecha = base.fecha;
+  await ref.set({...base, ...limpio});
+}
+const errMail = () => L("Revisá el mail: le falta algo.","Check your email address: something's missing.");
+function msgError(e){
+  if (e.message === "sin-lista") return L("La lista todavía no recibe anotaciones desde esta vista. Probá de nuevo en un rato.","The list can't take sign-ups from this view yet. Try again in a bit.");
+  return L("No pudimos anotarte. Revisá tu conexión y probá de nuevo.","We couldn't add you. Check your connection and try again.");
+}
+function marcarAnotado(email){
+  ls.set("slots-anotado", email);
+  $("#form-full").hidden = true; $("#listo").hidden = false;
+}
+
+/* Pop-up con el formulario completo: se mueve el mismo formulario de abajo al diálogo y vuelve al cerrarlo */
+const modal = $("#modal"), caja = $("#caja-lista"), cajaPadre = caja.parentNode;
+function abrirModal(email){
+  if (email) $("#email-full").value = email;
+  $("#modal-cuerpo").appendChild(caja);
+  try{ modal.showModal(); }catch(e){ modal.setAttribute("open",""); }
+  document.documentElement.classList.add("con-modal");
+  setTimeout(()=>{ const f = $("#email-full"); if (!$("#form-full").hidden) (okMail(f.value.trim()) ? $("#eq-ambos") : f).focus(); }, 50);
+}
+function cerrarModal(){ if (modal.open) modal.close(); }
+modal.addEventListener("close", () => { cajaPadre.appendChild(caja); document.documentElement.classList.remove("con-modal"); });
+modal.addEventListener("click", e => { if (e.target === modal) cerrarModal(); });
+$("#modal-cerrar").addEventListener("click", cerrarModal);
+
+$("#form-rapido").addEventListener("submit", e => {
+  e.preventDefault();
+  const email = $("#email-rapido").value.trim(), est = $("#estado-rapido");
+  if (email && !okMail(email)){ est.className = "estado error"; est.textContent = errMail(); return; }
+  est.textContent = "";
+  abrirModal(email);
+});
+document.querySelectorAll('[data-abrir-lista]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); abrirModal($("#email-rapido").value.trim()); }));
+
+$("#form-full").addEventListener("submit", async e => {
+  e.preventDefault();
+  const f = e.target, est = $("#estado-full"), btn = $("#btn-full");
+  const email = $("#email-full").value.trim();
+  if (!okMail(email)){ est.className = "estado error"; est.textContent = errMail(); $("#email-full").focus(); return; }
+  const datos = { email, equipo: f.equipo.value, rol: f.rol.value || "", uso: $("#uso").value.trim().slice(0,500) };
+  btn.disabled = true; est.className = "estado"; est.textContent = L("Anotando…","Adding you…");
+  try{ await guardar(datos); marcarAnotado(email); }
+  catch(err){ est.className = "estado error"; est.textContent = msgError(err); }
+  btn.disabled = false;
+});
+alCambiarIdioma.push(() => { document.querySelectorAll(".estado").forEach(e => { e.textContent = ""; }); });
+
+if (ls.get("slots-anotado")){ $("#email-full").value = ls.get("slots-anotado"); }
+
+ponerIdioma(lang);
+
+document.getElementById("nav-beta")?.setAttribute("href", BETA_RELEASE_URL);
+document.getElementById("pie-beta")?.setAttribute("href", BETA_RELEASE_URL);
+
+/* Siempre abrir arriba de todo: los links del menú se desplazan sin cambiar la dirección,
+   así el link que se comparte nunca lleva a una sección de abajo. */
+const SECCIONES = ["top","probalo","como","lista","preguntas"];
+try{ history.scrollRestoration = "manual"; }catch(e){}
+document.querySelectorAll('nav a[href^="#"]:not([data-abrir-lista])').forEach(a => a.addEventListener("click", e => {
+  const el = document.getElementById(a.getAttribute("href").slice(1)); if (!el) return;
+  e.preventDefault(); el.scrollIntoView({behavior: reduce ? "auto" : "smooth", block: "start"});
+}));
+function arriba(){
+  const h = location.hash.slice(1);
+  if (SECCIONES.includes(h)){ try{ history.replaceState(null, "", location.pathname + location.search); }catch(e){} }
+  window.scrollTo(0, 0);
+}
+arriba();
+addEventListener("load", () => setTimeout(arriba, 0));
+</script>
+
 </body>
 </html>

@@ -80,6 +80,21 @@ Objetivo: **build de prueba de usabilidad en Mac**. Decisiones: `docs/DECISIONES
 | [x] | **4** | Panel Mac handoff (header, bibliotecas, guardar portapapeles, onboarding 3, ajustes sidebar, arranque) |
 | [~] | **5** | Humo Mac, versión, DMG, guía de prueba final |
 
+## Landing web (handoff Dante · `docs/slots-landing/`)
+
+Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en GitHub Releases (`/releases/latest`).
+
+| Estado | Pri | Tarea |
+|--------|-----|-------|
+| [x] | P1 | Publicar landing Dante como `docs/index.html` + favicon |
+| [x] | P1 | Enlaces **Beta Mac** y **Privacidad** (`privacy.html`) en nav y pie |
+| [ ] | P1 | **Formspree / waitlist:** pegar `WAITLIST_ENDPOINT` (ver `slots-landing/LEEME.md`) |
+| [ ] | P2 | **og:image** 1200×630 para compartir en redes |
+| [ ] | P2 | Validar promesas de lista (beta, preventa, mes gratis) con producto — LEEME §5 |
+| [ ] | P2 | Deploy Vercel tras push; smoke ES/EN, móvil, formulario |
+| [ ] | P3 | Video hero `VIDEO_SRC` cuando exista mp4 liviano |
+| [ ] | P3 | Analytics (Plausible / Vercel) si pautan |
+
 | Estado | Pri | Tarea post-usabilidad |
 |--------|-----|------------------------|
 | [ ] | P1 | **Reactivar monetización** (trial, Lemon, compra, gating slots 2–5) |
@@ -108,7 +123,7 @@ Objetivo: **build de prueba de usabilidad en Mac**. Decisiones: `docs/DECISIONES
 | [ ] | P2 | **Sonido al guardar** — documentar toggle “Sonidos de acciones”; opcional sonido distinto guardar vs pegar si confunden |
 | [ ] | P3 | Atajo clicable extra en barra (además del icono) — evaluar si aporta o satura la menu bar |
 | [ ] | P3 | “Slots libres” en UI tipo Dynamic Island — **no aplica en Mac**; en iPhone sería otro producto |
-| [ ] | P1 | **Landing:** copy slots-first + enlace donación + créditos desarrolladores |
+| [ ] | P1 | **Landing:** copy slots-first + enlace donación + créditos desarrolladores *(superseded por landing Dante; ver sección Landing web)* |
 | [ ] | P1 | **Donación:** link en Ajustes → General / Acerca de (Ko-fi o similar) |
 | [ ] | P1 | **Analytics:** contador descargas (GitHub) en web; Vercel Analytics en docs; ping anónimo in-app acordado en privacidad |
 

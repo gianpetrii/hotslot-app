@@ -129,6 +129,8 @@ Roadmap: `BACKLOG.md`
 | `docs/DESVIOS-DISENO-DANTE.md` | Diferencias vs handoff para validar con Dante |
 | `docs/PRUEBA-MAC-REDISENO.md` | Checklist de humo antes del DMG |
 | `docs/MONETIZATION.md` | Lemon / licencia (referencia; gating pausado) |
+| `docs/LANDING-README.md` | Cómo publicar landing + waitlist |
+| `docs/slots-landing/` | Fuente Dante (no reemplazar sin sync a `index.html`) |
 | `.cursor/rules/base-rules.md` | Reglas para el agente en Cursor |
 
 El handoff completo (`slots-handoff/`) **no** va en Git; ver `docs/HANDOFF-README.md`.
