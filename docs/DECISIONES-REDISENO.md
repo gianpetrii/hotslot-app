@@ -10,8 +10,8 @@ Acuerdos entre Gianluca y desarrollo tras Etapa 0 y el handoff de Dante (descarg
 ## Monetización (Lemon, trial, compra)
 
 - **Sección Licencia visible** en Ajustes y menús (trial + compra siguen como hoy).
-- **Enfoque de desarrollo:** no retomar cambios de gating, checkout ni mensajes de compra hasta cerrar las etapas del rediseño macOS; el código (`Entitlements`, `LemonLicenseService`, `purchase.html`) se mantiene.
-- Ver BACKLOG › monetización.
+- **Enfoque de desarrollo:** no retomar gating, checkout ni copy de compra hasta cerrar el rediseño macOS; el código (`Entitlements.swift`, `LemonLicenseService`, `docs/purchase.html`) se mantiene.
+- **Modelo acordado:** 90 días prueba completa → después solo slot 1 sin licencia; pago único **USD 10** (Lemon) → clave en Ajustes → General → Licencia. Canal fuera de MAS (Accesibilidad). Reactivar gating: **BACKLOG** › post-usabilidad.
 
 ## Accesibilidad (TCC)
 
@@ -45,4 +45,4 @@ Reemplazo **incremental** del panel actual (no big-bang en un solo PR): tokens �
 - Fuente de verdad de comportamiento: `01-docs/flujos.md` dentro del zip del handoff.
 - Medidas y copy: HTML en `05-flujos/html/` y `02-diseno/html-referencia/`.
 - Tokens Swift del handoff → `HotSlot/Design/SlotsTheme.swift`.
-- **Desvíos intencionales sobre el mock (para validar con Dante):** `docs/DESVIOS-DISENO-DANTE.md`.
+- Validación de diseño con Dante: solo lo que Gianluca cargue en `docs/REVISION-PANEL-PARA-DANTE.md`.

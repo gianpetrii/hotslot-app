@@ -69,7 +69,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 
 ## Rediseño Slots (handoff Dante · ver `docs/HANDOFF-README.md`)
 
-Objetivo: **build de prueba de usabilidad en Mac**. Decisiones: `docs/DECISIONES-REDISENO.md`. Desvíos de diseño para Dante: `docs/DESVIOS-DISENO-DANTE.md`.
+Objetivo: **build de prueba de usabilidad en Mac**. Alcance y acuerdos: `docs/DECISIONES-REDISENO.md`. Lo que **Dante** debe validar explícitamente: `docs/REVISION-PANEL-PARA-DANTE.md` (solo ítems que cargue Gianluca).
 
 | Estado | Etapa | Alcance (macOS primero) |
 |--------|-------|-------------------------|
@@ -95,9 +95,13 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 | [ ] | P3 | Video hero `VIDEO_SRC` cuando exista mp4 liviano |
 | [ ] | P3 | Analytics (Plausible / Vercel) si pautan |
 
-| [x] | P2 | **Bibliotecas:** reorden drag + eliminar + **renombrar** (confirmación eliminar); dwell slot→pill |
-| [x] | P2 | **Panel UX:** pin historial, atajos contextual, contenido en slot, rename inline, fondo paleta, reorder/delete libs — ver `docs/DECISIONES-UX-PANEL.md` |
-| [ ] | P2 | **Grilla slots:** tamaños editables por slot (cuadrado vs alto) — Epic B |
+### Panel rediseño Mac (handoff)
+
+| Estado | Pri | Tarea |
+|--------|-----|-------|
+| [x] | P2 | **Bibliotecas:** reorden drag + eliminar + renombrar (confirmación eliminar); dwell slot→pill |
+| [~] | P2 | **Panel UX** — oleada nov 2026 (tabla «Panel UX — validación Gianluca» más abajo) |
+| [ ] | P2 | **Grilla slots:** tamaños editables por slot (cuadrado vs alto) |
 
 | Estado | Pri | Tarea post-usabilidad |
 |--------|-----|------------------------|
@@ -112,6 +116,39 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 | [ ] | P3 | Localización ES/EN completa |
 | [x] | P1 | Ícono de app: `docs/portapapeles.png` (Magnific / Flaticon) → AppIcon + menu bar |
 | [x] | P1 | Distribución directa v0.16 (Developer ID, notarización, landing, GitHub Release) |
+
+---
+
+## Panel UX — validación Gianluca (nov 2026)
+
+Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en otros `.md` salvo `REVISION-PANEL-PARA-DANTE.md` cuando toque Dante.
+
+| Estado | ID | Tema |
+|--------|-----|------|
+| [x] | V2 | Animación al **cambiar biblioteca** |
+| [~] | V3 | **Reorden:** fantasma en el lugar de origen, las pills se separan, al soltar queda ahí · **Tacho:** se agranda (oscuro + naranja), soltar → confirmación con «No volver a preguntar» (reactivable en Ajustes → General) |
+| [ ] | V4–V5 | Historial: más líneas al expandir · pin/meta sin robar espacio |
+| [ ] | V6–V7 | Chips atajo/cruz alineados a «Slot N» |
+| [ ] | V8 | Texto legible en degradé / fondos oscuros |
+| [ ] | V9–V10 | Renombrar biblioteca inline · título slot sin saltos de layout |
+| [x] | V11 | *(confirmado en pasada anterior)* |
+| [ ] | V12 | Pendiente cierre oleada |
+
+**Dante (solo si Gianluca lo pide):** reorden de bibliotecas → `docs/REVISION-PANEL-PARA-DANTE.md`.
+
+---
+
+## QA Mac — humo antes de tag / DMG
+
+| Qué | Xcode Run | App en `/Applications` |
+|-----|-----------|-------------------------|
+| Panel, bibliotecas, guardar, Ajustes | ✅ | ✅ |
+| Splash naranja al abrir | ❌ | ✅ |
+| TCC Accesibilidad / pegar en otra app | ⚠️ | ✅ recomendado |
+
+**Rápido (~15 min):** ⌥ menú → **Cargar ejemplo** · onboarding (**Empezar de cero**) · ⌘⇧V panel · cambiar biblioteca · **Guardar portapapeles** (no requiere TCC) · drag historial → slot · smoke menú contextual slot · Ajustes tabs · menú bar **Ver todo**.
+
+**P0 TCC:** sigue en tabla Crítico arriba. **Eventos moderador:** ⌥ menú → Exportar eventos.
 
 ---
 

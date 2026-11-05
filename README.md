@@ -122,15 +122,13 @@ Roadmap: `BACKLOG.md`
 | Archivo | Uso |
 |---------|-----|
 | `README.md` | Entrada al proyecto, desarrollo y release |
-| `BACKLOG.md` | Etapas del rediseño y tareas |
+| `BACKLOG.md` | **Tareas, QA Mac, validación panel (V2…), roadmap** |
 | `CHANGELOG.md` | Historial de versiones publicadas |
-| `docs/HANDOFF-README.md` | Dónde está el zip de Dante (Drive) |
 | `docs/DECISIONES-REDISENO.md` | Alcance macOS, monetización pausada, TCC, atajos |
-| `docs/DESVIOS-DISENO-DANTE.md` | Diferencias vs handoff para validar con Dante |
-| `docs/PRUEBA-MAC-REDISENO.md` | Checklist de humo antes del DMG |
-| `docs/MONETIZATION.md` | Lemon / licencia (referencia; gating pausado) |
-| `docs/LANDING-README.md` | Cómo publicar landing + waitlist |
-| `docs/slots-landing/` | Fuente Dante (no reemplazar sin sync a `index.html`) |
+| `docs/REVISION-PANEL-PARA-DANTE.md` | Solo ítems que Gianluca pide validar a Dante |
+| `docs/HANDOFF-README.md` | Zip de diseño en Drive (no está en Git) |
+| `docs/LANDING-README.md` | Deploy landing + waitlist (`docs/index.html`) |
+| `docs/slots-landing/` | Fuente Dante del sitio (sync con `index.html`) |
 | `.cursor/rules/base-rules.md` | Reglas para el agente en Cursor |
 
 El handoff completo (`slots-handoff/`) **no** va en Git; ver `docs/HANDOFF-README.md`.
