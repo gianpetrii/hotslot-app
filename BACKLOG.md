@@ -63,6 +63,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P1 | Animaciones de apertura/cierre más notorias (spring + slide) |
 | [x] | P0 | Unfold de apertura (clip fijo; no redimensionar la ventana) |
 | [ ] | P2 | Animación stagger al abrir (filas entran una a una) |
+| [ ] | P2 | Limpiar `RichText/` (formato de textos) cuando el texto ya no está en historial ni en slots |
 | [x] | P2 | Expand/collapse de filas: texto animado; imagen crece desde arriba sin el “bajón” |
 | [x] | P2 | Onboarding de primera vez (tour saltables, repetible) |
 | [ ] | P3 | Grabar referencia del Clipboard nativo y afinar timing |
@@ -127,7 +128,8 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 |--------|-----|------|
 | [x] | V2 | Animación al **cambiar biblioteca** |
 | [x] | V3 | **Reorden:** fantasma en el lugar de origen, las pills se separan, al soltar queda ahí · **Tacho:** se agranda (oscuro + naranja), soltar → confirmación con «No volver a preguntar» (reactivable en Ajustes → General) |
-| [ ] | V4–V5 | Historial: más líneas al expandir · pin/meta sin robar espacio |
+| [x] | V4–V5 | **Historial:** saltos de línea visibles · 2 renglones cerrado, hasta 8 al expandir, solo expande si el texto quedó cortado · pin arriba a la derecha sin fondo (fondo blanco solo sobre imagen agrandada), fijado = contorno naranja |
+| [ ] | V4b | **Pegar con estilos** (negrita, etc.) desde historial y slots; texto plano si la app no acepta formato. Probar con DMG |
 | [ ] | V6–V7 | Chips atajo/cruz alineados a «Slot N» |
 | [ ] | V8 | Texto legible en degradé / fondos oscuros |
 | [ ] | V9–V10 | Renombrar biblioteca inline · título slot sin saltos de layout |
