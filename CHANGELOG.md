@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.1] — 2026-11-05
+
+### Slots
+
+- La cruz y el atajo usan la misma pastilla: arena en cards claras, blanca sobre imagen o fondo oscuro. Ya no desaparece el fondo del atajo al pasar el mouse.
+- Al aparecer la cruz, «Slot N» se corre a la derecha en vez de quedar debajo.
+
 ## [0.22.0] — 2026-11-05
 
 ### Historial

@@ -130,7 +130,7 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 | [x] | V3 | **Reorden:** fantasma en el lugar de origen, las pills se separan, al soltar queda ahí · **Tacho:** se agranda (oscuro + naranja), soltar → confirmación con «No volver a preguntar» (reactivable en Ajustes → General) |
 | [x] | V4–V5 | **Historial:** saltos de línea visibles · 2 renglones cerrado, hasta 8 al expandir, solo expande si el texto quedó cortado · pin arriba a la derecha sin fondo (fondo blanco solo sobre imagen agrandada), fijado = contorno naranja |
 | [ ] | V4b | **Pegar con estilos** (negrita, etc.) desde historial y slots; texto plano si la app no acepta formato. Probar con DMG |
-| [ ] | V6–V7 | Chips atajo/cruz alineados a «Slot N» |
+| [x] | V6–V7 | **Chips:** cruz y atajo con la misma pastilla (arena en card clara, blanca sobre imagen o fondo oscuro). Al aparecer la cruz, «Slot N» se corre a la derecha |
 | [ ] | V8 | Texto legible en degradé / fondos oscuros |
 | [ ] | V9–V10 | Renombrar biblioteca inline · título slot sin saltos de layout |
 | [x] | V11 | *(confirmado en pasada anterior)* |

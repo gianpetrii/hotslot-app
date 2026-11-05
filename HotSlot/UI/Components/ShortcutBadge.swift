@@ -45,8 +45,8 @@ struct ShortcutBadge: View {
 /// Chip de atajo en cards del panel (handoff Main: fondo `#F1EDE8`, radio 8).
 struct SlotHandoffShortcutChip: View {
     let name: KeyboardShortcuts.Name
-    var emphasized: Bool = false
-    var onMediaBackground: Bool = false
+    var ink: Color = SlotsColor.textoTerciario
+    var plate: Color = SlotsColor.teclaFondo
     @Environment(AppState.self) private var appState
 
     private var shortcutLabel: String {
@@ -58,7 +58,7 @@ struct SlotHandoffShortcutChip: View {
 
         Text(shortcutLabel)
             .font(SlotsFont.etiqueta)
-            .foregroundStyle(SlotsColor.textoTerciario)
+            .foregroundStyle(shortcutLabel == "—" ? ink.opacity(0.55) : ink)
             .lineLimit(1)
             .minimumScaleFactor(0.7)
             .padding(.horizontal, 5)
@@ -69,17 +69,7 @@ struct SlotHandoffShortcutChip: View {
             )
             .background {
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
-                    .fill(chipBackground)
+                    .fill(shortcutLabel == "—" ? plate.opacity(0.6) : plate)
             }
-    }
-
-    private var chipBackground: Color {
-        if shortcutLabel == "—" {
-            return onMediaBackground ? Color.white.opacity(0.45) : SlotsColor.teclaFondo.opacity(0.6)
-        }
-        if onMediaBackground {
-            return Color.white.opacity(emphasized ? 0.88 : 0.75)
-        }
-        return emphasized ? Color.white.opacity(0.92) : SlotsColor.teclaFondo
     }
 }

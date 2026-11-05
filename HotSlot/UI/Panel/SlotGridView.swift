@@ -222,38 +222,27 @@ private struct SlotCardView: View {
     }
 
     private var headerRow: some View {
-        HStack(alignment: .center, spacing: 8) {
-            ZStack(alignment: .leading) {
-                Text(SlotCardCopy.metaPrimary(for: slot))
-                    .font(SlotsFont.etiqueta)
-                    .foregroundStyle(metaForeground)
-
-                if hasContent, isHovering {
-                    Button(action: onClear) {
-                        SlotHeaderActionChip(
-                            systemImage: "xmark",
-                            foreground: clearButtonForeground,
-                            onMediaBackground: prefersLightContent && !isDarkCustomBackground && !isDarkCard
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .help("Vaciar slot \(slot.index)")
-                    .transition(.opacity.combined(with: .scale(scale: 0.88)))
+        HStack(alignment: .center, spacing: 6) {
+            if hasContent, isHovering {
+                Button(action: onClear) {
+                    SlotHeaderActionChip(systemImage: "xmark", foreground: headerChipInk, plate: headerChipPlate)
                 }
+                .buttonStyle(.plain)
+                .help("Vaciar slot \(slot.index)")
+                .transition(.opacity.combined(with: .scale(scale: 0.88)))
             }
-            .frame(height: HotSlotDesign.slotHeaderChipHeight, alignment: .leading)
-            .animation(.spring(response: 0.28, dampingFraction: 0.86), value: isHovering)
 
-            Spacer(minLength: 0)
+            Text(SlotCardCopy.metaPrimary(for: slot))
+                .font(SlotsFont.etiqueta)
+                .foregroundStyle(metaForeground)
+                .lineLimit(1)
+
+            Spacer(minLength: 4)
 
             Button {
                 isEditingShortcuts = true
             } label: {
-                SlotHandoffShortcutChip(
-                    name: visibleShortcut,
-                    emphasized: isHovering,
-                    onMediaBackground: isImageContent && hasContent
-                )
+                SlotHandoffShortcutChip(name: visibleShortcut, ink: headerChipInk, plate: headerChipPlate)
             }
             .buttonStyle(.plain)
             .help(hasContent ? "Atajo pegar · clic para editar ambos" : "Atajo guardar · clic para editar ambos")
@@ -263,8 +252,13 @@ private struct SlotCardView: View {
         }
     }
 
-    private var clearButtonForeground: Color {
-        prefersLightContent ? Color.white.opacity(0.92) : SlotsColor.textoSecundario
+    /// Misma pastilla para la cruz y el atajo. Sobre fondos oscuros o imagen va clara; sobre cards claras, arena.
+    private var headerChipPlate: Color {
+        prefersLightContent ? Color.white.opacity(0.9) : SlotsColor.teclaFondo
+    }
+
+    private var headerChipInk: Color {
+        SlotsColor.textoSecundario
     }
 
     @ViewBuilder
@@ -498,7 +492,7 @@ private struct SlotCardView: View {
 private struct SlotHeaderActionChip: View {
     let systemImage: String
     var foreground: Color
-    var onMediaBackground: Bool
+    var plate: Color
 
     var body: some View {
         Image(systemName: systemImage)
@@ -507,7 +501,7 @@ private struct SlotHeaderActionChip: View {
             .frame(width: HotSlotDesign.slotHeaderChipHeight, height: HotSlotDesign.slotHeaderChipHeight)
             .background {
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
-                    .fill(onMediaBackground ? Color.white.opacity(0.82) : SlotsColor.teclaFondo)
+                    .fill(plate)
             }
     }
 }
