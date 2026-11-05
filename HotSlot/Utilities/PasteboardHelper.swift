@@ -51,6 +51,9 @@ enum PasteboardHelper {
 
         switch content {
         case .text(let string):
+            let formats = RichTextStore.load(for: string)
+            if let rtf = formats.rtf { pasteboard.setData(rtf, forType: .rtf) }
+            if let html = formats.html { pasteboard.setData(html, forType: .html) }
             pasteboard.setString(string, forType: .string)
         case .image(let fileName):
             let url = AppSupportDirectory.images.appendingPathComponent(fileName)
@@ -121,6 +124,10 @@ enum PasteboardHelper {
     private static func collectContents(from item: NSPasteboardItem, add: (ClipContent) -> Void) {
         for type in item.types where textTypes.contains(type) {
             if let text = readText(from: item, type: type) {
+                RichTextStore.save(
+                    .init(rtf: item.data(forType: .rtf), html: item.data(forType: .html)),
+                    for: text
+                )
                 add(.text(text))
                 break
             }
@@ -171,6 +178,10 @@ enum PasteboardHelper {
 
         for type in orderedTypes where textTypes.contains(type) {
             if let text = readTextLegacy(from: pasteboard, type: type) {
+                RichTextStore.save(
+                    .init(rtf: pasteboard.data(forType: .rtf), html: pasteboard.data(forType: .html)),
+                    for: text
+                )
                 return .text(text)
             }
         }

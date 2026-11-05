@@ -24,6 +24,12 @@ enum AppSupportDirectory {
         return url
     }
 
+    static var richText: URL {
+        let url = root.appendingPathComponent("RichText", isDirectory: true)
+        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        return url
+    }
+
     static var historyFile: URL {
         root.appendingPathComponent("history.json")
     }
