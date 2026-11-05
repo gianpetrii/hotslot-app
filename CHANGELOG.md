@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.21.0] — 2026-11-05
+
+### Accesibilidad
+
+- Vuelve el aviso del sistema para pedir Accesibilidad (onboarding y Ajustes → Permisos). La causa era App Sandbox, que bloquea el aviso; la app se distribuye sin sandbox (DMG Developer ID notarizado).
+- El aviso se trae al frente: antes quedaba tapado por las ventanas flotantes de Slots. Ajustes del Sistema solo se abre si el aviso no aparece.
+- Ya no se pide permiso de Automatización.
+- Migración única de historial, slots, imágenes y preferencias desde el contenedor del sandbox.
+
+### Bibliotecas
+
+- Arrastre propio para reordenar: las pills se separan, queda un fantasma en el lugar de origen y la pill vuela a su posición al soltar.
+- Tacho estilo Instagram al arrastrar; eliminar con confirmación y opción «No volver a preguntar» (también en Ajustes).
+- Animación al cambiar de biblioteca.
+- Botón principal naranja en todos los avisos de la app.
+
 ## [0.20.1] — 2026-11-03
 
 ### Panel (revisión UX — probar antes de dar por cerrado)

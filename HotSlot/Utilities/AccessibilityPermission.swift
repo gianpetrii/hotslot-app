@@ -11,7 +11,7 @@ enum AccessibilityPermission {
 
     /// Evita que el tour se oculte al resignar foco mientras macOS muestra el aviso TCC.
     static var isAccessibilityPromptInFlight: Bool {
-        Date() < promptGraceUntil
+        Date() < promptGraceUntil || isSystemPromptOnScreen
     }
 
     private static var promptGraceUntil = Date.distantPast
@@ -75,6 +75,33 @@ enum AccessibilityPermission {
     static var isSystemPromptOnScreen: Bool {
         let windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? [[String: Any]] ?? []
         return windows.contains { ($0[kCGWindowOwnerName as String] as? String) == "universalAccessAuthWarn" }
+    }
+
+    /// El aviso es una ventana de nivel normal: las ventanas flotantes de Slots (Ajustes, tour) lo tapan.
+    /// Baja `window` a nivel normal mientras el aviso siga abierto y lo trae al frente.
+    @discardableResult
+    static func surfaceSystemPrompt(over window: NSWindow?) -> Bool {
+        guard isSystemPromptOnScreen else { return false }
+
+        if let window, window.level != .normal {
+            let savedLevel = window.level
+            window.level = .normal
+            restoreLevelWhenPromptCloses(window, to: savedLevel)
+        }
+        NSRunningApplication
+            .runningApplications(withBundleIdentifier: "com.apple.accessibility.universalAccessAuthWarn")
+            .first?
+            .activate()
+        return true
+    }
+
+    private static func restoreLevelWhenPromptCloses(_ window: NSWindow, to level: NSWindow.Level) {
+        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak window] timer in
+            guard let window else { return timer.invalidate() }
+            guard !isSystemPromptOnScreen else { return }
+            timer.invalidate()
+            window.level = level
+        }
     }
 
     static func openSettings() {

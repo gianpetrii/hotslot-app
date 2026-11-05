@@ -94,7 +94,7 @@ struct AccessibilityGrantSection: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                 isTrusted = AccessibilityPermission.isTrusted
                 guard !isTrusted else { return }
-                if AccessibilityPermission.isSystemPromptOnScreen {
+                if AccessibilityPermission.surfaceSystemPrompt(over: appState.accessibilityPresentingWindow) {
                     appState.showToast("En el aviso, tocá «Abrir Ajustes del Sistema» y activá Slots.")
                 } else {
                     AccessibilityPermission.openSettings()

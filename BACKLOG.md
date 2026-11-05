@@ -18,7 +18,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 
 | Estado | Pri | Tarea |
 |--------|-----|-------|
-| [~] | P0 | **Accesibilidad (TCC):** el aviso no aparecía desde v0.15 porque la app estaba en **App Sandbox**: el kernel bloquea `mach-lookup com.apple.universalaccessAuthWarn` (el proceso que dibuja el aviso). Fix: sandbox desactivado (distribución DMG), migración de datos del contenedor, Ajustes del Sistema solo si el aviso no salió. **Falta validar con DMG nuevo** tras `tccutil reset Accessibility com.hotslot.app`. |
+| [x] | P0 | **Accesibilidad (TCC):** aviso del sistema funcionando en DMG (v0.21.0): sin App Sandbox y aviso traído al frente sobre las ventanas flotantes de Slots. Validado por Gianluca. |
 | [x] | P0 | Fix pegado al clic en historial (Button + paste tras cerrar panel) |
 | [x] | P0 | Fix ventana de Ajustes (hotkeys, slots, general) |
 | [x] | P0 | Quitar highlight automático del ítem más reciente |

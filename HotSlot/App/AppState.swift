@@ -205,6 +205,9 @@ final class AppState {
     func ensureAccessibilityForPaste() -> Bool {
         guard AccessibilityPermission.isTrusted else {
             AccessibilityPermission.requestAccessForPaste(focusWindow: accessibilityPresentingWindow)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
+                AccessibilityPermission.surfaceSystemPrompt(over: self?.accessibilityPresentingWindow)
+            }
             presentNotch(.noAccessibility)
             showToast("Permití el control en el diálogo del sistema (Accesibilidad)")
             FeedbackSound.play(.pasteFailed)
