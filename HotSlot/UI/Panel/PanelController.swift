@@ -113,6 +113,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         }
 
         openGeneration += 1
+        appState.libraryDrag = nil
         appState.isPanelVisible = false
         appState.panelBodyRevealed = false
         UsageEventLog.shared.record("panel_cerrar", screen: "mac_panel")

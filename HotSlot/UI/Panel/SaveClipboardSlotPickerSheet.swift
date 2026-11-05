@@ -51,31 +51,41 @@ struct SaveClipboardSlotPickerSheet: View {
                 }
             }
 
+            if replaceIndex != nil {
+                VStack(alignment: .leading, spacing: SlotsSpace.xs) {
+                    Text("¿Reemplazar «\(replaceTitle)»?")
+                        .font(SlotsFont.textoUI)
+                        .foregroundStyle(SlotsColor.tinta)
+                    Text("Lo que tenía el slot queda en el historial por si lo necesitás.")
+                        .font(SlotsFont.etiqueta)
+                        .foregroundStyle(SlotsColor.textoSecundario)
+                }
+                .transition(.opacity)
+            }
+
             HStack {
                 Spacer()
-                Button("Cancelar", action: closePicker)
+                if let index = replaceIndex {
+                    Button("Cancelar") { replaceIndex = nil }
+                        .buttonStyle(SlotsSecondaryButtonStyle())
+                        .keyboardShortcut(.cancelAction)
+                    Button("Reemplazar") {
+                        appState.saveClipboardToSlot(index, replaceExisting: true)
+                        replaceIndex = nil
+                        closePicker()
+                    }
+                    .buttonStyle(SlotsPrimaryButtonStyle())
+                    .keyboardShortcut(.defaultAction)
+                } else {
+                    Button("Cancelar", action: closePicker)
+                        .buttonStyle(SlotsSecondaryButtonStyle())
+                        .keyboardShortcut(.cancelAction)
+                }
             }
         }
         .padding(SlotsSpace.l)
         .frame(width: 400)
-        .alert(
-            "¿Reemplazar \"\(replaceTitle)\"?",
-            isPresented: Binding(
-                get: { replaceIndex != nil },
-                set: { if !$0 { replaceIndex = nil } }
-            )
-        ) {
-            Button("Cancelar", role: .cancel) { replaceIndex = nil }
-            Button("Reemplazar", role: .destructive) {
-                if let index = replaceIndex {
-                    appState.saveClipboardToSlot(index, replaceExisting: true)
-                    replaceIndex = nil
-                    closePicker()
-                }
-            }
-        } message: {
-            Text("Lo que tenía el slot queda en el historial por si lo necesitás.")
-        }
+        .animation(.easeOut(duration: 0.16), value: replaceIndex)
     }
 
     private func closePicker() {

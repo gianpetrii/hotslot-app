@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DeleteLibraryFormView: View {
     let libraryName: String
+    @Binding var dontAskAgain: Bool
     let onCancel: () -> Void
     let onDelete: () -> Void
 
@@ -15,10 +16,20 @@ struct DeleteLibraryFormView: View {
                 .foregroundStyle(SlotsColor.textoSecundario)
                 .fixedSize(horizontal: false, vertical: true)
 
+            Toggle("No volver a preguntar", isOn: $dontAskAgain)
+                .toggleStyle(.checkbox)
+                .font(SlotsFont.textoUI)
+                .foregroundStyle(SlotsColor.textoSecundario)
+                .help("Se puede volver a activar en Ajustes → General")
+
             HStack {
                 Spacer()
                 Button("Cancelar", action: onCancel)
+                    .buttonStyle(SlotsSecondaryButtonStyle())
+                    .keyboardShortcut(.cancelAction)
                 Button("Eliminar", role: .destructive, action: onDelete)
+                    .buttonStyle(SlotsPrimaryButtonStyle())
+                    .keyboardShortcut(.defaultAction)
             }
         }
         .padding(SlotsSpace.l)

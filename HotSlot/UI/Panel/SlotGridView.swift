@@ -82,6 +82,7 @@ struct SlotGridView: View {
                 }
             )
             .opacity(slotSearchOpacity(for: slot))
+            .clipped()
         }
     }
 
@@ -140,21 +141,33 @@ private struct SlotCardView: View {
                     Text(preview)
                         .font(SlotsFont.textoUI)
                         .foregroundStyle(bodyTextColor)
-                        .lineLimit(isHovering ? 8 : 3)
+                        .lineLimit(isHovering ? 8 : 4)
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                         .animation(.easeOut(duration: 0.15), value: isHovering)
                 } else if !hasContent {
                     Text(SlotCardCopy.emptyHint(slotIndex: slot.index))
                         .font(SlotsFont.textoUI)
-                        .foregroundStyle(SlotsColor.textoSecundario)
+                        .foregroundStyle(emptyHintColor)
                         .lineLimit(4)
                 }
 
                 titleRow
+                    .frame(height: HotSlotDesign.slotTitleRowHeight, alignment: .bottomLeading)
             }
             .padding(SlotsSpace.m)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .background(alignment: .bottom) {
+                if needsBottomTextScrim {
+                    LinearGradient(
+                        colors: [Color.black.opacity(0), Color.black.opacity(0.55)],
+                        startPoint: UnitPoint(x: 0.5, y: 0.25),
+                        endPoint: .bottom
+                    )
+                    .frame(height: 168)
+                    .allowsHitTesting(false)
+                }
+            }
         }
         .padding(2)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -214,19 +227,21 @@ private struct SlotCardView: View {
                 Text(SlotCardCopy.metaPrimary(for: slot))
                     .font(SlotsFont.etiqueta)
                     .foregroundStyle(metaForeground)
-                    .offset(x: hasContent && isHovering ? 22 : 0)
 
                 if hasContent, isHovering {
                     Button(action: onClear) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(clearButtonForeground)
+                        SlotHeaderActionChip(
+                            systemImage: "xmark",
+                            foreground: clearButtonForeground,
+                            onMediaBackground: prefersLightContent && !isDarkCustomBackground && !isDarkCard
+                        )
                     }
                     .buttonStyle(.plain)
                     .help("Vaciar slot \(slot.index)")
-                    .transition(.opacity)
+                    .transition(.opacity.combined(with: .scale(scale: 0.88)))
                 }
             }
+            .frame(height: HotSlotDesign.slotHeaderChipHeight, alignment: .leading)
             .animation(.spring(response: 0.28, dampingFraction: 0.86), value: isHovering)
 
             Spacer(minLength: 0)
@@ -254,50 +269,60 @@ private struct SlotCardView: View {
 
     @ViewBuilder
     private var titleRow: some View {
-        if isEditingLabel {
-            TextField("Título", text: $labelDraft)
-                .textFieldStyle(.plain)
-                .font(SlotsFont.tituloCard)
-                .foregroundStyle(titleColor)
-                .focused($labelFieldFocused)
-                .padding(.vertical, 4)
-                .padding(.horizontal, 6)
-                .background {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(Color.white.opacity(0.85))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .strokeBorder(SlotsColor.naranja.opacity(0.45), lineWidth: 1)
-                        }
-                }
-                .onSubmit { commitLabelEdit() }
-                .onKeyPress(.escape) {
-                    cancelLabelEdit()
-                    return .handled
-                }
-        } else {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
+        ZStack(alignment: .leading) {
+            if isEditingLabel {
+                TextField("Título", text: $labelDraft)
+                    .textFieldStyle(.plain)
+                    .font(SlotsFont.tituloCard)
+                    .foregroundStyle(titleColor)
+                    .focused($labelFieldFocused)
+                    .padding(.vertical, 2)
+                    .padding(.horizontal, 6)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background {
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill(Color.white.opacity(0.85))
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                    .strokeBorder(SlotsColor.naranja.opacity(0.45), lineWidth: 1)
+                            }
+                    }
+                    .onSubmit { commitLabelEdit() }
+                    .onKeyPress(.escape) {
+                        cancelLabelEdit()
+                        return .handled
+                    }
+            } else {
                 Text(hasContent ? SlotCardCopy.slotLabelDisplay(for: slot) : SlotCardCopy.emptyPlaceholderTitle(for: slot))
                     .font(SlotsFont.tituloCard)
                     .foregroundStyle(titleColor)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
-                if isTitleHovering {
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            HStack {
+                Spacer(minLength: 0)
+                if isTitleHovering, !isEditingLabel {
                     Image(systemName: "pencil")
-                        .font(SlotsFont.tituloCard)
-                        .foregroundStyle(SlotsColor.textoSecundario)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(titleColor.opacity(0.75))
+                        .frame(width: 24, height: 24)
+                        .transition(.opacity.combined(with: .scale(scale: 0.9)))
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(Rectangle())
-            .onHover { isTitleHovering = $0 }
-            .highPriorityGesture(
-                TapGesture().onEnded {
-                    labelDraft = SlotCardCopy.slotLabelDisplay(for: slot)
-                    isEditingLabel = true
-                }
-            )
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .contentShape(Rectangle())
+        .onHover { isTitleHovering = $0 }
+        .animation(.easeOut(duration: 0.14), value: isTitleHovering)
+        .highPriorityGesture(
+            TapGesture().onEnded {
+                guard isTitleHovering, !isEditingLabel else { return }
+                labelDraft = SlotCardCopy.slotLabelDisplay(for: slot)
+                isEditingLabel = true
+            }
+        )
     }
 
     @ViewBuilder
@@ -360,11 +385,19 @@ private struct SlotCardView: View {
     }
 
     private var titleColor: Color {
+        if prefersLightContent { return .white }
         if !hasContent {
             return slot.index == 5 ? SlotsColor.textoSecundario : SlotsColor.tinta
         }
-        if prefersLightContent { return .white }
         return SlotsColor.tinta
+    }
+
+    private var emptyHintColor: Color {
+        prefersLightContent ? Color.white.opacity(0.82) : SlotsColor.textoSecundario
+    }
+
+    private var needsBottomTextScrim: Bool {
+        prefersLightContent || SlotsPalette.isBrandGradient(slot.cardBackgroundHex)
     }
 
     private var colorSwatch: Color? {
@@ -378,7 +411,10 @@ private struct SlotCardView: View {
     }
 
     private var prefersLightContent: Bool {
-        isDarkCard || (isImageContent && hasContent) || isDarkCustomBackground
+        isDarkCard
+            || (isImageContent && hasContent)
+            || isDarkCustomBackground
+            || SlotsPalette.isBrandGradient(slot.cardBackgroundHex)
     }
 
     private var isDarkCustomBackground: Bool {
@@ -408,9 +444,18 @@ private struct SlotCardView: View {
     private var cardChrome: some View {
         ZStack {
             if SlotsPalette.isBrandGradient(slot.cardBackgroundHex) {
-                Image("DegradeNaranja")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
+                GeometryReader { geo in
+                    Image("DegradeNaranja")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: geo.size.width, height: geo.size.height)
+                        .clipped()
+                }
+                LinearGradient(
+                    colors: [Color.black.opacity(0.08), Color.black.opacity(0.52)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
             } else if isImageContent, case .image(let fileName) = slot.content {
                 ClipThumbnailView(fileName: fileName, style: .slot)
                 LinearGradient(
@@ -447,5 +492,22 @@ private struct SlotCardView: View {
     private var isImageContent: Bool {
         if case .image = slot.content { return true }
         return false
+    }
+}
+
+private struct SlotHeaderActionChip: View {
+    let systemImage: String
+    var foreground: Color
+    var onMediaBackground: Bool
+
+    var body: some View {
+        Image(systemName: systemImage)
+            .font(.system(size: 10, weight: .bold))
+            .foregroundStyle(foreground)
+            .frame(width: HotSlotDesign.slotHeaderChipHeight, height: HotSlotDesign.slotHeaderChipHeight)
+            .background {
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .fill(onMediaBackground ? Color.white.opacity(0.82) : SlotsColor.teclaFondo)
+            }
     }
 }

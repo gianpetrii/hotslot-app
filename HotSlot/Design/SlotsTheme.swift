@@ -54,3 +54,38 @@ enum SlotsRadius {
     static let chip: CGFloat = 8
     static let controlAlto: CGFloat = 48
 }
+
+/// Botón de acción principal en avisos del panel (el de la derecha).
+struct SlotsPrimaryButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(SlotsFont.textoUI)
+            .foregroundStyle(.white)
+            .padding(.horizontal, 16)
+            .frame(height: 32)
+            .background {
+                Capsule(style: .continuous)
+                    .fill(SlotsColor.naranja.opacity(configuration.isPressed ? 0.8 : 1))
+            }
+            .opacity(isEnabled ? 1 : 0.45)
+            .contentShape(Capsule(style: .continuous))
+    }
+}
+
+/// Botón secundario (Cancelar) junto a `SlotsPrimaryButtonStyle`.
+struct SlotsSecondaryButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(SlotsFont.textoUI)
+            .foregroundStyle(SlotsColor.tinta)
+            .padding(.horizontal, 16)
+            .frame(height: 32)
+            .background {
+                Capsule(style: .continuous)
+                    .fill(SlotsColor.teclaFondo.opacity(configuration.isPressed ? 0.7 : 1))
+            }
+            .contentShape(Capsule(style: .continuous))
+    }
+}

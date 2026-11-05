@@ -5,117 +5,107 @@ import UniformTypeIdentifiers
 /// Pills de bibliotecas + «Guardar portapapeles» (handoff `Main.html`).
 struct PanelLibraryBar: View {
     @Bindable var appState: AppState
-    @State private var libraryDropTargetId: UUID?
-    @State private var libraryBeingDragged: UUID?
-    @State private var isTrashDropTarget = false
+    @State private var pillHoverTargetId: UUID?
+    @State private var contentSwitchTask: Task<Void, Never>?
+    @State private var pillFrames: [UUID: CGRect] = [:]
+    @State private var barFrame: CGRect = .zero
+
+    private let contentSwitchDwell: TimeInterval = 0.55
+    private let reorderAnimation = Animation.spring(response: 0.28, dampingFraction: 0.82)
+    private let settleDuration: TimeInterval = 0.3
 
     private var libraries: [Library] {
         appState.libraryWorkspace.workspace.libraries.sorted { $0.order < $1.order }
+    }
+
+    /// Durante el arrastre, la pill arrastrada (como fantasma) se ubica en el punto de inserción.
+    private var displayedLibraries: [Library] {
+        let visible = libraries.filter { appState.deleteLibraryConfirmation?.id != $0.id }
+        guard let drag = appState.libraryDrag,
+              let dragged = visible.first(where: { $0.id == drag.libraryId }) else { return visible }
+        var others = visible.filter { $0.id != drag.libraryId }
+        others.insert(dragged, at: min(drag.insertIndex, others.count))
+        return others
     }
 
     private var activeId: UUID {
         appState.libraryWorkspace.workspace.activeLibraryId
     }
 
-    private var isLibraryDragActive: Bool {
-        libraryBeingDragged != nil
-    }
-
     var body: some View {
         HStack(spacing: SlotsSpace.m) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: SlotsSpace.s) {
-                    ForEach(libraries) { library in
-                        libraryPillRow(library)
+                    ForEach(displayedLibraries) { library in
+                        libraryPill(library)
                     }
                     addLibraryButton
                 }
                 .padding(.vertical, 4)
                 .padding(.horizontal, 2)
             }
-
-            if libraries.count > 1 {
-                libraryTrashDropTarget
+            .background {
+                GeometryReader { geo in
+                    Color.clear
+                        .onAppear { barFrame = geo.frame(in: .named(PanelView.coordinateSpaceName)) }
+                        .onChange(of: geo.frame(in: .named(PanelView.coordinateSpaceName))) { _, frame in
+                            barFrame = frame
+                        }
+                }
             }
 
             saveClipboardButton
         }
         .padding(.horizontal, HotSlotDesign.horizontalPadding)
-        .onChange(of: libraryDropTargetId) { _, _ in
-            clearLibraryDragIfIdle()
+        .onPreferenceChange(LibraryPillFramesKey.self) { pillFrames = $0 }
+        .onChange(of: pillHoverTargetId) { _, targetId in
+            scheduleContentLibrarySwitch(to: targetId)
         }
-        .onChange(of: isTrashDropTarget) { _, _ in
-            clearLibraryDragIfIdle()
+        .onDisappear {
+            contentSwitchTask?.cancel()
         }
-    }
-
-    private func clearLibraryDragIfIdle() {
-        guard libraryBeingDragged != nil else { return }
-        guard libraryDropTargetId == nil, !isTrashDropTarget else { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-            if libraryDropTargetId == nil, !isTrashDropTarget {
-                libraryBeingDragged = nil
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func libraryPillRow(_ library: Library) -> some View {
-        let showInsertMark = libraryDropTargetId == library.id
-            && libraryBeingDragged != nil
-            && libraryBeingDragged != library.id
-
-        HStack(spacing: 6) {
-            if showInsertMark {
-                RoundedRectangle(cornerRadius: 2, style: .continuous)
-                    .fill(SlotsColor.naranja)
-                    .frame(width: 3, height: SlotsRadius.controlAlto - 4)
-                    .transition(.opacity.combined(with: .scale(scale: 0.6, anchor: .leading)))
-            }
-            libraryPill(library)
-        }
-        .animation(.easeOut(duration: 0.16), value: showInsertMark)
     }
 
     private func libraryPill(_ library: Library) -> some View {
         let isActive = library.id == activeId
-        let count = appState.libraryWorkspace.filledSlotCount(in: library.id)
-        let isDropTarget = libraryDropTargetId == library.id
-        let isDragSource = library.id == libraryBeingDragged
+        let isGhost = appState.libraryDragActiveId == library.id
+        let isSlotDropHover = pillHoverTargetId == library.id && library.id != activeId
 
-        return HStack(spacing: SlotsSpace.s) {
-            Text(library.name)
-                .font(SlotsFont.textoUI)
-            countBadge(count: count, isActive: isActive)
-        }
-        .padding(.leading, 20)
-        .padding(.trailing, SlotsSpace.s)
-        .frame(height: SlotsRadius.controlAlto)
-        .background {
-            Capsule(style: .continuous)
-                .fill(isActive ? SlotsColor.tinta : Color.white.opacity(0.85))
-        }
+        return LibraryPillLabel(
+            name: library.name,
+            count: appState.libraryWorkspace.filledSlotCount(in: library.id),
+            isActive: isActive
+        )
         .overlay {
-            if isDropTarget, isLibraryDragActive {
+            if isGhost {
                 Capsule(style: .continuous)
-                    .strokeBorder(SlotsColor.naranja, lineWidth: 2)
-            } else if isDropTarget {
+                    .strokeBorder(SlotsColor.tinta.opacity(0.35), style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
+            } else if isSlotDropHover {
                 Capsule(style: .continuous)
-                    .strokeBorder(SlotsColor.naranja.opacity(0.45), lineWidth: 1.5)
+                    .strokeBorder(SlotsColor.naranja.opacity(0.4), lineWidth: 1.5)
             }
         }
-        .foregroundStyle(isActive ? Color.white : SlotsColor.tinta)
-        .scaleEffect(isDropTarget && isLibraryDragActive ? 1.03 : 1)
-        .opacity(isDragSource ? 0.38 : 1)
-        .animation(.easeOut(duration: 0.14), value: isDropTarget)
-        .animation(.easeOut(duration: 0.12), value: isDragSource)
+        .opacity(isGhost ? 0.3 : 1)
+        .background {
+            GeometryReader { geo in
+                Color.clear.preference(
+                    key: LibraryPillFramesKey.self,
+                    value: [library.id: geo.frame(in: .named(PanelView.coordinateSpaceName))]
+                )
+            }
+        }
         .contentShape(Capsule(style: .continuous))
         .onTapGesture {
             guard library.id != activeId else { return }
-            withAnimation(.easeOut(duration: 0.15)) {
+            withAnimation(.easeInOut(duration: 0.22)) {
                 appState.switchLibrary(to: library.id)
             }
         }
+        .gesture(
+            DragGesture(minimumDistance: 4, coordinateSpace: .named(PanelView.coordinateSpaceName))
+                .onChanged { value in updateLibraryDrag(library, value: value) }
+                .onEnded { _ in finishLibraryDrag() }
+        )
         .contextMenu {
             Button("Renombrar…") {
                 appState.renameLibraryTarget = library
@@ -123,106 +113,116 @@ struct PanelLibraryBar: View {
             Divider()
             if libraries.count > 1 {
                 Button("Eliminar «\(library.name)»…", role: .destructive) {
-                    appState.deleteLibraryConfirmation = library
-                }
-            }
-        }
-        .help("Clic para cambiar · Arrastrá para reordenar · Clic derecho para renombrar")
-        .onDrag {
-            libraryBeingDragged = library.id
-            let data = (try? JSONEncoder().encode(LibraryDragPayload(id: library.id))) ?? Data()
-            return NSItemProvider(item: data as NSData, typeIdentifier: UTType.hotslotLibraryDrag.identifier)
-        }
-        .onDrop(of: [UTType.hotslotLibraryDrag], isTargeted: Binding(
-            get: { libraryDropTargetId == library.id },
-            set: { targeted in
-                libraryDropTargetId = targeted ? library.id : nil
-                if !targeted, libraryBeingDragged == library.id {
-                    libraryBeingDragged = nil
-                }
-            }
-        )) { providers in
-            defer {
-                libraryBeingDragged = nil
-                libraryDropTargetId = nil
-            }
-            return acceptLibraryReorder(providers, before: library.id)
-        }
-    }
-
-    private var libraryTrashDropTarget: some View {
-        let active = isTrashDropTarget && isLibraryDragActive
-
-        return Image(systemName: "trash")
-            .font(.system(size: 14, weight: .semibold))
-            .foregroundStyle(active ? Color.white : SlotsColor.naranja)
-            .frame(width: SlotsRadius.controlAlto, height: SlotsRadius.controlAlto)
-            .background {
-                Circle()
-                    .fill(active ? SlotsColor.naranja : Color.white.opacity(0.85))
-                    .overlay {
-                        Circle()
-                            .strokeBorder(
-                                SlotsColor.naranja.opacity(active ? 1 : 0.45),
-                                lineWidth: active ? 0 : 1.5
-                            )
+                    withAnimation(reorderAnimation) {
+                        appState.requestDeleteLibrary(library)
                     }
-            }
-            .scaleEffect(active ? 1.06 : 1)
-            .animation(.easeOut(duration: 0.12), value: active)
-            .help("Arrastrá una biblioteca acá para eliminarla")
-            .onDrop(of: [UTType.hotslotLibraryDrag], isTargeted: $isTrashDropTarget) { providers in
-                defer {
-                    libraryBeingDragged = nil
-                    isTrashDropTarget = false
-                }
-                return acceptLibraryTrashDrop(providers)
-            }
-    }
-
-    private func acceptLibraryReorder(_ providers: [NSItemProvider], before targetId: UUID) -> Bool {
-        let type = UTType.hotslotLibraryDrag.identifier
-        guard let provider = providers.first(where: { $0.hasItemConformingToTypeIdentifier(type) }) else {
-            return false
-        }
-        provider.loadDataRepresentation(forTypeIdentifier: type) { data, _ in
-            guard let data,
-                  let payload = try? JSONDecoder().decode(LibraryDragPayload.self, from: data),
-                  payload.id != targetId else { return }
-            DispatchQueue.main.async {
-                withAnimation(.spring(response: 0.34, dampingFraction: 0.86)) {
-                    appState.reorderLibrary(draggedId: payload.id, before: targetId)
                 }
             }
         }
-        return true
+        .help("Clic cambiar · Arrastrá para reordenar o soltá en el tacho para eliminar")
+        .onDrop(of: [UTType.hotslotPanelDrag], isTargeted: Binding(
+            get: { pillHoverTargetId == library.id },
+            set: { pillHoverTargetId = $0 ? library.id : nil }
+        )) { _ in
+            false
+        }
     }
 
-    private func acceptLibraryTrashDrop(_ providers: [NSItemProvider]) -> Bool {
-        let type = UTType.hotslotLibraryDrag.identifier
-        guard let provider = providers.first(where: { $0.hasItemConformingToTypeIdentifier(type) }) else {
-            return false
+    // MARK: - Arrastre de bibliotecas
+
+    private func updateLibraryDrag(_ library: Library, value: DragGesture.Value) {
+        if appState.libraryDrag == nil {
+            guard let originIndex = libraries.firstIndex(where: { $0.id == library.id }),
+                  let frame = pillFrames[library.id] else { return }
+            contentSwitchTask?.cancel()
+            appState.libraryDrag = LibraryDragSession(
+                libraryId: library.id,
+                originIndex: originIndex,
+                startFrame: frame,
+                translation: value.translation,
+                location: value.location,
+                insertIndex: originIndex
+            )
         }
-        provider.loadDataRepresentation(forTypeIdentifier: type) { data, _ in
-            guard let data,
-                  let payload = try? JSONDecoder().decode(LibraryDragPayload.self, from: data),
-                  let library = libraries.first(where: { $0.id == payload.id }) else { return }
-            DispatchQueue.main.async {
-                appState.deleteLibraryConfirmation = library
+        guard var drag = appState.libraryDrag, drag.libraryId == library.id, !drag.isSettling else { return }
+        drag.translation = value.translation
+        drag.location = value.location
+
+        let newIndex = insertionIndex(for: drag)
+        if newIndex != drag.insertIndex {
+            drag.insertIndex = newIndex
+            withAnimation(reorderAnimation) {
+                appState.libraryDrag = drag
             }
+        } else {
+            appState.libraryDrag = drag
         }
-        return true
     }
 
-    private func countBadge(count: Int, isActive: Bool) -> some View {
-        Text("\(count)")
-            .font(SlotsFont.etiqueta)
-            .foregroundStyle(isActive ? Color.white : SlotsColor.tinta)
-            .frame(minWidth: 26, minHeight: 26)
-            .background {
-                Circle()
-                    .fill(isActive ? SlotsColor.naranja : Color.black.opacity(0.07))
+    /// Lejos de la barra (p. ej. yendo al tacho) la pill vuelve a su lugar original.
+    private func insertionIndex(for drag: LibraryDragSession) -> Int {
+        guard barFrame.insetBy(dx: -24, dy: -32).contains(drag.location) else {
+            return drag.originIndex
+        }
+        let others = libraries.filter { $0.id != drag.libraryId }
+        return others.filter { (pillFrames[$0.id]?.midX ?? .infinity) < drag.location.x }.count
+    }
+
+    private func finishLibraryDrag() {
+        guard let drag = appState.libraryDrag, !drag.isSettling,
+              let library = libraries.first(where: { $0.id == drag.libraryId }) else {
+            return
+        }
+
+        if appState.floatingLibraryTrashTargeted {
+            withAnimation(reorderAnimation) {
+                appState.libraryDrag = nil
+                appState.requestDeleteLibrary(library)
             }
+            return
+        }
+
+        if drag.insertIndex != drag.originIndex {
+            appState.moveLibrary(id: library.id, toIndex: drag.insertIndex)
+        }
+
+        guard let landing = pillFrames[library.id] else {
+            appState.libraryDrag = nil
+            return
+        }
+
+        var settling = drag
+        settling.isSettling = true
+        settling.translation = CGSize(
+            width: landing.midX - drag.startFrame.midX,
+            height: landing.midY - drag.startFrame.midY
+        )
+        withAnimation(.spring(response: settleDuration, dampingFraction: 0.82)) {
+            appState.libraryDrag = settling
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + settleDuration) {
+            guard appState.libraryDrag?.isSettling == true,
+                  appState.libraryDrag?.libraryId == library.id else { return }
+            withAnimation(.easeOut(duration: 0.12)) {
+                appState.libraryDrag = nil
+            }
+        }
+    }
+
+    private func scheduleContentLibrarySwitch(to targetId: UUID?) {
+        contentSwitchTask?.cancel()
+        guard let targetId,
+              appState.libraryDrag == nil,
+              targetId != activeId else { return }
+
+        contentSwitchTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: UInt64(contentSwitchDwell * 1_000_000_000))
+            guard !Task.isCancelled, pillHoverTargetId == targetId else { return }
+            guard appState.libraryDrag == nil else { return }
+            withAnimation(.easeInOut(duration: 0.22)) {
+                appState.switchLibrary(to: targetId)
+            }
+        }
     }
 
     private var addLibraryButton: some View {
@@ -274,5 +274,43 @@ struct PanelLibraryBar: View {
         }
         .buttonStyle(.plain)
         .help("Guarda el portapapeles en el primer slot vacío")
+    }
+}
+
+/// Pill de biblioteca (barra y copia flotante durante el arrastre).
+struct LibraryPillLabel: View {
+    let name: String
+    let count: Int
+    let isActive: Bool
+
+    var body: some View {
+        HStack(spacing: SlotsSpace.s) {
+            Text(name)
+                .font(SlotsFont.textoUI)
+            Text("\(count)")
+                .font(SlotsFont.etiqueta)
+                .foregroundStyle(isActive ? Color.white : SlotsColor.tinta)
+                .frame(minWidth: 26, minHeight: 26)
+                .background {
+                    Circle()
+                        .fill(isActive ? SlotsColor.naranja : Color.black.opacity(0.07))
+                }
+        }
+        .padding(.leading, 20)
+        .padding(.trailing, SlotsSpace.s)
+        .frame(height: SlotsRadius.controlAlto)
+        .background {
+            Capsule(style: .continuous)
+                .fill(isActive ? SlotsColor.tinta : Color.white.opacity(0.85))
+        }
+        .foregroundStyle(isActive ? Color.white : SlotsColor.tinta)
+    }
+}
+
+private struct LibraryPillFramesKey: PreferenceKey {
+    static var defaultValue: [UUID: CGRect] = [:]
+
+    static func reduce(value: inout [UUID: CGRect], nextValue: () -> [UUID: CGRect]) {
+        value.merge(nextValue()) { $1 }
     }
 }

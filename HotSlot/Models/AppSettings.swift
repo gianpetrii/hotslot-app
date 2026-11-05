@@ -12,6 +12,7 @@ struct AppSettings: Codable, Equatable {
     var firstInstallDate: Date?
     var licenseKey: String?
     var isLicensed: Bool
+    var confirmLibraryDelete: Bool
 
     static let `default` = AppSettings(
         historyLimit: 50,
@@ -32,7 +33,7 @@ struct AppSettings: Codable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case historyLimit, launchAtLogin, playSoundOnPaste, showNotchNotice, debugClipboard, hasCompletedOnboarding, hasSeenMenuBarHint
-        case firstInstallDate, licenseKey, isLicensed
+        case firstInstallDate, licenseKey, isLicensed, confirmLibraryDelete
     }
 
     init(
@@ -45,7 +46,8 @@ struct AppSettings: Codable, Equatable {
         hasSeenMenuBarHint: Bool = false,
         firstInstallDate: Date? = nil,
         licenseKey: String? = nil,
-        isLicensed: Bool = false
+        isLicensed: Bool = false,
+        confirmLibraryDelete: Bool = true
     ) {
         self.historyLimit = historyLimit
         self.launchAtLogin = launchAtLogin
@@ -57,6 +59,7 @@ struct AppSettings: Codable, Equatable {
         self.firstInstallDate = firstInstallDate
         self.licenseKey = licenseKey
         self.isLicensed = isLicensed
+        self.confirmLibraryDelete = confirmLibraryDelete
     }
 
     init(from decoder: Decoder) throws {
@@ -71,6 +74,7 @@ struct AppSettings: Codable, Equatable {
         firstInstallDate = try container.decodeIfPresent(Date.self, forKey: .firstInstallDate)
         licenseKey = try container.decodeIfPresent(String.self, forKey: .licenseKey)
         isLicensed = try container.decodeIfPresent(Bool.self, forKey: .isLicensed) ?? false
+        confirmLibraryDelete = try container.decodeIfPresent(Bool.self, forKey: .confirmLibraryDelete) ?? true
     }
 
     static func load() -> AppSettings {

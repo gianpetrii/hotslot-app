@@ -17,7 +17,9 @@ struct RenameLibraryFormView: View {
             HStack {
                 Spacer()
                 Button("Cancelar", action: onCancel)
+                    .buttonStyle(SlotsSecondaryButtonStyle())
                 Button("Guardar", action: onSave)
+                    .buttonStyle(SlotsPrimaryButtonStyle())
                     .keyboardShortcut(.defaultAction)
                     .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }

@@ -10,8 +10,10 @@ enum HotSlotDesign {
     /// Pista bajo el panel (handoff: fuera de la tarjeta de vidrio).
     static let panelHintOutsideGap: CGFloat = 12
     static let panelHintOutsideHeight: CGFloat = 22
+    /// Franja bajo la tarjeta: pista de uso, o el tacho mientras se arrastra una biblioteca.
+    static let panelBottomBandHeight: CGFloat = 64
     static var panelWindowHeight: CGFloat {
-        panelHeight + panelHintOutsideGap + panelHintOutsideHeight
+        panelHeight + panelHintOutsideGap + panelBottomBandHeight
     }
     /// Separación vertical entre cabecera, cuerpo y barra (handoff `Main.html` gap 24).
     static let panelSectionGap: CGFloat = SlotsSpace.l
@@ -49,6 +51,11 @@ enum HotSlotDesign {
     static let slotPeekMaxTextHeight: CGFloat = 220
     static let slotPeekHideDelay: TimeInterval = 0.18
     static let slotOverlayControlSize: CGFloat = 22
+    /// Altura visual compartida: «Slot N», atajo y cruz en la card.
+    static let slotHeaderChipHeight: CGFloat = 20
+    static let slotHeaderChipMinWidth: CGFloat = 28
+    /// Altura fija de la fila del título en cards (evita saltos al editar / lápiz).
+    static let slotTitleRowHeight: CGFloat = 46
     static let slotOverlayIconSize: CGFloat = 10
     static let slotOverlayCornerRadius: CGFloat = 6
     /// Ancho fijo del badge de atajo (evita que el popover se mueva al grabar/borrar).

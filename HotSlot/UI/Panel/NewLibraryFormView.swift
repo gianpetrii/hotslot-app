@@ -18,7 +18,9 @@ struct NewLibraryFormView: View {
             HStack {
                 Spacer()
                 Button("Cancelar", action: onCancel)
+                    .buttonStyle(SlotsSecondaryButtonStyle())
                 Button("Crear biblioteca", action: onCreate)
+                    .buttonStyle(SlotsPrimaryButtonStyle())
                     .keyboardShortcut(.defaultAction)
                     .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }

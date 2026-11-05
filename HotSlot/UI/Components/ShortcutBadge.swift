@@ -60,11 +60,15 @@ struct SlotHandoffShortcutChip: View {
             .font(SlotsFont.etiqueta)
             .foregroundStyle(SlotsColor.textoTerciario)
             .lineLimit(1)
-            .minimumScaleFactor(0.75)
-            .padding(.horizontal, SlotsSpace.s)
-            .padding(.vertical, SlotsSpace.xs)
+            .minimumScaleFactor(0.7)
+            .padding(.horizontal, 5)
+            .frame(
+                minWidth: HotSlotDesign.slotHeaderChipMinWidth,
+                minHeight: HotSlotDesign.slotHeaderChipHeight,
+                maxHeight: HotSlotDesign.slotHeaderChipHeight
+            )
             .background {
-                RoundedRectangle(cornerRadius: SlotsRadius.chip, style: .continuous)
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
                     .fill(chipBackground)
             }
     }

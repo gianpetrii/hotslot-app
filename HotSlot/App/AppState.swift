@@ -8,6 +8,17 @@ enum SettingsTab: Int {
     case permissions = 3
 }
 
+struct LibraryDragSession: Equatable {
+    let libraryId: UUID
+    let originIndex: Int
+    let startFrame: CGRect
+    var translation: CGSize
+    var location: CGPoint
+    var insertIndex: Int
+    /// Soltada: la copia flotante viaja a su lugar final antes de cerrar la sesión.
+    var isSettling = false
+}
+
 /// Estado global de la aplicación.
 @MainActor
 @Observable
@@ -30,7 +41,8 @@ final class AppState {
     var pendingSettingsTab: SettingsTab?
     /// Sube cuando cambia un atajo grabado, para refrescar badges sin relanzar.
     var shortcutEpoch = 0
-
+    /// Incrementa al cambiar biblioteca activa (animación del cuerpo del panel).
+    var librarySwitchRevision = 0
     /// Ventana delante de la cual mostrar el aviso de Accesibilidad (onboarding / ajustes).
     weak var accessibilityPresentingWindow: NSWindow?
 
@@ -39,6 +51,17 @@ final class AppState {
     var isNewLibraryFormPresented = false
     var deleteLibraryConfirmation: Library?
     var renameLibraryTarget: Library?
+
+    /// Arrastre de pill de biblioteca (reorden / tacho flotante). Coordenadas en `PanelView.coordinateSpaceName`.
+    var libraryDrag: LibraryDragSession?
+    var libraryTrashFrame: CGRect = .zero
+
+    var libraryDragActiveId: UUID? { libraryDrag?.libraryId }
+
+    var floatingLibraryTrashTargeted: Bool {
+        guard let libraryDrag, libraryTrashFrame != .zero else { return false }
+        return libraryTrashFrame.insetBy(dx: -24, dy: -20).contains(libraryDrag.location)
+    }
 
     /// Ajustes abiertos: el icono de menú bar no cierra el panel flotante al tocarlo.
     var isSettingsWindowVisible = false
@@ -285,6 +308,7 @@ final class AppState {
         libraryWorkspace.syncFromLegacySlotStore(slotStore)
         libraryWorkspace.setActiveLibrary(id: id)
         libraryWorkspace.applyActiveLibrary(to: slotStore)
+        librarySwitchRevision += 1
         UsageEventLog.shared.record("biblioteca_cambiar", detail: libraryWorkspace.activeLibrary?.name)
     }
 
@@ -300,14 +324,34 @@ final class AppState {
         libraryWorkspace.syncFromLegacySlotStore(slotStore)
         guard libraryWorkspace.deleteLibrary(id: id) else { return false }
         libraryWorkspace.applyActiveLibrary(to: slotStore)
+        librarySwitchRevision += 1
         UsageEventLog.shared.record("biblioteca_eliminar")
         return true
     }
 
-    func reorderLibrary(draggedId: UUID, before targetId: UUID) {
+    func moveLibrary(id: UUID, toIndex index: Int) {
         libraryWorkspace.syncFromLegacySlotStore(slotStore)
-        libraryWorkspace.reorderLibrary(draggedId: draggedId, before: targetId)
+        libraryWorkspace.moveLibrary(id: id, toIndex: index)
         UsageEventLog.shared.record("biblioteca_reordenar")
+    }
+
+    /// Eliminar desde tacho o menú: confirma salvo que el usuario haya elegido no volver a preguntar.
+    func requestDeleteLibrary(_ library: Library) {
+        guard libraryWorkspace.workspace.libraries.count > 1 else {
+            showToast("Tiene que quedar al menos una biblioteca")
+            return
+        }
+        if settings.confirmLibraryDelete {
+            deleteLibraryConfirmation = library
+        } else {
+            deleteLibrary(id: library.id)
+        }
+    }
+
+    func setConfirmLibraryDelete(_ confirm: Bool) {
+        var current = settings
+        current.confirmLibraryDelete = confirm
+        settings = current
     }
 
     func renameLibrary(id: UUID, name: String) {

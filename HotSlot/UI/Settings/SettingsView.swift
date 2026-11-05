@@ -10,6 +10,7 @@ struct SettingsView: View {
     @State private var showNotchNotice = AppSettings.load().showNotchNotice
     @State private var historyLimit = AppSettings.load().historyLimit
     @State private var debugClipboard = AppSettings.load().debugClipboard
+    @State private var confirmLibraryDelete = AppSettings.load().confirmLibraryDelete
     @State private var accessibilityTrusted = AccessibilityPermission.isTrusted
     @State private var selectedTab: SettingsTab = .general
     @State private var licenseKeyInput = AppSettings.load().licenseKey ?? ""
@@ -49,6 +50,7 @@ struct SettingsView: View {
         }
         .frame(width: 720, height: 540)
         .onAppear {
+            confirmLibraryDelete = AppSettings.load().confirmLibraryDelete
             if let pending = appState.pendingSettingsTab {
                 selectedTab = pending
                 appState.pendingSettingsTab = nil
@@ -96,6 +98,13 @@ struct SettingsView: View {
                         Button("Cómo mantener \(BrandDisplay.name) visible…") {
                             MenuBarGuide.present()
                         }
+                    }
+
+                    Section("Bibliotecas") {
+                        Toggle("Confirmar antes de eliminar una biblioteca", isOn: $confirmLibraryDelete)
+                            .onChange(of: confirmLibraryDelete) { _, newValue in
+                                appState.setConfirmLibraryDelete(newValue)
+                            }
                     }
 
                     Section("Historial") {

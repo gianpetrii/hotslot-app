@@ -94,16 +94,18 @@ final class LibraryWorkspaceStore {
         save()
     }
 
-    func reorderLibrary(draggedId: UUID, before targetId: UUID) {
-        guard draggedId != targetId else { return }
+    /// `index` cuenta posiciones en la lista sin la biblioteca movida.
+    func moveLibrary(id: UUID, toIndex index: Int) {
         var sorted = workspace.libraries.sorted { $0.order < $1.order }
-        guard let fromIdx = sorted.firstIndex(where: { $0.id == draggedId }),
-              let toIdx = sorted.firstIndex(where: { $0.id == targetId }) else { return }
+        guard let fromIdx = sorted.firstIndex(where: { $0.id == id }) else { return }
         let item = sorted.remove(at: fromIdx)
-        let insertIdx = fromIdx < toIdx ? toIdx - 1 : toIdx
-        sorted.insert(item, at: insertIdx)
-        for (offset, library) in sorted.enumerated() {
-            if let idx = workspace.libraries.firstIndex(where: { $0.id == library.id }) {
+        sorted.insert(item, at: min(max(index, 0), sorted.count))
+        applyLibraryOrder(sorted.map(\.id))
+    }
+
+    private func applyLibraryOrder(_ orderedIds: [UUID]) {
+        for (offset, id) in orderedIds.enumerated() {
+            if let idx = workspace.libraries.firstIndex(where: { $0.id == id }) {
                 workspace.libraries[idx].order = offset
             }
         }

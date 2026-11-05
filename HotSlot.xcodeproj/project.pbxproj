@@ -19,6 +19,7 @@
 		1831E0CCBA952305EFEE0AF7 /* SlotsWorkspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8791B78D4ECD0F3FCA7B987 /* SlotsWorkspace.swift */; };
 		1B17E199882E6BF6729D5C9F /* ShortcutConflict.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0D7BCF8AAD91BA51ABE18E6 /* ShortcutConflict.swift */; };
 		1BEBD40631434B777BF77F74 /* BackdropController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8108F534EC224E3BA83D449B /* BackdropController.swift */; };
+		1DA555C067A4C4FEC925FF5B /* PanelFloatingLibraryTrash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A64BAFFA5139B4A87269AD /* PanelFloatingLibraryTrash.swift */; };
 		1EB231A326C88DBB560DCA62 /* PanelDragPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73024E80E174C79983E6A25D /* PanelDragPayload.swift */; };
 		2666AEEE1C23121AC660B2AC /* PanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A911DBA98261441FF883EE51 /* PanelView.swift */; };
 		2C243CEF754FA0B312FCF6AD /* SlotStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099675B8BFE15486169F4C0B /* SlotStoreTests.swift */; };
@@ -112,6 +113,7 @@
 		1560171CDCA17C9B5AF77D26 /* OnboardingDemos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingDemos.swift; sourceTree = "<group>"; };
 		19FC870A2B9262688DDFDF1B /* SlotsTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsTheme.swift; sourceTree = "<group>"; };
 		20B797933714326535479FA7 /* InterTight-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InterTight-Regular.ttf"; sourceTree = "<group>"; };
+		23A64BAFFA5139B4A87269AD /* PanelFloatingLibraryTrash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelFloatingLibraryTrash.swift; sourceTree = "<group>"; };
 		27819786F66292E2771CA28D /* onboarding-demo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "onboarding-demo.png"; sourceTree = "<group>"; };
 		279A89FD0850AFC9891FEE6D /* MenuBarGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarGuide.swift; sourceTree = "<group>"; };
 		2CAA0E362F8D30646F3F7C48 /* DeleteLibraryFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteLibraryFormView.swift; sourceTree = "<group>"; };
@@ -375,6 +377,7 @@
 				9D990A1EB5D5AAA6C60B70D8 /* NewLibraryFormView.swift */,
 				EBD50D3AD7653F5FCEE0C092 /* PanelController.swift */,
 				73024E80E174C79983E6A25D /* PanelDragPayload.swift */,
+				23A64BAFFA5139B4A87269AD /* PanelFloatingLibraryTrash.swift */,
 				CBEB360BA0C811221C1D6DE1 /* PanelHeaderBlock.swift */,
 				2DCFDD565B98C8B5733679A0 /* PanelLibraryBar.swift */,
 				4BC816C077BA5FF7063ABC6F /* PanelModalOverlay.swift */,
@@ -675,6 +678,7 @@
 				5A14D5F57B0B72252A3272D1 /* OnboardingWindowController.swift in Sources */,
 				8A1E4F5E452F9201228BA817 /* PanelController.swift in Sources */,
 				1EB231A326C88DBB560DCA62 /* PanelDragPayload.swift in Sources */,
+				1DA555C067A4C4FEC925FF5B /* PanelFloatingLibraryTrash.swift in Sources */,
 				F956A4D89D12BE17B6D6BB23 /* PanelHeaderBlock.swift in Sources */,
 				9973A44BCB5E1A715BC15A84 /* PanelLibraryBar.swift in Sources */,
 				7C70678EEE4AD2EEFE68A29F /* PanelModalOverlay.swift in Sources */,

@@ -10,6 +10,7 @@ struct PanelView: View {
     @State private var unfoldGeneration = 0
     @State private var newLibraryName = ""
     @State private var renameLibraryName = ""
+    @State private var dontAskBeforeLibraryDelete = false
     @FocusState private var isSearchFocused: Bool
 
     private var filteredItems: [ClipItem] {
@@ -21,6 +22,13 @@ struct PanelView: View {
     }
 
     private let listAnimation = Animation.spring(response: 0.34, dampingFraction: 0.82)
+
+    static let coordinateSpaceName = "panelRoot"
+
+    private var showsLibraryTrash: Bool {
+        guard let drag = appState.libraryDrag, !drag.isSettling else { return false }
+        return appState.libraryWorkspace.workspace.libraries.count > 1
+    }
 
     var body: some View {
         ZStack {
@@ -34,6 +42,8 @@ struct PanelView: View {
                                 searchText: $searchText,
                                 isSearchFocused: $isSearchFocused
                             )
+                            .id("header-\(appState.librarySwitchRevision)")
+                            .transition(.opacity.combined(with: .move(edge: .top)))
 
                             HStack(alignment: .top, spacing: HotSlotDesign.panelBodyGap) {
                                 SlotGridView(
@@ -59,6 +69,8 @@ struct PanelView: View {
                             .padding(.horizontal, HotSlotDesign.horizontalPadding)
                             .frame(maxHeight: .infinity)
                             .opacity(appState.panelBodyRevealed ? 1 : 0.35)
+                            .id("body-\(appState.librarySwitchRevision)")
+                            .transition(.opacity.combined(with: .scale(scale: 0.992)))
 
                             PanelLibraryBar(appState: appState)
                         }
@@ -68,13 +80,29 @@ struct PanelView: View {
                 }
                 .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .topLeading)
 
-                panelShortcutHint
+                ZStack(alignment: .top) {
+                    if showsLibraryTrash {
+                        PanelFloatingLibraryTrash(appState: appState)
+                            .frame(maxHeight: .infinity)
+                            .transition(.scale(scale: 0.8).combined(with: .opacity))
+                    } else {
+                        panelShortcutHint
+                            .transition(.opacity)
+                    }
+                }
+                .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelBottomBandHeight, alignment: .top)
             }
+            .animation(.easeOut(duration: 0.18), value: showsLibraryTrash)
             .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelWindowHeight, alignment: .top)
 
             panelModalLayer
         }
         .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelWindowHeight, alignment: .top)
+        .coordinateSpace(name: Self.coordinateSpaceName)
+        .overlay(alignment: .topLeading) {
+            floatingDraggedLibrary
+        }
+        .animation(.easeInOut(duration: 0.22), value: appState.librarySwitchRevision)
         .animation(.easeOut(duration: 0.18), value: appState.isSaveClipboardSlotPickerPresented)
         .animation(.easeOut(duration: 0.18), value: appState.isNewLibraryFormPresented)
         .animation(.easeOut(duration: 0.18), value: appState.deleteLibraryConfirmation != nil)
@@ -82,7 +110,7 @@ struct PanelView: View {
         .overlay(alignment: .bottom) {
             if let toast = appState.toastMessage {
                 ToastView(message: toast)
-                    .padding(.bottom, HotSlotDesign.panelHintOutsideHeight + 8)
+                    .padding(.bottom, HotSlotDesign.panelBottomBandHeight + 8)
                     .transition(.asymmetric(
                         insertion: .move(edge: .bottom).combined(with: .opacity),
                         removal: .opacity
@@ -139,6 +167,7 @@ struct PanelView: View {
             return .handled
         }
         .onChange(of: appState.isPanelVisible) { _, visible in
+            appState.libraryDrag = nil
             if visible {
                 playOpenAnimation()
             } else {
@@ -166,6 +195,28 @@ struct PanelView: View {
             keyboardHighlightIndex = nil
         }
         .environment(appState)
+    }
+
+    @ViewBuilder
+    private var floatingDraggedLibrary: some View {
+        if let drag = appState.libraryDrag,
+           let library = appState.libraryWorkspace.workspace.libraries.first(where: { $0.id == drag.libraryId }) {
+            let overTrash = appState.floatingLibraryTrashTargeted
+            LibraryPillLabel(
+                name: library.name,
+                count: appState.libraryWorkspace.filledSlotCount(in: library.id),
+                isActive: library.id == appState.libraryWorkspace.workspace.activeLibraryId
+            )
+            .shadow(color: Color.black.opacity(drag.isSettling ? 0.04 : 0.18), radius: drag.isSettling ? 4 : 14, y: drag.isSettling ? 1 : 6)
+            .scaleEffect(overTrash ? 0.6 : (drag.isSettling ? 1 : 1.04))
+            .opacity(overTrash ? 0.75 : 1)
+            .animation(.spring(response: 0.22, dampingFraction: 0.75), value: overTrash)
+            .position(
+                x: drag.startFrame.midX + drag.translation.width,
+                y: drag.startFrame.midY + drag.translation.height
+            )
+            .allowsHitTesting(false)
+        }
     }
 
     @ViewBuilder
@@ -202,10 +253,22 @@ struct PanelView: View {
             } content: {
                 DeleteLibraryFormView(
                     libraryName: library.name,
-                    onCancel: { appState.deleteLibraryConfirmation = nil },
+                    dontAskAgain: $dontAskBeforeLibraryDelete,
+                    onCancel: {
+                        withAnimation(.easeOut(duration: 0.2)) {
+                            appState.deleteLibraryConfirmation = nil
+                        }
+                        dontAskBeforeLibraryDelete = false
+                    },
                     onDelete: {
-                        _ = appState.deleteLibrary(id: library.id)
-                        appState.deleteLibraryConfirmation = nil
+                        if dontAskBeforeLibraryDelete {
+                            appState.setConfirmLibraryDelete(false)
+                        }
+                        withAnimation(.easeOut(duration: 0.2)) {
+                            _ = appState.deleteLibrary(id: library.id)
+                            appState.deleteLibraryConfirmation = nil
+                        }
+                        dontAskBeforeLibraryDelete = false
                     }
                 )
             }

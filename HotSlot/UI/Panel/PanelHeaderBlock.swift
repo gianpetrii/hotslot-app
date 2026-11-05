@@ -6,6 +6,10 @@ struct PanelHeaderBlock: View {
     let panelController: PanelController
     @Binding var searchText: String
     @FocusState.Binding var isSearchFocused: Bool
+    @State private var isLibraryTitleHovering = false
+    @State private var isEditingLibraryName = false
+    @State private var libraryNameDraft = ""
+    @FocusState private var isLibraryNameFocused: Bool
 
     private var libraryName: String {
         appState.libraryWorkspace.activeLibrary?.name ?? BrandDisplay.name
@@ -13,11 +17,7 @@ struct PanelHeaderBlock: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: SlotsSpace.l) {
-            Text(libraryName)
-                .font(SlotsFont.tituloPantalla(false))
-                .foregroundStyle(SlotsColor.tinta)
-                .lineLimit(1)
-                .minimumScaleFactor(0.55)
+            libraryTitleBlock
                 .frame(maxWidth: .infinity, minHeight: SlotsRadius.controlAlto, alignment: .leading)
 
             HStack(spacing: SlotsSpace.s) {
@@ -43,6 +43,110 @@ struct PanelHeaderBlock: View {
         .padding(.horizontal, HotSlotDesign.horizontalPadding)
         .padding(.top, SlotsSpace.xl)
         .background(WindowDragHandle())
+        .onChange(of: appState.librarySwitchRevision) { _, _ in
+            cancelLibraryRename()
+        }
+    }
+
+    private var libraryTitleBlock: some View {
+        ZStack(alignment: .leading) {
+            if isEditingLibraryName {
+                TextField("Nombre de biblioteca", text: $libraryNameDraft)
+                    .textFieldStyle(.plain)
+                    .font(SlotsFont.tituloPantalla(false))
+                    .foregroundStyle(SlotsColor.tinta)
+                    .focused($isLibraryNameFocused)
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 8)
+                    .background {
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(Color.white.opacity(0.85))
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .strokeBorder(SlotsColor.naranja.opacity(0.45), lineWidth: 1)
+                            }
+                    }
+                    .onSubmit { commitLibraryRename() }
+                    .onKeyPress(.escape) {
+                        cancelLibraryRename()
+                        return .handled
+                    }
+            } else {
+                Text(libraryName)
+                    .font(SlotsFont.tituloPantalla(false))
+                    .foregroundStyle(SlotsColor.tinta)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.55)
+            }
+
+            HStack {
+                Spacer(minLength: 0)
+                if isLibraryTitleHovering, !isEditingLibraryName {
+                    Button(action: beginLibraryRename) {
+                        Image(systemName: "pencil")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(SlotsColor.textoSecundario)
+                            .frame(width: 28, height: 28)
+                            .background {
+                                Circle()
+                                    .fill(Color.black.opacity(0.06))
+                            }
+                    }
+                    .buttonStyle(.plain)
+                    .help("Renombrar biblioteca")
+                    .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                }
+            }
+        }
+        .frame(minHeight: SlotsRadius.controlAlto, alignment: .leading)
+        .contentShape(Rectangle())
+        .onHover { isLibraryTitleHovering = $0 }
+        .animation(.easeOut(duration: 0.14), value: isLibraryTitleHovering)
+        .highPriorityGesture(
+            TapGesture().onEnded {
+                guard isLibraryTitleHovering, !isEditingLibraryName else { return }
+                beginLibraryRename()
+            }
+        )
+        .onChange(of: isEditingLibraryName) { _, editing in
+            if editing {
+                libraryNameDraft = libraryName
+                DispatchQueue.main.async {
+                    isLibraryNameFocused = true
+                }
+            }
+        }
+        .onChange(of: isLibraryNameFocused) { wasFocused, focused in
+            if wasFocused, !focused, isEditingLibraryName {
+                commitLibraryRename()
+            }
+        }
+    }
+
+    private func beginLibraryRename() {
+        guard appState.libraryWorkspace.activeLibrary != nil else { return }
+        libraryNameDraft = libraryName
+        isEditingLibraryName = true
+    }
+
+    private func commitLibraryRename() {
+        let trimmed = libraryNameDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty,
+              let library = appState.libraryWorkspace.activeLibrary else {
+            cancelLibraryRename()
+            return
+        }
+        if trimmed != library.name {
+            appState.renameLibrary(id: library.id, name: trimmed)
+        }
+        isEditingLibraryName = false
+        isLibraryNameFocused = false
+    }
+
+    private func cancelLibraryRename() {
+        isEditingLibraryName = false
+        isLibraryNameFocused = false
+        libraryNameDraft = ""
     }
 
     private var panelSearchField: some View {
