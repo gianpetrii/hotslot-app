@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.22.0] — 2026-11-05
+
+### Historial
+
+- El texto conserva los saltos de línea. Cerrado muestra 2 renglones; al pasar el mouse, hasta 8, y solo si algo quedó cortado.
+- Pin arriba a la derecha, solo el ícono (fondo blanco únicamente sobre la imagen agrandada). Fijado: contorno naranja.
+
+### Pegado
+
+- Al pegar desde el historial o un slot se conserva el formato original (negrita y demás) cuando la app de destino lo acepta; si no, texto plano.
+
 ## [0.21.0] — 2026-11-05
 
 ### Accesibilidad
