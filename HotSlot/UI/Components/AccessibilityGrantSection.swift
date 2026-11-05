@@ -91,11 +91,15 @@ struct AccessibilityGrantSection: View {
 
             AccessibilityPermission.requestAccessForPaste(focusWindow: appState.accessibilityPresentingWindow)
 
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                 isTrusted = AccessibilityPermission.isTrusted
-                guard !AccessibilityPermission.isTrusted else { return }
-                AccessibilityPermission.openSettings()
-                appState.showToast("Activá el interruptor junto a Slots en Accesibilidad.")
+                guard !isTrusted else { return }
+                if AccessibilityPermission.isSystemPromptOnScreen {
+                    appState.showToast("En el aviso, tocá «Abrir Ajustes del Sistema» y activá Slots.")
+                } else {
+                    AccessibilityPermission.openSettings()
+                    appState.showToast("Activá el interruptor junto a Slots en Accesibilidad.")
+                }
             }
         }
     }
@@ -103,7 +107,7 @@ struct AccessibilityGrantSection: View {
 
 enum AccessibilityPermissionCopy {
     static let promptFirst = """
-    macOS muestra un aviso del sistema (una vez por copia de la app). Si no aparece, abrí Accesibilidad en Ajustes y activá \(BrandDisplay.name). La app no puede hacerlo sola.
+    macOS muestra un aviso del sistema la primera vez. Si ya lo cerraste, se abre Accesibilidad en Ajustes para que actives \(BrandDisplay.name). La app no puede activarlo sola.
     """
 }
 

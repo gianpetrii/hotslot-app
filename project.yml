@@ -36,9 +36,9 @@ targets:
         PRODUCT_NAME: Slots
         PRODUCT_MODULE_NAME: HotSlot
         INFOPLIST_FILE: HotSlot/Resources/Info.plist
-        CODE_SIGN_ENTITLEMENTS: HotSlot/Resources/HotSlot.entitlements
         ENABLE_HARDENED_RUNTIME: YES
-        ENABLE_APP_SANDBOX: YES
+        # Sin sandbox: el sandbox bloquea el aviso TCC de Accesibilidad (universalAccessAuthWarn) y el pegado con CGEvent.
+        ENABLE_APP_SANDBOX: NO
         COMBINE_HIDPI_IMAGES: YES
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
     dependencies:
@@ -55,13 +55,6 @@ targets:
         basedOnDependencyAnalysis: false
         script: |
           xattr -cr "${TARGET_BUILD_DIR}/${FULL_PRODUCT_NAME}" 2>/dev/null || true
-    entitlements:
-      path: HotSlot/Resources/HotSlot.entitlements
-      properties:
-        com.apple.security.app-sandbox: true
-        com.apple.security.automation.apple-events: true
-        com.apple.security.temporary-exception.files.home-relative-path.read-only:
-          - "/Library/Application Support/HotSlot/"
 
   HotSlotTests:
     type: bundle.unit-test

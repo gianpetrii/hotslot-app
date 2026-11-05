@@ -13,10 +13,11 @@ Acuerdos entre Gianluca y desarrollo tras Etapa 0 y el handoff de Dante (descarg
 - **Enfoque de desarrollo:** no retomar gating, checkout ni copy de compra hasta cerrar el rediseño macOS; el código (`Entitlements.swift`, `LemonLicenseService`, `docs/purchase.html`) se mantiene.
 - **Modelo acordado:** 90 días prueba completa → después solo slot 1 sin licencia; pago único **USD 10** (Lemon) → clave en Ajustes → General → Licencia. Canal fuera de MAS (Accesibilidad). Reactivar gating: **BACKLOG** › post-usabilidad.
 
-## Accesibilidad (TCC)
+## Accesibilidad (TCC) y sandbox
 
-- **Producto:** el aviso del sistema debe volver a funcionar; activación manual con **+** no es aceptable a largo plazo (P0 en BACKLOG).
-- **Prueba de usabilidad:** si el aviso sigue fallando, documentar workaround en guion del moderador; seguir investigando en paralelo al rediseño.
+- **Sin App Sandbox** (nov 2026): con sandbox, macOS bloquea el aviso de Accesibilidad y el pegado con ⌘V sintético. Sandbox solo es obligatorio en Mac App Store, que ya rechazó la app por Accesibilidad; la distribución es DMG Developer ID notarizado.
+- Si algún día se vuelve a Mac App Store, haría falta otra estrategia de pegado (p. ej. copiar y que el usuario pegue con ⌘V).
+- Al pasar a sin sandbox, la app copia una vez datos y preferencias desde `~/Library/Containers/com.hotslot.app`.
 
 ## Atajos por defecto
 

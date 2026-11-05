@@ -8,7 +8,7 @@ enum AppSupportDirectory {
     /// Override para tests unitarios.
     static var rootOverride: URL?
 
-    private static let unsandboxedMigrationKey = "hotslot.migrated.unsandboxed.support.v1"
+    private static let sandboxContainerMigrationKey = "hotslot.migrated.fromSandboxContainer.v1"
 
     static var root: URL {
         if let rootOverride { return rootOverride }
@@ -40,38 +40,55 @@ enum AppSupportDirectory {
         root.appendingPathComponent("usage-events.json")
     }
 
-    /// Copia historial/slots/imágenes desde `~/Library/Application Support/HotSlot` al contenedor sandbox.
-    static func migrateUnsandboxedIfNeeded() {
-        guard ProcessInfo.processInfo.environment["APP_SANDBOX_CONTAINER_ID"] != nil else { return }
-        guard !UserDefaults.standard.bool(forKey: unsandboxedMigrationKey) else { return }
-        UserDefaults.standard.set(true, forKey: unsandboxedMigrationKey)
+    /// Hasta 0.20.x la app corría en sandbox: datos y preferencias vivían en `~/Library/Containers/<bundle>`.
+    /// Se copian una sola vez; el contenedor es la versión más nueva, así que pisa lo que haya.
+    static func migrateFromSandboxContainerIfNeeded() {
+        guard rootOverride == nil,
+              ProcessInfo.processInfo.environment["APP_SANDBOX_CONTAINER_ID"] == nil else { return }
+        let defaults = UserDefaults.standard
+        guard !defaults.bool(forKey: sandboxContainerMigrationKey) else { return }
+        defer { defaults.set(true, forKey: sandboxContainerMigrationKey) }
 
-        guard let realHome = realUserHomeDirectory() else { return }
-        let source = realHome.appendingPathComponent("Library/Application Support/\(appName)", isDirectory: true)
-        let destination = root
-        let fm = FileManager.default
-        guard source.standardizedFileURL != destination.standardizedFileURL,
-              fm.fileExists(atPath: source.path) else { return }
+        guard let bundleID = Bundle.main.bundleIdentifier,
+              let realHome = realUserHomeDirectory() else { return }
+        let containerLibrary = realHome
+            .appendingPathComponent("Library/Containers/\(bundleID)/Data/Library", isDirectory: true)
 
-        copyIfMissing(from: source.appendingPathComponent("history.json"), to: historyFile)
-        copyIfMissing(from: source.appendingPathComponent("slots.json"), to: slotsFile)
+        copyReplacing(
+            from: containerLibrary.appendingPathComponent("Application Support/\(appName)", isDirectory: true),
+            to: root
+        )
 
-        let sourceImages = source.appendingPathComponent("Images", isDirectory: true)
-        guard let files = try? fm.contentsOfDirectory(at: sourceImages, includingPropertiesForKeys: nil) else { return }
-        let destImages = images
-        for file in files {
-            copyIfMissing(from: file, to: destImages.appendingPathComponent(file.lastPathComponent))
+        let preferences = containerLibrary.appendingPathComponent("Preferences/\(bundleID).plist")
+        if let values = NSDictionary(contentsOf: preferences) as? [String: Any] {
+            for (key, value) in values where key != sandboxContainerMigrationKey {
+                defaults.set(value, forKey: key)
+            }
         }
     }
 
-    private static func copyIfMissing(from source: URL, to destination: URL) {
+    /// Archivos: reemplaza. Carpetas (p. ej. `Images`): fusiona.
+    private static func copyReplacing(from source: URL, to destination: URL) {
         let fm = FileManager.default
-        guard fm.fileExists(atPath: source.path),
-              !fm.fileExists(atPath: destination.path) else { return }
-        try? fm.copyItem(at: source, to: destination)
+        guard let items = try? fm.contentsOfDirectory(
+            at: source,
+            includingPropertiesForKeys: [.isDirectoryKey]
+        ) else { return }
+        try? fm.createDirectory(at: destination, withIntermediateDirectories: true)
+
+        for item in items {
+            let target = destination.appendingPathComponent(item.lastPathComponent)
+            let isDirectory = (try? item.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+            if isDirectory {
+                copyReplacing(from: item, to: target)
+            } else {
+                try? fm.removeItem(at: target)
+                try? fm.copyItem(at: item, to: target)
+            }
+        }
     }
 
-    /// En sandbox, `homeDirectoryForCurrentUser` es el contenedor; `getpwuid` da el home real.
+    /// `getpwuid` da el home real aunque el proceso tenga otro `HOME`.
     private static func realUserHomeDirectory() -> URL? {
         guard let pw = getpwuid(getuid()), let dir = pw.pointee.pw_dir else { return nil }
         return URL(fileURLWithPath: String(cString: dir), isDirectory: true)

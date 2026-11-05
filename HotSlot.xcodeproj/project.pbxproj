@@ -139,7 +139,6 @@
 		67CCD20A269221ECF634E755 /* UsageEventLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageEventLog.swift; sourceTree = "<group>"; };
 		6F80607680DE710540140313 /* InterTight-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InterTight-Medium.ttf"; sourceTree = "<group>"; };
 		73024E80E174C79983E6A25D /* PanelDragPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelDragPayload.swift; sourceTree = "<group>"; };
-		7716292477212411D84E93C5 /* HotSlot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HotSlot.entitlements; sourceTree = "<group>"; };
 		7F7D2094D67542CF6B99B29B /* SaveClipboardSlotPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveClipboardSlotPickerSheet.swift; sourceTree = "<group>"; };
 		8108F534EC224E3BA83D449B /* BackdropController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackdropController.swift; sourceTree = "<group>"; };
 		830BEFF3258CA1569A340731 /* LaunchSplashController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchSplashController.swift; sourceTree = "<group>"; };
@@ -359,7 +358,6 @@
 			isa = PBXGroup;
 			children = (
 				B880BD3AB5B57E6D542F8B5F /* Assets.xcassets */,
-				7716292477212411D84E93C5 /* HotSlot.entitlements */,
 				D4B5F0EEAA83D6809073C8CE /* Info.plist */,
 				27819786F66292E2771CA28D /* onboarding-demo.png */,
 				F26BDB29C229E2B9CAFCA297 /* Fonts */,
@@ -826,9 +824,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = HotSlot/Resources/HotSlot.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				ENABLE_APP_SANDBOX = YES;
+				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = HotSlot/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -843,9 +840,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = HotSlot/Resources/HotSlot.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				ENABLE_APP_SANDBOX = YES;
+				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = HotSlot/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";

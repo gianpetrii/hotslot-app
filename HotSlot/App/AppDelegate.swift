@@ -30,8 +30,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
+        AppSupportDirectory.migrateFromSandboxContainerIfNeeded()
         migrateHotkeysIfNeeded()
-        AppSupportDirectory.migrateUnsandboxedIfNeeded()
         NSApp.appearance = NSAppearance(named: .aqua)
         let state = AppState()
         let panel = PanelController(appState: state)

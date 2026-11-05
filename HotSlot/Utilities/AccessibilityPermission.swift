@@ -71,6 +71,12 @@ enum AccessibilityPermission {
         promptGraceUntil = trustedAfter ? .distantPast : Date().addingTimeInterval(2)
     }
 
+    /// macOS muestra el aviso TCC una sola vez por app; si ya respondió (o la app ya está en la lista) no vuelve a salir.
+    static var isSystemPromptOnScreen: Bool {
+        let windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? [[String: Any]] ?? []
+        return windows.contains { ($0[kCGWindowOwnerName as String] as? String) == "universalAccessAuthWarn" }
+    }
+
     static func openSettings() {
         let candidates = [
             "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_Accessibility",
