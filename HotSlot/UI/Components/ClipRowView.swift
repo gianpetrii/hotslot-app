@@ -17,6 +17,15 @@ struct ClipRowView: View {
     @State private var expandTask: Task<Void, Never>?
     @State private var isPeeking = false
     @State private var peekTask: Task<Void, Never>?
+    @State private var collapsedTextHeight: CGFloat = 0
+    @State private var threeLineTextHeight: CGFloat = 0
+
+    private static let collapsedTextLines = 2
+
+    /// Expandir solo tiene sentido si el texto no entra en los renglones colapsados.
+    private var textOverflowsCollapsed: Bool {
+        threeLineTextHeight > collapsedTextHeight + 1
+    }
 
     private let expandAnimation = Animation.spring(response: 0.32, dampingFraction: 0.92)
 
@@ -83,14 +92,16 @@ struct ClipRowView: View {
 
             if isHovering || item.isPinned {
                 Button(action: onTogglePin) {
-                    Image(systemName: item.isPinned ? "pin.fill" : "pin")
+                    Image(systemName: "pin")
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(item.isPinned ? SlotsColor.naranja : SlotsColor.textoSecundario)
                         .frame(width: 26, height: 26)
                         .background {
-                            Circle()
-                                .fill(Color.white.opacity(0.92))
-                                .shadow(color: Color.black.opacity(0.08), radius: 4, y: 2)
+                            if showsPinBackdrop {
+                                Circle()
+                                    .fill(Color.white.opacity(0.92))
+                                    .shadow(color: Color.black.opacity(0.08), radius: 4, y: 2)
+                            }
                         }
                 }
                 .buttonStyle(.plain)
@@ -169,10 +180,35 @@ struct ClipRowView: View {
                 Text(item.handoffPanelPrimaryLine())
                     .font(SlotsFont.textoUI)
                     .foregroundStyle(SlotsColor.tinta)
-                    .lineLimit(isExpanded ? 10 : 4)
+                    .lineLimit(isExpanded ? 8 : Self.collapsedTextLines)
+                    .background { textOverflowProbe }
                     .padding(.trailing, isHovering || item.isPinned ? 28 : 0)
             }
         }
+    }
+
+    /// Mide el texto con el ancho real de la fila: 2 renglones contra 3.
+    private var textOverflowProbe: some View {
+        ZStack(alignment: .topLeading) {
+            probeText(lines: Self.collapsedTextLines)
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { collapsedTextHeight = $0 }
+            probeText(lines: Self.collapsedTextLines + 1)
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { threeLineTextHeight = $0 }
+        }
+        .hidden()
+    }
+
+    private func probeText(lines: Int) -> some View {
+        Text(item.handoffPanelPrimaryLine())
+            .font(SlotsFont.textoUI)
+            .lineLimit(lines)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    /// Solo la imagen agrandada queda debajo del pin; en el resto el ícono va sin fondo.
+    private var showsPinBackdrop: Bool {
+        if case .image = item.content { return isExpanded }
+        return false
     }
 
     private func schedulePanelHandoffHover(hovering: Bool) {
@@ -183,7 +219,7 @@ struct ClipRowView: View {
             isPeeking = false
             return
         }
-        if case .text = item.content {
+        if case .text = item.content, textOverflowsCollapsed {
             expandTask = Task { @MainActor in
                 try? await Task.sleep(nanoseconds: UInt64(HotSlotDesign.hoverExpandDelay * 1_000_000_000))
                 guard !Task.isCancelled, isHovering else { return }

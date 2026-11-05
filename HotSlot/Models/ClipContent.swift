@@ -93,16 +93,15 @@ extension ClipItem {
         return "\(app) · \(handoffRelativeTime())"
     }
 
+    /// Conserva los saltos de línea; varias líneas en blanco seguidas se reducen a una.
     func handoffPanelPrimaryLine() -> String {
         switch content {
         case .text(let string):
             let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
             if trimmed.isEmpty { return "Texto vacío" }
-            let singleLine = trimmed.replacingOccurrences(of: "\n", with: " ")
-            if singleLine.count > 72 {
-                return String(singleLine.prefix(72)) + "…"
-            }
-            return singleLine
+            return trimmed
+                .replacingOccurrences(of: "\r\n", with: "\n")
+                .replacingOccurrences(of: #"\n[ \t]*\n(?:[ \t]*\n)+"#, with: "\n\n", options: .regularExpression)
         case .image:
             return content.displayTitle
         }
