@@ -126,7 +126,7 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 | Estado | ID | Tema |
 |--------|-----|------|
 | [x] | V2 | Animación al **cambiar biblioteca** |
-| [~] | V3 | **Reorden:** fantasma en el lugar de origen, las pills se separan, al soltar queda ahí · **Tacho:** se agranda (oscuro + naranja), soltar → confirmación con «No volver a preguntar» (reactivable en Ajustes → General) |
+| [x] | V3 | **Reorden:** fantasma en el lugar de origen, las pills se separan, al soltar queda ahí · **Tacho:** se agranda (oscuro + naranja), soltar → confirmación con «No volver a preguntar» (reactivable en Ajustes → General) |
 | [ ] | V4–V5 | Historial: más líneas al expandir · pin/meta sin robar espacio |
 | [ ] | V6–V7 | Chips atajo/cruz alineados a «Slot N» |
 | [ ] | V8 | Texto legible en degradé / fondos oscuros |
