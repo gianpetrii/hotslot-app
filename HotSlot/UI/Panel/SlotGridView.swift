@@ -144,12 +144,14 @@ private struct SlotCardView: View {
                         .lineLimit(isHovering ? 8 : 4)
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .topLeading)
+                        .modifier(SlotReadableText(onDark: prefersLightContent))
                         .animation(.easeOut(duration: 0.15), value: isHovering)
                 } else if !hasContent {
                     Text(SlotCardCopy.emptyHint(slotIndex: slot.index))
                         .font(SlotsFont.textoUI)
                         .foregroundStyle(emptyHintColor)
                         .lineLimit(4)
+                        .modifier(SlotReadableText(onDark: prefersLightContent))
                 }
 
                 titleRow
@@ -157,17 +159,7 @@ private struct SlotCardView: View {
             }
             .padding(SlotsSpace.m)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .background(alignment: .bottom) {
-                if needsBottomTextScrim {
-                    LinearGradient(
-                        colors: [Color.black.opacity(0), Color.black.opacity(0.55)],
-                        startPoint: UnitPoint(x: 0.5, y: 0.25),
-                        endPoint: .bottom
-                    )
-                    .frame(height: 168)
-                    .allowsHitTesting(false)
-                }
-            }
+            .background { mixedBackgroundScrims }
         }
         .padding(2)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -236,6 +228,7 @@ private struct SlotCardView: View {
                 .font(SlotsFont.etiqueta)
                 .foregroundStyle(metaForeground)
                 .lineLimit(1)
+                .modifier(SlotReadableText(onDark: prefersLightContent))
 
             Spacer(minLength: 4)
 
@@ -263,50 +256,44 @@ private struct SlotCardView: View {
 
     @ViewBuilder
     private var titleRow: some View {
-        ZStack(alignment: .leading) {
-            if isEditingLabel {
-                TextField("Título", text: $labelDraft)
-                    .textFieldStyle(.plain)
-                    .font(SlotsFont.tituloCard)
-                    .foregroundStyle(titleColor)
-                    .focused($labelFieldFocused)
-                    .padding(.vertical, 2)
-                    .padding(.horizontal, 6)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background {
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            .fill(Color.white.opacity(0.85))
-                            .overlay {
-                                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .strokeBorder(SlotsColor.naranja.opacity(0.45), lineWidth: 1)
-                            }
-                    }
-                    .onSubmit { commitLabelEdit() }
-                    .onKeyPress(.escape) {
-                        cancelLabelEdit()
-                        return .handled
-                    }
-            } else {
-                Text(hasContent ? SlotCardCopy.slotLabelDisplay(for: slot) : SlotCardCopy.emptyPlaceholderTitle(for: slot))
-                    .font(SlotsFont.tituloCard)
-                    .foregroundStyle(titleColor)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-
-            HStack {
-                Spacer(minLength: 0)
-                if isTitleHovering, !isEditingLabel {
-                    Image(systemName: "pencil")
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(titleColor.opacity(0.75))
-                        .frame(width: 24, height: 24)
-                        .transition(.opacity.combined(with: .scale(scale: 0.9)))
+        HStack(alignment: .bottom, spacing: 6) {
+            Group {
+                if isEditingLabel {
+                    TextField("Título", text: $labelDraft)
+                        .textFieldStyle(.plain)
+                        .font(SlotsFont.tituloCard)
+                        .foregroundStyle(titleColor)
+                        .focused($labelFieldFocused)
+                        .padding(.vertical, 2)
+                        .padding(.horizontal, 4)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .strokeBorder(SlotsColor.naranja.opacity(0.7), lineWidth: 1.5)
+                        }
+                        .onSubmit { commitLabelEdit() }
+                        .onKeyPress(.escape) {
+                            cancelLabelEdit()
+                            return .handled
+                        }
+                } else {
+                    Text(hasContent ? SlotCardCopy.slotLabelDisplay(for: slot) : SlotCardCopy.emptyPlaceholderTitle(for: slot))
+                        .font(SlotsFont.tituloCard)
+                        .foregroundStyle(titleColor)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                        .modifier(SlotReadableText(onDark: prefersLightContent))
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Image(systemName: "pencil")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(titleColor.opacity(0.75))
+                .frame(width: 24, height: 24)
+                .opacity(isTitleHovering && !isEditingLabel ? 1 : 0)
+                .allowsHitTesting(false)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
         .contentShape(Rectangle())
         .onHover { isTitleHovering = $0 }
         .animation(.easeOut(duration: 0.14), value: isTitleHovering)
@@ -387,11 +374,34 @@ private struct SlotCardView: View {
     }
 
     private var emptyHintColor: Color {
-        prefersLightContent ? Color.white.opacity(0.82) : SlotsColor.textoSecundario
+        prefersLightContent ? Color.white.opacity(0.92) : SlotsColor.textoSecundario
     }
 
-    private var needsBottomTextScrim: Bool {
-        prefersLightContent || SlotsPalette.isBrandGradient(slot.cardBackgroundHex)
+    /// Degradé e imagen: claro arriba, oscuro abajo. Un velo en cada punta para el texto blanco.
+    @ViewBuilder
+    private var mixedBackgroundScrims: some View {
+        if needsMixedBackgroundScrims {
+            VStack(spacing: 0) {
+                LinearGradient(
+                    colors: [Color.black.opacity(0.42), Color.black.opacity(0)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 64)
+                Spacer(minLength: 0)
+                LinearGradient(
+                    colors: [Color.black.opacity(0), Color.black.opacity(0.62)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 140)
+            }
+            .allowsHitTesting(false)
+        }
+    }
+
+    private var needsMixedBackgroundScrims: Bool {
+        SlotsPalette.isBrandGradient(slot.cardBackgroundHex) || (isImageContent && hasContent)
     }
 
     private var colorSwatch: Color? {
@@ -405,15 +415,11 @@ private struct SlotCardView: View {
     }
 
     private var prefersLightContent: Bool {
-        isDarkCard
-            || (isImageContent && hasContent)
-            || isDarkCustomBackground
-            || SlotsPalette.isBrandGradient(slot.cardBackgroundHex)
-    }
-
-    private var isDarkCustomBackground: Bool {
-        guard let hex = slot.cardBackgroundHex?.uppercased() else { return false }
-        return hex.contains("1C1C1C") || hex.contains("111111")
+        if isImageContent && hasContent { return true }
+        if SlotsPalette.prefersLightContent(hexString: slot.cardBackgroundHex) { return true }
+        // Color hex en el portapapeles: la card es oscura salvo que el usuario eligió un fondo claro.
+        if isDarkCard, slot.cardBackgroundHex == nil { return true }
+        return false
     }
 
     private static func acceptDrop(
@@ -446,7 +452,7 @@ private struct SlotCardView: View {
                         .clipped()
                 }
                 LinearGradient(
-                    colors: [Color.black.opacity(0.08), Color.black.opacity(0.52)],
+                    colors: [Color.black.opacity(0.22), Color.black.opacity(0.12), Color.black.opacity(0.5)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -486,6 +492,14 @@ private struct SlotCardView: View {
     private var isImageContent: Bool {
         if case .image = slot.content { return true }
         return false
+    }
+}
+
+private struct SlotReadableText: ViewModifier {
+    var onDark: Bool
+
+    func body(content: Content) -> some View {
+        content.shadow(color: Color.black.opacity(onDark ? 0.55 : 0), radius: 5, y: 1)
     }
 }
 

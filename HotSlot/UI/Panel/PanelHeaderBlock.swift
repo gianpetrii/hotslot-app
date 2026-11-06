@@ -49,22 +49,18 @@ struct PanelHeaderBlock: View {
     }
 
     private var libraryTitleBlock: some View {
-        ZStack(alignment: .leading) {
+        HStack(alignment: .center, spacing: 8) {
             if isEditingLibraryName {
                 TextField("Nombre de biblioteca", text: $libraryNameDraft)
                     .textFieldStyle(.plain)
                     .font(SlotsFont.tituloPantalla(false))
                     .foregroundStyle(SlotsColor.tinta)
                     .focused($isLibraryNameFocused)
-                    .padding(.vertical, 4)
-                    .padding(.horizontal, 8)
-                    .background {
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(Color.white.opacity(0.85))
-                            .overlay {
-                                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .strokeBorder(SlotsColor.naranja.opacity(0.45), lineWidth: 1)
-                            }
+                    .padding(.vertical, 2)
+                    .padding(.horizontal, 4)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .strokeBorder(SlotsColor.naranja.opacity(0.7), lineWidth: 1.5)
                     }
                     .onSubmit { commitLibraryRename() }
                     .onKeyPress(.escape) {
@@ -79,24 +75,18 @@ struct PanelHeaderBlock: View {
                     .minimumScaleFactor(0.55)
             }
 
-            HStack {
-                Spacer(minLength: 0)
-                if isLibraryTitleHovering, !isEditingLibraryName {
-                    Button(action: beginLibraryRename) {
-                        Image(systemName: "pencil")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(SlotsColor.textoSecundario)
-                            .frame(width: 28, height: 28)
-                            .background {
-                                Circle()
-                                    .fill(Color.black.opacity(0.06))
-                            }
-                    }
-                    .buttonStyle(.plain)
-                    .help("Renombrar biblioteca")
-                    .transition(.opacity.combined(with: .scale(scale: 0.9)))
-                }
+            Button(action: beginLibraryRename) {
+                Image(systemName: "pencil")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(SlotsColor.textoSecundario)
+                    .frame(width: 28, height: 28)
             }
+            .buttonStyle(.plain)
+            .help("Renombrar biblioteca")
+            .opacity(isLibraryTitleHovering && !isEditingLibraryName ? 1 : 0)
+            .allowsHitTesting(isLibraryTitleHovering && !isEditingLibraryName)
+
+            Spacer(minLength: 0)
         }
         .frame(minHeight: SlotsRadius.controlAlto, alignment: .leading)
         .contentShape(Rectangle())

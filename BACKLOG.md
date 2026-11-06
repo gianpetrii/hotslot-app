@@ -131,10 +131,12 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 | [x] | V4–V5 | **Historial:** saltos de línea visibles · 2 renglones cerrado, hasta 8 al expandir, solo expande si el texto quedó cortado · pin arriba a la derecha sin fondo (fondo blanco solo sobre imagen agrandada), fijado = contorno naranja |
 | [ ] | V4b | **Pegar con estilos** (negrita, etc.) desde historial y slots; texto plano si la app no acepta formato. Probar con DMG |
 | [x] | V6–V7 | **Chips:** cruz y atajo con la misma pastilla (arena en card clara, blanca sobre imagen o fondo oscuro). Al aparecer la cruz, «Slot N» se corre a la derecha |
-| [ ] | V8 | Texto legible en degradé / fondos oscuros |
-| [ ] | V9–V10 | Renombrar biblioteca inline · título slot sin saltos de layout |
+| [x] | V8 | Texto blanco + velo arriba/abajo en degradé, imagen y fondo oscuro |
+| [ ] | V9–V10 | Lápiz y recuadro al renombrar biblioteca y título de slot (sin mover el texto) |
 | [x] | V11 | *(confirmado en pasada anterior)* |
 | [ ] | V12 | Pendiente cierre oleada |
+| [ ] | V13 | **Hover de slots:** borde naranja al pasar el mouse (peso, color, vacío vs con contenido) |
+| [ ] | V15 | **Notch:** aviso al guardar/pegar (copy, tamaño, duración, que no tape el notch real) |
 
 **Dante (solo si Gianluca lo pide):** reorden de bibliotecas → `docs/REVISION-PANEL-PARA-DANTE.md`.
 
