@@ -7,6 +7,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
     private let appState: AppState
     private let backdrop = BackdropController()
     private var keyMonitor: Any?
+    private var mouseMonitor: Any?
     private var isAnimating = false
     private var openGeneration = 0
     private var targetFrame: NSRect = .zero
@@ -55,6 +56,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         panel.delegate = self
 
         setupKeyMonitor()
+        setupMouseMonitor()
     }
 
     @available(*, unavailable)
@@ -114,6 +116,9 @@ final class PanelController: NSWindowController, NSWindowDelegate {
 
         openGeneration += 1
         appState.libraryDrag = nil
+        if appState.isInlineEditing {
+            appState.endInlineEdit(save: true)
+        }
         appState.isPanelVisible = false
         appState.panelBodyRevealed = false
         UsageEventLog.shared.record("panel_cerrar", screen: "mac_panel")
@@ -152,12 +157,26 @@ final class PanelController: NSWindowController, NSWindowDelegate {
     // MARK: - NSWindowDelegate
 
     func windowDidResignKey(_ notification: Notification) {
-        // Cerrar solo si el clic fue fuera (backdrop maneja eso); evitar cierre al interactuar con menú bar
+        if appState.isInlineEditing {
+            appState.endInlineEdit(save: true)
+        }
     }
 
     private func setupKeyMonitor() {
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             guard let self, self.isVisible else { return event }
+            if self.appState.isInlineEditing {
+                if event.keyCode == 53 { // Esc: cancelar
+                    self.appState.endInlineEdit(save: false)
+                    window?.makeFirstResponder(nil)
+                    return nil
+                }
+                if event.keyCode == 36 || event.keyCode == 76 { // Return / Enter: guardar
+                    self.appState.endInlineEdit(save: true)
+                    window?.makeFirstResponder(nil)
+                    return nil
+                }
+            }
             if event.keyCode == 53 { // Esc — cerrar modal del panel antes que la ventana
                 if self.appState.isNewLibraryFormPresented {
                     self.appState.isNewLibraryFormPresented = false
@@ -180,6 +199,29 @@ final class PanelController: NSWindowController, NSWindowDelegate {
             }
             return event
         }
+    }
+
+    /// Clic en el panel (fuera del campo) o en otra ventana: guarda y sale de edición.
+    private func setupMouseMonitor() {
+        mouseMonitor = NSEvent.addLocalMonitorForEvents(matching: .leftMouseDown) { [weak self] event in
+            guard let self, self.appState.isInlineEditing else { return event }
+            if event.window == self.window, Self.isClickInTextEditor(event, window: self.window) {
+                return event
+            }
+            self.appState.endInlineEdit(save: true)
+            self.window?.makeFirstResponder(nil)
+            return nil
+        }
+    }
+
+    private static func isClickInTextEditor(_ event: NSEvent, window: NSWindow?) -> Bool {
+        guard let window else { return false }
+        var view: NSView? = window.contentView?.hitTest(event.locationInWindow)
+        while let current = view {
+            if current is NSTextView || current is NSTextField { return true }
+            view = current.superview
+        }
+        return false
     }
 }
 

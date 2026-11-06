@@ -45,6 +45,23 @@ enum SlotCardCopy {
         return "Slot \(slot.index)"
     }
 
+    /// Título visible: el nombre custom gana siempre, incluso si el slot está vacío.
+    static func visibleCardTitle(for slot: Slot) -> String {
+        if hasCustomLabel(slot) { return slotLabelDisplay(for: slot) }
+        if slot.content == nil { return emptyPlaceholderTitle(for: slot) }
+        return slotLabelDisplay(for: slot)
+    }
+
+    static func hasCustomLabel(_ slot: Slot) -> Bool {
+        let label = slot.label.trimmingCharacters(in: .whitespacesAndNewlines)
+        return !label.isEmpty && label != "Slot \(slot.index)"
+    }
+
+    /// Al editar, el placeholder de vacío no se mete en el campo.
+    static func editingTitle(for slot: Slot) -> String {
+        hasCustomLabel(slot) ? slotLabelDisplay(for: slot) : "Slot \(slot.index)"
+    }
+
     static func emptyPlaceholderTitle(for slot: Slot) -> String {
         if slot.index == 5 { return "Soltá algo acá" }
         if slot.index == 1 { return "Tu primer slot" }

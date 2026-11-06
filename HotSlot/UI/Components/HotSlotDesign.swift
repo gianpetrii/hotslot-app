@@ -65,6 +65,7 @@ enum HotSlotDesign {
     static let onboardingHeight: CGFloat = 600
 
     static let rowExpandAnimation = Animation.spring(response: 0.32, dampingFraction: 0.92)
+    static let titleEditAnimation = Animation.easeInOut(duration: 0.22)
 
     static let openDuration: TimeInterval = 0.28
     static let closeDuration: TimeInterval = 0.24

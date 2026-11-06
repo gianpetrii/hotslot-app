@@ -51,7 +51,7 @@ struct PanelHeaderBlock: View {
     private var libraryTitleBlock: some View {
         HStack(alignment: .center, spacing: 8) {
             if isEditingLibraryName {
-                TextField("Nombre de biblioteca", text: $libraryNameDraft)
+                TextField("", text: $libraryNameDraft, prompt: Text("Nombre"))
                     .textFieldStyle(.plain)
                     .font(SlotsFont.tituloPantalla(false))
                     .foregroundStyle(SlotsColor.tinta)
@@ -63,16 +63,14 @@ struct PanelHeaderBlock: View {
                             .strokeBorder(SlotsColor.naranja.opacity(0.7), lineWidth: 1.5)
                     }
                     .onSubmit { commitLibraryRename() }
-                    .onKeyPress(.escape) {
-                        cancelLibraryRename()
-                        return .handled
-                    }
+                    .transition(.opacity.combined(with: .scale(scale: 0.98)))
             } else {
                 Text(libraryName)
                     .font(SlotsFont.tituloPantalla(false))
                     .foregroundStyle(SlotsColor.tinta)
                     .lineLimit(1)
                     .minimumScaleFactor(0.55)
+                    .transition(.opacity)
             }
 
             Button(action: beginLibraryRename) {
@@ -92,6 +90,7 @@ struct PanelHeaderBlock: View {
         .contentShape(Rectangle())
         .onHover { isLibraryTitleHovering = $0 }
         .animation(.easeOut(duration: 0.14), value: isLibraryTitleHovering)
+        .animation(HotSlotDesign.titleEditAnimation, value: isEditingLibraryName)
         .highPriorityGesture(
             TapGesture().onEnded {
                 guard isLibraryTitleHovering, !isEditingLibraryName else { return }
@@ -111,15 +110,27 @@ struct PanelHeaderBlock: View {
                 commitLibraryRename()
             }
         }
+        .onChange(of: appState.inlineEditSession) { _, _ in
+            guard isEditingLibraryName else { return }
+            if appState.inlineEditShouldSave {
+                commitLibraryRename()
+            } else {
+                cancelLibraryRename()
+            }
+        }
     }
 
     private func beginLibraryRename() {
         guard appState.libraryWorkspace.activeLibrary != nil else { return }
+        appState.beginInlineEdit()
         libraryNameDraft = libraryName
-        isEditingLibraryName = true
+        withAnimation(HotSlotDesign.titleEditAnimation) {
+            isEditingLibraryName = true
+        }
     }
 
     private func commitLibraryRename() {
+        guard isEditingLibraryName else { return }
         let trimmed = libraryNameDraft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty,
               let library = appState.libraryWorkspace.activeLibrary else {
@@ -129,14 +140,21 @@ struct PanelHeaderBlock: View {
         if trimmed != library.name {
             appState.renameLibrary(id: library.id, name: trimmed)
         }
-        isEditingLibraryName = false
+        withAnimation(HotSlotDesign.titleEditAnimation) {
+            isEditingLibraryName = false
+        }
         isLibraryNameFocused = false
+        appState.isInlineEditing = false
     }
 
     private func cancelLibraryRename() {
-        isEditingLibraryName = false
+        guard isEditingLibraryName else { return }
+        withAnimation(HotSlotDesign.titleEditAnimation) {
+            isEditingLibraryName = false
+        }
         isLibraryNameFocused = false
         libraryNameDraft = ""
+        appState.isInlineEditing = false
     }
 
     private var panelSearchField: some View {

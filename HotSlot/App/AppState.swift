@@ -43,6 +43,11 @@ final class AppState {
     var shortcutEpoch = 0
     /// Incrementa al cambiar biblioteca activa (animación del cuerpo del panel).
     var librarySwitchRevision = 0
+    /// Hay un título de biblioteca o slot en edición. El clic fuera o Esc lo cierran.
+    var isInlineEditing = false
+    /// Sube para pedir a los editores inline que cierren (`inlineEditShouldSave`).
+    var inlineEditSession = 0
+    var inlineEditShouldSave = true
     /// Ventana delante de la cual mostrar el aviso de Accesibilidad (onboarding / ajustes).
     weak var accessibilityPresentingWindow: NSWindow?
 
@@ -361,6 +366,21 @@ final class AppState {
         libraryWorkspace.syncFromLegacySlotStore(slotStore)
         libraryWorkspace.renameLibrary(id: id, name: name)
         UsageEventLog.shared.record("biblioteca_renombrar", detail: name)
+    }
+
+    func beginInlineEdit() {
+        if isInlineEditing {
+            endInlineEdit(save: true)
+        }
+        isInlineEditing = true
+    }
+
+    /// Clic fuera o Enter: `save == true`. Esc: `save == false` (vuelve al texto anterior).
+    func endInlineEdit(save: Bool) {
+        guard isInlineEditing else { return }
+        inlineEditShouldSave = save
+        inlineEditSession += 1
+        isInlineEditing = false
     }
 
     func replaceSlotFromClipboard(index: Int) {

@@ -111,6 +111,7 @@ private struct SlotCardView: View {
     @State private var isTitleHovering = false
     @State private var labelDraft = ""
     @FocusState private var labelFieldFocused: Bool
+    @Environment(AppState.self) private var appState
 
     private var hasContent: Bool { slot.content != nil }
 
@@ -200,7 +201,7 @@ private struct SlotCardView: View {
         .help("Clic para pegar · Arrastrá para intercambiar o soltá un clip del historial.")
         .onChange(of: isEditingLabel) { _, editing in
             if editing {
-                labelDraft = SlotCardCopy.editableTitle(for: slot)
+                labelDraft = SlotCardCopy.editingTitle(for: slot)
                 DispatchQueue.main.async {
                     labelFieldFocused = true
                 }
@@ -209,6 +210,14 @@ private struct SlotCardView: View {
         .onChange(of: labelFieldFocused) { wasFocused, focused in
             if wasFocused, !focused, isEditingLabel {
                 commitLabelEdit()
+            }
+        }
+        .onChange(of: appState.inlineEditSession) { _, _ in
+            guard isEditingLabel else { return }
+            if appState.inlineEditShouldSave {
+                commitLabelEdit()
+            } else {
+                cancelLabelEdit()
             }
         }
     }
@@ -271,17 +280,15 @@ private struct SlotCardView: View {
                                 .strokeBorder(SlotsColor.naranja.opacity(0.7), lineWidth: 1.5)
                         }
                         .onSubmit { commitLabelEdit() }
-                        .onKeyPress(.escape) {
-                            cancelLabelEdit()
-                            return .handled
-                        }
+                        .transition(.opacity.combined(with: .scale(scale: 0.98)))
                 } else {
-                    Text(hasContent ? SlotCardCopy.slotLabelDisplay(for: slot) : SlotCardCopy.emptyPlaceholderTitle(for: slot))
+                    Text(SlotCardCopy.visibleCardTitle(for: slot))
                         .font(SlotsFont.tituloCard)
                         .foregroundStyle(titleColor)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                         .modifier(SlotReadableText(onDark: prefersLightContent))
+                        .transition(.opacity)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -297,11 +304,11 @@ private struct SlotCardView: View {
         .contentShape(Rectangle())
         .onHover { isTitleHovering = $0 }
         .animation(.easeOut(duration: 0.14), value: isTitleHovering)
+        .animation(HotSlotDesign.titleEditAnimation, value: isEditingLabel)
         .highPriorityGesture(
             TapGesture().onEnded {
                 guard isTitleHovering, !isEditingLabel else { return }
-                labelDraft = SlotCardCopy.slotLabelDisplay(for: slot)
-                isEditingLabel = true
+                beginLabelEdit()
             }
         )
     }
@@ -309,8 +316,7 @@ private struct SlotCardView: View {
     @ViewBuilder
     private var slotContextMenu: some View {
         Button("Renombrar…") {
-            labelDraft = SlotCardCopy.slotLabelDisplay(for: slot)
-            isEditingLabel = true
+            beginLabelEdit()
         }
         Menu("Color de fondo") {
             Button("Predeterminado (handoff)") { onSetBackground(nil) }
@@ -340,20 +346,36 @@ private struct SlotCardView: View {
         }
     }
 
+    private func beginLabelEdit() {
+        appState.beginInlineEdit()
+        labelDraft = SlotCardCopy.editingTitle(for: slot)
+        withAnimation(HotSlotDesign.titleEditAnimation) {
+            isEditingLabel = true
+        }
+    }
+
     private func commitLabelEdit() {
+        guard isEditingLabel else { return }
         let trimmed = labelDraft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
             cancelLabelEdit()
             return
         }
         onUpdateLabel(trimmed)
-        isEditingLabel = false
+        withAnimation(HotSlotDesign.titleEditAnimation) {
+            isEditingLabel = false
+        }
         labelFieldFocused = false
+        appState.isInlineEditing = false
     }
 
     private func cancelLabelEdit() {
-        isEditingLabel = false
+        guard isEditingLabel else { return }
+        withAnimation(HotSlotDesign.titleEditAnimation) {
+            isEditingLabel = false
+        }
         labelFieldFocused = false
+        appState.isInlineEditing = false
     }
 
     private var bodyTextColor: Color {

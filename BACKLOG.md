@@ -43,6 +43,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P0 | Overlay en slot: atajo de pegar + cruz encima del contenido (también si está vacío) |
 | [x] | P2 | Cruz de vaciar al mismo tamaño visual que el badge de atajo (no más grande) |
 | [x] | P1 | Arrastrar un ítem del historial a un slot para guardarlo ahí |
+| [ ] | P1 | **Archivos en slots e historial:** guardar y pegar files (PDF, zip, etc.), no solo texto e imagen |
 | [x] | P1 | Ver mejor el contenido de un slot (peek al hover; no copiar el expand de filas) |
 | [x] | P1 | Sonidos por acción (éxito vs no se pudo pegar vs guardado vs vacío) |
 | [x] | P1 | Reordenar ítems **pinneados** con drag & drop (orden persistente entre pines) |
@@ -132,7 +133,7 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 | [ ] | V4b | **Pegar con estilos** (negrita, etc.) desde historial y slots; texto plano si la app no acepta formato. Probar con DMG |
 | [x] | V6–V7 | **Chips:** cruz y atajo con la misma pastilla (arena en card clara, blanca sobre imagen o fondo oscuro). Al aparecer la cruz, «Slot N» se corre a la derecha |
 | [x] | V8 | Texto blanco + velo arriba/abajo en degradé, imagen y fondo oscuro |
-| [ ] | V9–V10 | Lápiz y recuadro al renombrar biblioteca y título de slot (sin mover el texto) |
+| [x] | V9–V10 | Lápiz junto al nombre de biblioteca / a la derecha en slots · transición al editar · Enter o clic fuera guarda (el clic no dispara la otra acción) · Escape cancela · slots vacíos se renombran y el nombre se conserva al vaciar |
 | [x] | V11 | *(confirmado en pasada anterior)* |
 | [ ] | V12 | Pendiente cierre oleada |
 | [ ] | V13 | **Hover de slots:** borde naranja al pasar el mouse (peso, color, vacío vs con contenido) |
