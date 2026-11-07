@@ -39,7 +39,6 @@
 		51661401F91CFF3E1F9E5C79 /* LemonLicenseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893CB5382B7CBEF716185C1F /* LemonLicenseService.swift */; };
 		5A14D5F57B0B72252A3272D1 /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3383874D55B3B03906F05B76 /* OnboardingWindowController.swift */; };
 		5A7458632B0A0E2FB4810EAB /* HotkeyName.swift in Sources */ = {isa = PBXBuildFile; fileRef = F694AB71C18F22C86D117ACC /* HotkeyName.swift */; };
-		5AEB6A3416609666695B9C48 /* SlotsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A2713A93781D6CF0A531E1 /* SlotsSettingsView.swift */; };
 		5F03F3682880EE8CB86A7501 /* SlotStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F74883603B94FB2FCCA0073 /* SlotStore.swift */; };
 		5F54E5810EE5E19A94501C02 /* SlotsPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0053E366473B0BCE5341CE9 /* SlotsPalette.swift */; };
 		601143B29971E9F1B4963725 /* NewLibraryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D990A1EB5D5AAA6C60B70D8 /* NewLibraryFormView.swift */; };
@@ -175,7 +174,6 @@
 		B880BD3AB5B57E6D542F8B5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BD36EA0DCFD93B6DFACE95B8 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		C349BC8D5A0BB79D81326F87 /* FileClipViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileClipViews.swift; sourceTree = "<group>"; };
-		C6A2713A93781D6CF0A531E1 /* SlotsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsSettingsView.swift; sourceTree = "<group>"; };
 		CB00CAB33F7731154F7391F1 /* FeedbackSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackSound.swift; sourceTree = "<group>"; };
 		CBEB360BA0C811221C1D6DE1 /* PanelHeaderBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelHeaderBlock.swift; sourceTree = "<group>"; };
 		CFB47B1DB3239FAF3E7E19E6 /* InterTight-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InterTight-SemiBold.ttf"; sourceTree = "<group>"; };
@@ -296,7 +294,6 @@
 				9C232CD058B6607F39574953 /* HotkeysSettingsView.swift */,
 				40B7E7A2B2C7D507EFD132F1 /* SettingsView.swift */,
 				A3D8A3FBDC8BD6954875D49B /* SettingsWindowController.swift */,
-				C6A2713A93781D6CF0A531E1 /* SlotsSettingsView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -730,7 +727,6 @@
 				9570DF8FCE70BA5E0E073256 /* SlotShortcutEditorPopover.swift in Sources */,
 				5F03F3682880EE8CB86A7501 /* SlotStore.swift in Sources */,
 				5F54E5810EE5E19A94501C02 /* SlotsPalette.swift in Sources */,
-				5AEB6A3416609666695B9C48 /* SlotsSettingsView.swift in Sources */,
 				8050B51FEBAEB5B66FDE5DF5 /* SlotsTheme.swift in Sources */,
 				1831E0CCBA952305EFEE0AF7 /* SlotsWorkspace.swift in Sources */,
 				709457F1F7152675FEE4A77B /* StatusBarController.swift in Sources */,

@@ -9,7 +9,7 @@ struct SettingsView: View {
     @State private var playSound = AppSettings.load().playSoundOnPaste
     @State private var showNotchNotice = AppSettings.load().showNotchNotice
     @State private var historyLimit = AppSettings.load().historyLimit
-    @State private var debugClipboard = AppSettings.load().debugClipboard
+    @State private var showNotchShelf = AppSettings.load().showNotchShelf
     @State private var confirmLibraryDelete = AppSettings.load().confirmLibraryDelete
     @State private var clickItemAction = AppSettings.load().clickItemAction
     @State private var accessibilityTrusted = AccessibilityPermission.isTrusted
@@ -26,8 +26,6 @@ struct SettingsView: View {
                     .tag(SettingsTab.hotkeys)
                 Label("Permisos", systemImage: "lock.shield")
                     .tag(SettingsTab.permissions)
-                Label("Slots", systemImage: "square.grid.2x2")
-                    .tag(SettingsTab.slots)
             }
             .listStyle(.sidebar)
             .navigationSplitViewColumnWidth(min: 168, ideal: 188, max: 220)
@@ -38,9 +36,6 @@ struct SettingsView: View {
                     generalTab
                 case .hotkeys:
                     HotkeysSettingsView()
-                        .padding()
-                case .slots:
-                    SlotsSettingsView(appState: appState)
                         .padding()
                 case .permissions:
                     permissionsTab
@@ -75,15 +70,20 @@ struct SettingsView: View {
                                 settings.showNotchNotice = newValue
                                 settings.save()
                             }
-                        Text("Píldora negra ~1,5 s arriba al centro (bajo la cámara o la barra de menú). No es la Dynamic Island de iPhone.")
+                        Text("Aviso breve arriba al centro, bajo el notch o la barra de menú. Negro al confirmar, naranja si pide una acción.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                        Button("Probar aviso ahora") {
-                            guard showNotchNotice else { return }
-                            appState.presentNotch(.ready)
-                        }
-                        .disabled(!showNotchNotice)
-                        Text("\(BrandDisplay.name) vive en la barra de menú (⌘ arriba a la derecha). Si no aparece, la barra está llena: mové ítems del sistema a Centro de control o reordená con ⌘+arrastrar. Atajo ⌘⇧V; también podés abrir desde Aplicaciones.")
+                    }
+
+                    Section("Barra del notch") {
+                        Toggle("Mostrar la barra al pasar el mouse por el notch", isOn: $showNotchShelf)
+                            .onChange(of: showNotchShelf) { _, newValue in
+                                var settings = AppSettings.load()
+                                settings.showNotchShelf = newValue
+                                settings.save()
+                                NotificationCenter.default.post(name: .notchShelfSettingChanged, object: nil)
+                            }
+                        Text("Muestra tus slots y bibliotecas al pasar por el notch (o el centro de la barra de menú). También se abre al arrastrar un archivo hacia ahí.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -94,7 +94,7 @@ struct SettingsView: View {
                     .id("settings-license")
 
                     Section("Barra de menú") {
-                        Text("macOS no permite fijar el icono ⌘ por código. Arrastralo con ⌘ hacia la derecha (junto al reloj) para que no lo reemplacen otros iconos.")
+                        Text("macOS no permite fijar el ícono de \(BrandDisplay.name) por código. Arrastralo con ⌘ hacia la derecha (junto al reloj) para que no lo reemplacen otros íconos.")
                             .font(.callout)
                             .foregroundStyle(.secondary)
                         Button("Cómo mantener \(BrandDisplay.name) visible…") {
@@ -150,30 +150,6 @@ struct SettingsView: View {
                         Text("Pegar, guardar en un slot o cuando no se puede completar la acción.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                    }
-
-                    Section("Depuración") {
-                        Toggle("Modo depuración del portapapeles", isOn: $debugClipboard)
-                            .onChange(of: debugClipboard) { _, newValue in
-                                var settings = AppSettings.load()
-                                settings.debugClipboard = newValue
-                                settings.save()
-                            }
-
-                        if debugClipboard {
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(appState.clipboardService.debugStatus)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                    .textSelection(.enabled)
-                                Text("Ítems en historial: \(appState.historyStore.items.count)")
-                                    .font(.caption2)
-                                    .foregroundStyle(.tertiary)
-                                Button("Forzar lectura ahora") {
-                                    appState.clipboardService.pollNow()
-                                }
-                            }
-                        }
                     }
 
                     Section("Ayuda") {
@@ -269,13 +245,6 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
 
                 AccessibilityGrantSection(isTrusted: $accessibilityTrusted, style: .settingsForm)
-
-                if !AccessibilityPermission.lastDiagnostic.isEmpty {
-                    Text(AccessibilityPermission.lastDiagnostic)
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
-                        .textSelection(.enabled)
-                }
             }
         }
         .formStyle(.grouped)

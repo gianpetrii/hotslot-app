@@ -13,6 +13,10 @@ final class NotchShelfController {
     private var screenObserver: NSObjectProtocol?
     private var globalMonitor: Any?
     private var localMonitor: Any?
+    private var dragDownMonitor: Any?
+    private var dragMonitor: Any?
+    /// `changeCount` del portapapeles de arrastre al pulsar el botón: si cambia, empezó un arrastre nuevo.
+    private var dragChangeCountAtMouseDown = 0
     private var isOpen = false
     private let pointer = NotchShelfPointer()
     private weak var hostingView: NSView?
@@ -20,7 +24,10 @@ final class NotchShelfController {
     var isBlocked: () -> Bool = { false }
 
     /// Con el panel, Ajustes o el onboarding al frente, la barra no tiene sentido.
-    private var isSuppressed: Bool { appState.isPanelVisible || isBlocked() }
+    private var isSuppressed: Bool { !isEnabled || appState.isPanelVisible || isBlocked() }
+    /// Copia del interruptor de Ajustes: se lee en cada movimiento del mouse, así que no se decodifica cada vez.
+    private var isEnabled = AppSettings.load().showNotchShelf
+    private var settingObserver: NSObjectProtocol?
 
     init(appState: AppState, panelController: PanelController) {
         self.appState = appState
@@ -38,6 +45,7 @@ final class NotchShelfController {
                 appState: appState,
                 pointer: pointer,
                 onActivateSlot: { [weak self] index in self?.activate(slot: index) },
+                onDropFile: { [weak self] index, url in self?.saveDroppedFile(url, toSlot: index) },
                 onOpenPanel: { [weak self] in self?.openPanel() }
             )
             .environment(appState)
@@ -63,6 +71,26 @@ final class NotchShelfController {
         localMonitor = NSEvent.addLocalMonitorForEvents(matching: .mouseMoved) { [weak self] event in
             Task { @MainActor in self?.mouseMoved() }
             return event
+        }
+        // Arrastrar un archivo hacia el notch abre la barra para soltarlo en un slot.
+        dragDownMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { [weak self] _ in
+            Task { @MainActor in
+                self?.dragChangeCountAtMouseDown = NSPasteboard(name: .drag).changeCount
+            }
+        }
+        dragMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDragged) { [weak self] _ in
+            Task { @MainActor in self?.fileDragMoved() }
+        }
+        settingObserver = NotificationCenter.default.addObserver(
+            forName: .notchShelfSettingChanged,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                guard let self else { return }
+                self.isEnabled = AppSettings.load().showNotchShelf
+                if !self.isEnabled { self.hide(animated: true, force: true) }
+            }
         }
         screenObserver = NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification,
@@ -98,6 +126,27 @@ final class NotchShelfController {
         let inWindow = shelfPanel.convertPoint(fromScreen: NSEvent.mouseLocation)
         let inView = hostingView.convert(inWindow, from: nil)
         pointer.location = hostingView.bounds.contains(inView) ? inView : nil
+    }
+
+    /// Guarda el archivo soltado en el slot y cierra la barra.
+    private func saveDroppedFile(_ url: URL, toSlot index: Int) {
+        hide(animated: true, force: true)
+        appState.saveToSlot(index: index, content: .fileReference(url: url))
+    }
+
+    /// Hay un arrastre de archivos en curso. El portapapeles de arrastre conserva el último arrastre,
+    /// así que solo cuenta si cambió desde que se pulsó el botón.
+    private func isDraggingFiles() -> Bool {
+        let drag = NSPasteboard(name: .drag)
+        guard drag.changeCount != dragChangeCountAtMouseDown else { return false }
+        return drag.canReadObject(forClasses: [NSURL.self], options: [.urlReadingFileURLsOnly: true])
+    }
+
+    private func fileDragMoved() {
+        guard !isOpen, !isSuppressed, pointerIsInTriggerZone(), isDraggingFiles() else { return }
+        hideWork?.cancel()
+        hideWork = nil
+        show()
     }
 
     private func mouseMoved() {

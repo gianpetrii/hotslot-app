@@ -3,7 +3,6 @@ import Foundation
 
 enum SettingsTab: Int {
     case hotkeys = 0
-    case slots = 1
     case general = 2
     case permissions = 3
 }
@@ -39,6 +38,8 @@ final class AppState {
     var openOnboarding: (() -> Void)?
     /// Pestaña a abrir la próxima vez que se muestren Ajustes (p. ej. tras el tour).
     var pendingSettingsTab: SettingsTab?
+    /// Versión nueva encontrada en segundo plano. Sparkle no la muestra sola en apps de barra de menú.
+    var availableUpdateVersion: String?
     /// Sube cuando cambia un atajo grabado, para refrescar badges sin relanzar.
     var shortcutEpoch = 0
     /// Incrementa al cambiar biblioteca activa (animación del cuerpo del panel).

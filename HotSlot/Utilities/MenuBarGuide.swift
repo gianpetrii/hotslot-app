@@ -3,7 +3,7 @@ import AppKit
 /// macOS no permite «fijar» un icono de la barra por API; solo guía al usuario.
 enum MenuBarGuide {
     static let body = """
-    Buscá el ⌘ arriba a la derecha, junto al reloj y el Wi‑Fi.
+    Buscá el ícono de \(BrandDisplay.name) arriba a la derecha, junto al reloj y el Wi‑Fi.
 
     Para que no se oculte cuando la barra está llena:
     • Mantené ⌘ (Command) y arrastrá \(BrandDisplay.name) hacia la derecha, cerca del reloj: ahí macOS suele dejarlo fijo y no lo reemplaza por otros iconos.

@@ -76,6 +76,17 @@ final class StatusBarController {
     private func buildContextMenu(includeDeveloperItems: Bool) -> NSMenu {
         let menu = NSMenu()
 
+        if let version = appState.availableUpdateVersion {
+            let updateItem = NSMenuItem(
+                title: "Actualización disponible: \(version)…",
+                action: #selector(checkForUpdates),
+                keyEquivalent: ""
+            )
+            updateItem.target = self
+            menu.addItem(updateItem)
+            menu.addItem(.separator())
+        }
+
         let openItem = NSMenuItem(title: "Ver todo", action: #selector(togglePanel), keyEquivalent: "")
         openItem.target = self
         menu.addItem(openItem)

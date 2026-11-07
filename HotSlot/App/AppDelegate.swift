@@ -91,7 +91,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         state.bootstrap(panelController: panel)
         applyLaunchAtLoginSetting()
-        updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
+        updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: self)
 
         let onboardingPending = !AppSettings.load().hasCompletedOnboarding
         let userOpened = shouldPresentPanelAfterLaunch
@@ -271,5 +271,41 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         } catch {
             // El usuario puede no tener permisos; ignorar silenciosamente en MVP
         }
+    }
+}
+
+// MARK: - Recordatorios de actualización
+// Una app de barra de menú no se pone al frente sola: si Sparkle encuentra una versión mientras
+// el usuario trabaja, la avisamos con el notch y con una línea arriba del menú del ícono.
+
+extension AppDelegate: SPUStandardUserDriverDelegate {
+    var supportsGentleScheduledUpdateReminders: Bool { true }
+
+    func standardUserDriverShouldHandleShowingScheduledUpdate(
+        _ update: SUAppcastItem,
+        andInImmediateFocus immediateFocus: Bool
+    ) -> Bool {
+        immediateFocus
+    }
+
+    func standardUserDriverWillHandleShowingUpdate(
+        _ handleShowingUpdate: Bool,
+        forUpdate update: SUAppcastItem,
+        state: SPUUserUpdateState
+    ) {
+        guard !handleShowingUpdate, !state.userInitiated else { return }
+        let version = update.displayVersionString
+        Task { @MainActor [weak self] in
+            self?.appState?.availableUpdateVersion = version
+            self?.appState?.presentNotch(.plain("Hay una versión nueva (\(version)) · ícono de la barra de menú"))
+        }
+    }
+
+    func standardUserDriverDidReceiveUserAttention(forUpdate update: SUAppcastItem) {
+        Task { @MainActor [weak self] in self?.appState?.availableUpdateVersion = nil }
+    }
+
+    func standardUserDriverWillFinishUpdateSession() {
+        Task { @MainActor [weak self] in self?.appState?.availableUpdateVersion = nil }
     }
 }

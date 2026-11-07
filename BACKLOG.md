@@ -44,7 +44,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P2 | Cruz de vaciar al mismo tamaño visual que el badge de atajo (no más grande) |
 | [x] | P1 | Arrastrar un ítem del historial a un slot para guardarlo ahí |
 | [x] | P1 | **Clic en slot/historial:** copiar al portapapeles (default) o pegar donde estaba el cursor (Ajustes). Atajos siguen pegando. Validado. |
-| [~] | P1 | **Archivos en slots e historial:** primera etapa en 0.24.0 (referencia con bookmark, un archivo por slot, captura desde Finder, soltar sobre un slot del panel). Falta validar con el DMG. Segunda etapa: soltar sobre el notch y archivos de Mail, Fotos o descargas del navegador (promesas de archivo) |
+| [~] | P1 | **Archivos en slots e historial:** primera etapa en 0.24.0 (referencia con bookmark, un archivo por slot, captura desde Finder, soltar sobre un slot del panel). Soltar archivos sobre la barra del notch ya funciona (validado). Falta validar con el DMG y la segunda etapa: archivos de Mail, Fotos o descargas del navegador (promesas de archivo) |
 | [x] | P1 | Ver mejor el contenido de un slot (peek al hover; no copiar el expand de filas) |
 | [x] | P1 | Sonidos por acción (éxito vs no se pudo pegar vs guardado vs vacío) |
 | [x] | P1 | Reordenar ítems **pinneados** con drag & drop (orden persistente entre pines) |
@@ -177,7 +177,7 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 
 | Estado | Pri | Tarea |
 |--------|-----|-------|
-| [~] | P1 | **Sparkle** — integrado y con `SUPublicEDKey`; falta correr `generate_appcast` y subir `docs/appcast.xml` en cada release (hoy el feed está vacío, así que ningún usuario recibe aviso de actualización) |
+| [~] | P1 | **Sparkle** — integrado y con `SUPublicEDKey`; falta correr `generate_appcast` y subir `docs/appcast.xml` en cada release. El feed ya tiene la 0.24.0 (validado: la 0.23.0 se actualiza). Recordatorio propio agregado (aviso en el notch y línea «Actualización disponible» en el menú del ícono): falta validarlo con el próximo release |
 | [x] | P1 | **Ícono menu bar más visible** — `clipboard.fill` semibold 15 pt |
 | [x] | P1 | **Editar atajos desde el panel** — clic en badge → popover pegar/guardar |
 | [x] | P1 | **Un solo flujo de Ajustes** — escena SwiftUI vacía + ⌘,; ventana sobre el panel; panel solo se reabre si estaba abierto |
@@ -186,6 +186,7 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 | [ ] | P3 | Atajo clicable extra en barra (además del icono) — evaluar si aporta o satura la menu bar |
 | [ ] | P3 | “Slots libres” en UI tipo Dynamic Island — **no aplica en Mac**; en iPhone sería otro producto |
 | [ ] | P1 | **Analytics (importante):** contador descargas (GitHub) en web; Vercel Analytics en docs; ping anónimo in-app acordado en privacidad |
+| [x] | P1 | **Limpieza de Ajustes:** se quitó la pestaña «Slots», la sección «Depuración», el diagnóstico de Accesibilidad y el botón de probar el aviso. Nueva sección «Barra del notch» con interruptor. Validado por Gianluca |
 
 ### Propuesta rápida (cómo resolver)
 

@@ -30,6 +30,8 @@ struct AppSettings: Codable, Equatable {
     var launchAtLogin: Bool
     var playSoundOnPaste: Bool
     var showNotchNotice: Bool
+    /// Barra que baja desde el notch al pasar el mouse.
+    var showNotchShelf: Bool
     var clickItemAction: ClickItemAction
     var debugClipboard: Bool
     var hasCompletedOnboarding: Bool
@@ -58,7 +60,7 @@ struct AppSettings: Codable, Equatable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case historyLimit, launchAtLogin, playSoundOnPaste, showNotchNotice, clickItemAction, debugClipboard, hasCompletedOnboarding, hasSeenMenuBarHint
+        case historyLimit, launchAtLogin, playSoundOnPaste, showNotchNotice, showNotchShelf, clickItemAction, debugClipboard, hasCompletedOnboarding, hasSeenMenuBarHint
         case firstInstallDate, licenseKey, isLicensed, confirmLibraryDelete
     }
 
@@ -67,6 +69,7 @@ struct AppSettings: Codable, Equatable {
         launchAtLogin: Bool,
         playSoundOnPaste: Bool,
         showNotchNotice: Bool = true,
+        showNotchShelf: Bool = true,
         clickItemAction: ClickItemAction = .copyToClipboard,
         debugClipboard: Bool,
         hasCompletedOnboarding: Bool,
@@ -80,6 +83,7 @@ struct AppSettings: Codable, Equatable {
         self.launchAtLogin = launchAtLogin
         self.playSoundOnPaste = playSoundOnPaste
         self.showNotchNotice = showNotchNotice
+        self.showNotchShelf = showNotchShelf
         self.clickItemAction = clickItemAction
         self.debugClipboard = debugClipboard
         self.hasCompletedOnboarding = hasCompletedOnboarding
@@ -96,6 +100,7 @@ struct AppSettings: Codable, Equatable {
         launchAtLogin = try container.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? false
         playSoundOnPaste = try container.decodeIfPresent(Bool.self, forKey: .playSoundOnPaste) ?? true
         showNotchNotice = try container.decodeIfPresent(Bool.self, forKey: .showNotchNotice) ?? true
+        showNotchShelf = try container.decodeIfPresent(Bool.self, forKey: .showNotchShelf) ?? true
         clickItemAction = try container.decodeIfPresent(ClickItemAction.self, forKey: .clickItemAction) ?? .copyToClipboard
         debugClipboard = try container.decodeIfPresent(Bool.self, forKey: .debugClipboard) ?? false
         hasCompletedOnboarding = try container.decodeIfPresent(Bool.self, forKey: .hasCompletedOnboarding) ?? false
@@ -118,4 +123,9 @@ struct AppSettings: Codable, Equatable {
         guard let data = try? JSONEncoder().encode(self) else { return }
         UserDefaults.standard.set(data, forKey: Keys.storage)
     }
+}
+
+extension Notification.Name {
+    /// Se publica al activar o desactivar la barra del notch en Ajustes.
+    static let notchShelfSettingChanged = Notification.Name("com.hotslot.notchShelfSettingChanged")
 }

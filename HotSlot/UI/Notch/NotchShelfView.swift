@@ -1,5 +1,6 @@
 import KeyboardShortcuts
 import SwiftUI
+import UniformTypeIdentifiers
 
 private let shelfSpace = "notchShelf"
 
@@ -36,6 +37,7 @@ struct NotchShelfView: View {
     @Bindable var appState: AppState
     let pointer: NotchShelfPointer
     let onActivateSlot: (Int) -> Void
+    let onDropFile: (Int, URL) -> Void
     let onOpenPanel: () -> Void
 
     @State private var isOpenPanelHovering = false
@@ -46,9 +48,12 @@ struct NotchShelfView: View {
         VStack(alignment: .leading, spacing: NotchShelfMetrics.sectionGap) {
             HStack(spacing: NotchShelfMetrics.gap) {
                 ForEach(appState.slotStore.slots) { slot in
-                    NotchShelfTile(slot: slot, pointer: pointer) {
-                        onActivateSlot(slot.index)
-                    }
+                    NotchShelfTile(
+                        slot: slot,
+                        pointer: pointer,
+                        onActivate: { onActivateSlot(slot.index) },
+                        onDropFile: { url in onDropFile(slot.index, url) }
+                    )
                 }
             }
 
@@ -163,8 +168,10 @@ private struct NotchShelfTile: View {
     let slot: Slot
     let pointer: NotchShelfPointer
     let onActivate: () -> Void
+    let onDropFile: (URL) -> Void
 
     @State private var isHovering = false
+    @State private var isDropTarget = false
     @State private var pressScale: CGFloat = 1
 
     private var radius: CGFloat { NotchShelfMetrics.tileCorner }
@@ -232,8 +239,25 @@ private struct NotchShelfTile: View {
             .contentShape(RoundedRectangle(cornerRadius: radius, style: .continuous))
         }
         .buttonStyle(.plain)
+        .overlay {
+            if isDropTarget {
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .strokeBorder(SlotsColor.naranja, lineWidth: 2)
+            }
+        }
+        .onDrop(of: [UTType.fileURL], isTargeted: $isDropTarget) { providers in
+            guard let provider = providers.first(where: {
+                $0.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier)
+            }) else { return false }
+            _ = provider.loadObject(ofClass: URL.self) { url, _ in
+                guard let url, url.isFileURL else { return }
+                DispatchQueue.main.async { onDropFile(url) }
+            }
+            return true
+        }
+        .animation(.easeOut(duration: 0.12), value: isDropTarget)
         .scaleEffect(pressScale)
-        .slotsHoverLift(isHovering && hasContent, scales: true)
+        .slotsHoverLift((isHovering || isDropTarget) && (hasContent || isDropTarget), scales: true)
         .animation(.spring(response: 0.28, dampingFraction: 0.86), value: isHovering)
         .pointerHover(pointer, isHovering: $isHovering)
     }
