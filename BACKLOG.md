@@ -44,7 +44,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P2 | Cruz de vaciar al mismo tamaño visual que el badge de atajo (no más grande) |
 | [x] | P1 | Arrastrar un ítem del historial a un slot para guardarlo ahí |
 | [x] | P1 | **Clic en slot/historial:** copiar al portapapeles (default) o pegar donde estaba el cursor (Ajustes). Atajos siguen pegando. Validado. |
-| [ ] | P1 | **Archivos en slots e historial:** guardar y pegar files (PDF, zip, etc.), no solo texto e imagen |
+| [~] | P1 | **Archivos en slots e historial:** primera etapa en 0.24.0 (referencia con bookmark, un archivo por slot, captura desde Finder, soltar sobre un slot del panel). Falta validar con el DMG. Segunda etapa: soltar sobre el notch y archivos de Mail, Fotos o descargas del navegador (promesas de archivo) |
 | [x] | P1 | Ver mejor el contenido de un slot (peek al hover; no copiar el expand de filas) |
 | [x] | P1 | Sonidos por acción (éxito vs no se pudo pegar vs guardado vs vacío) |
 | [x] | P1 | Reordenar ítems **pinneados** con drag & drop (orden persistente entre pines) |

@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.24.0] — 2026-11-07
+
+### Barra del notch
+
+- Al pasar el mouse por el notch (o por el centro de la barra de menú en Macs sin notch) baja una barra con los 5 slots y las bibliotecas, con el mismo estilo del panel.
+- Un clic en un slot con contenido copia o pega según Ajustes. En un slot vacío guarda el portapapeles. Cada slot muestra su atajo.
+- Un botón redondo abre el panel completo. La barra se cierra sola tras cualquier clic y no se abre con el panel, Ajustes o el onboarding visibles.
+
+### Archivos
+
+- Los archivos y carpetas se pueden guardar en slots y aparecen en el historial. Se guarda una referencia (no una copia) y se sigue el archivo si se renombra o se mueve.
+- Copiar un archivo en Finder lo guarda como archivo, no como su nombre. También se puede soltar uno sobre un slot del panel.
+- Un archivo por slot. Si ya no está en su lugar, el slot lo avisa y el portapapeles no se toca.
+
+### Panel
+
+- Hover unificado: sombra más marcada y un leve agrandado en slots, bibliotecas y botones. Las filas del historial solo cambian la sombra.
+
 ## [0.23.0] — 2026-11-07
 
 ### Panel
