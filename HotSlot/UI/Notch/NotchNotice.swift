@@ -48,6 +48,16 @@ enum NotchNoticeKind: Equatable {
         return false
     }
 
+    /// Negro para confirmar. Naranja cuando el aviso pide hacer algo.
+    var usesActionColor: Bool {
+        switch self {
+        case .emptySlot, .noAccessibility:
+            return true
+        case .saved, .pasted, .copied, .ready, .plain:
+            return false
+        }
+    }
+
     private static func saveShortcut(for index: Int) -> String {
         guard (1 ... 5).contains(index) else { return "⌘⌃" }
         return ["⌘⌃A", "⌘⌃S", "⌘⌃D", "⌘⌃Q", "⌘⌃W"][index - 1]
@@ -68,7 +78,7 @@ private final class NotchPillView: NSView {
         layer?.backgroundColor = NSColor.clear.cgColor
 
         pill.wantsLayer = true
-        pill.layer?.backgroundColor = NSColor(calibratedRed: 0.11, green: 0.11, blue: 0.11, alpha: 1).cgColor
+        pill.layer?.backgroundColor = NotchPillView.quietColor
         pill.layer?.cornerRadius = 18
         pill.layer?.cornerCurve = .continuous
 
@@ -91,11 +101,15 @@ private final class NotchPillView: NSView {
         fatalError("init(coder:) no soportado")
     }
 
-    func configure(line: String, actionable: Bool, action: (() -> Void)?) {
+    func configure(line: String, actionable: Bool, actionColor: Bool, action: (() -> Void)?) {
         label.stringValue = line
         onAction = actionable ? action : nil
+        pill.layer?.backgroundColor = actionColor ? Self.actionColor : Self.quietColor
         needsLayout = true
     }
+
+    private static let quietColor = NSColor(calibratedRed: 0.11, green: 0.11, blue: 0.11, alpha: 1).cgColor
+    private static let actionColor = NSColor(srgbRed: 226 / 255, green: 80 / 255, blue: 29 / 255, alpha: 1).cgColor
 
     override func layout() {
         super.layout()
@@ -133,7 +147,7 @@ private final class NotchPillView: NSView {
     }
 }
 
-/// Píldora negra bajo el notch o la barra de menú.
+/// Píldora bajo el notch o la barra de menú. Negra para confirmar, naranja si pide una acción.
 @MainActor
 final class NotchNoticeController {
     private var panel: NSPanel?
@@ -153,7 +167,7 @@ final class NotchNoticeController {
         guard let panel, let pillView else { return }
 
         let actionable = kind.isActionable
-        pillView.configure(line: kind.line, actionable: actionable) { [weak self] in
+        pillView.configure(line: kind.line, actionable: actionable, actionColor: kind.usesActionColor) { [weak self] in
             self?.onOpenAccessibilitySettings?()
         }
 
