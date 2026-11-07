@@ -95,6 +95,7 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 | [ ] | P2 | **og:image** 1200×630 para compartir en redes |
 | [ ] | P2 | Validar promesas de lista (beta, preventa, mes gratis) con producto — LEEME §5 |
 | [ ] | P2 | Deploy Vercel tras push; smoke ES/EN, móvil, formulario |
+| [ ] | P2 | **Cambio de idioma:** transición al pasar de español a inglés (y al revés), para que el reflow del layout no se sienta un salto |
 | [ ] | P3 | Video hero `VIDEO_SRC` cuando exista mp4 liviano |
 | [ ] | P3 | Analytics (Plausible / Vercel) si pautan |
 
@@ -104,7 +105,7 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 |--------|-----|-------|
 | [x] | P2 | **Bibliotecas:** reorden drag + eliminar + renombrar (confirmación eliminar); dwell slot→pill |
 | [~] | P2 | **Panel UX** — oleada nov 2026 (tabla «Panel UX — validación Gianluca» más abajo) |
-| [ ] | P2 | **Fondos de slot:** sacar «Handoff (blanco)» y agregar el naranja de la paleta (`#E2501D`). Después de cerrar el hover (V13). |
+| [ ] | P2 | **Grilla slots:** tamaños editables por slot (cuadrado vs alto) |
 
 | Estado | Pri | Tarea post-usabilidad |
 |--------|-----|------------------------|
@@ -137,7 +138,10 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 | [x] | V9–V10 | Lápiz junto al nombre de biblioteca / a la derecha en slots · transición al editar · Enter o clic fuera guarda (el clic no dispara la otra acción) · Escape cancela · slots vacíos se renombran y el nombre se conserva al vaciar |
 | [x] | V11 | *(confirmado en pasada anterior)* |
 | [ ] | V12 | Pendiente cierre oleada |
-| [ ] | V13 | **Hover de slots:** borde naranja al pasar el mouse (peso, color, vacío vs con contenido) |
+| [x] | V13 | **Hover de slots:** borde gris cálido en cards claras y blanco suave en imagen, degradé u oscuro. Sin borde en vacíos. Naranja sólido solo al soltar encima |
+| [ ] | V16 | **Fondos de slot:** sacar «Handoff (blanco)» y agregar el naranja de la paleta (`#E2501D`) |
+| [ ] | V17 | **Hover de bibliotecas:** borde quieto en las pills no seleccionadas y en «+». El naranja sigue marcando solo la activa |
+| [ ] | V16 | **Fondos de slot:** sacar «Handoff (blanco)» y agregar el naranja de la paleta (`#E2501D`) |
 | [ ] | V15 | **Notch:** aviso al guardar/pegar (copy, tamaño, duración, que no tape el notch real) |
 
 **Dante (solo si Gianluca lo pide):** reorden de bibliotecas → `docs/REVISION-PANEL-PARA-DANTE.md`.

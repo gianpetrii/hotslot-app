@@ -171,7 +171,7 @@ private struct SlotCardView: View {
                     .strokeBorder(SlotsColor.naranja, lineWidth: 2)
             } else if isHovering, hasContent {
                 RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
-                    .strokeBorder(SlotsColor.naranja.opacity(0.35), lineWidth: 1)
+                    .strokeBorder(slotHoverStroke, lineWidth: 1)
             }
         }
         .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
@@ -261,6 +261,11 @@ private struct SlotCardView: View {
 
     private var headerChipInk: Color {
         SlotsColor.textoSecundario
+    }
+
+    /// Misma idea que el hover del historial: una línea quieta. El naranja queda para soltar encima.
+    private var slotHoverStroke: Color {
+        prefersLightContent ? Color.white.opacity(0.55) : SlotsColor.linea
     }
 
     private var clickHelp: String {
