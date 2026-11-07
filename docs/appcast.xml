@@ -1,10 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
-  <channel>
-    <title>HotSlot</title>
-    <link>https://hotslot-app-docs.vercel.app/</link>
-    <description>Actualizaciones de HotSlot</description>
-    <language>es</language>
-    <!-- Rellenar con `generate_appcast` de Sparkle al publicar cada release (ver README). -->
-  </channel>
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Slots</title>
+        <item>
+            <title>0.24.0</title>
+            <pubDate>Sat, 07 Nov 2026 16:44:27 -0300</pubDate>
+            <sparkle:version>32</sparkle:version>
+            <sparkle:shortVersionString>0.24.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/gianpetrii/hotslot-app/releases/download/v0.24.0/Slots-0.24.0.dmg" length="4987010" type="application/octet-stream" sparkle:edSignature="yGnSNVhSoXaknwXhAHxm/UjFkbNUbf0vFdKdVvVDQR+sXz01XP3n62CgWPuk+wwR6On7SPgaoiLlYIgfUEZIBw=="/>
+        </item>
+    </channel>
 </rss>
