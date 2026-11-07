@@ -110,6 +110,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         statusBar.refreshVisibility()
+
+        Telemetry.startIfConsented()
+        if !backgroundLaunch {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+                self?.presentAnalyticsPromptIfNeeded()
+            }
+        }
+    }
+
+    /// Una sola vez, con el onboarding ya completado y solo si hay telemetría configurada.
+    @MainActor
+    private func presentAnalyticsPromptIfNeeded() {
+        let settings = AppSettings.load()
+        guard Telemetry.isConfigured, settings.hasCompletedOnboarding, !settings.hasAnsweredAnalyticsPrompt else { return }
+
+        let alert = NSAlert()
+        alert.messageText = "¿Ayudás a mejorar \(BrandDisplay.name)?"
+        alert.informativeText = """
+        Podés compartir datos de uso anónimos: qué funciones se usan y con qué frecuencia.
+
+        Nunca enviamos lo que copiás, nombres de archivos, bibliotecas o slots, ni quién sos. Está apagado hasta que lo aceptes, y lo cambiás cuando quieras en Ajustes → General → Privacidad.
+        """
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "Compartir uso anónimo")
+        alert.addButton(withTitle: "No, gracias")
+        NSApp.activate(ignoringOtherApps: true)
+        let accepted = alert.runModal() == .alertFirstButtonReturn
+
+        var updated = AppSettings.load()
+        updated.analyticsEnabled = accepted
+        updated.hasAnsweredAnalyticsPrompt = true
+        updated.save()
+        Telemetry.consentChanged()
     }
 
     @MainActor

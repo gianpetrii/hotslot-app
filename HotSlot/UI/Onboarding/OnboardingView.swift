@@ -9,8 +9,9 @@ struct OnboardingView: View {
     @Environment(AppState.self) private var appState
     @State private var page = 0
     @State private var accessibilityTrusted = AccessibilityPermission.isTrusted
+    @State private var shareUsage = AppSettings.load().analyticsEnabled
 
-    private let pages = OnboardingPage.all
+    private let pages = OnboardingPage.pages
     private let pageAnimation = HotSlotDesign.rowExpandAnimation
 
     var body: some View {
@@ -89,6 +90,7 @@ struct OnboardingView: View {
                     }
                 } else {
                     OnboardingChromeButton(title: "Empezar", emphasized: true) {
+                        commitAnalyticsChoice()
                         onFinished()
                     }
                 }
@@ -116,6 +118,8 @@ struct OnboardingView: View {
                 AccessibilityGrantSection(isTrusted: $accessibilityTrusted, style: .onboarding)
             } else if item.demo == .shortcutsSummary {
                 onboardingShortcutsSummary
+            } else if item.demo == .privacy {
+                privacyBlock
             } else if item.demo == .menuBar {
                 menuBarBlock
             } else {
@@ -177,11 +181,43 @@ struct OnboardingView: View {
                         .fill(Color.primary.opacity(0.07))
                 }
 
-            OnboardingChromeButton(title: "Cómo mantener ⌘ visible", emphasized: true) {
+            OnboardingChromeButton(title: "Cómo mantener \(BrandDisplay.name) visible", emphasized: true) {
                 MenuBarGuide.present()
             }
         }
         .padding(.top, 16)
+    }
+
+    /// Apagado por defecto: solo se enciende si la persona lo elige acá.
+    private var privacyBlock: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Toggle(isOn: $shareUsage) {
+                Text("Compartir uso anónimo")
+                    .font(SlotsFont.textoUI)
+                    .foregroundStyle(SlotsColor.tinta)
+            }
+            .toggleStyle(.switch)
+            Text("Cuenta qué funciones se usan y con qué frecuencia. Nunca enviamos lo que copiás, nombres de archivos, bibliotecas o slots, ni quién sos.")
+                .font(SlotsFont.etiqueta)
+                .foregroundStyle(SlotsColor.textoSecundario)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(SlotsSpace.m)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background {
+            RoundedRectangle(cornerRadius: SlotsRadius.card, style: .continuous)
+                .fill(SlotsColor.teclaFondo)
+        }
+        .padding(.top, 8)
+    }
+
+    private func commitAnalyticsChoice() {
+        guard Telemetry.isConfigured else { return }
+        var settings = AppSettings.load()
+        settings.analyticsEnabled = shareUsage
+        settings.hasAnsweredAnalyticsPrompt = true
+        settings.save()
+        Telemetry.consentChanged()
     }
 
     private func go(to index: Int) {
@@ -224,6 +260,18 @@ private struct OnboardingPage {
     let caption: String
     let demo: OnboardingDemoKind
     var hint: String?
+
+    /// La página de privacidad solo existe si hay telemetría configurada.
+    static var pages: [OnboardingPage] {
+        Telemetry.isConfigured ? all + [privacy] : all
+    }
+
+    private static let privacy = OnboardingPage(
+        title: "Ayudanos a mejorar",
+        caption: "Si querés, compartí datos de uso anónimos. Está apagado y lo cambiás cuando quieras en Ajustes › General › Privacidad.",
+        demo: .privacy,
+        hint: nil
+    )
 
     static let all: [OnboardingPage] = [
         OnboardingPage(

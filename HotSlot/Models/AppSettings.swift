@@ -40,6 +40,9 @@ struct AppSettings: Codable, Equatable {
     var licenseKey: String?
     var isLicensed: Bool
     var confirmLibraryDelete: Bool
+    /// Uso anónimo opcional (TelemetryDeck). Apagado hasta que la persona lo activa.
+    var analyticsEnabled: Bool
+    var hasAnsweredAnalyticsPrompt: Bool
 
     static let `default` = AppSettings(
         historyLimit: 50,
@@ -61,7 +64,7 @@ struct AppSettings: Codable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case historyLimit, launchAtLogin, playSoundOnPaste, showNotchNotice, showNotchShelf, clickItemAction, debugClipboard, hasCompletedOnboarding, hasSeenMenuBarHint
-        case firstInstallDate, licenseKey, isLicensed, confirmLibraryDelete
+        case firstInstallDate, licenseKey, isLicensed, confirmLibraryDelete, analyticsEnabled, hasAnsweredAnalyticsPrompt
     }
 
     init(
@@ -77,7 +80,9 @@ struct AppSettings: Codable, Equatable {
         firstInstallDate: Date? = nil,
         licenseKey: String? = nil,
         isLicensed: Bool = false,
-        confirmLibraryDelete: Bool = true
+        confirmLibraryDelete: Bool = true,
+        analyticsEnabled: Bool = false,
+        hasAnsweredAnalyticsPrompt: Bool = false
     ) {
         self.historyLimit = historyLimit
         self.launchAtLogin = launchAtLogin
@@ -92,6 +97,8 @@ struct AppSettings: Codable, Equatable {
         self.licenseKey = licenseKey
         self.isLicensed = isLicensed
         self.confirmLibraryDelete = confirmLibraryDelete
+        self.analyticsEnabled = analyticsEnabled
+        self.hasAnsweredAnalyticsPrompt = hasAnsweredAnalyticsPrompt
     }
 
     init(from decoder: Decoder) throws {
@@ -109,6 +116,8 @@ struct AppSettings: Codable, Equatable {
         licenseKey = try container.decodeIfPresent(String.self, forKey: .licenseKey)
         isLicensed = try container.decodeIfPresent(Bool.self, forKey: .isLicensed) ?? false
         confirmLibraryDelete = try container.decodeIfPresent(Bool.self, forKey: .confirmLibraryDelete) ?? true
+        analyticsEnabled = try container.decodeIfPresent(Bool.self, forKey: .analyticsEnabled) ?? false
+        hasAnsweredAnalyticsPrompt = try container.decodeIfPresent(Bool.self, forKey: .hasAnsweredAnalyticsPrompt) ?? false
     }
 
     static func load() -> AppSettings {

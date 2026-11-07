@@ -27,7 +27,7 @@
 
   <main class="doc-main">
     <h1>Política de privacidad</h1>
-    <p class="doc-updated">Slots · Última actualización: 26 de octubre de 2026</p>
+    <p class="doc-updated">Slots · Última actualización: 7 de noviembre de 2026</p>
 
     <section class="panel-glass glass-section">
       <p class="section-label">Resumen</p>
@@ -36,6 +36,7 @@
         Slots es un gestor de portapapeles para macOS.
         <strong>No recopilamos, transmitimos ni vendemos datos personales.</strong>
         Toda la información que usa la app permanece en tu dispositivo.
+        La única excepción es el uso anónimo que podés activar vos (ver «Uso anónimo, opcional»).
       </p>
     </section>
 
@@ -43,7 +44,7 @@
       <h2>Datos que permanecen en tu dispositivo</h2>
       <p>Slots guarda localmente, dentro del contenedor de la aplicación:</p>
       <ul>
-        <li>Contenido que copiás (texto e imágenes)</li>
+        <li>Contenido que copiás (texto, imágenes y referencias a archivos)</li>
         <li>Historial de clipboard y slots guardados</li>
         <li>Preferencias de la app (atajos, ajustes, sonidos)</li>
       </ul>
@@ -61,7 +62,35 @@
           en la app donde estabas. El permiso se usa solo en tu Mac; no enviamos contenido del portapapeles a internet.
         </li>
       </ul>
-      <p>No usamos analítica ni servicios en la nube para tu historial.</p>
+      <p>No usamos servicios en la nube para tu historial.</p>
+    </section>
+
+    <section class="panel-glass glass-section">
+      <h2>Uso anónimo, opcional</h2>
+      <p>
+        Está <strong>apagado por defecto</strong>. Solo se activa si lo elegís cuando la app te lo pregunta
+        o en <strong>Ajustes → General → Privacidad</strong>, y lo podés apagar cuando quieras.
+      </p>
+      <p>Si lo activás, medimos qué funciones se usan y con qué frecuencia. Por ejemplo:</p>
+      <ul>
+        <li>que se abrió la app;</li>
+        <li>que se guardó o se usó un slot (con el tipo genérico: texto, imagen o archivo, y si fue desde el panel, un atajo o la barra del notch);</li>
+        <li>que se creó una biblioteca;</li>
+        <li>que se tocó «Comprar» o se activó una licencia.</li>
+      </ul>
+      <p>
+        Junto con eso llegan datos técnicos básicos: versión de la app y de macOS, modelo de Mac,
+        idioma y región, zona horaria y tamaño de pantalla.
+      </p>
+      <p>
+        <strong>Nunca enviamos</strong> lo que copiás, nombres de archivos, de bibliotecas o de slots,
+        la app desde donde copiás, ni tu nombre o email. Cada instalación usa un identificador aleatorio y
+        cifrado, pensado para no identificar a nadie.
+      </p>
+      <p>
+        Para esto usamos TelemetryDeck, un servicio de analítica pensado para apps de Apple y la privacidad.
+        Si lo activás, su política de privacidad aplica a esos datos.
+      </p>
     </section>
 
     <section class="panel-glass glass-section">
@@ -75,7 +104,14 @@
 
     <section class="panel-glass glass-section">
       <h2>Terceros</h2>
-      <p>La app no integra servicios de analítica, publicidad ni seguimiento.</p>
+      <p>
+        La app no integra publicidad ni seguimiento. La única analítica es el uso anónimo opcional descrito arriba,
+        apagado por defecto.
+      </p>
+      <p>
+        Este sitio web usa Vercel Web Analytics para contar visitas de forma agregada, sin cookies
+        ni seguimiento entre sitios.
+      </p>
       <p>
         En Ajustes hay un enlace de atributación del ícono (Flaticon).
         Solo se abre en el navegador si elegís visitarlo; no implica recolección de datos.
@@ -116,5 +152,7 @@
     <span>© 2026 Slots · macOS clipboard manager</span>
     <span><a href="./">Volver al inicio</a></span>
   </footer>
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

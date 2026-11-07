@@ -54,6 +54,7 @@ enum Entitlements {
         let key = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         if LicenseKeyFormat.isLegacySlotsKey(key.uppercased()) {
             activateLicenseKey(key)
+            Telemetry.licenseActivated()
             return nil
         }
 
@@ -63,6 +64,7 @@ enum Entitlements {
             settings.licenseKey = key
             settings.isLicensed = true
             settings.save()
+            Telemetry.licenseActivated()
             return nil
         }
         return result.message

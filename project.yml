@@ -13,6 +13,9 @@ packages:
   Sparkle:
     url: https://github.com/sparkle-project/Sparkle
     from: 2.6.0
+  TelemetryDeck:
+    url: https://github.com/TelemetryDeck/SwiftSDK
+    from: 2.14.0
 
 settings:
   base:
@@ -45,6 +48,8 @@ targets:
       - package: KeyboardShortcuts
       - package: Sparkle
         product: Sparkle
+      - package: TelemetryDeck
+        product: TelemetryDeck
     preBuildScripts:
       - name: Strip Quarantine (Resources)
         basedOnDependencyAnalysis: false

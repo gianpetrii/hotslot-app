@@ -10,6 +10,7 @@ struct SettingsView: View {
     @State private var showNotchNotice = AppSettings.load().showNotchNotice
     @State private var historyLimit = AppSettings.load().historyLimit
     @State private var showNotchShelf = AppSettings.load().showNotchShelf
+    @State private var analyticsEnabled = AppSettings.load().analyticsEnabled
     @State private var confirmLibraryDelete = AppSettings.load().confirmLibraryDelete
     @State private var clickItemAction = AppSettings.load().clickItemAction
     @State private var accessibilityTrusted = AccessibilityPermission.isTrusted
@@ -152,6 +153,23 @@ struct SettingsView: View {
                             .foregroundStyle(.secondary)
                     }
 
+                    if Telemetry.isConfigured {
+                        Section("Privacidad") {
+                            Toggle("Compartir uso anónimo", isOn: $analyticsEnabled)
+                                .onChange(of: analyticsEnabled) { _, newValue in
+                                    var settings = AppSettings.load()
+                                    settings.analyticsEnabled = newValue
+                                    settings.hasAnsweredAnalyticsPrompt = true
+                                    settings.save()
+                                    Telemetry.consentChanged()
+                                }
+                            Text("Cuenta qué funciones se usan, sin enviar lo que copiás, nombres de archivos, bibliotecas o slots, ni quién sos. Apagado por defecto.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            Link("Política de privacidad", destination: Self.privacyURL)
+                        }
+                    }
+
                     Section("Ayuda") {
                         Button("Cómo usar \(BrandDisplay.name)") {
                             appState.openOnboarding?()
@@ -255,6 +273,7 @@ struct SettingsView: View {
         }
     }
 
+    private static let privacyURL = URL(string: "https://hotslot-app-docs.vercel.app/privacy.html")!
     private static let iconAttributionURL = URL(string: "https://www.flaticon.es/iconos-gratis/reporte")!
 
     private func updateLaunchAtLogin(_ enabled: Bool) {

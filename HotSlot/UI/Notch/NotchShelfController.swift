@@ -107,7 +107,7 @@ final class NotchShelfController {
         if appState.slotStore.content(at: index) == nil {
             appState.replaceSlotFromClipboard(index: index)
         } else {
-            appState.pasteSlot(index: index, panelController: panelController)
+            appState.pasteSlot(index: index, panelController: panelController, via: .notch)
         }
     }
 
@@ -173,6 +173,7 @@ final class NotchShelfController {
         startHoverWatch()
         if isOpen { return }
         isOpen = true
+        Telemetry.notchOpened()
         let open = shelfFrame(on: screen, open: true)
         let closed = shelfFrame(on: screen, open: false)
         shelfPanel.setFrame(closed, display: false)

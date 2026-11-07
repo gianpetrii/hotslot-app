@@ -131,6 +131,9 @@ final class AppState {
                 return
             }
             self.focusTracker.capture()
+            if let content = self.slotStore.content(at: index) {
+                Telemetry.slotUsed(.hotkey, content: content)
+            }
             self.pasteService.pasteFromSlot(
                 index: index,
                 slotStore: self.slotStore,
@@ -145,6 +148,7 @@ final class AppState {
                 self.focusTracker.capture()
                 if let content = await self.clipboardService.captureSelection() {
                     self.slotStore.saveContent(index: index, content: content)
+                    Telemetry.slotSaved(content)
                     FeedbackSound.play(.saved)
                     self.presentNotch(.saved(slotIndex: index, title: self.slotDisplayTitle(at: index)))
                 } else {
@@ -182,13 +186,14 @@ final class AppState {
         activateContent(item.content, slotIndex: nil, panelController: panelController)
     }
 
-    func pasteSlot(index: Int, panelController: PanelController) {
+    func pasteSlot(index: Int, panelController: PanelController, via method: Telemetry.Method = .panel) {
         guard ensureCanUseSlot(index) else { return }
         guard let content = slotStore.content(at: index) else {
             FeedbackSound.play(.pasteFailed)
             presentNotch(.emptySlot(index: index))
             return
         }
+        Telemetry.slotUsed(method, content: content)
         activateContent(content, slotIndex: index, panelController: panelController)
     }
 
@@ -271,6 +276,7 @@ final class AppState {
     }
 
     func openPurchasePage() {
+        Telemetry.purchaseClicked()
         NSWorkspace.shared.open(Entitlements.purchaseURL)
     }
 
@@ -296,6 +302,7 @@ final class AppState {
             )
         }
         slotStore.saveContent(index: index, content: content)
+        Telemetry.slotSaved(content)
         if announce {
             FeedbackSound.play(.saved)
             presentNotch(.saved(slotIndex: index, title: slotDisplayTitle(at: index)))
@@ -350,6 +357,7 @@ final class AppState {
         libraryWorkspace.syncFromLegacySlotStore(slotStore)
         libraryWorkspace.createLibrary(named: name)
         libraryWorkspace.applyActiveLibrary(to: slotStore)
+        Telemetry.libraryCreated()
         UsageEventLog.shared.record("biblioteca_crear", detail: name)
     }
 

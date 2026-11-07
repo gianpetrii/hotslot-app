@@ -42,6 +42,7 @@
 		5F03F3682880EE8CB86A7501 /* SlotStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F74883603B94FB2FCCA0073 /* SlotStore.swift */; };
 		5F54E5810EE5E19A94501C02 /* SlotsPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0053E366473B0BCE5341CE9 /* SlotsPalette.swift */; };
 		601143B29971E9F1B4963725 /* NewLibraryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D990A1EB5D5AAA6C60B70D8 /* NewLibraryFormView.swift */; };
+		60BCAF886C1D755BAF4F57B0 /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = D9564164F8FDDB85AA2D2816 /* TelemetryDeck */; };
 		626F2AD7F73EF8432A0D67D7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B880BD3AB5B57E6D542F8B5F /* Assets.xcassets */; };
 		666961C01803DCEA644EF356 /* ShortcutBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644A9655A112A4CEB512EA84 /* ShortcutBadge.swift */; };
 		67A7DB765E43FE0A8431F019 /* SaveClipboardSlotPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F7D2094D67542CF6B99B29B /* SaveClipboardSlotPickerSheet.swift */; };
@@ -67,6 +68,7 @@
 		999AA44F8AF5D7EDD8CA8B74 /* HotSlotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51184CDE4DE57A7C42AA1D1 /* HotSlotApp.swift */; };
 		A4444F4B642C0155DD82A848 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89452FF5E5C474F90625C4C3 /* AppDelegate.swift */; };
 		A52EB6844570257DB70152C2 /* AccessibilityPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4528F5EDD7002053F6D7D2AC /* AccessibilityPermission.swift */; };
+		A8AE9AF960E27653C8416182 /* Telemetry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7412C6D8E3680205603B447 /* Telemetry.swift */; };
 		AAB02DE1F528DDBEB6CA3EE0 /* BrandDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585B27068C55611BF34BD149 /* BrandDisplay.swift */; };
 		B7A96F91F33FE780998A9FD9 /* HistoryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904BC54DEB4EA0FB71573C0A /* HistoryStoreTests.swift */; };
 		BE931C778F5553DF67F0481B /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49192713FE49EA8C0DC9E8D /* EmptyStateView.swift */; };
@@ -169,6 +171,7 @@
 		A3D8A3FBDC8BD6954875D49B /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		A51184CDE4DE57A7C42AA1D1 /* HotSlotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotSlotApp.swift; sourceTree = "<group>"; };
 		A6CF8C198E8B698B91A020C3 /* PasteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteService.swift; sourceTree = "<group>"; };
+		A7412C6D8E3680205603B447 /* Telemetry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Telemetry.swift; sourceTree = "<group>"; };
 		A8791B78D4ECD0F3FCA7B987 /* SlotsWorkspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsWorkspace.swift; sourceTree = "<group>"; };
 		A911DBA98261441FF883EE51 /* PanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelView.swift; sourceTree = "<group>"; };
 		B880BD3AB5B57E6D542F8B5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -210,6 +213,7 @@
 			files = (
 				E7ADCDF4133C8D6377C65B29 /* KeyboardShortcuts in Frameworks */,
 				CDCC4BC8F2CB2B20B54B4F94 /* Sparkle in Frameworks */,
+				60BCAF886C1D755BAF4F57B0 /* TelemetryDeck in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -355,6 +359,7 @@
 		90D79007D5D359CA787E2A2B /* Analytics */ = {
 			isa = PBXGroup;
 			children = (
+				A7412C6D8E3680205603B447 /* Telemetry.swift */,
 				67CCD20A269221ECF634E755 /* UsageEventLog.swift */,
 			);
 			path = Analytics;
@@ -518,6 +523,7 @@
 			packageProductDependencies = (
 				C4BD315A42A86DEEE9D248F0 /* KeyboardShortcuts */,
 				68A08721B90AA8DAEF581ABC /* Sparkle */,
+				D9564164F8FDDB85AA2D2816 /* TelemetryDeck */,
 			);
 			productName = HotSlot;
 			productReference = D1A146B669DE65CF68ECF5A0 /* HotSlot.app */;
@@ -572,6 +578,7 @@
 			packageReferences = (
 				48823868B75029504C4CDEC3 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
 				763925598C95C169ADE0C368 /* XCRemoteSwiftPackageReference "Sparkle" */,
+				A5658C6DCED452DEBA6C7365 /* XCRemoteSwiftPackageReference "SwiftSDK" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E5031C35BCD2C1773CCBABD3 /* Products */;
@@ -730,6 +737,7 @@
 				8050B51FEBAEB5B66FDE5DF5 /* SlotsTheme.swift in Sources */,
 				1831E0CCBA952305EFEE0AF7 /* SlotsWorkspace.swift in Sources */,
 				709457F1F7152675FEE4A77B /* StatusBarController.swift in Sources */,
+				A8AE9AF960E27653C8416182 /* Telemetry.swift in Sources */,
 				F5B44D9C82D3CB4398737ED5 /* ToastView.swift in Sources */,
 				74695771CEBCEED13F7F3906 /* UsageEventLog.swift in Sources */,
 				7D09BF2DF35F201E3F7FFD36 /* VisualEffectBackground.swift in Sources */,
@@ -993,6 +1001,14 @@
 				minimumVersion = 2.6.0;
 			};
 		};
+		A5658C6DCED452DEBA6C7365 /* XCRemoteSwiftPackageReference "SwiftSDK" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TelemetryDeck/SwiftSDK";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.14.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1005,6 +1021,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 48823868B75029504C4CDEC3 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
 			productName = KeyboardShortcuts;
+		};
+		D9564164F8FDDB85AA2D2816 /* TelemetryDeck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A5658C6DCED452DEBA6C7365 /* XCRemoteSwiftPackageReference "SwiftSDK" */;
+			productName = TelemetryDeck;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
