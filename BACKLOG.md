@@ -92,7 +92,7 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 | [x] | P1 | Publicar landing Dante como `docs/index.html` + favicon |
 | [x] | P1 | Enlaces **Beta Mac** y **Privacidad** (`privacy.html`) en nav y pie |
 | [x] | P1 | **Cambio de idioma:** al pasar de español a inglés (y al revés) la página se funde, el texto cambia oculto y vuelve. El scroll se queda en el mismo tramo. Sin animación si el sistema la reduce |
-| [ ] | P1 | **Barra del notch:** al pasar el mouse por el rectángulo negro de arriba al centro, baja una barra horizontal con los 5 slots en cuadrados iguales (estilo e info ya guardados). Las bibliotecas van debajo o al costado para cambiar de vista. Es el panel acostado, para ocupar menos espacio. En Macs sin notch, el mismo gesto sale desde el centro de la barra de menú. La landing ya lo promete («Pasás el mouse por el notch y ves tus slots»); la app solo tiene la píldora de confirmación |
+| [x] | P1 | **Barra del notch:** al pasar el mouse por el notch (o el centro de la barra de menú) baja una barra con los 5 slots en cuadrados iguales, con el mismo estilo del panel, y las bibliotecas debajo para cambiar de vista. Clic en slot con contenido copia o pega según Ajustes; en slot vacío guarda el portapapeles. Chip de atajo de solo lectura. Un botón redondo abre el panel completo. Se cierra sola tras cualquier clic y no se abre con el panel, Ajustes o el onboarding visibles. Sin historial, sin edición ni arrastre: eso queda en el panel. Validado por Gianluca |
 | [ ] | P1 | **Formspree / waitlist:** pegar `WAITLIST_ENDPOINT` (ver `slots-landing/LEEME.md`) |
 | [ ] | P2 | **og:image** 1200×630 para compartir en redes |
 | [ ] | P2 | Validar promesas de lista (beta, preventa, mes gratis) con producto — LEEME §5 |
@@ -144,6 +144,7 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 | [x] | V16 | **Fondos de slot:** predeterminado = papel. Vaciar muestra el estilo vacío pero recuerda el color y lo restaura al guardar. El paso entre vacío, color y contenido se funde. El color persiste al reabrir y al cambiar de biblioteca |
 | [x] | V17 | **«+» de bibliotecas:** hover = solo sombra. Clic = pulso de escala que se ve aunque sea instantáneo, y después abre el formulario. Pills no seleccionadas validadas |
 | [x] | V15 | **Aviso del notch:** píldora negra al copiar, guardar o pegar. Naranja solo si pide una acción (accesibilidad, slot vacío). La barra desplegable con los 5 slots queda en P1 |
+| [x] | V18 | **Hover unificado:** sombra más marcada y agrandado del 2 % en slots, pills y botones redondos (panel y notch). Las filas del historial solo cambian la sombra. Re-validación de V13. Validado por Gianluca |
 
 **Dante (solo si Gianluca lo pide):** reorden de bibliotecas → `docs/REVISION-PANEL-PARA-DANTE.md`.
 

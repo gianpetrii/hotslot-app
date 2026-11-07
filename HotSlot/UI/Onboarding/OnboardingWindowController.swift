@@ -5,6 +5,8 @@ import SwiftUI
 /// Ventana del tour. Mismo ciclo de vida que `SettingsWindowController`.
 final class OnboardingWindowController: NSObject, NSWindowDelegate {
     private var window: NSWindow?
+
+    var isVisible: Bool { window?.isVisible == true }
     private var appState: AppState?
     private var backdrop: BackdropController?
     /// `true` = el usuario tocó «Empezar» y conviene reabrir el panel al cerrar.

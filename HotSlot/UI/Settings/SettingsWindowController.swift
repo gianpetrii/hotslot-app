@@ -5,6 +5,8 @@ import SwiftUI
 /// Ventana de ajustes regular. Las apps de menú bar no reciben teclas hasta pasar a `.regular`.
 final class SettingsWindowController: NSObject, NSWindowDelegate {
     private var window: NSWindow?
+
+    var isVisible: Bool { window?.isVisible == true }
     private var appState: AppState?
     private var onDismiss: (() -> Void)?
     private var isAnimating = false

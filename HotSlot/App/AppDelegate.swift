@@ -7,6 +7,7 @@ import Sparkle
 final class AppDelegate: NSObject, NSApplicationDelegate {
     var statusBarController: StatusBarController?
     var panelController: PanelController?
+    var notchShelf: NotchShelfController?
     var appState: AppState?
     let settingsWindowController = SettingsWindowController()
     let onboardingWindowController = OnboardingWindowController()
@@ -49,6 +50,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self.appState = state
         self.panelController = panel
         self.statusBarController = statusBar
+        let shelf = NotchShelfController(appState: state, panelController: panel)
+        shelf.isBlocked = { [weak self] in
+            guard let self else { return false }
+            return self.settingsWindowController.isVisible || self.onboardingWindowController.isVisible
+        }
+        shelf.start()
+        self.notchShelf = shelf
 
         state.openSettings = { [weak self] in
             guard let self, let state = self.appState else { return }

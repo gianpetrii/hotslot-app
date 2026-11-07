@@ -177,7 +177,7 @@ private struct SlotCardView: View {
                 .opacity(copyFlash ? 1 : 0)
                 .allowsHitTesting(false)
         }
-        .slotsHoverLift(isHovering && hasContent && !copyFlash)
+        .slotsHoverLift(isHovering && hasContent && !copyFlash, scales: true)
         .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
         .onTapGesture {
             if isEditingLabel {

@@ -89,7 +89,7 @@ struct PanelLibraryBar: View {
             }
         }
         .opacity(isGhost ? 0.3 : 1)
-        .slotsHoverLift(hoveredLibraryId == library.id && !isActive && !isGhost)
+        .slotsHoverLift(hoveredLibraryId == library.id && !isActive && !isGhost, scales: true)
         .onHover { hovering in
             hoveredLibraryId = hovering ? library.id : (hoveredLibraryId == library.id ? nil : hoveredLibraryId)
         }
@@ -301,7 +301,7 @@ private struct AddLibraryButtonStyle: ButtonStyle {
                             .strokeBorder(Color.black.opacity(0.12), lineWidth: 1)
                     }
             }
-            .slotsHoverLift(isHovering)
+            .slotsHoverLift(isHovering, scales: true)
             .animation(.easeOut(duration: 0.16), value: isHovering)
             .onHover { isHovering = $0 }
     }

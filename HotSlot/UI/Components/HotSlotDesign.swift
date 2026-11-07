@@ -85,21 +85,26 @@ enum HotSlotDesign {
     static let openSquareSize: CGFloat = panelHeaderHeight
 }
 
+/// Elevación al pasar el mouse, común al panel y a la barra del notch.
+/// `scales` agranda un 2 %: para slots, pills y botones; no para filas densas del historial.
 struct SlotsHoverLift: ViewModifier {
     var isActive: Bool
+    var scales = false
 
     func body(content: Content) -> some View {
-        content.shadow(
-            color: Color(slotsHex: 0x462D14).opacity(isActive ? 0.18 : 0),
-            radius: isActive ? 10 : 0,
-            y: isActive ? 4 : 0
-        )
+        content
+            .scaleEffect(scales && isActive ? 1.02 : 1)
+            .shadow(
+                color: Color(slotsHex: 0x462D14).opacity(isActive ? 0.32 : 0),
+                radius: isActive ? 14 : 0,
+                y: isActive ? 6 : 0
+            )
     }
 }
 
 extension View {
-    func slotsHoverLift(_ isActive: Bool) -> some View {
-        modifier(SlotsHoverLift(isActive: isActive))
+    func slotsHoverLift(_ isActive: Bool, scales: Bool = false) -> some View {
+        modifier(SlotsHoverLift(isActive: isActive, scales: scales))
     }
 }
 
