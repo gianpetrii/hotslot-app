@@ -57,6 +57,9 @@ struct SlotGridView: View {
                         appState.saveToSlot(index: slot.index, content: content)
                     }
                 },
+                onSaveFile: { url in
+                    appState.saveToSlot(index: slot.index, content: .fileReference(url: url))
+                },
                 onSaveHistoryItem: { itemID in
                     guard let content = appState.historyStore.item(id: itemID)?.content else { return }
                     appState.saveToSlot(index: slot.index, content: content)
@@ -96,6 +99,7 @@ private struct SlotCardView: View {
     let otherLibraries: [Library]
     let onPaste: () -> Void
     let onSaveFromClipboard: () -> Void
+    let onSaveFile: (URL) -> Void
     let onSaveHistoryItem: (UUID) -> Void
     let onClear: () -> Void
     let onSwapFrom: (Int) -> Void
@@ -138,7 +142,15 @@ private struct SlotCardView: View {
 
                 Spacer(minLength: 0)
 
-                if let preview = SlotCardCopy.contentBodyPreview(for: slot), !isImageContent {
+                if case .file = slot.content, let content = slot.content {
+                    SlotFileBlock(
+                        content: content,
+                        iconSize: 52,
+                        ink: bodyTextColor,
+                        secondaryInk: metaForeground
+                    )
+                    .modifier(SlotReadableText(onDark: prefersLightContent))
+                } else if let preview = SlotCardCopy.contentBodyPreview(for: slot), !isImageContent {
                     Text(preview)
                         .font(SlotsFont.textoUI)
                         .foregroundStyle(bodyTextColor)
@@ -188,8 +200,16 @@ private struct SlotCardView: View {
         }
         .onHover { isHovering = $0 }
         .draggable(PanelDragPayload.slot(index: slot.index))
-        .onDrop(of: [UTType.hotslotPanelDrag], isTargeted: $isDropTarget) { providers in
-            Self.acceptDrop(providers) { payload in
+        .onDrop(of: [UTType.hotslotPanelDrag, UTType.fileURL], isTargeted: $isDropTarget) { providers in
+            // Archivo o carpeta arrastrado desde Finder u otra app.
+            if let provider = providers.first(where: { $0.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) }) {
+                _ = provider.loadObject(ofClass: URL.self) { url, _ in
+                    guard let url, url.isFileURL else { return }
+                    DispatchQueue.main.async { onSaveFile(url) }
+                }
+                return true
+            }
+            return Self.acceptDrop(providers) { payload in
                 switch payload {
                 case .slot(let source):
                     guard (1...SlotStore.slotCount).contains(source), source != slot.index else { return }

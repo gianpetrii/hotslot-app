@@ -4,6 +4,18 @@ import Foundation
 enum ClipContent: Codable, Equatable, Sendable {
     case text(String)
     case image(fileName: String)
+    /// Referencia a un archivo o carpeta. No se copia: se guarda la ruta y un bookmark para seguirlo si se mueve.
+    case file(path: String, bookmark: Data?)
+
+    /// Dos referencias son iguales si apuntan a la misma ruta (el bookmark cambia entre capturas).
+    static func == (lhs: ClipContent, rhs: ClipContent) -> Bool {
+        switch (lhs, rhs) {
+        case let (.text(a), .text(b)): return a == b
+        case let (.image(a), .image(b)): return a == b
+        case let (.file(a, _), .file(b, _)): return a == b
+        default: return false
+        }
+    }
 
     var previewText: String {
         switch self {
@@ -14,6 +26,8 @@ enum ClipContent: Codable, Equatable, Sendable {
             return singleLine.count > 80 ? String(singleLine.prefix(80)) + "…" : singleLine
         case .image:
             return "Imagen"
+        case .file:
+            return fileName
         }
     }
 
@@ -28,6 +42,8 @@ enum ClipContent: Codable, Equatable, Sendable {
             let ext = (fileName as NSString).pathExtension.uppercased()
             if ext.isEmpty { return "Imagen" }
             return "Imagen.\(ext.lowercased())"
+        case .file:
+            return fileName
         }
     }
 
@@ -37,6 +53,10 @@ enum ClipContent: Codable, Equatable, Sendable {
         case .image(let fileName):
             let ext = (fileName as NSString).pathExtension.uppercased()
             return ext.isEmpty ? "Imagen" : "Imagen \(ext)"
+        case .file:
+            if isFolder { return "Carpeta" }
+            let ext = (fileName as NSString).pathExtension.uppercased()
+            return ext.isEmpty ? "Archivo" : "Archivo \(ext)"
         }
     }
 
@@ -102,7 +122,7 @@ extension ClipItem {
             return trimmed
                 .replacingOccurrences(of: "\r\n", with: "\n")
                 .replacingOccurrences(of: #"\n[ \t]*\n(?:[ \t]*\n)+"#, with: "\n\n", options: .regularExpression)
-        case .image:
+        case .image, .file:
             return content.displayTitle
         }
     }

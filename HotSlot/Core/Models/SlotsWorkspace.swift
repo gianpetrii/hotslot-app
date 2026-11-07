@@ -37,6 +37,9 @@ struct SlotRecord: Codable, Identifiable, Equatable, Sendable {
     var imageFileName: String?
     var linkURL: String?
     var meta: String?
+    /// Archivo guardado como referencia (`kind == .file`).
+    var filePath: String? = nil
+    var fileBookmark: Data? = nil
     /// Fondo elegido en la card. `nil` es el predeterminado.
     var cardBackgroundHex: String? = nil
     var createdAt: Date
@@ -51,8 +54,8 @@ struct SlotRecord: Codable, Identifiable, Equatable, Sendable {
             guard let imageFileName else { return nil }
             return .image(fileName: imageFileName)
         case .file:
-            guard let textPayload, !textPayload.isEmpty else { return nil }
-            return .text(textPayload)
+            guard let filePath, !filePath.isEmpty else { return nil }
+            return .file(path: filePath, bookmark: fileBookmark)
         }
     }
 }
@@ -66,6 +69,8 @@ struct HistoryRecord: Codable, Identifiable, Equatable, Sendable {
     var kind: SlotKind
     var textPayload: String?
     var imageFileName: String?
+    var filePath: String? = nil
+    var fileBookmark: Data? = nil
     var preview: String
 
     func clipItem() -> ClipItem? {
@@ -74,6 +79,9 @@ struct HistoryRecord: Codable, Identifiable, Equatable, Sendable {
         case .image:
             guard let imageFileName else { return nil }
             content = .image(fileName: imageFileName)
+        case .file:
+            guard let filePath else { return nil }
+            content = .file(path: filePath, bookmark: fileBookmark)
         default:
             guard let textPayload else { return nil }
             content = .text(textPayload)

@@ -192,7 +192,14 @@ private struct NotchShelfTile: View {
                         .layoutPriority(1)
                     }
 
-                    if let preview = SlotCardCopy.contentBodyPreview(for: slot), !isImage {
+                    if case .file = slot.content, let content = slot.content {
+                        FileClipIconView(content: content, side: 40)
+                        Text(content.fileName)
+                            .font(SlotsFont.etiqueta)
+                            .foregroundStyle(SlotsColor.tinta)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    } else if let preview = SlotCardCopy.contentBodyPreview(for: slot), !isImage {
                         Text(preview)
                             .font(SlotsFont.etiqueta)
                             .foregroundStyle(prefersLight ? Color.white : SlotsColor.tinta)

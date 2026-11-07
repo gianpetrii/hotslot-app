@@ -47,6 +47,8 @@ struct ClipItem: Codable, Identifiable, Equatable, Sendable {
                 return "image:" + Self.sha256(data)
             }
             return "image:\(fileName)"
+        case .file(let path, _):
+            return "file:" + path
         }
     }
 

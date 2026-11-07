@@ -23,6 +23,8 @@ enum SlotCardCopy {
             return "Texto · \(words) palabras"
         case .image:
             return "Imagen"
+        case .file:
+            return content.typeLabel
         }
     }
 
@@ -76,7 +78,7 @@ enum SlotCardCopy {
             let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
             if isHexColor(trimmed) { return normalizedHex(trimmed) }
             return trimmed
-        case .image:
+        case .image, .file:
             return nil
         }
     }

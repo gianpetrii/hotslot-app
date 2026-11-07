@@ -38,6 +38,9 @@ enum PasteboardHelper {
     ) -> ClipContent? {
         if shouldIgnore(pasteboard: pasteboard) { return nil }
 
+        // Un archivo copiado en Finder trae también su nombre como texto: el archivo manda.
+        if let file = fileContent(from: pasteboard) { return file }
+
         let candidates = collectCandidates(from: pasteboard)
         if let previous, let fresh = candidates.first(where: { $0 != previous }) {
             return fresh
@@ -47,6 +50,10 @@ enum PasteboardHelper {
 
     @discardableResult
     static func write(content: ClipContent, to pasteboard: NSPasteboard = .general) -> Int {
+        // Archivo que ya no existe: no se vacía el portapapeles del usuario.
+        if case .file = content, content.resolvedFileURL == nil {
+            return pasteboard.changeCount
+        }
         pasteboard.clearContents()
 
         switch content {
@@ -64,6 +71,10 @@ enum PasteboardHelper {
                     pasteboard.setData(data, forType: .tiff)
                 }
             }
+        case .file:
+            if let url = content.resolvedFileURL {
+                pasteboard.writeObjects([url as NSURL])
+            }
         }
 
         return pasteboard.changeCount
@@ -79,6 +90,24 @@ enum PasteboardHelper {
         write(content: content)
     }
 
+    // MARK: - Archivos
+
+    /// Primer archivo del portapapeles (un archivo por slot). Si el texto no es el nombre del archivo,
+    /// el portapapeles es texto de verdad y no se trata como archivo.
+    private static func fileContent(from pasteboard: NSPasteboard) -> ClipContent? {
+        guard let urls = pasteboard.readObjects(
+            forClasses: [NSURL.self],
+            options: [.urlReadingFileURLsOnly: true]
+        ) as? [URL], let first = urls.first else { return nil }
+
+        if let string = pasteboard.string(forType: .string) {
+            let names = Set(urls.map(\.lastPathComponent))
+            let lines = string.split(whereSeparator: \.isNewline).map(String.init)
+            if !lines.allSatisfy({ names.contains($0) }) { return nil }
+        }
+        return .fileReference(url: first)
+    }
+
     // MARK: - Candidatos
 
     private static func collectCandidates(from pasteboard: NSPasteboard) -> [ClipContent] {
@@ -92,6 +121,8 @@ enum PasteboardHelper {
                 key = "t:" + string
             case .image(let fileName):
                 key = "i:" + fileName
+            case .file(let path, _):
+                key = "f:" + path
             }
             if seen.insert(key).inserted {
                 result.append(content)

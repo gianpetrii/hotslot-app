@@ -185,6 +185,26 @@ struct ClipRowView: View {
                     .padding(.trailing, 28)
                 }
             }
+        case .file:
+            HStack(spacing: 12) {
+                FileClipIconView(content: item.content, side: 40)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(item.handoffPanelMetaLine())
+                        .font(SlotsFont.etiqueta)
+                        .foregroundStyle(SlotsColor.textoSecundario)
+                        .lineLimit(1)
+                    Text(item.content.fileName)
+                        .font(SlotsFont.textoUI)
+                        .foregroundStyle(SlotsColor.tinta)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    Text(item.content.fileDetail)
+                        .font(SlotsFont.etiqueta)
+                        .foregroundStyle(SlotsColor.textoSecundario)
+                        .lineLimit(1)
+                }
+                .padding(.trailing, 28)
+            }
         case .text:
             VStack(alignment: .leading, spacing: 3) {
                 if !isExpanded {
@@ -272,6 +292,15 @@ struct ClipRowView: View {
             switch item.content {
             case .image(let fileName):
                 ClipThumbnailView(fileName: fileName, style: .row, isExpanded: isExpanded)
+            case .file:
+                HStack(spacing: 10) {
+                    FileClipIconView(content: item.content, side: 32)
+                    Text(item.content.fileName)
+                        .font(SlotsFont.textoUI)
+                        .foregroundStyle(SlotsColor.tinta)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }
             case .text(let string):
                 let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
                 Text(trimmed)

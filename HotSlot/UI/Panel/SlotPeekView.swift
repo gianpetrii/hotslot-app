@@ -11,6 +11,9 @@ struct SlotPeekView: View {
                 ClipThumbnailView(fileName: fileName, style: .peek)
             case .text(let string):
                 textPeek(string.trimmingCharacters(in: .whitespacesAndNewlines))
+            case .file:
+                SlotFileBlock(content: content, iconSize: 96, ink: SlotsColor.tinta, secondaryInk: SlotsColor.textoSecundario, nameLines: 2)
+                    .frame(width: HotSlotDesign.slotPeekWidth - 20, alignment: .leading)
             }
         }
         .padding(10)

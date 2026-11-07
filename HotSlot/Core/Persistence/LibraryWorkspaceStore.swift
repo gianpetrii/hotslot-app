@@ -167,6 +167,11 @@ final class LibraryWorkspaceStore {
                     records[i].kind = .image
                     records[i].imageFileName = fileName
                     records[i].meta = "Imagen"
+                case .file(let path, let bookmark):
+                    records[i].kind = .file
+                    records[i].filePath = path
+                    records[i].fileBookmark = bookmark
+                    records[i].meta = content.typeLabel
                 }
             }
             records[i].updatedAt = now
@@ -197,6 +202,8 @@ final class LibraryWorkspaceStore {
         dest.kind = source.kind
         dest.textPayload = source.textPayload
         dest.imageFileName = source.imageFileName
+        dest.filePath = source.filePath
+        dest.fileBookmark = source.fileBookmark
         dest.linkURL = source.linkURL
         dest.meta = source.meta
         dest.cardBackgroundHex = source.cardBackgroundHex
@@ -204,6 +211,8 @@ final class LibraryWorkspaceStore {
 
         source.textPayload = nil
         source.imageFileName = nil
+        source.filePath = nil
+        source.fileBookmark = nil
         source.linkURL = nil
         source.kind = .text
         source.meta = nil
@@ -231,16 +240,29 @@ final class LibraryWorkspaceStore {
                     workspace.slots[idx].kind = string.hasPrefix("http") ? .link : .text
                     workspace.slots[idx].textPayload = string
                     workspace.slots[idx].imageFileName = nil
+                    workspace.slots[idx].filePath = nil
+                    workspace.slots[idx].fileBookmark = nil
                     workspace.slots[idx].meta = wordCountMeta(string)
                 case .image(let fileName):
                     workspace.slots[idx].kind = .image
                     workspace.slots[idx].imageFileName = fileName
+                    workspace.slots[idx].filePath = nil
+                    workspace.slots[idx].fileBookmark = nil
                     workspace.slots[idx].textPayload = nil
                     workspace.slots[idx].meta = "Imagen"
+                case .file(let path, let bookmark):
+                    workspace.slots[idx].kind = .file
+                    workspace.slots[idx].filePath = path
+                    workspace.slots[idx].fileBookmark = bookmark
+                    workspace.slots[idx].textPayload = nil
+                    workspace.slots[idx].imageFileName = nil
+                    workspace.slots[idx].meta = content.typeLabel
                 }
             } else {
                 workspace.slots[idx].textPayload = nil
                 workspace.slots[idx].imageFileName = nil
+                workspace.slots[idx].filePath = nil
+                workspace.slots[idx].fileBookmark = nil
                 workspace.slots[idx].kind = .text
                 workspace.slots[idx].meta = nil
             }

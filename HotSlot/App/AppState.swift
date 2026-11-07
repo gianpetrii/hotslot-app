@@ -194,6 +194,11 @@ final class AppState {
     /// Clic en slot o historial: copia o pega, según Ajustes. Los atajos de teclado siguen pegando.
     /// El cierre espera un instante para que el relleno del clic se pinte; la duración del cierre no cambia.
     private func activateContent(_ content: ClipContent, slotIndex: Int?, panelController: PanelController) {
+        if content.isMissingFile {
+            FeedbackSound.play(.pasteFailed)
+            presentNotch(.plain("El archivo ya no está en su lugar"))
+            return
+        }
         let close = {
             switch self.settings.clickItemAction {
             case .copyToClipboard:

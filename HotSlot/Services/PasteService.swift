@@ -24,6 +24,11 @@ final class PasteService {
 
     /// Deja el contenido en el portapapeles para que el usuario pegue con ⌘V. No usa Accesibilidad.
     func copyToClipboard(content: ClipContent, slotIndex: Int? = nil) {
+        guard !content.isMissingFile else {
+            FeedbackSound.play(.pasteFailed)
+            onShowToast?("El archivo ya no está en su lugar")
+            return
+        }
         let changeCount = PasteboardHelper.copyContentToPasteboard(content)
         clipboardService?.suppressUntilChangeCount = changeCount
         FeedbackSound.play(.pasteSuccess)
@@ -34,6 +39,11 @@ final class PasteService {
 
     @discardableResult
     func paste(content: ClipContent, targetApp: NSRunningApplication?, slotIndex: Int? = nil) -> PasteResult {
+        guard !content.isMissingFile else {
+            FeedbackSound.play(.pasteFailed)
+            onShowToast?("El archivo ya no está en su lugar")
+            return .failed("Archivo no encontrado")
+        }
         let changeCount = PasteboardHelper.copyContentToPasteboard(content)
         clipboardService?.suppressUntilChangeCount = changeCount
 
