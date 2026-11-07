@@ -133,7 +133,7 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 | [x] | V2 | Animación al **cambiar biblioteca** |
 | [x] | V3 | **Reorden:** fantasma en el lugar de origen, las pills se separan, al soltar queda ahí · **Tacho:** se agranda (oscuro + naranja), soltar → confirmación con «No volver a preguntar» (reactivable en Ajustes → General) |
 | [x] | V4–V5 | **Historial:** saltos de línea visibles · 2 renglones cerrado, hasta 8 al expandir, solo expande si el texto quedó cortado · pin arriba a la derecha sin fondo (fondo blanco solo sobre imagen agrandada), fijado = contorno naranja |
-| [ ] | V4b | **Pegar con estilos** (negrita, etc.) desde historial y slots; texto plano si la app no acepta formato. Probar con DMG |
+| [ ] | V4b | **Pegar con estilos:** primera pasada en 0.22.1 conservó algunas marcas y no todas. Alcanza por ahora. Volver a probar con el DMG 0.23.0 (negrita, saltos de línea, texto plano si el destino no acepta formato) |
 | [x] | V6–V7 | **Chips:** cruz y atajo con la misma pastilla (arena en card clara, blanca sobre imagen o fondo oscuro). Al aparecer la cruz, «Slot N» se corre a la derecha |
 | [x] | V8 | Texto blanco + velo arriba/abajo en degradé, imagen y fondo oscuro |
 | [x] | V9–V10 | Lápiz junto al nombre de biblioteca / a la derecha en slots · transición al editar · Enter o clic fuera guarda (el clic no dispara la otra acción) · Escape cancela · slots vacíos se renombran y el nombre se conserva al vaciar |

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.23.0] — 2026-11-07
+
+### Panel
+
+- El clic en un slot o en el historial copia al portapapeles. En Ajustes se puede volver a pegar donde estaba el cursor. Los atajos siguen pegando.
+- Al hacer clic, el slot se llena de su color un instante antes de cerrar. En el historial solo cambia el fondo a papel y el texto sigue visible.
+- Hover unificado: la misma sombra en slots con contenido, historial, bibliotecas y «+». El «+» hace un pulso al crear una biblioteca.
+- El fondo predeterminado de un slot con contenido es papel. Vaciarlo muestra el estilo vacío, recuerda el color y lo restaura al guardar, con una transición.
+- El aviso del notch sigue negro al copiar, guardar o pegar. Pasa a naranja cuando pide una acción (slot vacío o permiso de Accesibilidad).
+
 ## [0.22.1] — 2026-11-05
 
 ### Slots
