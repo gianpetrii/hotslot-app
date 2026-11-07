@@ -5,10 +5,9 @@ enum SlotsPalette {
     static let brandGradientAsset = "asset:degrade-naranja"
 
     static let slotBackgrounds: [(name: String, hex: UInt32)] = [
-        ("Handoff (blanco)", 0xFFFFFF),
         ("Papel", 0xF2F2F0),
         ("Arena", 0xE7DED2),
-        ("Degradé naranja (marca)", 0xE2501D), // sentinel → asset in UI
+        ("Naranja", 0xE2501D),
         ("Oscuro", 0x1C1C1C),
     ]
 

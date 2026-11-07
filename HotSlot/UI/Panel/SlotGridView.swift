@@ -333,7 +333,7 @@ private struct SlotCardView: View {
         Menu("Color de fondo") {
             Button("Predeterminado (handoff)") { onSetBackground(nil) }
             Button("Degradé naranja (marca)") { onSetBackground(SlotsPalette.brandGradientAsset) }
-            ForEach(SlotsPalette.slotBackgrounds.filter { $0.hex != 0xE2501D }, id: \.hex) { entry in
+            ForEach(SlotsPalette.slotBackgrounds, id: \.hex) { entry in
                 Button(entry.name) {
                     onSetBackground(SlotsPalette.normalizedHex(entry.hex))
                 }

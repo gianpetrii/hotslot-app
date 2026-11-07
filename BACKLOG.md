@@ -91,11 +91,11 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 |--------|-----|-------|
 | [x] | P1 | Publicar landing Dante como `docs/index.html` + favicon |
 | [x] | P1 | Enlaces **Beta Mac** y **Privacidad** (`privacy.html`) en nav y pie |
+| [ ] | P1 | **Cambio de idioma:** transición al pasar de español a inglés (y al revés), para que el reflow del layout no se sienta un salto. Primero de los P1, después de cerrar la oleada V |
 | [ ] | P1 | **Formspree / waitlist:** pegar `WAITLIST_ENDPOINT` (ver `slots-landing/LEEME.md`) |
 | [ ] | P2 | **og:image** 1200×630 para compartir en redes |
 | [ ] | P2 | Validar promesas de lista (beta, preventa, mes gratis) con producto — LEEME §5 |
 | [ ] | P2 | Deploy Vercel tras push; smoke ES/EN, móvil, formulario |
-| [ ] | P2 | **Cambio de idioma:** transición al pasar de español a inglés (y al revés), para que el reflow del layout no se sienta un salto |
 | [ ] | P3 | Video hero `VIDEO_SRC` cuando exista mp4 liviano |
 | [ ] | P3 | Analytics (Plausible / Vercel) si pautan |
 
@@ -139,9 +139,8 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 | [x] | V11 | *(confirmado en pasada anterior)* |
 | [ ] | V12 | Pendiente cierre oleada |
 | [x] | V13 | **Hover de slots:** borde gris cálido en cards claras y blanco suave en imagen, degradé u oscuro. Sin borde en vacíos. Naranja sólido solo al soltar encima |
-| [ ] | V16 | **Fondos de slot:** sacar «Handoff (blanco)» y agregar el naranja de la paleta (`#E2501D`) |
+| [x] | V16 | **Fondos de slot:** sin «Handoff (blanco)». Naranja pleno `#E2501D` en el menú, además del degradé |
 | [ ] | V17 | **Hover de bibliotecas:** borde quieto en las pills no seleccionadas y en «+». El naranja sigue marcando solo la activa |
-| [ ] | V16 | **Fondos de slot:** sacar «Handoff (blanco)» y agregar el naranja de la paleta (`#E2501D`) |
 | [ ] | V15 | **Notch:** aviso al guardar/pegar (copy, tamaño, duración, que no tape el notch real) |
 
 **Dante (solo si Gianluca lo pide):** reorden de bibliotecas → `docs/REVISION-PANEL-PARA-DANTE.md`.
