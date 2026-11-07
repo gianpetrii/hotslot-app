@@ -91,7 +91,7 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 |--------|-----|-------|
 | [x] | P1 | Publicar landing Dante como `docs/index.html` + favicon |
 | [x] | P1 | Enlaces **Beta Mac** y **Privacidad** (`privacy.html`) en nav y pie |
-| [ ] | P1 | **Cambio de idioma:** transición al pasar de español a inglés (y al revés), para que el reflow del layout no se sienta un salto. Primero de los P1, después de cerrar la oleada V |
+| [x] | P1 | **Cambio de idioma:** al pasar de español a inglés (y al revés) la página se funde, el texto cambia oculto y vuelve. El scroll se queda en el mismo tramo. Sin animación si el sistema la reduce |
 | [ ] | P1 | **Barra del notch:** al pasar el mouse por el rectángulo negro de arriba al centro, baja una barra horizontal con los 5 slots en cuadrados iguales (estilo e info ya guardados). Las bibliotecas van debajo o al costado para cambiar de vista. Es el panel acostado, para ocupar menos espacio. En Macs sin notch, el mismo gesto sale desde el centro de la barra de menú. La landing ya lo promete («Pasás el mouse por el notch y ves tus slots»); la app solo tiene la píldora de confirmación |
 | [ ] | P1 | **Formspree / waitlist:** pegar `WAITLIST_ENDPOINT` (ver `slots-landing/LEEME.md`) |
 | [ ] | P2 | **og:image** 1200×630 para compartir en redes |
