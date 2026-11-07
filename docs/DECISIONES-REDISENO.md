@@ -11,7 +11,7 @@ Acuerdos entre Gianluca y desarrollo tras Etapa 0 y el handoff de Dante (descarg
 
 - **Sección Licencia visible** en Ajustes y menús (trial + compra siguen como hoy).
 - **Enfoque de desarrollo:** no retomar gating, checkout ni copy de compra hasta cerrar el rediseño macOS; el código (`Entitlements.swift`, `LemonLicenseService`, `docs/purchase.html`) se mantiene.
-- **Modelo acordado:** 90 días prueba completa → después solo slot 1 sin licencia; pago único **USD 10** (Lemon) → clave en Ajustes → General → Licencia. Canal fuera de MAS (Accesibilidad). Reactivar gating: **BACKLOG** › post-usabilidad.
+- **Modelo acordado:** 30 días prueba completa → después solo slot 1 sin licencia; pago único **USD 10** (Lemon) → clave en Ajustes → General → Licencia. Canal fuera de MAS (Accesibilidad). Reactivar gating: **BACKLOG** › post-usabilidad.
 
 ## Accesibilidad (TCC) y sandbox
 

@@ -1,9 +1,9 @@
 import Foundation
 
-/// Trial 90 días desde la primera instalación; después solo slot 1 sin licencia.
+/// Trial 30 días desde la primera instalación; después solo slot 1 sin licencia.
 /// Pago único USD 10 vía Lemon Squeezy (modelo en `docs/DECISIONES-REDISENO.md`).
 enum Entitlements {
-    static let trialDurationDays = 90
+    static let trialDurationDays = 30
     static let freeSlotIndexAfterTrial = 1
 
     /// Checkout publicado en Lemon Squeezy.

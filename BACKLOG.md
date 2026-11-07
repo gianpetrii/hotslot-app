@@ -6,7 +6,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 
 ## Decisiones de producto (alineación Oct 2025 — actualizado)
 
-- **Monetización:** **90 días** de prueba → **USD 10** pago único (Lemon, `Entitlements.swift`). **UI de licencia visible**; no retomar cambios de gating/compra hasta cerrar el rediseño (ver `docs/DECISIONES-REDISENO.md`).
+- **Monetización:** **30 días** de prueba → **USD 10** pago único (Lemon, `Entitlements.swift`). **UI de licencia visible**; no retomar cambios de gating/compra hasta cerrar el rediseño (ver `docs/DECISIONES-REDISENO.md`).
 - **Mensaje público:** **slots fijos** como lead; historial + búsqueda como complemento.
 - **Distribución:** DMG notarizado + GitHub Releases.
 - **Rediseño (nov 2026):** handoff Dante **fuera del repo** — enlace en `docs/HANDOFF-README.md`; **solo macOS primero**, iOS después.
@@ -110,7 +110,16 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 
 | Estado | Pri | Tarea post-usabilidad |
 |--------|-----|------------------------|
-| [ ] | P1 | **Reactivar monetización** (trial, Lemon, compra, gating slots 2–5) |
+| [ ] | P1 | **Reactivar monetización** (trial de 30 días, Lemon, compra, gating slots 2–5). Nota: el trial pasó de 90 a 30 días en el código; instalaciones con más de 30 días quedan limitadas al slot 1 salvo licencia |
+
+## iOS y sync (decisión nov 2026)
+
+- **Sync entre Mac e iPhone:** iCloud con **CloudKit, base privada** del usuario. Sin servidor propio ni base alojada por nosotros; los datos viajan por la cuenta de iCloud de cada persona.
+- **Antes del target iOS:** decidir el modelo de datos. Hoy todo vive en JSON (`slots.json`, `libraries-workspace.json`, `history.json`); hay que migrarlo a SwiftData o Core Data, o escribir una capa de sync propia sobre CloudKit. Hacerlo una sola vez.
+- **Archivos en slots:** la referencia (ruta + bookmark) no sirve entre dispositivos. Recomendación: primera versión del sync sin contenido de archivos (en el iPhone se ven con nombre y tamaño como «Solo en tu Mac»); subir el contenido como `CKAsset` con tope de tamaño queda para una versión posterior. Decidido por Gianluca.
+- **Versión web (para computadoras de trabajo donde no se puede instalar):** caso de uso real, a retomar después de iOS. Alcance pensado: ver los slots de cada biblioteca, copiar uno, y guardar en un slot lo que se copió. Un historial en la web es posible técnicamente, pero queda fuera del primer alcance. Hay dos caminos y falta elegir:
+  - **A) CloudKit JS + «Iniciar sesión con Apple»:** sin servidor ni mails propios, pero exige cuenta de iCloud y la web solo ve lo que el sync ya subió.
+  - **B) Backend propio con login por mail, Apple o Google:** funciona sin iCloud, pero implica alojar cuentas y datos, y actualizar la política de privacidad («sin recolección de datos» deja de ser cierto).
 
 ## Otros
 
@@ -168,7 +177,7 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 
 | Estado | Pri | Tarea |
 |--------|-----|-------|
-| [~] | P1 | **Sparkle** — integrado; falta `SUPublicEDKey` + `generate_appcast` en cada release |
+| [~] | P1 | **Sparkle** — integrado y con `SUPublicEDKey`; falta correr `generate_appcast` y subir `docs/appcast.xml` en cada release (hoy el feed está vacío, así que ningún usuario recibe aviso de actualización) |
 | [x] | P1 | **Ícono menu bar más visible** — `clipboard.fill` semibold 15 pt |
 | [x] | P1 | **Editar atajos desde el panel** — clic en badge → popover pegar/guardar |
 | [x] | P1 | **Un solo flujo de Ajustes** — escena SwiftUI vacía + ⌘,; ventana sobre el panel; panel solo se reabre si estaba abierto |
@@ -176,9 +185,7 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 | [ ] | P2 | **Sonido al guardar** — documentar toggle “Sonidos de acciones”; opcional sonido distinto guardar vs pegar si confunden |
 | [ ] | P3 | Atajo clicable extra en barra (además del icono) — evaluar si aporta o satura la menu bar |
 | [ ] | P3 | “Slots libres” en UI tipo Dynamic Island — **no aplica en Mac**; en iPhone sería otro producto |
-| [ ] | P1 | **Landing:** copy slots-first + enlace donación + créditos desarrolladores *(superseded por landing Dante; ver sección Landing web)* |
-| [ ] | P1 | **Donación:** link en Ajustes → General / Acerca de (Ko-fi o similar) |
-| [ ] | P1 | **Analytics:** contador descargas (GitHub) en web; Vercel Analytics en docs; ping anónimo in-app acordado en privacidad |
+| [ ] | P1 | **Analytics (importante):** contador descargas (GitHub) en web; Vercel Analytics en docs; ping anónimo in-app acordado en privacidad |
 
 ### Propuesta rápida (cómo resolver)
 
