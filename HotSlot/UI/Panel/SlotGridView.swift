@@ -162,6 +162,7 @@ private struct SlotCardView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .background { mixedBackgroundScrims }
         }
+        .animation(.easeInOut(duration: 0.28), value: chromePhase)
         .padding(2)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
@@ -450,7 +451,8 @@ private struct SlotCardView: View {
     }
 
     private var needsMixedBackgroundScrims: Bool {
-        SlotsPalette.isBrandGradient(slot.cardBackgroundHex) || (isImageContent && hasContent)
+        guard hasContent else { return false }
+        return SlotsPalette.isBrandGradient(backgroundHex) || isImageContent
     }
 
     private var colorSwatch: Color? {
@@ -463,11 +465,17 @@ private struct SlotCardView: View {
         return SlotCardCopy.isHexColor(string.trimmingCharacters(in: .whitespacesAndNewlines))
     }
 
+    /// Color guardado, con el blanco viejo leído como predeterminado.
+    private var backgroundHex: String? {
+        SlotsPalette.storedBackgroundHex(slot.cardBackgroundHex)
+    }
+
     private var prefersLightContent: Bool {
-        if isImageContent && hasContent { return true }
-        if SlotsPalette.prefersLightContent(hexString: slot.cardBackgroundHex) { return true }
+        guard hasContent else { return false }
+        if isImageContent { return true }
+        if SlotsPalette.prefersLightContent(hexString: backgroundHex) { return true }
         // Color hex en el portapapeles: la card es oscura salvo que el usuario eligió un fondo claro.
-        if isDarkCard, slot.cardBackgroundHex == nil { return true }
+        if isDarkCard, backgroundHex == nil { return true }
         return false
     }
 
@@ -489,10 +497,30 @@ private struct SlotCardView: View {
         return true
     }
 
+    /// Identifica vacío, color, degradé o imagen para animar solo esos cambios.
+    private var chromePhase: String {
+        guard hasContent else { return "empty" }
+        if isImageContent, case .image(let fileName) = slot.content { return "image:\(fileName)" }
+        if SlotsPalette.isBrandGradient(backgroundHex) { return "gradient" }
+        if isDarkCard, backgroundHex == nil { return "ink" }
+        return "fill:\(backgroundHex ?? "papel")"
+    }
+
+    /// El relleno sólido interpola. Degradé e imagen se funden encima.
+    private var chromeFill: Color {
+        if !hasContent { return Color.white.opacity(0.28) }
+        if let custom = SlotsPalette.color(hexString: backgroundHex) { return custom }
+        if isDarkCard { return SlotsColor.cardOscura }
+        return SlotsColor.papel
+    }
+
     @ViewBuilder
     private var cardChrome: some View {
         ZStack {
-            if SlotsPalette.isBrandGradient(slot.cardBackgroundHex) {
+            RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
+                .fill(chromeFill)
+
+            if hasContent, SlotsPalette.isBrandGradient(backgroundHex) {
                 GeometryReader { geo in
                     Image("DegradeNaranja")
                         .resizable()
@@ -505,33 +533,25 @@ private struct SlotCardView: View {
                     startPoint: .top,
                     endPoint: .bottom
                 )
-            } else if isImageContent, case .image(let fileName) = slot.content {
+                .transition(.opacity)
+            }
+
+            if hasContent, isImageContent, case .image(let fileName) = slot.content {
                 ClipThumbnailView(fileName: fileName, style: .slot)
+                    .transition(.opacity)
                 LinearGradient(
                     colors: [Color.black.opacity(0.12), Color.black.opacity(0.55)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
-            } else if let custom = SlotsPalette.color(hexString: slot.cardBackgroundHex) {
-                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
-                    .fill(custom)
-            } else if isDarkCard {
-                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
-                    .fill(SlotsColor.cardOscura)
-            } else if hasContent {
-                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
-                    .fill(Color.white)
-            } else {
-                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
-                    .fill(Color.white.opacity(0.28))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
-                            .strokeBorder(
-                                Color.black.opacity(0.22),
-                                style: StrokeStyle(lineWidth: 1.5, dash: [7, 5])
-                            )
-                    }
+                .transition(.opacity)
             }
+
+            RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
+                .strokeBorder(
+                    Color.black.opacity(hasContent ? 0 : 0.22),
+                    style: StrokeStyle(lineWidth: 1.5, dash: [7, 5])
+                )
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipped()

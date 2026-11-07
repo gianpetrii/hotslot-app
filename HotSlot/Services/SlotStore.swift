@@ -27,7 +27,7 @@ final class SlotStore {
 
     func updateCardBackground(index: Int, hex: String?) {
         guard let i = slots.firstIndex(where: { $0.index == index }) else { return }
-        slots[i].cardBackgroundHex = hex
+        slots[i].cardBackgroundHex = SlotsPalette.storedBackgroundHex(hex)
         save()
     }
 
@@ -64,7 +64,15 @@ final class SlotStore {
             slots = Slot.defaultSlots()
             return
         }
-        slots = decoded
+        let normalized = decoded.map { slot in
+            var slot = slot
+            slot.cardBackgroundHex = SlotsPalette.storedBackgroundHex(slot.cardBackgroundHex)
+            return slot
+        }
+        slots = normalized
+        if normalized != decoded {
+            save()
+        }
     }
 
     private func save() {

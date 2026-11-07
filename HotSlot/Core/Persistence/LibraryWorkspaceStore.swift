@@ -7,7 +7,12 @@ final class LibraryWorkspaceStore {
     private(set) var workspace: SlotsWorkspace
 
     init() {
-        workspace = Self.loadFromDisk() ?? SlotsWorkspace.empty()
+        let loaded = Self.loadFromDisk() ?? SlotsWorkspace.empty()
+        let normalized = Self.normalizingBackgrounds(loaded)
+        workspace = normalized
+        if normalized != loaded {
+            save()
+        }
     }
 
     var activeLibrary: Library? {
@@ -246,6 +251,14 @@ final class LibraryWorkspaceStore {
     private func save() {
         guard let data = try? JSONEncoder().encode(workspace) else { return }
         try? data.write(to: AppSupportDirectory.workspaceFile, options: .atomic)
+    }
+
+    private static func normalizingBackgrounds(_ workspace: SlotsWorkspace) -> SlotsWorkspace {
+        var copy = workspace
+        for index in copy.slots.indices {
+            copy.slots[index].cardBackgroundHex = SlotsPalette.storedBackgroundHex(copy.slots[index].cardBackgroundHex)
+        }
+        return copy
     }
 
     private static func loadFromDisk() -> SlotsWorkspace? {

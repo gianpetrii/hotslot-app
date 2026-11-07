@@ -36,6 +36,22 @@ enum SlotsPalette {
         return (0.2126 * r + 0.7152 * g + 0.0722 * b) < 0.45
     }
 
+    /// `nil` y el blanco viejo (`#FFFFFF`) son el predeterminado. El degradé se conserva.
+    static func storedBackgroundHex(_ hexString: String?) -> String? {
+        guard let hexString else { return nil }
+        let trimmed = hexString.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        if isBrandGradient(trimmed) { return brandGradientAsset }
+        var hex = trimmed
+        if hex.hasPrefix("#") { hex.removeFirst() }
+        if hex.count == 3, hex.allSatisfy(\.isHexDigit) {
+            hex = hex.map { String($0) + String($0) }.joined()
+        }
+        guard hex.count == 6, let value = UInt32(hex, radix: 16) else { return trimmed }
+        if value == 0xFFFFFF { return nil }
+        return normalizedHex(value)
+    }
+
     static func color(hexString: String?) -> Color? {
         guard let hexString, !hexString.isEmpty else { return nil }
         var hex = hexString.trimmingCharacters(in: .whitespacesAndNewlines)
