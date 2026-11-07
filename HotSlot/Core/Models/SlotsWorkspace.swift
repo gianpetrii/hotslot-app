@@ -37,6 +37,8 @@ struct SlotRecord: Codable, Identifiable, Equatable, Sendable {
     var imageFileName: String?
     var linkURL: String?
     var meta: String?
+    /// Fondo elegido en la card. `nil` es el predeterminado.
+    var cardBackgroundHex: String? = nil
     var createdAt: Date
     var updatedAt: Date
 

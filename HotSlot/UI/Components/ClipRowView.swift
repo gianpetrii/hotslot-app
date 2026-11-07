@@ -19,6 +19,8 @@ struct ClipRowView: View {
     @State private var peekTask: Task<Void, Never>?
     @State private var collapsedTextHeight: CGFloat = 0
     @State private var threeLineTextHeight: CGFloat = 0
+    @State private var copyFlash = false
+    @Environment(AppState.self) private var appState
 
     private static let collapsedTextLines = 2
 
@@ -73,13 +75,8 @@ struct ClipRowView: View {
         .background {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .fill(backgroundFill)
-                .overlay {
-                    if isHovering || isKeyboardHighlighted {
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .strokeBorder(SlotsColor.linea, lineWidth: 1)
-                    }
-                }
         }
+        .slotsHoverLift(isHovering)
         .onHover(perform: handleStandardHover)
         .animation(.easeOut(duration: 0.12), value: isHovering)
         .animation(.easeOut(duration: 0.12), value: isKeyboardHighlighted)
@@ -94,7 +91,7 @@ struct ClipRowView: View {
             HStack(alignment: .center, spacing: 12) {
                 panelHandoffBody
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .modifier(ClipRowInteractionModifier(isDemo: isDemo, item: item, onPaste: onPaste))
+                    .modifier(ClipRowInteractionModifier(isDemo: isDemo, item: item, onPaste: onPaste, handlesTap: false))
             }
 
             if isHovering || item.isPinned {
@@ -128,11 +125,17 @@ struct ClipRowView: View {
         .overlay {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .strokeBorder(
-                    isKeyboardHighlighted
-                        ? SlotsColor.naranja.opacity(0.5)
-                        : (isHovering ? SlotsColor.linea : (isFirst ? Color(slotsHex: 0x462D14).opacity(0.08) : Color.clear)),
+                    isKeyboardHighlighted ? SlotsColor.naranja.opacity(0.5) : (isFirst ? Color(slotsHex: 0x462D14).opacity(0.08) : Color.clear),
                     lineWidth: isKeyboardHighlighted ? 1.5 : 1
                 )
+        }
+        .slotsHoverLift(isHovering && !copyFlash)
+        .onTapGesture {
+            guard !isDemo else { return }
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) { copyFlash = true }
+            onPaste()
         }
         .onHover { hovering in
             isHovering = hovering
@@ -146,6 +149,12 @@ struct ClipRowView: View {
         .onDisappear(perform: resetHoverState)
         .accessibilityAddTraits(.isButton)
         .accessibilityHint(clickHint)
+        .onChange(of: appState.isPanelVisible) { _, visible in
+            guard visible, copyFlash else { return }
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) { copyFlash = false }
+        }
     }
 
     @ViewBuilder
@@ -251,9 +260,9 @@ struct ClipRowView: View {
     }
 
     private func panelHandoffBackground(isFirst: Bool) -> Color {
+        if copyFlash { return SlotsColor.papel }
         if isKeyboardHighlighted { return Color.white.opacity(0.95) }
         if isFirst { return Color.white.opacity(0.92) }
-        if isHovering { return Color.white.opacity(0.72) }
         return Color.white.opacity(0.55)
     }
 
@@ -329,13 +338,14 @@ private struct ClipRowInteractionModifier: ViewModifier {
     let isDemo: Bool
     let item: ClipItem
     let onPaste: () -> Void
+    var handlesTap: Bool = true
+    @State private var copyFlash = false
 
     func body(content: Content) -> some View {
         if isDemo {
             content
         } else {
-            content
-                .onTapGesture(perform: onPaste)
+            let row = content
                 .draggable(PanelDragPayload.historyItem(id: item.id)) {
                     Text(item.content.previewText)
                         .font(.system(size: 12, weight: .medium))
@@ -344,6 +354,23 @@ private struct ClipRowInteractionModifier: ViewModifier {
                         .frame(maxWidth: 180, alignment: .leading)
                         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
                 }
+            if handlesTap {
+                row
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .fill(SlotsColor.papel)
+                            .opacity(copyFlash ? 1 : 0)
+                            .allowsHitTesting(false)
+                    }
+                    .onTapGesture {
+                        var transaction = Transaction()
+                        transaction.disablesAnimations = true
+                        withTransaction(transaction) { copyFlash = true }
+                        onPaste()
+                    }
+            } else {
+                row
+            }
         }
     }
 }

@@ -138,10 +138,11 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 | [x] | V9–V10 | Lápiz junto al nombre de biblioteca / a la derecha en slots · transición al editar · Enter o clic fuera guarda (el clic no dispara la otra acción) · Escape cancela · slots vacíos se renombran y el nombre se conserva al vaciar |
 | [x] | V11 | *(confirmado en pasada anterior)* |
 | [ ] | V12 | Pendiente cierre oleada |
-| [x] | V13 | **Hover de slots:** borde gris cálido en cards claras y blanco suave en imagen, degradé u oscuro. Sin borde en vacíos. Naranja sólido solo al soltar encima |
-| [x] | V16 | **Fondos de slot:** sin «Handoff (blanco)». Naranja pleno `#E2501D` en el menú, además del degradé |
-| [ ] | V17 | **Hover de bibliotecas:** borde quieto en las pills no seleccionadas y en «+». El naranja sigue marcando solo la activa |
-| [ ] | V15 | **Notch:** aviso al guardar/pegar (copy, tamaño, duración, que no tape el notch real) |
+| [x] | V13 | **Hover:** la misma sombra cálida en slots con contenido, filas del historial, pills no seleccionadas y «+». Sin sombra en slots vacíos. Naranja sólido solo al soltar encima |
+| [x] | V14 | **Clic:** el slot se llena de su propio color, sin texto, un instante antes de cerrar. En el historial solo cambia el fondo a papel y el texto sigue. Al reabrir queda limpio. La velocidad del cierre no cambia |
+| [ ] | V16 | **Fondos de slot:** predeterminado = papel, no blanco. Vaciar muestra el estilo vacío pero recuerda el color y lo restaura al guardar de nuevo. Naranja pleno ya está en el menú. El color elegido persiste al reabrir y al cambiar de biblioteca |
+| [x] | V17 | **«+» de bibliotecas:** hover = solo sombra. Clic = pulso de escala que se ve aunque sea instantáneo, y después abre el formulario. Pills no seleccionadas validadas |
+| [ ] | V15 | **Notch:** aviso al guardar/pegar. Negro para copiar/guardar/pegar. Naranja solo para avisos que piden una acción (accesibilidad, slot vacío) |
 
 **Dante (solo si Gianluca lo pide):** reorden de bibliotecas → `docs/REVISION-PANEL-PARA-DANTE.md`.
 

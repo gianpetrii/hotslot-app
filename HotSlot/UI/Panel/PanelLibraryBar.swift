@@ -9,6 +9,8 @@ struct PanelLibraryBar: View {
     @State private var contentSwitchTask: Task<Void, Never>?
     @State private var pillFrames: [UUID: CGRect] = [:]
     @State private var barFrame: CGRect = .zero
+    @State private var hoveredLibraryId: UUID?
+    @State private var addClickScale: CGFloat = 1
 
     private let contentSwitchDwell: TimeInterval = 0.55
     private let reorderAnimation = Animation.spring(response: 0.28, dampingFraction: 0.82)
@@ -41,9 +43,10 @@ struct PanelLibraryBar: View {
                     }
                     addLibraryButton
                 }
-                .padding(.vertical, 4)
-                .padding(.horizontal, 2)
+                .padding(.vertical, 16)
+                .padding(.horizontal, 8)
             }
+            .scrollClipDisabled()
             .background {
                 GeometryReader { geo in
                     Color.clear
@@ -86,6 +89,10 @@ struct PanelLibraryBar: View {
             }
         }
         .opacity(isGhost ? 0.3 : 1)
+        .slotsHoverLift(hoveredLibraryId == library.id && !isActive && !isGhost)
+        .onHover { hovering in
+            hoveredLibraryId = hovering ? library.id : (hoveredLibraryId == library.id ? nil : hoveredLibraryId)
+        }
         .background {
             GeometryReader { geo in
                 Color.clear.preference(
@@ -226,23 +233,25 @@ struct PanelLibraryBar: View {
     }
 
     private var addLibraryButton: some View {
-        Button {
+        Button(action: playAddClick) {
+            Image(systemName: "plus")
+                .font(.system(size: 15, weight: .semibold))
+        }
+        .buttonStyle(AddLibraryButtonStyle())
+        .scaleEffect(addClickScale)
+        .animation(.spring(response: 0.34, dampingFraction: 0.55), value: addClickScale)
+        .help("Nueva biblioteca")
+    }
+
+    /// El pulso corre entero aunque el clic dure un instante. El formulario entra cuando el botón ya se achicó.
+    private func playAddClick() {
+        withAnimation(.easeOut(duration: 0.07)) { addClickScale = 0.84 }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
+            withAnimation(.spring(response: 0.34, dampingFraction: 0.55)) { addClickScale = 1 }
             withAnimation(.easeOut(duration: 0.18)) {
                 appState.isNewLibraryFormPresented = true
             }
-        } label: {
-            Image(systemName: "plus")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(SlotsColor.tinta)
-                .frame(width: SlotsRadius.controlAlto, height: SlotsRadius.controlAlto)
-                .contentShape(Circle())
-                .background {
-                    Circle()
-                        .strokeBorder(Color.black.opacity(0.28), style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
-                }
         }
-        .buttonStyle(.plain)
-        .help("Nueva biblioteca")
     }
 
     private var saveClipboardButton: some View {
@@ -274,6 +283,27 @@ struct PanelLibraryBar: View {
         }
         .buttonStyle(.plain)
         .help("Guarda el portapapeles en el primer slot vacío")
+    }
+}
+
+private struct AddLibraryButtonStyle: ButtonStyle {
+    @State private var isHovering = false
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(SlotsColor.textoSecundario)
+            .frame(width: SlotsRadius.controlAlto, height: SlotsRadius.controlAlto)
+            .background {
+                Circle()
+                    .fill(Color.white.opacity(0.85))
+                    .overlay {
+                        Circle()
+                            .strokeBorder(Color.black.opacity(0.12), lineWidth: 1)
+                    }
+            }
+            .slotsHoverLift(isHovering)
+            .animation(.easeOut(duration: 0.16), value: isHovering)
+            .onHover { isHovering = $0 }
     }
 }
 

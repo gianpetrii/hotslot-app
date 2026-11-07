@@ -85,6 +85,24 @@ enum HotSlotDesign {
     static let openSquareSize: CGFloat = panelHeaderHeight
 }
 
+struct SlotsHoverLift: ViewModifier {
+    var isActive: Bool
+
+    func body(content: Content) -> some View {
+        content.shadow(
+            color: Color(slotsHex: 0x462D14).opacity(isActive ? 0.18 : 0),
+            radius: isActive ? 10 : 0,
+            y: isActive ? 4 : 0
+        )
+    }
+}
+
+extension View {
+    func slotsHoverLift(_ isActive: Bool) -> some View {
+        modifier(SlotsHoverLift(isActive: isActive))
+    }
+}
+
 /// Tipografía alineada al Clipboard de macOS (SF Pro).
 enum HotSlotTypography {
     static let searchField = Font.system(size: 15, weight: .regular)

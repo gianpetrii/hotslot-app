@@ -122,13 +122,21 @@ final class LibraryWorkspaceStore {
     }
 
     /// Sincroniza los 5 slots legacy (`SlotStore`) con la biblioteca activa.
-    func applyActiveLibrary(to slotStore: SlotStore) {
+    /// `preservingMissingBackgrounds` solo en el arranque: el archivo viejo de slots
+    /// puede tener colores que el workspace todavía no guardaba.
+    func applyActiveLibrary(to slotStore: SlotStore, preservingMissingBackgrounds: Bool = false) {
         let records = activeSlots()
+        let previous = slotStore.slots
         var legacy = Slot.defaultSlots()
         for record in records {
             guard let index = legacy.firstIndex(where: { $0.index == record.order }) else { continue }
             legacy[index].label = record.title
             legacy[index].content = record.clipContent()
+            if let hex = record.cardBackgroundHex {
+                legacy[index].cardBackgroundHex = hex
+            } else if preservingMissingBackgrounds {
+                legacy[index].cardBackgroundHex = previous.first { $0.index == record.order }?.cardBackgroundHex
+            }
         }
         slotStore.replaceAll(legacy)
     }
@@ -143,6 +151,7 @@ final class LibraryWorkspaceStore {
         for slot in slotStore.slots {
             guard let i = records.firstIndex(where: { $0.order == slot.index }) else { continue }
             records[i].title = slot.label
+            records[i].cardBackgroundHex = slot.cardBackgroundHex
             if let content = slot.content {
                 switch content {
                 case .text(let string):
@@ -185,6 +194,7 @@ final class LibraryWorkspaceStore {
         dest.imageFileName = source.imageFileName
         dest.linkURL = source.linkURL
         dest.meta = source.meta
+        dest.cardBackgroundHex = source.cardBackgroundHex
         dest.updatedAt = now
 
         source.textPayload = nil
@@ -208,6 +218,7 @@ final class LibraryWorkspaceStore {
                 continue
             }
             workspace.slots[idx].title = slot.label
+            workspace.slots[idx].cardBackgroundHex = slot.cardBackgroundHex
             workspace.slots[idx].updatedAt = now
             if let content = slot.content {
                 switch content {

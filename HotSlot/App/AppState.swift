@@ -78,12 +78,12 @@ final class AppState {
 
     func bootstrap(panelController: PanelController) {
         Entitlements.recordFirstLaunchIfNeeded()
-        libraryWorkspace.importLegacySlotsIfNeeded(from: slotStore)
-        libraryWorkspace.applyActiveLibrary(to: slotStore)
         slotStore.onPersist = { [weak self] in
             guard let self else { return }
             self.libraryWorkspace.syncFromLegacySlotStore(self.slotStore)
         }
+        libraryWorkspace.importLegacySlotsIfNeeded(from: slotStore)
+        libraryWorkspace.applyActiveLibrary(to: slotStore, preservingMissingBackgrounds: true)
         clipboardService.configure(historyStore: historyStore)
         pasteService.configure(clipboardService: clipboardService, focusTracker: focusTracker)
 
@@ -192,22 +192,28 @@ final class AppState {
     }
 
     /// Clic en slot o historial: copia o pega, según Ajustes. Los atajos de teclado siguen pegando.
+    /// El cierre espera un instante para que el relleno del clic se pinte; la duración del cierre no cambia.
     private func activateContent(_ content: ClipContent, slotIndex: Int?, panelController: PanelController) {
-        switch settings.clickItemAction {
-        case .copyToClipboard:
-            panelController.hide(animated: true) {
-                self.isPanelVisible = false
-                self.pasteService.copyToClipboard(content: content, slotIndex: slotIndex)
-                self.focusTracker.clearPasteDestination()
+        let close = {
+            switch self.settings.clickItemAction {
+            case .copyToClipboard:
+                panelController.hide(animated: true) {
+                    self.isPanelVisible = false
+                    self.pasteService.copyToClipboard(content: content, slotIndex: slotIndex)
+                    self.focusTracker.clearPasteDestination()
+                }
+            case .pasteAtFocus:
+                guard self.ensureAccessibilityForPaste() else { return }
+                let target = self.focusTracker.pasteDestination()
+                panelController.hide(animated: true) {
+                    self.isPanelVisible = false
+                    self.pasteService.paste(content: content, targetApp: target, slotIndex: slotIndex)
+                    self.focusTracker.clearPasteDestination()
+                }
             }
-        case .pasteAtFocus:
-            guard ensureAccessibilityForPaste() else { return }
-            let target = focusTracker.pasteDestination()
-            panelController.hide(animated: true) {
-                self.isPanelVisible = false
-                self.pasteService.paste(content: content, targetApp: target, slotIndex: slotIndex)
-                self.focusTracker.clearPasteDestination()
-            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.09) {
+            close()
         }
     }
 

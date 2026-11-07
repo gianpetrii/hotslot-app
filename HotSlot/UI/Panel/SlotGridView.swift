@@ -82,7 +82,6 @@ struct SlotGridView: View {
                 }
             )
             .opacity(slotSearchOpacity(for: slot))
-            .clipped()
         }
     }
 
@@ -110,6 +109,7 @@ private struct SlotCardView: View {
     @State private var isEditingLabel = false
     @State private var isTitleHovering = false
     @State private var labelDraft = ""
+    @State private var copyFlash = false
     @FocusState private var labelFieldFocused: Bool
     @Environment(AppState.self) private var appState
 
@@ -169,18 +169,21 @@ private struct SlotCardView: View {
             if isDropTarget {
                 RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
                     .strokeBorder(SlotsColor.naranja, lineWidth: 2)
-            } else if isHovering, hasContent {
-                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
-                    .strokeBorder(slotHoverStroke, lineWidth: 1)
             }
         }
+        .overlay {
+            cardChrome
+                .opacity(copyFlash ? 1 : 0)
+                .allowsHitTesting(false)
+        }
+        .slotsHoverLift(isHovering && hasContent && !copyFlash)
         .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
         .onTapGesture {
             if isEditingLabel {
                 commitLabelEdit()
                 return
             }
-            onPaste()
+            confirmCopy()
         }
         .onHover { isHovering = $0 }
         .draggable(PanelDragPayload.slot(index: slot.index))
@@ -211,6 +214,12 @@ private struct SlotCardView: View {
             if wasFocused, !focused, isEditingLabel {
                 commitLabelEdit()
             }
+        }
+        .onChange(of: appState.isPanelVisible) { _, visible in
+            guard visible, copyFlash else { return }
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) { copyFlash = false }
         }
         .onChange(of: appState.inlineEditSession) { _, _ in
             guard isEditingLabel else { return }
@@ -263,9 +272,15 @@ private struct SlotCardView: View {
         SlotsColor.textoSecundario
     }
 
-    /// Misma idea que el hover del historial: una línea quieta. El naranja queda para soltar encima.
-    private var slotHoverStroke: Color {
-        prefersLightContent ? Color.white.opacity(0.55) : SlotsColor.linea
+    private func confirmCopy() {
+        guard hasContent else {
+            onPaste()
+            return
+        }
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) { copyFlash = true }
+        onPaste()
     }
 
     private var clickHelp: String {
@@ -331,7 +346,7 @@ private struct SlotCardView: View {
             beginLabelEdit()
         }
         Menu("Color de fondo") {
-            Button("Predeterminado (handoff)") { onSetBackground(nil) }
+            Button("Predeterminado") { onSetBackground(nil) }
             Button("Degradé naranja (marca)") { onSetBackground(SlotsPalette.brandGradientAsset) }
             ForEach(SlotsPalette.slotBackgrounds, id: \.hex) { entry in
                 Button(entry.name) {
@@ -352,7 +367,7 @@ private struct SlotCardView: View {
             }
         }
         Divider()
-        Button(appState.settings.clickItemAction == .copyToClipboard ? "Copiar" : "Pegar") { onPaste() }
+        Button(appState.settings.clickItemAction == .copyToClipboard ? "Copiar" : "Pegar") { confirmCopy() }
         if hasContent {
             Button("Vaciar slot", role: .destructive) { onClear() }
         }
