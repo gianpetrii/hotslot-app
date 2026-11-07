@@ -43,6 +43,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P0 | Overlay en slot: atajo de pegar + cruz encima del contenido (también si está vacío) |
 | [x] | P2 | Cruz de vaciar al mismo tamaño visual que el badge de atajo (no más grande) |
 | [x] | P1 | Arrastrar un ítem del historial a un slot para guardarlo ahí |
+| [x] | P1 | **Clic en slot/historial:** copiar al portapapeles (default) o pegar donde estaba el cursor (Ajustes). Atajos siguen pegando. Validado. |
 | [ ] | P1 | **Archivos en slots e historial:** guardar y pegar files (PDF, zip, etc.), no solo texto e imagen |
 | [x] | P1 | Ver mejor el contenido de un slot (peek al hover; no copiar el expand de filas) |
 | [x] | P1 | Sonidos por acción (éxito vs no se pudo pegar vs guardado vs vacío) |
@@ -103,7 +104,7 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 |--------|-----|-------|
 | [x] | P2 | **Bibliotecas:** reorden drag + eliminar + renombrar (confirmación eliminar); dwell slot→pill |
 | [~] | P2 | **Panel UX** — oleada nov 2026 (tabla «Panel UX — validación Gianluca» más abajo) |
-| [ ] | P2 | **Grilla slots:** tamaños editables por slot (cuadrado vs alto) |
+| [ ] | P2 | **Fondos de slot:** sacar «Handoff (blanco)» y agregar el naranja de la paleta (`#E2501D`). Después de cerrar el hover (V13). |
 
 | Estado | Pri | Tarea post-usabilidad |
 |--------|-----|------------------------|

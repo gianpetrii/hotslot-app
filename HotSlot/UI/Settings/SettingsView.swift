@@ -11,6 +11,7 @@ struct SettingsView: View {
     @State private var historyLimit = AppSettings.load().historyLimit
     @State private var debugClipboard = AppSettings.load().debugClipboard
     @State private var confirmLibraryDelete = AppSettings.load().confirmLibraryDelete
+    @State private var clickItemAction = AppSettings.load().clickItemAction
     @State private var accessibilityTrusted = AccessibilityPermission.isTrusted
     @State private var selectedTab: SettingsTab = .general
     @State private var licenseKeyInput = AppSettings.load().licenseKey ?? ""
@@ -51,6 +52,7 @@ struct SettingsView: View {
         .frame(width: 720, height: 540)
         .onAppear {
             confirmLibraryDelete = AppSettings.load().confirmLibraryDelete
+            clickItemAction = AppSettings.load().clickItemAction
             if let pending = appState.pendingSettingsTab {
                 selectedTab = pending
                 appState.pendingSettingsTab = nil
@@ -98,6 +100,23 @@ struct SettingsView: View {
                         Button("Cómo mantener \(BrandDisplay.name) visible…") {
                             MenuBarGuide.present()
                         }
+                    }
+
+                    Section("Al hacer clic en un slot o el historial") {
+                        Picker("Acción", selection: $clickItemAction) {
+                            ForEach(ClickItemAction.allCases) { action in
+                                Text(action.title).tag(action)
+                            }
+                        }
+                        .pickerStyle(.radioGroup)
+                        .onChange(of: clickItemAction) { _, newValue in
+                            var current = AppSettings.load()
+                            current.clickItemAction = newValue
+                            current.save()
+                        }
+                        Text(clickItemAction.caption)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
 
                     Section("Bibliotecas") {

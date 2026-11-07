@@ -133,7 +133,7 @@ private struct HistoryRowChromeModifier: ViewModifier {
                             historyStore.togglePin(id: item.id)
                         }
                     }
-                    Button("Pegar", action: onPaste)
+                    Button(AppSettings.load().clickItemAction == .copyToClipboard ? "Copiar" : "Pegar", action: onPaste)
                     Button("Eliminar", role: .destructive) {
                         withAnimation(listAnimation) {
                             historyStore.remove(id: item.id)

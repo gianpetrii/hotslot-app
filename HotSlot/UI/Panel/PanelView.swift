@@ -296,7 +296,9 @@ struct PanelView: View {
     }
 
     private var panelShortcutHint: some View {
-        Text("Clic para pegar · Arrastrá para guardar · Esc para cerrar")
+        Text(appState.settings.clickItemAction == .copyToClipboard
+             ? "Clic para copiar · ⌘V para pegar · Esc para cerrar"
+             : "Clic para pegar · Arrastrá para guardar · Esc para cerrar")
             .font(SlotsFont.textoUI)
             .foregroundStyle(SlotsColor.textoTerciario)
             .frame(maxWidth: .infinity, minHeight: HotSlotDesign.panelHintOutsideHeight)

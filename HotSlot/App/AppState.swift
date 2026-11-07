@@ -101,6 +101,13 @@ final class AppState {
             self.presentNotch(.pasted(slotIndex: slotIndex, title: title))
         }
 
+        pasteService.onCopied = { [weak self] slotIndex in
+            guard let self else { return }
+            let title = slotIndex.flatMap { self.slotDisplayTitle(at: $0) }
+            self.presentNotch(.copied(slotIndex: slotIndex, title: title))
+            self.showToast("Copiado — ⌘V para pegar")
+        }
+
         hotkeyManager.onTogglePanel = { [weak self, weak panelController] in
             guard let self, let panelController else { return }
             if panelController.isVisible {
@@ -171,29 +178,36 @@ final class AppState {
 
     func pasteItem(_ item: ClipItem, panelController: PanelController) {
         guard ensureCanUseHistory() else { return }
-        guard ensureAccessibilityForPaste() else { return }
-        let target = focusTracker.pasteDestination()
-        let content = item.content
-        panelController.hide(animated: true) {
-            self.isPanelVisible = false
-            self.pasteService.paste(content: content, targetApp: target, slotIndex: nil)
-            self.focusTracker.clearPasteDestination()
-        }
+        activateContent(item.content, slotIndex: nil, panelController: panelController)
     }
 
     func pasteSlot(index: Int, panelController: PanelController) {
         guard ensureCanUseSlot(index) else { return }
-        guard ensureAccessibilityForPaste() else { return }
         guard let content = slotStore.content(at: index) else {
             FeedbackSound.play(.pasteFailed)
             presentNotch(.emptySlot(index: index))
             return
         }
-        let target = focusTracker.pasteDestination()
-        panelController.hide(animated: true) {
-            self.isPanelVisible = false
-            self.pasteService.paste(content: content, targetApp: target, slotIndex: index)
-            self.focusTracker.clearPasteDestination()
+        activateContent(content, slotIndex: index, panelController: panelController)
+    }
+
+    /// Clic en slot o historial: copia o pega, según Ajustes. Los atajos de teclado siguen pegando.
+    private func activateContent(_ content: ClipContent, slotIndex: Int?, panelController: PanelController) {
+        switch settings.clickItemAction {
+        case .copyToClipboard:
+            panelController.hide(animated: true) {
+                self.isPanelVisible = false
+                self.pasteService.copyToClipboard(content: content, slotIndex: slotIndex)
+                self.focusTracker.clearPasteDestination()
+            }
+        case .pasteAtFocus:
+            guard ensureAccessibilityForPaste() else { return }
+            let target = focusTracker.pasteDestination()
+            panelController.hide(animated: true) {
+                self.isPanelVisible = false
+                self.pasteService.paste(content: content, targetApp: target, slotIndex: slotIndex)
+                self.focusTracker.clearPasteDestination()
+            }
         }
     }
 

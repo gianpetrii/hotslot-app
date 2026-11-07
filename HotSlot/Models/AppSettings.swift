@@ -1,11 +1,36 @@
 import Foundation
 
+/// Qué hace un clic en un slot o en un ítem del historial.
+enum ClickItemAction: String, Codable, CaseIterable, Identifiable {
+    case copyToClipboard
+    case pasteAtFocus
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .copyToClipboard: return "Copiar al portapapeles"
+        case .pasteAtFocus: return "Pegar donde estaba el cursor"
+        }
+    }
+
+    var caption: String {
+        switch self {
+        case .copyToClipboard:
+            return "El clic deja el contenido copiado; lo pegás vos con ⌘V donde quieras. Los atajos de teclado siguen pegando solos."
+        case .pasteAtFocus:
+            return "El clic pega en la app que tenías delante, igual que los atajos. Hace falta permiso de Accesibilidad."
+        }
+    }
+}
+
 /// Preferencias de la app persistidas en UserDefaults.
 struct AppSettings: Codable, Equatable {
     var historyLimit: Int
     var launchAtLogin: Bool
     var playSoundOnPaste: Bool
     var showNotchNotice: Bool
+    var clickItemAction: ClickItemAction
     var debugClipboard: Bool
     var hasCompletedOnboarding: Bool
     var hasSeenMenuBarHint: Bool
@@ -19,6 +44,7 @@ struct AppSettings: Codable, Equatable {
         launchAtLogin: false,
         playSoundOnPaste: true,
         showNotchNotice: true,
+        clickItemAction: .copyToClipboard,
         debugClipboard: false,
         hasCompletedOnboarding: false,
         hasSeenMenuBarHint: false,
@@ -32,7 +58,7 @@ struct AppSettings: Codable, Equatable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case historyLimit, launchAtLogin, playSoundOnPaste, showNotchNotice, debugClipboard, hasCompletedOnboarding, hasSeenMenuBarHint
+        case historyLimit, launchAtLogin, playSoundOnPaste, showNotchNotice, clickItemAction, debugClipboard, hasCompletedOnboarding, hasSeenMenuBarHint
         case firstInstallDate, licenseKey, isLicensed, confirmLibraryDelete
     }
 
@@ -41,6 +67,7 @@ struct AppSettings: Codable, Equatable {
         launchAtLogin: Bool,
         playSoundOnPaste: Bool,
         showNotchNotice: Bool = true,
+        clickItemAction: ClickItemAction = .copyToClipboard,
         debugClipboard: Bool,
         hasCompletedOnboarding: Bool,
         hasSeenMenuBarHint: Bool = false,
@@ -53,6 +80,7 @@ struct AppSettings: Codable, Equatable {
         self.launchAtLogin = launchAtLogin
         self.playSoundOnPaste = playSoundOnPaste
         self.showNotchNotice = showNotchNotice
+        self.clickItemAction = clickItemAction
         self.debugClipboard = debugClipboard
         self.hasCompletedOnboarding = hasCompletedOnboarding
         self.hasSeenMenuBarHint = hasSeenMenuBarHint
@@ -68,6 +96,7 @@ struct AppSettings: Codable, Equatable {
         launchAtLogin = try container.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? false
         playSoundOnPaste = try container.decodeIfPresent(Bool.self, forKey: .playSoundOnPaste) ?? true
         showNotchNotice = try container.decodeIfPresent(Bool.self, forKey: .showNotchNotice) ?? true
+        clickItemAction = try container.decodeIfPresent(ClickItemAction.self, forKey: .clickItemAction) ?? .copyToClipboard
         debugClipboard = try container.decodeIfPresent(Bool.self, forKey: .debugClipboard) ?? false
         hasCompletedOnboarding = try container.decodeIfPresent(Bool.self, forKey: .hasCompletedOnboarding) ?? false
         hasSeenMenuBarHint = try container.decodeIfPresent(Bool.self, forKey: .hasSeenMenuBarHint) ?? false

@@ -29,6 +29,13 @@ struct ClipRowView: View {
 
     private let expandAnimation = Animation.spring(response: 0.32, dampingFraction: 0.92)
 
+    private var clickHint: String {
+        let action = AppSettings.load().clickItemAction == .copyToClipboard
+            ? "Clic para copiar, después ⌘V para pegar."
+            : "Clic para pegar."
+        return "\(action) Arrastrá para guardar en un slot."
+    }
+
     var body: some View {
         switch layout {
         case .panelHandoff(let isFirst):
@@ -79,7 +86,7 @@ struct ClipRowView: View {
         .animation(.easeOut(duration: 0.15), value: item.isPinned)
         .onDisappear(perform: resetHoverState)
         .accessibilityAddTraits(.isButton)
-        .accessibilityHint("Clic para pegar. Arrastrá para guardar en un slot.")
+        .accessibilityHint(clickHint)
     }
 
     private func panelHandoffRow(isFirst: Bool) -> some View {
@@ -138,7 +145,7 @@ struct ClipRowView: View {
         .animation(.easeOut(duration: 0.12), value: isKeyboardHighlighted)
         .onDisappear(perform: resetHoverState)
         .accessibilityAddTraits(.isButton)
-        .accessibilityHint("Clic para pegar. Arrastrá para guardar en un slot.")
+        .accessibilityHint(clickHint)
     }
 
     @ViewBuilder

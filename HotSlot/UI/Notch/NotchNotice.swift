@@ -3,6 +3,7 @@ import AppKit
 enum NotchNoticeKind: Equatable {
     case saved(slotIndex: Int, title: String?)
     case pasted(slotIndex: Int?, title: String?)
+    case copied(slotIndex: Int?, title: String?)
     case emptySlot(index: Int)
     case noAccessibility
     case ready
@@ -23,6 +24,14 @@ enum NotchNoticeKind: Equatable {
                 return "\(index) · Pegado ✓"
             }
             return "Pegado ✓"
+        case let .copied(index, title):
+            if let index, let title, !title.isEmpty {
+                return "\(index) · \(title) · Copiado · ⌘V"
+            }
+            if let index {
+                return "\(index) · Copiado · ⌘V"
+            }
+            return "Copiado · ⌘V para pegar"
         case let .emptySlot(index):
             return "\(index) · Slot vacío · Guardá con \(Self.saveShortcut(for: index))"
         case .noAccessibility:

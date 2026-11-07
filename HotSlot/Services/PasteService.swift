@@ -22,6 +22,16 @@ final class PasteService {
         self.focusTracker = focusTracker
     }
 
+    /// Deja el contenido en el portapapeles para que el usuario pegue con ⌘V. No usa Accesibilidad.
+    func copyToClipboard(content: ClipContent, slotIndex: Int? = nil) {
+        let changeCount = PasteboardHelper.copyContentToPasteboard(content)
+        clipboardService?.suppressUntilChangeCount = changeCount
+        FeedbackSound.play(.pasteSuccess)
+        onCopied?(slotIndex)
+    }
+
+    var onCopied: ((Int?) -> Void)?
+
     @discardableResult
     func paste(content: ClipContent, targetApp: NSRunningApplication?, slotIndex: Int? = nil) -> PasteResult {
         let changeCount = PasteboardHelper.copyContentToPasteboard(content)

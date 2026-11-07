@@ -198,7 +198,7 @@ private struct SlotCardView: View {
         .animation(.spring(response: 0.28, dampingFraction: 0.86), value: isHovering)
         .animation(.easeOut(duration: 0.12), value: isDropTarget)
         .contextMenu { slotContextMenu }
-        .help("Clic para pegar · Arrastrá para intercambiar o soltá un clip del historial.")
+        .help(clickHelp)
         .onChange(of: isEditingLabel) { _, editing in
             if editing {
                 labelDraft = SlotCardCopy.editingTitle(for: slot)
@@ -261,6 +261,13 @@ private struct SlotCardView: View {
 
     private var headerChipInk: Color {
         SlotsColor.textoSecundario
+    }
+
+    private var clickHelp: String {
+        let action = appState.settings.clickItemAction == .copyToClipboard
+            ? "Clic para copiar (⌘V para pegar)"
+            : "Clic para pegar"
+        return "\(action) · Arrastrá para intercambiar o soltá un clip del historial."
     }
 
     @ViewBuilder
@@ -340,7 +347,7 @@ private struct SlotCardView: View {
             }
         }
         Divider()
-        Button("Pegar") { onPaste() }
+        Button(appState.settings.clickItemAction == .copyToClipboard ? "Copiar" : "Pegar") { onPaste() }
         if hasContent {
             Button("Vaciar slot", role: .destructive) { onClear() }
         }
