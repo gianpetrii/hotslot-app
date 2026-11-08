@@ -10,6 +10,9 @@ struct HistoryListView: View {
     var isDemo: Bool = false
 
     private let listAnimation = Animation.spring(response: 0.34, dampingFraction: 0.82)
+    /// Margen para que la sombra del hover no se corte en el borde de la lista.
+    private let shadowSide: CGFloat = 18
+    private let shadowTop: CGFloat = 10
 
     var body: some View {
         VStack(alignment: .leading, spacing: SlotsSpace.s) {
@@ -76,8 +79,13 @@ struct HistoryListView: View {
                             }
                         }
                         .padding(.bottom, SlotsSpace.m)
+                        .padding(.horizontal, shadowSide)
+                        .padding(.top, shadowTop)
                     }
                     .scrollIndicators(.hidden)
+                    // El recorte de la lista es más ancho que la columna; el contenido vuelve a su lugar con el padding de arriba.
+                    .padding(.horizontal, -shadowSide)
+                    .padding(.top, -shadowTop)
                     .animation(listAnimation, value: items.map(\.id))
                     .onChange(of: keyboardHighlightIndex) { _, newValue in
                         if let idx = newValue, let id = items[safe: idx]?.id {

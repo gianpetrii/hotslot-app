@@ -281,6 +281,9 @@ struct ClipRowView: View {
 
     private func panelHandoffBackground(isFirst: Bool) -> Color {
         if copyFlash { return SlotsColor.papel }
+        // Opaco al pasar el mouse, como las cards de los slots: con un fondo translúcido la sombra
+        // de la fila se ve a través y parece una sombra en las letras.
+        if isHovering { return SlotsColor.papel }
         if isKeyboardHighlighted { return Color.white.opacity(0.95) }
         if isFirst { return Color.white.opacity(0.92) }
         return Color.white.opacity(0.55)

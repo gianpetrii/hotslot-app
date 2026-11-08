@@ -155,6 +155,7 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 | [x] | V17 | **«+» de bibliotecas:** hover = solo sombra. Clic = pulso de escala que se ve aunque sea instantáneo, y después abre el formulario. Pills no seleccionadas validadas |
 | [x] | V15 | **Aviso del notch:** píldora negra al copiar, guardar o pegar. Naranja solo si pide una acción (accesibilidad, slot vacío). La barra desplegable con los 5 slots queda en P1 |
 | [x] | V18 | **Hover unificado:** sombra más marcada y agrandado del 2 % en slots, pills y botones redondos (panel y notch). Las filas del historial solo cambian la sombra. Re-validación de V13. Validado por Gianluca |
+| [x] | P2 | **Hover del historial:** la sombra se cortaba en los costados (el scroll la recortaba) y se veía una sombra en las letras (fondo translúcido). Ahora la lista tiene margen para la sombra y la fila pasa a papel opaco al pasar el mouse, como las cards. Validado por Gianluca |
 
 **Dante (solo si Gianluca lo pide):** reorden de bibliotecas → `docs/REVISION-PANEL-PARA-DANTE.md`.
 
@@ -188,6 +189,7 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 | [ ] | P3 | “Slots libres” en UI tipo Dynamic Island — **no aplica en Mac**; en iPhone sería otro producto |
 | [~] | P1 | **Analytics (importante):** hecho en código, falta activarlo. (1) Landing: Vercel Web Analytics en `index`, `privacy` y `purchase` (hay que activarlo en el proyecto de Vercel y, si cambia `docs/slots-landing/`, repetir el script en la fuente). (2) Descargas: `scripts/download-stats.sh`. (3) In-app: TelemetryDeck, **opt-in** (apagado por defecto, aviso único tras el onboarding y sección «Privacidad» en Ajustes). Inactiva hasta pegar el App ID en `Telemetry.appID`. Política de privacidad actualizada. Eventos: `App.launched`, `Slot.saved`, `Slot.firstSaved`, `Slot.used` (panel, atajo o notch), `Notch.opened`, `Library.created`, `License.purchaseClicked`, `License.activated`. Nunca contenido ni nombres |
 | [x] | P1 | **Limpieza de Ajustes:** se quitó la pestaña «Slots», la sección «Depuración», el diagnóstico de Accesibilidad y el botón de probar el aviso. Nueva sección «Barra del notch» con interruptor. Validado por Gianluca |
+| [x] | P1 | **Slots en una sola fuente (preparación de iOS):** `SlotStore` lee y escribe en el workspace; se eliminó el copiado con `slots.json`, que se migra una vez con copia de seguridad en `Backups/`. Validado por Gianluca |
 
 ### Propuesta rápida (cómo resolver)
 
