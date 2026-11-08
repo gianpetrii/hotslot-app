@@ -1,5 +1,38 @@
 # Changelog
 
+## [1.0.0] — 2026-11-08
+
+La primera versión completa de Slots.
+
+### Notch
+
+- Se puede arrastrar un archivo hacia el notch: la barra se abre sola y lo soltás sobre un slot.
+- En Ajustes hay un interruptor para desactivar la barra del notch.
+
+### Privacidad
+
+- Uso anónimo opcional, apagado por defecto. Se ofrece en el onboarding (y una sola vez a quienes ya lo completaron) y se cambia en Ajustes → General → Privacidad. Solo cuenta qué funciones se usan: nunca lo que copiás, nombres de archivos, bibliotecas o slots, ni quién sos.
+
+### Actualizaciones
+
+- Si hay una versión nueva mientras trabajás, aparece un aviso en el notch y una línea «Actualización disponible» arriba del menú del ícono.
+
+### Ajustes
+
+- Se quitó la pestaña «Slots» y la sección de depuración. Los textos ya no dicen «⌘» donde va el ícono de la app.
+
+### Historial
+
+- Al pasar el mouse, la sombra de la fila ya no se corta a los costados ni se ve en las letras: la fila pasa a papel opaco, como las cards de los slots.
+
+### Licencia
+
+- La prueba gratuita pasa de 90 a 30 días. Quien instaló hace más de 30 días y no tiene licencia queda con el slot 1 al actualizar.
+
+### Interno
+
+- Los slots viven en un solo lugar. Al abrir por primera vez se hace una copia de seguridad en `Application Support/HotSlot/Backups/`.
+
 ## [0.24.0] — 2026-11-07
 
 ### Barra del notch

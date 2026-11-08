@@ -6,6 +6,7 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 
 ## Decisiones de producto (alineación Oct 2025 — actualizado)
 
+- **Versión 1.0.0 publicada (nov 2026):** primera versión completa. Sync con iPhone y la app iOS quedan para la siguiente.
 - **Monetización:** **30 días** de prueba → **USD 10** pago único (Lemon, `Entitlements.swift`). **UI de licencia visible**; no retomar cambios de gating/compra hasta cerrar el rediseño (ver `docs/DECISIONES-REDISENO.md`).
 - **Mensaje público:** **slots fijos** como lead; historial + búsqueda como complemento.
 - **Distribución:** DMG notarizado + GitHub Releases.
