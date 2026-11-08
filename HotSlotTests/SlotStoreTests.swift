@@ -64,4 +64,61 @@ final class SlotStoreTests: XCTestCase {
         XCTAssertNil(store.content(at: 2))
         XCTAssertEqual(store.content(at: 5)?.previewText, "lleno")
     }
+
+    func testSlotsLiveOnlyInTheWorkspaceFile() {
+        let store = SlotStore()
+        store.saveContent(index: 1, content: .text("uno"))
+
+        XCTAssertFalse(FileManager.default.fileExists(atPath: AppSupportDirectory.slotsFile.path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: AppSupportDirectory.workspaceFile.path))
+    }
+
+    func testClearingKeepsLabelAndBackground() {
+        let workspace = LibraryWorkspaceStore()
+        let store = SlotStore(workspace: workspace)
+        store.updateLabel(index: 4, label: "Mi título")
+        store.saveContent(index: 4, content: .text("algo"))
+        store.clearSlot(index: 4)
+
+        XCTAssertNil(store.content(at: 4))
+        XCTAssertEqual(store.slot(at: 4)?.label, "Mi título")
+    }
+
+    func testEachLibraryKeepsItsOwnSlots() {
+        let workspace = LibraryWorkspaceStore()
+        let store = SlotStore(workspace: workspace)
+        let first = workspace.workspace.activeLibraryId
+        store.saveContent(index: 1, content: .text("de la primera"))
+
+        workspace.createLibrary(named: "Otra")
+        XCTAssertNil(store.content(at: 1))
+        store.saveContent(index: 1, content: .text("de la segunda"))
+
+        workspace.setActiveLibrary(id: first)
+        XCTAssertEqual(store.content(at: 1)?.previewText, "de la primera")
+    }
+
+    func testLegacyMigrationFillsGapsAndNeverOverwrites() throws {
+        let workspace = LibraryWorkspaceStore()
+        let store = SlotStore(workspace: workspace)
+        store.saveContent(index: 1, content: .text("del workspace"))
+
+        let legacy = [
+            Slot(index: 1, label: "Slot 1", content: .text("viejo"), cardBackgroundHex: nil),
+            Slot(index: 2, label: "Mi título", content: .text("solo en legacy"), cardBackgroundHex: nil),
+        ]
+        try JSONEncoder().encode(legacy).write(to: AppSupportDirectory.slotsFile)
+
+        workspace.migrateLegacySlotsIfNeeded()
+
+        XCTAssertEqual(store.content(at: 1)?.previewText, "del workspace")
+        XCTAssertEqual(store.content(at: 2)?.previewText, "solo en legacy")
+        XCTAssertEqual(store.slot(at: 2)?.label, "Mi título")
+        XCTAssertFalse(FileManager.default.fileExists(atPath: AppSupportDirectory.slotsFile.path))
+
+        let moved = AppSupportDirectory.root.appendingPathComponent("slots.json.migrado")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: moved.path))
+        let backups = AppSupportDirectory.root.appendingPathComponent("Backups")
+        XCTAssertFalse(try FileManager.default.contentsOfDirectory(atPath: backups.path).isEmpty)
+    }
 }

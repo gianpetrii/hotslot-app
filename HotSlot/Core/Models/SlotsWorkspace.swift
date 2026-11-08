@@ -45,6 +45,35 @@ struct SlotRecord: Codable, Identifiable, Equatable, Sendable {
     var createdAt: Date
     var updatedAt: Date
 
+    /// Guarda (o vacía) el contenido y deja coherentes el tipo, los datos y el resumen.
+    /// El título y el fondo de la card no se tocan: vaciar un slot los conserva.
+    mutating func setContent(_ content: ClipContent?, now: Date = Date()) {
+        textPayload = nil
+        imageFileName = nil
+        filePath = nil
+        fileBookmark = nil
+        switch content {
+        case nil:
+            kind = .text
+            meta = nil
+        case .text(let string):
+            kind = string.hasPrefix("http") ? .link : .text
+            textPayload = string
+            let words = string.split { $0.isWhitespace || $0.isNewline }.count
+            meta = "\(words) palabras"
+        case .image(let fileName):
+            kind = .image
+            imageFileName = fileName
+            meta = "Imagen"
+        case .file(let path, let bookmark):
+            kind = .file
+            filePath = path
+            fileBookmark = bookmark
+            meta = content?.typeLabel
+        }
+        updatedAt = now
+    }
+
     func clipContent() -> ClipContent? {
         switch kind {
         case .text, .link, .color:

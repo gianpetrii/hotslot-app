@@ -99,5 +99,23 @@ enum AppSupportDirectory {
         guard let pw = getpwuid(getuid()), let dir = pw.pointee.pw_dir else { return nil }
         return URL(fileURLWithPath: String(cString: dir), isDirectory: true)
     }
-}
 
+    /// Copia los archivos de datos a `Backups/<fecha>-<motivo>/` antes de un cambio de formato.
+    @discardableResult
+    static func backupDataFiles(label: String) -> URL? {
+        let fm = FileManager.default
+        let stamp = ISO8601DateFormatter().string(from: Date()).replacingOccurrences(of: ":", with: "-")
+        let dir = root
+            .appendingPathComponent("Backups", isDirectory: true)
+            .appendingPathComponent("\(stamp)-\(label)", isDirectory: true)
+        do {
+            try fm.createDirectory(at: dir, withIntermediateDirectories: true)
+        } catch {
+            return nil
+        }
+        for url in [slotsFile, workspaceFile, historyFile] where fm.fileExists(atPath: url.path) {
+            try? fm.copyItem(at: url, to: dir.appendingPathComponent(url.lastPathComponent))
+        }
+        return dir
+    }
+}

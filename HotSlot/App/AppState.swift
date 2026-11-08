@@ -23,13 +23,19 @@ struct LibraryDragSession: Equatable {
 @Observable
 final class AppState {
     let historyStore = HistoryStore()
-    let slotStore = SlotStore()
-    let libraryWorkspace = LibraryWorkspaceStore()
+    let slotStore: SlotStore
+    let libraryWorkspace: LibraryWorkspaceStore
     let clipboardService = ClipboardService()
     let pasteService = PasteService()
     let focusTracker = FocusTracker()
     let hotkeyManager = HotkeyManager()
     let notchNotice = NotchNoticeController()
+
+    init() {
+        let workspace = LibraryWorkspaceStore()
+        libraryWorkspace = workspace
+        slotStore = SlotStore(workspace: workspace)
+    }
 
     var toastMessage: String?
     var isPanelVisible = false
@@ -79,12 +85,7 @@ final class AppState {
 
     func bootstrap(panelController: PanelController) {
         Entitlements.recordFirstLaunchIfNeeded()
-        slotStore.onPersist = { [weak self] in
-            guard let self else { return }
-            self.libraryWorkspace.syncFromLegacySlotStore(self.slotStore)
-        }
-        libraryWorkspace.importLegacySlotsIfNeeded(from: slotStore)
-        libraryWorkspace.applyActiveLibrary(to: slotStore, preservingMissingBackgrounds: true)
+        libraryWorkspace.migrateLegacySlotsIfNeeded()
         clipboardService.configure(historyStore: historyStore)
         pasteService.configure(clipboardService: clipboardService, focusTracker: focusTracker)
 
@@ -346,33 +347,26 @@ final class AppState {
     }
 
     func switchLibrary(to id: UUID) {
-        libraryWorkspace.syncFromLegacySlotStore(slotStore)
         libraryWorkspace.setActiveLibrary(id: id)
-        libraryWorkspace.applyActiveLibrary(to: slotStore)
         librarySwitchRevision += 1
         UsageEventLog.shared.record("biblioteca_cambiar", detail: libraryWorkspace.activeLibrary?.name)
     }
 
     func createLibrary(named name: String) {
-        libraryWorkspace.syncFromLegacySlotStore(slotStore)
         libraryWorkspace.createLibrary(named: name)
-        libraryWorkspace.applyActiveLibrary(to: slotStore)
         Telemetry.libraryCreated()
         UsageEventLog.shared.record("biblioteca_crear", detail: name)
     }
 
     @discardableResult
     func deleteLibrary(id: UUID) -> Bool {
-        libraryWorkspace.syncFromLegacySlotStore(slotStore)
         guard libraryWorkspace.deleteLibrary(id: id) else { return false }
-        libraryWorkspace.applyActiveLibrary(to: slotStore)
         librarySwitchRevision += 1
         UsageEventLog.shared.record("biblioteca_eliminar")
         return true
     }
 
     func moveLibrary(id: UUID, toIndex index: Int) {
-        libraryWorkspace.syncFromLegacySlotStore(slotStore)
         libraryWorkspace.moveLibrary(id: id, toIndex: index)
         UsageEventLog.shared.record("biblioteca_reordenar")
     }
@@ -397,7 +391,6 @@ final class AppState {
     }
 
     func renameLibrary(id: UUID, name: String) {
-        libraryWorkspace.syncFromLegacySlotStore(slotStore)
         libraryWorkspace.renameLibrary(id: id, name: name)
         UsageEventLog.shared.record("biblioteca_renombrar", detail: name)
     }
@@ -428,12 +421,10 @@ final class AppState {
 
     func moveSlotToLibrary(slotIndex: Int, libraryId: UUID) {
         guard ensureCanUseSlot(slotIndex) else { return }
-        libraryWorkspace.syncFromLegacySlotStore(slotStore)
         guard libraryWorkspace.moveSlotContent(order: slotIndex, toLibraryId: libraryId) else {
             showToast("No hay slot vacío en esa biblioteca")
             return
         }
-        libraryWorkspace.applyActiveLibrary(to: slotStore)
         UsageEventLog.shared.record("slot_mover_biblioteca", detail: "\(slotIndex)")
     }
 

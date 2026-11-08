@@ -98,7 +98,6 @@ enum SampleDataFixture {
 
         let workspace = SlotsWorkspace(libraries: libraries, slots: slots, activeLibraryId: trabajo)
         workspaceStore.replaceWorkspace(workspace)
-        workspaceStore.applyActiveLibrary(to: slotStore)
 
         historyStore.clear()
         historyStore.add(
@@ -141,9 +140,7 @@ enum SampleDataFixture {
         AppSettings.default.save()
 
         appState.historyStore.clear()
-        appState.slotStore.replaceAll(Slot.defaultSlots())
         appState.libraryWorkspace.replaceWorkspace(SlotsWorkspace.empty())
-        appState.libraryWorkspace.applyActiveLibrary(to: appState.slotStore)
         UsageEventLog.shared.clear()
         UsageEventLog.shared.record("fixture_empezar_de_cero", screen: "mac")
 

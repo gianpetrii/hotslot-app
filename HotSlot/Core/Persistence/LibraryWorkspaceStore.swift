@@ -126,62 +126,68 @@ final class LibraryWorkspaceStore {
         }
     }
 
-    /// Sincroniza los 5 slots legacy (`SlotStore`) con la biblioteca activa.
-    /// `preservingMissingBackgrounds` solo en el arranque: el archivo viejo de slots
-    /// puede tener colores que el workspace todavía no guardaba.
-    func applyActiveLibrary(to slotStore: SlotStore, preservingMissingBackgrounds: Bool = false) {
-        let records = activeSlots()
-        let previous = slotStore.slots
-        var legacy = Slot.defaultSlots()
-        for record in records {
-            guard let index = legacy.firstIndex(where: { $0.index == record.order }) else { continue }
-            legacy[index].label = record.title
-            legacy[index].content = record.clipContent()
-            if let hex = record.cardBackgroundHex {
-                legacy[index].cardBackgroundHex = hex
-            } else if preservingMissingBackgrounds {
-                legacy[index].cardBackgroundHex = previous.first { $0.index == record.order }?.cardBackgroundHex
-            }
-        }
-        slotStore.replaceAll(legacy)
+    // MARK: - Edición de la biblioteca activa
+
+    func activeSlot(order: Int) -> SlotRecord? {
+        workspace.slots.first { $0.libraryId == workspace.activeLibraryId && $0.order == order }
     }
 
-    /// Importa el `slots.json` legacy a la biblioteca activa si el workspace está vacío.
-    func importLegacySlotsIfNeeded(from slotStore: SlotStore) {
-        let hasContent = workspace.slots.contains { $0.clipContent() != nil }
-        guard !hasContent else { return }
-
-        let now = Date()
-        var records = activeSlots()
-        for slot in slotStore.slots {
-            guard let i = records.firstIndex(where: { $0.order == slot.index }) else { continue }
-            records[i].title = slot.label
-            records[i].cardBackgroundHex = slot.cardBackgroundHex
-            if let content = slot.content {
-                switch content {
-                case .text(let string):
-                    records[i].kind = string.hasPrefix("http") ? .link : .text
-                    records[i].textPayload = string
-                    records[i].meta = wordCountMeta(string)
-                case .image(let fileName):
-                    records[i].kind = .image
-                    records[i].imageFileName = fileName
-                    records[i].meta = "Imagen"
-                case .file(let path, let bookmark):
-                    records[i].kind = .file
-                    records[i].filePath = path
-                    records[i].fileBookmark = bookmark
-                    records[i].meta = content.typeLabel
-                }
-            }
-            records[i].updatedAt = now
-        }
-        for record in records {
-            if let idx = workspace.slots.firstIndex(where: { $0.id == record.id }) {
-                workspace.slots[idx] = record
-            }
-        }
+    /// Edita un slot de la biblioteca activa y guarda.
+    func updateActiveSlot(order: Int, _ change: (inout SlotRecord) -> Void) {
+        guard let idx = workspace.slots.firstIndex(where: {
+            $0.libraryId == workspace.activeLibraryId && $0.order == order
+        }) else { return }
+        change(&workspace.slots[idx])
+        workspace.slots[idx].updatedAt = Date()
         save()
+    }
+
+    // MARK: - Migración desde `slots.json`
+
+    /// Hasta la 0.24 los slots de la biblioteca activa también vivían en `slots.json`, copiados de ida y vuelta.
+    /// Desde ahora el workspace es la única fuente. Una sola vez: se hace copia de seguridad de los archivos,
+    /// se completa lo que el workspace no tuviera (fondos, contenido, nombres) y `slots.json` queda apartado.
+    func migrateLegacySlotsIfNeeded() {
+        let fm = FileManager.default
+        let legacyURL = AppSupportDirectory.slotsFile
+        guard fm.fileExists(atPath: legacyURL.path) else { return }
+
+        AppSupportDirectory.backupDataFiles(label: "antes-de-unificar-slots")
+
+        if let data = try? Data(contentsOf: legacyURL),
+           let legacy = try? JSONDecoder().decode([Slot].self, from: data) {
+            var changed = false
+            for slot in legacy {
+                updateActiveSlotIfNeeded(order: slot.index, legacy: slot, changed: &changed)
+            }
+            if changed { save() }
+        }
+
+        let moved = legacyURL.deletingLastPathComponent().appendingPathComponent("slots.json.migrado")
+        try? fm.removeItem(at: moved)
+        try? fm.moveItem(at: legacyURL, to: moved)
+    }
+
+    /// Completa solo lo que falta: nunca pisa lo que el workspace ya tiene.
+    private func updateActiveSlotIfNeeded(order: Int, legacy: Slot, changed: inout Bool) {
+        guard let idx = workspace.slots.firstIndex(where: {
+            $0.libraryId == workspace.activeLibraryId && $0.order == order
+        }) else { return }
+        let record = workspace.slots[idx]
+
+        if record.cardBackgroundHex == nil, let hex = SlotsPalette.storedBackgroundHex(legacy.cardBackgroundHex) {
+            workspace.slots[idx].cardBackgroundHex = hex
+            changed = true
+        }
+        let isDefaultTitle = record.title.isEmpty || record.title == "Slot \(order)"
+        if isDefaultTitle, !legacy.label.isEmpty, legacy.label != "Slot \(order)" {
+            workspace.slots[idx].title = legacy.label
+            changed = true
+        }
+        if record.clipContent() == nil, let content = legacy.content {
+            workspace.slots[idx].setContent(content)
+            changed = true
+        }
     }
 
     /// Mueve el contenido del slot `order` de la biblioteca activa al primer slot vacío de `toLibraryId`.
@@ -224,52 +230,6 @@ final class LibraryWorkspaceStore {
         return true
     }
 
-    func syncFromLegacySlotStore(_ slotStore: SlotStore) {
-        let libraryId = workspace.activeLibraryId
-        let now = Date()
-        for slot in slotStore.slots {
-            guard let idx = workspace.slots.firstIndex(where: { $0.libraryId == libraryId && $0.order == slot.index }) else {
-                continue
-            }
-            workspace.slots[idx].title = slot.label
-            workspace.slots[idx].cardBackgroundHex = slot.cardBackgroundHex
-            workspace.slots[idx].updatedAt = now
-            if let content = slot.content {
-                switch content {
-                case .text(let string):
-                    workspace.slots[idx].kind = string.hasPrefix("http") ? .link : .text
-                    workspace.slots[idx].textPayload = string
-                    workspace.slots[idx].imageFileName = nil
-                    workspace.slots[idx].filePath = nil
-                    workspace.slots[idx].fileBookmark = nil
-                    workspace.slots[idx].meta = wordCountMeta(string)
-                case .image(let fileName):
-                    workspace.slots[idx].kind = .image
-                    workspace.slots[idx].imageFileName = fileName
-                    workspace.slots[idx].filePath = nil
-                    workspace.slots[idx].fileBookmark = nil
-                    workspace.slots[idx].textPayload = nil
-                    workspace.slots[idx].meta = "Imagen"
-                case .file(let path, let bookmark):
-                    workspace.slots[idx].kind = .file
-                    workspace.slots[idx].filePath = path
-                    workspace.slots[idx].fileBookmark = bookmark
-                    workspace.slots[idx].textPayload = nil
-                    workspace.slots[idx].imageFileName = nil
-                    workspace.slots[idx].meta = content.typeLabel
-                }
-            } else {
-                workspace.slots[idx].textPayload = nil
-                workspace.slots[idx].imageFileName = nil
-                workspace.slots[idx].filePath = nil
-                workspace.slots[idx].fileBookmark = nil
-                workspace.slots[idx].kind = .text
-                workspace.slots[idx].meta = nil
-            }
-        }
-        save()
-    }
-
     private func save() {
         guard let data = try? JSONEncoder().encode(workspace) else { return }
         try? data.write(to: AppSupportDirectory.workspaceFile, options: .atomic)
@@ -291,8 +251,4 @@ final class LibraryWorkspaceStore {
         return decoded
     }
 
-    private func wordCountMeta(_ text: String) -> String {
-        let words = text.split { $0.isWhitespace || $0.isNewline }.count
-        return "\(words) palabras"
-    }
 }
