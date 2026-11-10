@@ -5,14 +5,76 @@ import Foundation
 @Observable
 final class LibraryWorkspaceStore {
     private(set) var workspace: SlotsWorkspace
+    /// SwiftData + iCloud. `nil` si no abrió: entonces todo sigue en el JSON de siempre.
+    @ObservationIgnored private let database: WorkspaceDatabase?
+    /// Base vacía y sin JSON viejo: las bibliotecas de arranque están solo en memoria hasta que
+    /// termine el primer import de iCloud. Así un dispositivo nuevo no resucita bibliotecas ya borradas.
+    @ObservationIgnored private var seedPending = false
 
     init() {
-        let loaded = Self.loadFromDisk() ?? SlotsWorkspace.empty()
-        let normalized = Self.normalizingBackgrounds(loaded)
+        let database = WorkspaceDatabase()
+        self.database = database
+        let loaded = Self.initialWorkspace(database: database)
+        seedPending = loaded.deferredSeed
+        let normalized = Self.normalizingBackgrounds(loaded.workspace)
         workspace = normalized
-        if normalized != loaded {
+        if normalized != loaded.workspace, !seedPending {
             save()
         }
+        database?.onRemoteChange = { [weak self] in self?.reloadFromDatabase() }
+        if seedPending, let database {
+            Task { @MainActor [weak self] in
+                await database.waitForFirstImport(timeout: 15)
+                self?.resolveSeed()
+            }
+        }
+    }
+
+    /// Cambios que llegan de otro dispositivo.
+    private func reloadFromDatabase() {
+        guard let loaded = database?.load() else { return }
+        seedPending = false
+        let normalized = Self.normalizingBackgrounds(loaded)
+        if normalized != workspace { workspace = normalized }
+    }
+
+    /// Terminó la espera: si llegaron datos de iCloud se usan; si no, se guardan las bibliotecas de arranque.
+    private func resolveSeed() {
+        guard seedPending, let database else { return }
+        seedPending = false
+        if let stored = database.load() {
+            let normalized = Self.normalizingBackgrounds(stored)
+            if normalized != workspace { workspace = normalized }
+        } else {
+            database.write(workspace)
+        }
+    }
+
+    /// Lee la base. Si está vacía, pasa el JSON anterior a la base (con copia de seguridad) o parte de cero.
+    private static func initialWorkspace(database: WorkspaceDatabase?) -> (workspace: SlotsWorkspace, deferredSeed: Bool) {
+        guard let database else { return (loadFromDisk() ?? SlotsWorkspace.empty(), false) }
+        if let stored = database.load() { return (stored, false) }
+
+        let legacy = loadFromDisk()
+        if legacy != nil {
+            AppSupportDirectory.backupDataFiles(label: "antes-de-swiftdata")
+        }
+        // Las bibliotecas y slots de arranque llevan fecha 0: si ya hay datos en iCloud, siempre pierden
+        // contra ellos al fusionar duplicados. Cualquier edición del usuario les pone fecha real.
+        let initial = legacy ?? SlotsWorkspace.empty(now: Date(timeIntervalSince1970: 0))
+        if legacy == nil, database.syncsWithCloud {
+            return (initial, true)
+        }
+        database.write(initial)
+        if legacy != nil {
+            let fm = FileManager.default
+            let moved = AppSupportDirectory.workspaceFile
+                .deletingLastPathComponent()
+                .appendingPathComponent("libraries-workspace.json.migrado")
+            try? fm.removeItem(at: moved)
+            try? fm.moveItem(at: AppSupportDirectory.workspaceFile, to: moved)
+        }
+        return (initial, false)
     }
 
     var activeLibrary: Library? {
@@ -231,6 +293,11 @@ final class LibraryWorkspaceStore {
     }
 
     private func save() {
+        if let database {
+            seedPending = false
+            database.write(workspace)
+            return
+        }
         guard let data = try? JSONEncoder().encode(workspace) else { return }
         try? data.write(to: AppSupportDirectory.workspaceFile, options: .atomic)
     }

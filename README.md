@@ -4,7 +4,7 @@ Clipboard manager nativo para macOS con historial, slots fijos y atajos globales
 
 ## Requisitos
 
-- macOS 14.0+
+- macOS 15.0+
 - Xcode 15+
 
 ## Versiones

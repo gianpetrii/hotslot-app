@@ -65,12 +65,15 @@ final class SlotStoreTests: XCTestCase {
         XCTAssertEqual(store.content(at: 5)?.previewText, "lleno")
     }
 
-    func testSlotsLiveOnlyInTheWorkspaceFile() {
+    func testSlotsLiveOnlyInTheWorkspaceDatabase() {
         let store = SlotStore()
         store.saveContent(index: 1, content: .text("uno"))
 
         XCTAssertFalse(FileManager.default.fileExists(atPath: AppSupportDirectory.slotsFile.path))
-        XCTAssertTrue(FileManager.default.fileExists(atPath: AppSupportDirectory.workspaceFile.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: AppSupportDirectory.workspaceFile.path))
+        XCTAssertTrue(FileManager.default.fileExists(
+            atPath: AppSupportDirectory.root.appendingPathComponent("Workspace.store").path
+        ))
     }
 
     func testClearingKeepsLabelAndBackground() {

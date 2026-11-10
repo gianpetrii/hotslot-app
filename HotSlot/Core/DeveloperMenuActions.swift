@@ -21,6 +21,10 @@ final class StatusBarDeveloperActions: NSObject {
         SampleDataFixture.resetToFresh(appState: appState)
     }
 
+    @objc func devProbeICloud() {
+        CloudKitProbe.run()
+    }
+
     @objc func devExportEvents() {
         guard let url = UsageEventLog.shared.exportCSV() else { return }
         NSWorkspace.shared.activateFileViewerSelecting([url])
@@ -47,6 +51,10 @@ enum DeveloperMenuBuilder {
         let export = NSMenuItem(title: "Exportar eventos…", action: #selector(StatusBarDeveloperActions.devExportEvents), keyEquivalent: "")
         export.target = target
         menu.addItem(export)
+
+        let icloud = NSMenuItem(title: "Probar iCloud…", action: #selector(StatusBarDeveloperActions.devProbeICloud), keyEquivalent: "")
+        icloud.target = target
+        menu.addItem(icloud)
 
         if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
            let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {

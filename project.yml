@@ -2,7 +2,7 @@ name: HotSlot
 options:
   bundleIdPrefix: com.hotslot
   deploymentTarget:
-    macOS: "14.0"
+    macOS: "15.0"
   xcodeVersion: "15.0"
   createIntermediateGroups: true
 
@@ -20,7 +20,7 @@ packages:
 settings:
   base:
     SWIFT_VERSION: "5.9"
-    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    MACOSX_DEPLOYMENT_TARGET: "15.0"
     MARKETING_VERSION: "1.0.0"
     CURRENT_PROJECT_VERSION: "33"
     DEVELOPMENT_TEAM: 53M8KYX8G4
@@ -44,6 +44,14 @@ targets:
         ENABLE_APP_SANDBOX: NO
         COMBINE_HIDPI_IMAGES: YES
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
+    entitlements:
+      path: HotSlot/Resources/Slots.entitlements
+      properties:
+        com.apple.developer.icloud-container-identifiers:
+          - iCloud.com.hotslot.app
+        com.apple.developer.icloud-services:
+          - CloudKit
+        com.apple.developer.aps-environment: development
     dependencies:
       - package: KeyboardShortcuts
       - package: Sparkle

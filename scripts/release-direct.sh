@@ -60,6 +60,7 @@ xcodebuild \
   -configuration Release \
   -archivePath "$ARCHIVE_PATH" \
   archive \
+  -allowProvisioningUpdates \
   DEVELOPMENT_TEAM="$TEAM_ID" \
   CODE_SIGN_STYLE=Automatic
 
@@ -68,6 +69,7 @@ mkdir -p "$EXPORT_DIR"
 
 echo "→ Export Developer ID"
 xcodebuild -exportArchive \
+  -allowProvisioningUpdates \
   -archivePath "$ARCHIVE_PATH" \
   -exportPath "$EXPORT_DIR" \
   -exportOptionsPlist "$EXPORT_OPTIONS"
