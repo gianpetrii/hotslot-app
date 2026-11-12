@@ -107,7 +107,6 @@ final class AppState {
             guard let self else { return }
             let title = slotIndex.flatMap { self.slotDisplayTitle(at: $0) }
             self.presentNotch(.copied(slotIndex: slotIndex, title: title))
-            self.showToast("Copiado — ⌘V para pegar")
         }
 
         hotkeyManager.onTogglePanel = { [weak self, weak panelController] in
@@ -209,10 +208,11 @@ final class AppState {
         let close = {
             switch self.settings.clickItemAction {
             case .copyToClipboard:
+                // Sonido y aviso en el instante del clic; el panel se cierra en paralelo.
+                self.pasteService.copyToClipboard(content: content, slotIndex: slotIndex)
+                self.focusTracker.clearPasteDestination()
                 panelController.hide(animated: true) {
                     self.isPanelVisible = false
-                    self.pasteService.copyToClipboard(content: content, slotIndex: slotIndex)
-                    self.focusTracker.clearPasteDestination()
                 }
             case .pasteAtFocus:
                 guard self.ensureAccessibilityForPaste() else { return }
@@ -224,12 +224,23 @@ final class AppState {
                 }
             }
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.09) {
+        switch settings.clickItemAction {
+        case .copyToClipboard:
             close()
+        case .pasteAtFocus:
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                close()
+            }
         }
     }
 
+    /// Avisos de una línea. Salen en la barra del notch, igual que Guardado o Copiado;
+    /// si ese aviso está apagado en Ajustes, caen al cartel del panel.
     func showToast(_ message: String) {
+        if AppSettings.load().showNotchNotice {
+            presentNotch(.plain(message))
+            return
+        }
         toastMessage = message
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { [weak self] in
             if self?.toastMessage == message {
@@ -419,13 +430,36 @@ final class AppState {
         saveToSlot(index: index, content: content)
     }
 
-    func moveSlotToLibrary(slotIndex: Int, libraryId: UUID) {
+    /// Pasa un slot a otra biblioteca. Sin `toOrder` va al primer slot vacío.
+    func moveSlotToLibrary(slotIndex: Int, fromLibraryId: UUID? = nil, libraryId: UUID, toOrder: Int? = nil) {
+        let source = fromLibraryId ?? libraryWorkspace.workspace.activeLibraryId
         guard ensureCanUseSlot(slotIndex) else { return }
-        guard libraryWorkspace.moveSlotContent(order: slotIndex, toLibraryId: libraryId) else {
-            showToast("No hay slot vacío en esa biblioteca")
+        guard libraryWorkspace.transferSlot(
+            fromLibraryId: source, order: slotIndex, toLibraryId: libraryId, toOrder: toOrder
+        ) else {
+            noEmptySlotFeedback()
             return
         }
         UsageEventLog.shared.record("slot_mover_biblioteca", detail: "\(slotIndex)")
+    }
+
+    /// Un ítem del historial soltado sobre otra biblioteca va a su primer slot vacío.
+    func saveHistoryItem(_ id: UUID, toLibrary libraryId: UUID) {
+        guard let content = historyStore.item(id: id)?.content else { return }
+        guard let order = libraryWorkspace.firstEmptyOrder(in: libraryId) else {
+            noEmptySlotFeedback()
+            return
+        }
+        guard ensureCanUseSlot(order) else { return }
+        libraryWorkspace.saveContent(content, order: order, toLibraryId: libraryId)
+        Telemetry.slotSaved(content)
+        FeedbackSound.play(.saved)
+        UsageEventLog.shared.record("historial_a_biblioteca", detail: "slot_\(order)")
+    }
+
+    private func noEmptySlotFeedback() {
+        FeedbackSound.play(.pasteFailed)
+        showToast("No hay slot vacío en esa biblioteca")
     }
 
     private func slotDisplayTitle(at index: Int) -> String? {

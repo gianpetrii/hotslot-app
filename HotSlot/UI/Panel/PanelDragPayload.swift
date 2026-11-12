@@ -9,7 +9,8 @@ extension UTType {
 
 /// Payload de drag del panel: intercambiar slots o guardar un clip del historial.
 enum PanelDragPayload: Codable, Transferable {
-    case slot(index: Int)
+    /// `libraryId` es la biblioteca de la que sale el slot (el panel puede cambiar de biblioteca mientras se arrastra).
+    case slot(index: Int, libraryId: UUID)
     case historyItem(id: UUID)
 
     static var transferRepresentation: some TransferRepresentation {

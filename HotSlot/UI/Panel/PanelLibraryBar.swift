@@ -104,12 +104,12 @@ struct PanelLibraryBar: View {
         .contentShape(Capsule(style: .continuous))
         .onTapGesture {
             guard library.id != activeId else { return }
-            withAnimation(.easeInOut(duration: 0.22)) {
+            withAnimation(.easeOut(duration: 0.12)) {
                 appState.switchLibrary(to: library.id)
             }
         }
         .gesture(
-            DragGesture(minimumDistance: 4, coordinateSpace: .named(PanelView.coordinateSpaceName))
+            DragGesture(minimumDistance: 10, coordinateSpace: .named(PanelView.coordinateSpaceName))
                 .onChanged { value in updateLibraryDrag(library, value: value) }
                 .onEnded { _ in finishLibraryDrag() }
         )
@@ -130,8 +130,30 @@ struct PanelLibraryBar: View {
         .onDrop(of: [UTType.hotslotPanelDrag], isTargeted: Binding(
             get: { pillHoverTargetId == library.id },
             set: { pillHoverTargetId = $0 ? library.id : nil }
-        )) { _ in
-            false
+        )) { providers in
+            // Soltar un slot o un ítem del historial sobre otra biblioteca lo deja en su primer slot vacío.
+            let type = UTType.hotslotPanelDrag.identifier
+            guard library.id != activeId,
+                  let provider = providers.first(where: { $0.hasItemConformingToTypeIdentifier(type) }) else {
+                return false
+            }
+            provider.loadDataRepresentation(forTypeIdentifier: type) { data, _ in
+                guard let data,
+                      let payload = try? JSONDecoder().decode(PanelDragPayload.self, from: data) else { return }
+                DispatchQueue.main.async {
+                    contentSwitchTask?.cancel()
+                    withAnimation(.easeOut(duration: 0.15)) {
+                        switch payload {
+                        case .slot(let index, let sourceLibrary):
+                            guard sourceLibrary != library.id else { return }
+                            appState.moveSlotToLibrary(slotIndex: index, fromLibraryId: sourceLibrary, libraryId: library.id)
+                        case .historyItem(let id):
+                            appState.saveHistoryItem(id, toLibrary: library.id)
+                        }
+                    }
+                }
+            }
+            return true
         }
     }
 
@@ -226,7 +248,7 @@ struct PanelLibraryBar: View {
             try? await Task.sleep(nanoseconds: UInt64(contentSwitchDwell * 1_000_000_000))
             guard !Task.isCancelled, pillHoverTargetId == targetId else { return }
             guard appState.libraryDrag == nil else { return }
-            withAnimation(.easeInOut(duration: 0.22)) {
+            withAnimation(.easeOut(duration: 0.12)) {
                 appState.switchLibrary(to: targetId)
             }
         }

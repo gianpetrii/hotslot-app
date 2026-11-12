@@ -5,10 +5,9 @@ enum SlotsPalette {
     static let brandGradientAsset = "asset:degrade-naranja"
 
     static let slotBackgrounds: [(name: String, hex: UInt32)] = [
-        ("Papel", 0xF2F2F0),
-        ("Arena", 0xE7DED2),
+        ("Tinta", 0x111111),
         ("Naranja", 0xE2501D),
-        ("Oscuro", 0x1C1C1C),
+        ("Arena", 0xE7DED2),
     ]
 
     static func isBrandGradient(_ hexString: String?) -> Bool {

@@ -68,14 +68,14 @@ enum HotSlotDesign {
     static let titleEditAnimation = Animation.easeInOut(duration: 0.22)
 
     static let openDuration: TimeInterval = 0.28
-    static let closeDuration: TimeInterval = 0.24
+    static let closeDuration: TimeInterval = 0.16
     static let springTiming = CAMediaTimingFunction(controlPoints: 0.22, 1.0, 0.36, 1.0)
     static let closeTiming = CAMediaTimingFunction(controlPoints: 0.4, 0.0, 0.6, 1.0)
     /// Expandir a la derecha (cuadrado → barra de búsqueda).
     static let openRightTiming = CAMediaTimingFunction(controlPoints: 0.16, 1.18, 0.28, 1.0)
     /// Expandir hacia abajo (barra → panel completo).
     static let openDownTiming = CAMediaTimingFunction(controlPoints: 0.2, 1.08, 0.32, 1.0)
-    static let openRightDuration: TimeInterval = 0.26
+    static let openRightDuration: TimeInterval = 0.14
     static let openDownDuration: TimeInterval = 0.30
 
     static let openScaleInset: CGFloat = 20
@@ -149,7 +149,6 @@ struct PanelChrome<Content: View>: View {
         .overlay {
             shape.strokeBorder(Color.white.opacity(0.75), lineWidth: 1)
         }
-        .shadow(color: Color(slotsHex: 0x462D14).opacity(0.22), radius: 45, y: 20)
         .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .topLeading)
         .contentShape(shape)
     }

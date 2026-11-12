@@ -194,7 +194,7 @@ final class NotchShelfController {
             self.hide(animated: true)
         }
         hideWork = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.28, execute: work)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: work)
     }
 
     /// Mientras la barra está abierta, la posición real del mouse manda (el tracking se pierde al taparse).
@@ -245,7 +245,7 @@ final class NotchShelfController {
             .insetBy(dx: NotchShelfMetrics.shadowPad, dy: NotchShelfMetrics.shadowPad)
         let zone = hitFrame(on: screen)
             .union(glass)
-            .insetBy(dx: -20, dy: -16)
+            .insetBy(dx: -8, dy: -6)
         return zone.contains(NSEvent.mouseLocation)
     }
 

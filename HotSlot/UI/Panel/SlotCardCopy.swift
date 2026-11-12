@@ -2,9 +2,13 @@ import Foundation
 import SwiftUI
 
 enum SlotCardCopy {
+    /// Primera línea de la card: el tipo de contenido (ya no el número de slot).
     static func metaPrimary(for slot: Slot) -> String {
-        "Slot \(slot.index)"
+        metaSecondary(for: slot)
     }
+
+    /// Título mientras el usuario no le pone nombre: «Slot 1», «Slot 2»…
+    static func unnamedTitle(for slot: Slot) -> String { "Slot \(slot.index)" }
 
     static func metaSecondary(for slot: Slot) -> String {
         guard let content = slot.content else {
@@ -20,16 +24,12 @@ enum SlotCardCopy {
                 return host
             }
             let words = trimmed.split { $0.isWhitespace || $0.isNewline }.count
-            return "Texto · \(words) palabras"
+            return "\(words) palabras"
         case .image:
             return "Imagen"
         case .file:
             return content.typeLabel
         }
-    }
-
-    static func metaLine(for slot: Slot) -> String {
-        "\(metaPrimary(for: slot))\n\(metaSecondary(for: slot))"
     }
 
     /// Texto inicial al renombrar (lo que ve el usuario en la card, en una línea).
@@ -44,7 +44,7 @@ enum SlotCardCopy {
         if !label.isEmpty, label != "Slot \(slot.index)" {
             return label
         }
-        return "Slot \(slot.index)"
+        return unnamedTitle(for: slot)
     }
 
     /// Título visible: el nombre custom gana siempre, incluso si el slot está vacío.
@@ -61,13 +61,13 @@ enum SlotCardCopy {
 
     /// Al editar, el placeholder de vacío no se mete en el campo.
     static func editingTitle(for slot: Slot) -> String {
-        hasCustomLabel(slot) ? slotLabelDisplay(for: slot) : "Slot \(slot.index)"
+        hasCustomLabel(slot) ? slotLabelDisplay(for: slot) : unnamedTitle(for: slot)
     }
 
     static func emptyPlaceholderTitle(for slot: Slot) -> String {
         if slot.index == 5 { return "Soltá algo acá" }
         if slot.index == 1 { return "Tu primer slot" }
-        return "Slot \(slot.index)"
+        return unnamedTitle(for: slot)
     }
 
     /// Texto del cuerpo de la card (contenido real, no metadatos).
@@ -95,12 +95,12 @@ enum SlotCardCopy {
             if slot.index == 1 {
                 return "Tu primer\nslot"
             }
-            return "Slot \(slot.index)"
+            return unnamedTitle(for: slot)
         }
         if let content = slot.content, case .text(let string) = content, isHexColor(string.trimmingCharacters(in: .whitespacesAndNewlines)) {
             return normalizedHex(string)
         }
-        return label.isEmpty ? "Slot \(slot.index)" : label
+        return label.isEmpty ? unnamedTitle(for: slot) : label
     }
 
     static func emptySubhint(slotIndex: Int) -> String? {

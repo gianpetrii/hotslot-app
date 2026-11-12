@@ -307,7 +307,7 @@ private struct NotchShelfTile: View {
         if !hasContent { return Color.white.opacity(0.28) }
         if let custom = SlotsPalette.color(hexString: backgroundHex) { return custom }
         if isDarkCard { return SlotsColor.cardOscura }
-        return SlotsColor.papel
+        return SlotsColor.piedra
     }
 
     private var chrome: some View {

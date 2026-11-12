@@ -26,6 +26,8 @@ struct HistoryListView: View {
                     .foregroundStyle(SlotsColor.textoSecundario)
             }
             .frame(minHeight: 28, alignment: .bottomLeading)
+            // Mismo inset que las filas, para que el texto llegue justo a los bordes de los rectángulos blancos.
+            .padding(.horizontal, 2)
             .padding(.bottom, SlotsSpace.s)
 
             if isSearching {

@@ -102,7 +102,7 @@ struct PanelView: View {
         .overlay(alignment: .topLeading) {
             floatingDraggedLibrary
         }
-        .animation(.easeInOut(duration: 0.22), value: appState.librarySwitchRevision)
+        .animation(.easeOut(duration: 0.12), value: appState.librarySwitchRevision)
         .animation(.easeOut(duration: 0.18), value: appState.isSaveClipboardSlotPickerPresented)
         .animation(.easeOut(duration: 0.18), value: appState.isNewLibraryFormPresented)
         .animation(.easeOut(duration: 0.18), value: appState.deleteLibraryConfirmation != nil)
@@ -314,21 +314,21 @@ struct PanelView: View {
 
         DispatchQueue.main.async {
             guard generation == unfoldGeneration else { return }
-            withAnimation(.spring(response: 0.28, dampingFraction: 0.82)) {
+            withAnimation(.spring(response: 0.2, dampingFraction: 0.86)) {
                 revealWidth = HotSlotDesign.panelWidth
             }
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + HotSlotDesign.openRightDuration) {
             guard generation == unfoldGeneration else { return }
-            withAnimation(.spring(response: 0.32, dampingFraction: 0.84)) {
+            withAnimation(.spring(response: 0.24, dampingFraction: 0.88)) {
                 revealHeight = HotSlotDesign.panelHeight
                 appState.panelBodyRevealed = true
             }
             isSearchFocused = true
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + HotSlotDesign.openRightDuration + 0.42) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + HotSlotDesign.openRightDuration + 0.32) {
             guard generation == unfoldGeneration else { return }
             revealWidth = HotSlotDesign.panelWidth
             revealHeight = HotSlotDesign.panelHeight

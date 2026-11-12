@@ -254,42 +254,56 @@ final class LibraryWorkspaceStore {
 
     /// Mueve el contenido del slot `order` de la biblioteca activa al primer slot vacío de `toLibraryId`.
     @discardableResult
-    func moveSlotContent(order: Int, toLibraryId: UUID) -> Bool {
-        let fromId = workspace.activeLibraryId
-        guard fromId != toLibraryId else { return false }
-        guard let fromIdx = workspace.slots.firstIndex(where: { $0.libraryId == fromId && $0.order == order }),
+    /// Orden del primer slot vacío de una biblioteca.
+    func firstEmptyOrder(in libraryId: UUID) -> Int? {
+        workspace.slots
+            .filter { $0.libraryId == libraryId && $0.clipContent() == nil }
+            .map(\.order)
+            .min()
+    }
+
+    /// Guarda un contenido en un slot de cualquier biblioteca (no solo la activa).
+    func saveContent(_ content: ClipContent, order: Int, toLibraryId libraryId: UUID) {
+        guard let idx = workspace.slots.firstIndex(where: { $0.libraryId == libraryId && $0.order == order }) else { return }
+        workspace.slots[idx].setContent(content)
+        save()
+    }
+
+    /// Pasa un slot con contenido a otra biblioteca, con su contenido, nombre y fondo.
+    /// Sin `toOrder` va al primer slot vacío. Con `toOrder` intercambia con ese slot, así no se pierde lo que había.
+    @discardableResult
+    func transferSlot(fromLibraryId: UUID, order: Int, toLibraryId: UUID, toOrder: Int? = nil) -> Bool {
+        guard fromLibraryId != toLibraryId,
+              let fromIdx = workspace.slots.firstIndex(where: { $0.libraryId == fromLibraryId && $0.order == order }),
               workspace.slots[fromIdx].clipContent() != nil else { return false }
-        guard let toIdx = workspace.slots.firstIndex(where: { $0.libraryId == toLibraryId && $0.clipContent() == nil }) else {
+        let destOrder = toOrder ?? firstEmptyOrder(in: toLibraryId)
+        guard let destOrder,
+              let toIdx = workspace.slots.firstIndex(where: { $0.libraryId == toLibraryId && $0.order == destOrder }) else {
             return false
         }
 
         let now = Date()
         var source = workspace.slots[fromIdx]
         var dest = workspace.slots[toIdx]
-        dest.title = source.title
-        dest.kind = source.kind
-        dest.textPayload = source.textPayload
-        dest.imageFileName = source.imageFileName
-        dest.filePath = source.filePath
-        dest.fileBookmark = source.fileBookmark
-        dest.linkURL = source.linkURL
-        dest.meta = source.meta
-        dest.cardBackgroundHex = source.cardBackgroundHex
-        dest.updatedAt = now
-
-        source.textPayload = nil
-        source.imageFileName = nil
-        source.filePath = nil
-        source.fileBookmark = nil
-        source.linkURL = nil
-        source.kind = .text
-        source.meta = nil
+        Self.swapPayload(&source, &dest)
         source.updatedAt = now
-
+        dest.updatedAt = now
         workspace.slots[fromIdx] = source
         workspace.slots[toIdx] = dest
         save()
         return true
+    }
+
+    private static func swapPayload(_ a: inout SlotRecord, _ b: inout SlotRecord) {
+        swap(&a.title, &b.title)
+        swap(&a.kind, &b.kind)
+        swap(&a.textPayload, &b.textPayload)
+        swap(&a.imageFileName, &b.imageFileName)
+        swap(&a.filePath, &b.filePath)
+        swap(&a.fileBookmark, &b.fileBookmark)
+        swap(&a.linkURL, &b.linkURL)
+        swap(&a.meta, &b.meta)
+        swap(&a.cardBackgroundHex, &b.cardBackgroundHex)
     }
 
     private func save() {

@@ -111,7 +111,6 @@ private struct SlotCardView: View {
     @State private var isDropTarget = false
     @State private var isEditingShortcuts = false
     @State private var isEditingLabel = false
-    @State private var isTitleHovering = false
     @State private var labelDraft = ""
     @State private var copyFlash = false
     @FocusState private var labelFieldFocused: Bool
@@ -199,7 +198,7 @@ private struct SlotCardView: View {
             confirmCopy()
         }
         .onHover { isHovering = $0 }
-        .draggable(PanelDragPayload.slot(index: slot.index))
+        .draggable(PanelDragPayload.slot(index: slot.index, libraryId: appState.libraryWorkspace.workspace.activeLibraryId))
         .onDrop(of: [UTType.hotslotPanelDrag, UTType.fileURL], isTargeted: $isDropTarget) { providers in
             // Archivo o carpeta arrastrado desde Finder u otra app.
             if let provider = providers.first(where: { $0.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) }) {
@@ -211,9 +210,19 @@ private struct SlotCardView: View {
             }
             return Self.acceptDrop(providers) { payload in
                 switch payload {
-                case .slot(let source):
-                    guard (1...SlotStore.slotCount).contains(source), source != slot.index else { return }
-                    onSwapFrom(source)
+                case .slot(let source, let sourceLibrary):
+                    guard (1...SlotStore.slotCount).contains(source) else { return }
+                    let activeLibrary = appState.libraryWorkspace.workspace.activeLibraryId
+                    if sourceLibrary == activeLibrary {
+                        guard source != slot.index else { return }
+                        onSwapFrom(source)
+                    } else {
+                        // Venía de otra biblioteca (el panel cambió mientras arrastrabas).
+                        appState.moveSlotToLibrary(
+                            slotIndex: source, fromLibraryId: sourceLibrary,
+                            libraryId: activeLibrary, toOrder: slot.index
+                        )
+                    }
                 case .historyItem(let id):
                     onSaveHistoryItem(id)
                 }
@@ -259,7 +268,7 @@ private struct SlotCardView: View {
                     SlotHeaderActionChip(systemImage: "xmark", foreground: headerChipInk, plate: headerChipPlate)
                 }
                 .buttonStyle(.plain)
-                .help("Vaciar slot \(slot.index)")
+                .help("Vaciar slot")
                 .transition(.opacity.combined(with: .scale(scale: 0.88)))
             }
 
@@ -340,25 +349,10 @@ private struct SlotCardView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-
-            Image(systemName: "pencil")
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(titleColor.opacity(0.75))
-                .frame(width: 24, height: 24)
-                .opacity(isTitleHovering && !isEditingLabel ? 1 : 0)
-                .allowsHitTesting(false)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
         .contentShape(Rectangle())
-        .onHover { isTitleHovering = $0 }
-        .animation(.easeOut(duration: 0.14), value: isTitleHovering)
         .animation(HotSlotDesign.titleEditAnimation, value: isEditingLabel)
-        .highPriorityGesture(
-            TapGesture().onEnded {
-                guard isTitleHovering, !isEditingLabel else { return }
-                beginLabelEdit()
-            }
-        )
     }
 
     @ViewBuilder
@@ -367,11 +361,17 @@ private struct SlotCardView: View {
             beginLabelEdit()
         }
         Menu("Color de fondo") {
-            Button("Predeterminado") { onSetBackground(nil) }
-            Button("Degradé naranja (marca)") { onSetBackground(SlotsPalette.brandGradientAsset) }
+            Button { onSetBackground(nil) } label: {
+                Label { Text("Predeterminado (Piedra)") } icon: { Image(nsImage: Self.colorDot(0xE6E3DE)) }
+            }
+            Button { onSetBackground(SlotsPalette.brandGradientAsset) } label: {
+                Label { Text("Degradé naranja (marca)") } icon: { Image(nsImage: Self.colorDot(0xE2501D)) }
+            }
             ForEach(SlotsPalette.slotBackgrounds, id: \.hex) { entry in
-                Button(entry.name) {
+                Button {
                     onSetBackground(SlotsPalette.normalizedHex(entry.hex))
+                } label: {
+                    Label { Text(entry.name) } icon: { Image(nsImage: Self.colorDot(entry.hex)) }
                 }
             }
         }
@@ -392,6 +392,28 @@ private struct SlotCardView: View {
         if hasContent {
             Button("Vaciar slot", role: .destructive) { onClear() }
         }
+    }
+
+    /// Círculo de color para el menú de fondos.
+    private static func colorDot(_ hex: UInt32) -> NSImage {
+        let size = NSSize(width: 14, height: 14)
+        let image = NSImage(size: size, flipped: false) { rect in
+            let color = NSColor(
+                srgbRed: CGFloat((hex >> 16) & 0xFF) / 255,
+                green: CGFloat((hex >> 8) & 0xFF) / 255,
+                blue: CGFloat(hex & 0xFF) / 255,
+                alpha: 1
+            )
+            color.setFill()
+            let path = NSBezierPath(ovalIn: rect.insetBy(dx: 1, dy: 1))
+            path.fill()
+            NSColor.black.withAlphaComponent(0.2).setStroke()
+            path.lineWidth = 0.5
+            path.stroke()
+            return true
+        }
+        image.isTemplate = false
+        return image
     }
 
     private func beginLabelEdit() {
@@ -466,6 +488,7 @@ private struct SlotCardView: View {
                 )
                 .frame(height: 140)
             }
+            .clipShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
             .allowsHitTesting(false)
         }
     }
@@ -531,7 +554,7 @@ private struct SlotCardView: View {
         if !hasContent { return Color.white.opacity(0.28) }
         if let custom = SlotsPalette.color(hexString: backgroundHex) { return custom }
         if isDarkCard { return SlotsColor.cardOscura }
-        return SlotsColor.papel
+        return SlotsColor.piedra
     }
 
     @ViewBuilder

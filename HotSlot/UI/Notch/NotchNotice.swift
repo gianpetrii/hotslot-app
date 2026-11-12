@@ -43,6 +43,28 @@ enum NotchNoticeKind: Equatable {
         }
     }
 
+    /// Avisos de guardar, pegar y copiar: número de slot, título y estado a la derecha.
+    struct Structured {
+        let badge: String?
+        let title: String
+        let status: String
+        let showsCheck: Bool
+        let orangeBadge: Bool
+    }
+
+    var structured: Structured? {
+        switch self {
+        case let .saved(index, title):
+            return Structured(badge: "\(index)", title: title ?? "", status: "Guardado", showsCheck: true, orangeBadge: true)
+        case let .pasted(index, title):
+            return Structured(badge: index.map(String.init), title: title ?? "", status: "Pegado", showsCheck: false, orangeBadge: false)
+        case let .copied(index, title):
+            return Structured(badge: index.map(String.init), title: title ?? "", status: "Copiado", showsCheck: true, orangeBadge: false)
+        default:
+            return nil
+        }
+    }
+
     var isActionable: Bool {
         if case .noAccessibility = self { return true }
         return false
@@ -70,7 +92,20 @@ private final class NotchPillView: NSView {
 
     private let pill = NSView()
     private let label = NSTextField(labelWithString: "")
+    private let badge = NSView()
+    private let badgeLabel = NSTextField(labelWithString: "")
+    private let titleLabel = NSTextField(labelWithString: "")
+    private let statusLabel = NSTextField(labelWithString: "")
+    private let check = NSView()
+    private let checkIcon = NSImageView()
     private var trackingArea: NSTrackingArea?
+    private var structured: NotchNoticeKind.Structured?
+    private var flush = false
+
+    private static let height: CGFloat = 40
+    private static let padding: CGFloat = 14
+    private static let badgeSize: CGFloat = 22
+    private static let checkSize: CGFloat = 18
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -79,21 +114,38 @@ private final class NotchPillView: NSView {
 
         pill.wantsLayer = true
         pill.layer?.backgroundColor = NotchPillView.quietColor
-        pill.layer?.cornerRadius = 18
         pill.layer?.cornerCurve = .continuous
 
-        label.font = NSFont.systemFont(ofSize: 11, weight: .medium)
-        label.textColor = .white
+        Self.style(label, size: 11, weight: .medium, color: .white)
         label.lineBreakMode = .byWordWrapping
         label.maximumNumberOfLines = 2
         label.alignment = .center
-        label.isEditable = false
-        label.isSelectable = false
-        label.backgroundColor = .clear
-        label.isBezeled = false
+
+        Self.style(titleLabel, size: 12, weight: .regular, color: NSColor.white.withAlphaComponent(0.75))
+        titleLabel.lineBreakMode = .byTruncatingTail
+        Self.style(statusLabel, size: 12, weight: .semibold, color: .white)
+
+        badge.wantsLayer = true
+        badge.layer?.cornerRadius = 6
+        badge.layer?.cornerCurve = .continuous
+        Self.style(badgeLabel, size: 11, weight: .semibold, color: .black)
+        badgeLabel.alignment = .center
+
+        check.wantsLayer = true
+        check.layer?.backgroundColor = NotchPillView.actionColor
+        check.layer?.cornerRadius = Self.checkSize / 2
+        checkIcon.image = NSImage(systemSymbolName: "checkmark", accessibilityDescription: nil)?
+            .withSymbolConfiguration(.init(pointSize: 9, weight: .bold))
+        checkIcon.contentTintColor = .white
 
         addSubview(pill)
         pill.addSubview(label)
+        pill.addSubview(badge)
+        badge.addSubview(badgeLabel)
+        pill.addSubview(titleLabel)
+        pill.addSubview(statusLabel)
+        pill.addSubview(check)
+        check.addSubview(checkIcon)
     }
 
     @available(*, unavailable)
@@ -101,26 +153,105 @@ private final class NotchPillView: NSView {
         fatalError("init(coder:) no soportado")
     }
 
-    func configure(line: String, actionable: Bool, actionColor: Bool, action: (() -> Void)?) {
-        label.stringValue = line
-        onAction = actionable ? action : nil
-        pill.layer?.backgroundColor = actionColor ? Self.actionColor : Self.quietColor
+    private static func style(_ field: NSTextField, size: CGFloat, weight: NSFont.Weight, color: NSColor) {
+        field.font = NSFont.systemFont(ofSize: size, weight: weight)
+        field.textColor = color
+        field.isEditable = false
+        field.isSelectable = false
+        field.backgroundColor = .clear
+        field.isBezeled = false
+    }
+
+    func configure(kind: NotchNoticeKind, flush: Bool, action: (() -> Void)?) {
+        self.flush = flush
+        structured = kind.structured
+        onAction = kind.isActionable ? action : nil
+        pill.layer?.backgroundColor = kind.usesActionColor ? Self.actionColor : Self.quietColor
+
+        label.stringValue = kind.line
+        label.isHidden = structured != nil
+        let isStructured = structured != nil
+        [badge, titleLabel, statusLabel].forEach { $0.isHidden = !isStructured }
+        check.isHidden = !(structured?.showsCheck ?? false)
+
+        if let structured {
+            badge.isHidden = structured.badge == nil
+            badgeLabel.stringValue = structured.badge ?? ""
+            badge.layer?.backgroundColor = structured.orangeBadge ? Self.actionColor : NSColor.white.cgColor
+            badgeLabel.textColor = structured.orangeBadge ? .white : .black
+            titleLabel.stringValue = structured.title
+            statusLabel.stringValue = structured.status
+        }
+
+        // Pegada al borde de arriba: solo se redondean las esquinas de abajo.
+        pill.layer?.cornerRadius = flush ? 16 : 18
+        pill.layer?.maskedCorners = flush
+            ? [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            : [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         needsLayout = true
     }
 
-    private static let quietColor = NSColor(calibratedRed: 0.11, green: 0.11, blue: 0.11, alpha: 1).cgColor
+    private static let quietColor = NSColor(calibratedRed: 0.07, green: 0.07, blue: 0.07, alpha: 1).cgColor
     private static let actionColor = NSColor(srgbRed: 226 / 255, green: 80 / 255, blue: 29 / 255, alpha: 1).cgColor
+
+    /// Tamaño que necesita el aviso para este contenido.
+    static func size(for kind: NotchNoticeKind, maxWidth: CGFloat, flush: Bool) -> NSSize {
+        if let structured = kind.structured {
+            let titleFont = NSFont.systemFont(ofSize: 12)
+            let statusFont = NSFont.systemFont(ofSize: 12, weight: .semibold)
+            let titleW = (structured.title as NSString).size(withAttributes: [.font: titleFont]).width
+            let statusW = (structured.status as NSString).size(withAttributes: [.font: statusFont]).width
+            var width = padding * 2 + statusW + 6
+            if structured.badge != nil { width += badgeSize + 8 }
+            if structured.showsCheck { width += checkSize + 6 }
+            width += min(ceil(titleW), 180) + 16
+            return NSSize(width: min(max(ceil(width), flush ? 260 : 200), maxWidth), height: height)
+        }
+        let font = NSFont.systemFont(ofSize: 11, weight: .medium)
+        let rect = (kind.line as NSString).boundingRect(
+            with: NSSize(width: maxWidth - 28, height: 200),
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            attributes: [.font: font]
+        )
+        return NSSize(
+            width: min(max(ceil(rect.width) + 28, 120), maxWidth),
+            height: max(ceil(rect.height) + 16, 36)
+        )
+    }
 
     override func layout() {
         super.layout()
-        let paddingH: CGFloat = 14
-        let paddingV: CGFloat = 8
-        let maxTextWidth: CGFloat = min(420, bounds.width) - paddingH * 2
-        let textSize = label.sizeThatFits(NSSize(width: maxTextWidth, height: 200))
-        let pillWidth = min(max(textSize.width + paddingH * 2, 120), bounds.width)
-        let pillHeight = max(textSize.height + paddingV * 2, 36)
-        pill.frame = NSRect(x: (bounds.width - pillWidth) / 2, y: (bounds.height - pillHeight) / 2, width: pillWidth, height: pillHeight)
-        label.frame = NSRect(x: paddingH, y: paddingV, width: pillWidth - paddingH * 2, height: pillHeight - paddingV * 2)
+        pill.frame = bounds
+        guard structured != nil else {
+            let paddingH: CGFloat = 14
+            let paddingV: CGFloat = 8
+            let textSize = label.sizeThatFits(NSSize(width: bounds.width - paddingH * 2, height: 200))
+            label.frame = NSRect(
+                x: paddingH,
+                y: (bounds.height - textSize.height) / 2,
+                width: bounds.width - paddingH * 2,
+                height: max(textSize.height, bounds.height - paddingV * 2)
+            ).integral
+            return
+        }
+
+        let midY = bounds.height / 2
+        var left = Self.padding
+        if !badge.isHidden {
+            badge.frame = NSRect(x: left, y: midY - Self.badgeSize / 2, width: Self.badgeSize, height: Self.badgeSize)
+            badgeLabel.frame = NSRect(x: 0, y: (Self.badgeSize - 14) / 2, width: Self.badgeSize, height: 14)
+            left += Self.badgeSize + 8
+        }
+        var right = bounds.width - Self.padding
+        if !check.isHidden {
+            right -= Self.checkSize
+            check.frame = NSRect(x: right, y: midY - Self.checkSize / 2, width: Self.checkSize, height: Self.checkSize)
+            checkIcon.frame = check.bounds
+            right -= 6
+        }
+        let statusW = ceil(statusLabel.intrinsicContentSize.width)
+        statusLabel.frame = NSRect(x: right - statusW, y: midY - 8, width: statusW, height: 16)
+        titleLabel.frame = NSRect(x: left, y: midY - 8, width: max(0, statusLabel.frame.minX - 12 - left), height: 16)
     }
 
     override func mouseDown(with event: NSEvent) {
@@ -147,7 +278,8 @@ private final class NotchPillView: NSView {
     }
 }
 
-/// Píldora bajo el notch o la barra de menú. Negra para confirmar, naranja si pide una acción.
+/// Barra negra que cuelga del notch (o bajo la barra de menú) para confirmar guardado, pegado o copiado.
+/// Naranja si el aviso pide hacer algo.
 @MainActor
 final class NotchNoticeController {
     private var panel: NSPanel?
@@ -166,20 +298,22 @@ final class NotchNoticeController {
         ensurePanel()
         guard let panel, let pillView else { return }
 
-        let actionable = kind.isActionable
-        pillView.configure(line: kind.line, actionable: actionable, actionColor: kind.usesActionColor) { [weak self] in
+        let screen = NSScreen.main ?? NSScreen.screens.first!
+        let topInset = screen.safeAreaInsets.top
+        let flush = topInset > 20
+        let maxWidth = min(420, screen.visibleFrame.width - 32)
+        let measured = NotchPillView.size(for: kind, maxWidth: maxWidth, flush: flush)
+
+        pillView.configure(kind: kind, flush: flush) { [weak self] in
             self?.onOpenAccessibilitySettings?()
         }
-
-        let screen = NSScreen.main ?? NSScreen.screens.first!
-        let maxWidth = min(420, screen.visibleFrame.width - 32)
-        let measured = Self.measurePill(line: kind.line, maxWidth: maxWidth)
         pillView.frame = NSRect(origin: .zero, size: measured)
         panel.contentView?.frame = NSRect(origin: .zero, size: measured)
 
-        let topInset = screen.safeAreaInsets.top
         let x = screen.frame.midX - measured.width / 2
-        let y: CGFloat = if topInset > 20 {
+        let y: CGFloat = if flush {
+            screen.frame.maxY - measured.height
+        } else if topInset > 20 {
             screen.frame.maxY - topInset - measured.height - 6
         } else {
             screen.frame.maxY - NSStatusBar.system.thickness - measured.height - 10
@@ -191,7 +325,9 @@ final class NotchNoticeController {
 
         let work = DispatchWorkItem { [weak self] in self?.dismiss() }
         hideWorkItem = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.6, execute: work)
+        // Los mensajes largos necesitan más tiempo de lectura.
+        let seconds = kind.structured != nil ? 1.4 : min(4.0, max(1.8, Double(kind.line.count) * 0.05))
+        DispatchQueue.main.asyncAfter(deadline: .now() + seconds, execute: work)
     }
 
     private func dismiss() {
@@ -210,7 +346,7 @@ final class NotchNoticeController {
         )
         p.isOpaque = false
         p.backgroundColor = .clear
-        p.hasShadow = true
+        p.hasShadow = false
         p.level = .statusBar
         p.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .ignoresCycle]
         p.hidesOnDeactivate = false
@@ -218,18 +354,5 @@ final class NotchNoticeController {
         p.contentView = pill
         panel = p
         pillView = pill
-    }
-
-    private static func measurePill(line: String, maxWidth: CGFloat) -> NSSize {
-        let font = NSFont.systemFont(ofSize: 11, weight: .medium)
-        let textMax = maxWidth - 28
-        let rect = (line as NSString).boundingRect(
-            with: NSSize(width: textMax, height: 200),
-            options: [.usesLineFragmentOrigin, .usesFontLeading],
-            attributes: [.font: font]
-        )
-        let width = min(max(ceil(rect.width) + 28, 120), maxWidth)
-        let height = max(ceil(rect.height) + 16, 36)
-        return NSSize(width: width, height: height)
     }
 }

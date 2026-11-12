@@ -18,6 +18,8 @@ enum SlotsColor {
     static let oxido = Color(slotsHex: 0xA8431A)
     static let arena = Color(slotsHex: 0xE7DED2)
     static let papel = Color(slotsHex: 0xF2F2F0)
+    /// Fondo predeterminado de las cards de slot.
+    static let piedra = Color(slotsHex: 0xE6E3DE)
     static let cardOscura = Color(slotsHex: 0x1C1C1C)
     static let textoSecundario = Color(slotsHex: 0x5E5A56)
     static let textoTerciario = Color(slotsHex: 0x3A3734)
