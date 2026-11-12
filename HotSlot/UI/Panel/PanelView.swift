@@ -117,6 +117,10 @@ struct PanelView: View {
                     ))
             }
         }
+        .onChange(of: isSearchFocused) { _, focused in
+            // Escribir en el buscador no debe confundirse con llenar un slot nuevo con ⌘V.
+            if focused { appState.pendingNewSlot = nil }
+        }
         .animation(.easeOut(duration: 0.12), value: appState.panelBodyRevealed)
         .animation(.spring(response: 0.3, dampingFraction: 0.88), value: appState.toastMessage)
         .animation(listAnimation, value: filteredItems.map(\.id))

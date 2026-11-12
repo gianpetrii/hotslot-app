@@ -68,6 +68,22 @@ final class MoreSlotsTests: XCTestCase {
         XCTAssertEqual(store.totalSlotCount, 6)
     }
 
+    func testSwapSlotsExchangesOnlyThosePositions() {
+        let (_, store) = makeStore()
+        store.saveContent(index: 1, content: .text("uno"))
+        store.saveContent(index: 2, content: .text("dos"))
+        store.addSlot(content: .text("seis"))
+        store.updateLabel(index: 6, label: "Mi seis")
+
+        XCTAssertTrue(store.swapSlots(1, 6))
+
+        XCTAssertEqual(store.content(at: 1)?.previewText, "seis")
+        XCTAssertEqual(store.slot(at: 1)?.label, "Mi seis")
+        XCTAssertEqual(store.content(at: 2)?.previewText, "dos")
+        XCTAssertEqual(store.content(at: 6)?.previewText, "uno")
+        XCTAssertEqual(store.totalSlotCount, 6)
+    }
+
     func testMoveToTheSamePositionOrOutOfRangeDoesNothing() {
         let (_, store) = makeStore()
         XCTAssertFalse(store.moveSlot(from: 2, to: 2))

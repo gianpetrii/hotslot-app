@@ -66,6 +66,12 @@ final class SlotStore {
         workspace.moveSlot(libraryId: workspace.workspace.activeLibraryId, from: from, to: to)
     }
 
+    /// Intercambia dos slots completos; el resto queda igual.
+    @discardableResult
+    func swapSlots(_ a: Int, _ b: Int) -> Bool {
+        workspace.swapSlots(libraryId: workspace.workspace.activeLibraryId, a, b)
+    }
+
     func slot(at index: Int) -> Slot? {
         allSlots.first { $0.index == index }
     }

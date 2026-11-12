@@ -16,6 +16,41 @@ struct SlotGridView: View {
     private let shadowSide: CGFloat = 12
     private let shadowVertical: CGFloat = 8
 
+    private struct ScrollMetrics: Equatable {
+        var offset: CGFloat = 0
+        var content: CGFloat = 0
+        var viewport: CGFloat = 0
+    }
+
+    @State private var scrollMetrics = ScrollMetrics()
+    @State private var scrollPosition = ScrollPosition()
+    @State private var gridFrame: CGRect = .zero
+
+    /// Franja (en pt) donde, mientras arrastrás, la grilla se desplaza sola.
+    private static let autoScrollZone: CGFloat = 56
+
+    /// Mientras hay un clic sostenido (arrastre) cerca del borde de la grilla, la desplaza.
+    private func autoScrollWhileDragging() {
+        guard NSEvent.pressedMouseButtons & 1 != 0, appState.isPanelVisible, gridFrame.height > 0,
+              let window = NSApp.windows.first(where: { $0.isVisible && String(describing: type(of: $0)) == "FloatingPanel" }),
+              let contentHeight = window.contentView?.bounds.height else { return }
+        let point = window.convertPoint(fromScreen: NSEvent.mouseLocation)
+        guard point.x >= gridFrame.minX, point.x <= gridFrame.maxX else { return }
+        let y = contentHeight - point.y
+        let zone = Self.autoScrollZone
+        var delta: CGFloat = 0
+        if y > gridFrame.maxY - zone, y < gridFrame.maxY + zone {
+            delta = min(1, (y - (gridFrame.maxY - zone)) / zone) * 14
+        } else if y < gridFrame.minY + zone, y > gridFrame.minY - zone {
+            delta = -min(1, ((gridFrame.minY + zone) - y) / zone) * 14
+        }
+        guard delta != 0 else { return }
+        let maxOffset = max(0, scrollMetrics.content - scrollMetrics.viewport)
+        let target = min(max(scrollMetrics.offset + delta, 0), maxOffset)
+        guard target != scrollMetrics.offset else { return }
+        scrollPosition.scrollTo(y: target)
+    }
+
     var body: some View {
         GeometryReader { geometry in
             let gap = SlotsSpace.entreCards
@@ -44,14 +79,7 @@ struct SlotGridView: View {
                                     .frame(height: rowHeight)
                                     .id(slot.index)
                             }
-                            NewSlotCardView(onCreate: {
-                                guard appState.slotStore.addSlot() != nil else { return }
-                                DispatchQueue.main.async {
-                                    withAnimation(.easeInOut(duration: 0.3)) {
-                                        proxy.scrollTo(Self.newSlotAnchor, anchor: .bottom)
-                                    }
-                                }
-                            })
+                            NewSlotCardView(appState: appState)
                             .frame(height: rowHeight)
                             .id(Self.newSlotAnchor)
                         }
@@ -59,16 +87,66 @@ struct SlotGridView: View {
                     .padding(.horizontal, shadowSide)
                     .padding(.vertical, shadowVertical)
                 }
-                .scrollIndicators(.automatic)
+                .scrollIndicators(.hidden)
+                .scrollPosition($scrollPosition)
+                .onReceive(Timer.publish(every: 1.0 / 40.0, on: .main, in: .common).autoconnect()) { _ in
+                    autoScrollWhileDragging()
+                }
+                .onScrollGeometryChange(for: ScrollMetrics.self) { geometry in
+                    ScrollMetrics(
+                        offset: geometry.contentOffset.y,
+                        content: geometry.contentSize.height,
+                        viewport: geometry.containerSize.height
+                    )
+                } action: { _, metrics in
+                    scrollMetrics = metrics
+                }
                 // El recorte es más ancho que la grilla; el contenido vuelve a su lugar con el padding de adentro.
                 .padding(.horizontal, -shadowSide)
                 .padding(.vertical, -shadowVertical)
+                .overlay(alignment: .topTrailing) { scrollThumb }
                 .onChange(of: appState.isPanelVisible) { _, visible in
                     if visible { proxy.scrollTo(Self.topAnchor, anchor: .top) }
+                }
+                .onChange(of: appState.slotScrollTarget) { _, target in
+                    guard let target else { return }
+                    DispatchQueue.main.async {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            if target.index <= SlotStore.slotCount {
+                                proxy.scrollTo(Self.topAnchor, anchor: .top)
+                            } else {
+                                proxy.scrollTo(target.index, anchor: .center)
+                            }
+                        }
+                    }
                 }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background {
+            GeometryReader { proxy in
+                Color.clear
+                    .onAppear { gridFrame = proxy.frame(in: .global) }
+                    .onChange(of: proxy.frame(in: .global)) { _, frame in gridFrame = frame }
+            }
+        }
+    }
+
+    /// Barra de scroll fina (5 pt), visible solo mientras hay más contenido.
+    @ViewBuilder
+    private var scrollThumb: some View {
+        let metrics = scrollMetrics
+        let scrollable = metrics.content - metrics.viewport
+        if scrollable > 1, metrics.viewport > 0 {
+            let thumbHeight = max(28, metrics.viewport * metrics.viewport / metrics.content)
+            let progress = min(max(metrics.offset / scrollable, 0), 1)
+            Capsule()
+                .fill(SlotsColor.tinta.opacity(0.28))
+                .frame(width: 5, height: thumbHeight)
+                .offset(y: progress * (metrics.viewport - thumbHeight))
+                .padding(.trailing, 3)
+                .allowsHitTesting(false)
+        }
     }
 
     private static let newSlotAnchor = "new-slot"
@@ -136,7 +214,7 @@ struct SlotGridView: View {
                     appState.slotStore.clearSlot(index: slot.index)
                 },
                 onSwapFrom: { sourceIndex in
-                    appState.slotStore.swapContents(from: sourceIndex, to: slot.index)
+                    appState.reorderSlot(from: sourceIndex, to: slot.index)
                 },
                 onUpdateLabel: { title in
                     appState.slotStore.updateLabel(index: slot.index, label: title)
@@ -150,9 +228,13 @@ struct SlotGridView: View {
                 },
                 onMoveToLibrary: { libraryId in
                     appState.moveSlotToLibrary(slotIndex: slot.index, libraryId: libraryId)
+                },
+                onDiscardNew: {
+                    appState.discardPendingNewSlot()
                 }
             )
             .opacity(slotSearchOpacity(for: slot))
+            .modifier(SwapFlashModifier(isSwapped: appState.swapHighlight?.indices.contains(index) == true))
         }
     }
 
@@ -175,6 +257,8 @@ private struct SlotCardView: View {
     let onSetBackground: (String?) -> Void
     let onReplaceFromClipboard: () -> Void
     let onMoveToLibrary: (UUID) -> Void
+    let onDiscardNew: () -> Void
+    @State private var didStartNewSlotEdit = false
     @State private var isHovering = false
     @State private var isDropTarget = false
     @State private var isEditingShortcuts = false
@@ -185,6 +269,17 @@ private struct SlotCardView: View {
     @Environment(AppState.self) private var appState
 
     private var hasContent: Bool { slot.content != nil }
+
+    /// Slot que acaba de crearse con «Nuevo slot» y todavía no tiene contenido.
+    private var isNewlyCreated: Bool {
+        appState.pendingNewSlot == slot.index && !hasContent
+    }
+
+    private func startNewSlotEditIfNeeded() {
+        guard isNewlyCreated, !didStartNewSlotEdit, !isEditingLabel else { return }
+        didStartNewSlotEdit = true
+        beginLabelEdit()
+    }
 
     /// Solo los primeros 5 slots tienen atajo, por posición.
     private var visibleShortcut: KeyboardShortcuts.Name? {
@@ -223,7 +318,7 @@ private struct SlotCardView: View {
                         .modifier(SlotReadableText(onDark: prefersLightContent))
                         .animation(.easeOut(duration: 0.15), value: isHovering)
                 } else if !hasContent {
-                    Text(SlotCardCopy.emptyHint(slotIndex: slot.index))
+                    Text(isNewlyCreated ? "Soltá algo acá o pegá con ⌘V" : SlotCardCopy.emptyHint(slotIndex: slot.index))
                         .font(SlotsFont.textoUI)
                         .foregroundStyle(emptyHintColor)
                         .lineLimit(4)
@@ -320,9 +415,11 @@ private struct SlotCardView: View {
             if appState.inlineEditShouldSave {
                 commitLabelEdit()
             } else {
-                cancelLabelEdit()
+                cancelLabelEdit(discardIfNew: true)
             }
         }
+        .onAppear { startNewSlotEditIfNeeded() }
+        .onChange(of: appState.pendingNewSlot) { _, _ in startNewSlotEditIfNeeded() }
     }
 
     private var headerRow: some View {
@@ -400,7 +497,7 @@ private struct SlotCardView: View {
         HStack(alignment: .bottom, spacing: 6) {
             Group {
                 if isEditingLabel {
-                    TextField("Título", text: $labelDraft)
+                    TextField(isNewlyCreated ? "Nombre del slot" : "Título", text: $labelDraft)
                         .textFieldStyle(.plain)
                         .font(SlotsFont.tituloCard)
                         .foregroundStyle(titleColor)
@@ -492,6 +589,7 @@ private struct SlotCardView: View {
     }
 
     private func beginLabelEdit() {
+        if appState.pendingNewSlot != slot.index { appState.pendingNewSlot = nil }
         appState.beginInlineEdit()
         labelDraft = SlotCardCopy.editingTitle(for: slot)
         withAnimation(HotSlotDesign.titleEditAnimation) {
@@ -514,13 +612,16 @@ private struct SlotCardView: View {
         appState.isInlineEditing = false
     }
 
-    private func cancelLabelEdit() {
+    /// `discardIfNew`: Esc sobre un slot nuevo sin nombre ni contenido lo descarta.
+    private func cancelLabelEdit(discardIfNew: Bool = false) {
         guard isEditingLabel else { return }
+        let discards = discardIfNew && isNewlyCreated && !SlotCardCopy.hasCustomLabel(slot)
         withAnimation(HotSlotDesign.titleEditAnimation) {
             isEditingLabel = false
         }
         labelFieldFocused = false
         appState.isInlineEditing = false
+        if discards { onDiscardNew() }
     }
 
     private var bodyTextColor: Color {
@@ -667,7 +768,7 @@ private struct SlotCardView: View {
 
             RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
                 .strokeBorder(
-                    Color.black.opacity(hasContent ? 0 : 0.22),
+                    hasContent ? Color.clear : (isNewlyCreated ? SlotsColor.naranja : Color.black.opacity(0.22)),
                     style: StrokeStyle(lineWidth: 1.5, dash: [7, 5])
                 )
         }
@@ -683,23 +784,31 @@ private struct SlotCardView: View {
 }
 
 /// Última card de la grilla: crea un slot vacío al final de la biblioteca.
+/// También recibe lo que se suelta encima: un ítem del historial, un archivo o un slot (va al final).
 private struct NewSlotCardView: View {
-    let onCreate: () -> Void
+    @Bindable var appState: AppState
     @State private var isHovering = false
+    @State private var isDropTarget = false
+    /// Aparece una sola vez por apertura del panel, cuando entra en vista al hacer scroll.
+    @State private var revealed = false
 
     var body: some View {
-        Button(action: onCreate) {
+        Button {
+            appState.createSlotAndEditName()
+        } label: {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top) {
                     Image(systemName: "plus")
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(isHovering ? Color.white : SlotsColor.tinta)
+                        .foregroundStyle(isHovering && !isDropTarget ? Color.white : SlotsColor.tinta)
                         .frame(width: 40, height: 40)
                         .background {
-                            Circle().fill(isHovering ? SlotsColor.tinta : Color.clear)
+                            Circle().fill(isHovering && !isDropTarget ? SlotsColor.tinta : Color.clear)
                         }
                         .overlay {
-                            Circle().strokeBorder(SlotsColor.tinta.opacity(isHovering ? 0 : 0.3), lineWidth: 1.5)
+                            Circle().strokeBorder(
+                                SlotsColor.tinta.opacity(isHovering || isDropTarget ? 0 : 0.3), lineWidth: 1.5
+                            )
                         }
                     Spacer(minLength: 0)
                     Text("⌘N")
@@ -712,34 +821,79 @@ private struct NewSlotCardView: View {
                         }
                 }
                 Spacer(minLength: 0)
-                Text("Nuevo slot")
+                Text(isDropTarget ? "Soltá para crear el slot" : "Nuevo slot")
                     .font(SlotsFont.tituloCard)
-                    .foregroundStyle(SlotsColor.tinta)
-                Text("Clic o ⌘N")
-                    .font(.system(size: 13))
-                    .foregroundStyle(SlotsColor.textoSecundario)
-                    .padding(.top, 2)
+                    .foregroundStyle(isDropTarget ? SlotsColor.naranja : SlotsColor.tinta)
+                    .lineLimit(2)
+                if !isDropTarget {
+                    Text("Clic, ⌘N o arrastrá algo del historial")
+                        .font(.system(size: 13))
+                        .foregroundStyle(SlotsColor.textoSecundario)
+                        .padding(.top, 2)
+                }
             }
             .padding(16)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .background {
                 RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
-                    .fill(Color.white.opacity(isHovering ? 0.6 : 0.28))
+                    .fill(isDropTarget ? SlotsColor.naranja.opacity(0.10) : Color.white.opacity(isHovering ? 0.6 : 0.28))
             }
             .overlay {
                 RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
                     .strokeBorder(
-                        SlotsColor.tinta.opacity(isHovering ? 0.5 : 0.24),
-                        style: StrokeStyle(lineWidth: 1.5, dash: [7, 5])
+                        isDropTarget ? SlotsColor.naranja : SlotsColor.tinta.opacity(isHovering ? 0.5 : 0.24),
+                        style: StrokeStyle(lineWidth: isDropTarget ? 2 : 1.5, dash: [7, 5])
                     )
             }
             .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
         }
         .buttonStyle(.plain)
-        .keyboardShortcut("n", modifiers: .command)
         .onHover { isHovering = $0 }
+        .onDrop(of: [UTType.hotslotPanelDrag, UTType.fileURL], isTargeted: $isDropTarget) { providers in
+            handleDrop(providers)
+        }
+        .opacity(revealed ? 1 : 0)
+        .offset(y: revealed ? 0 : 16)
+        .scaleEffect(revealed ? 1 : 0.96)
+        .onScrollVisibilityChange(threshold: 0.15) { visible in
+            guard visible, !revealed else { return }
+            withAnimation(.easeOut(duration: 0.3)) { revealed = true }
+        }
+        .onChange(of: appState.isPanelVisible) { _, visible in
+            if visible { revealed = false }
+        }
         .animation(.easeOut(duration: 0.12), value: isHovering)
+        .animation(.easeOut(duration: 0.12), value: isDropTarget)
         .help("Nuevo slot al final de la biblioteca")
+    }
+
+    private func handleDrop(_ providers: [NSItemProvider]) -> Bool {
+        if let provider = providers.first(where: { $0.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) }) {
+            _ = provider.loadObject(ofClass: URL.self) { url, _ in
+                guard let url, url.isFileURL else { return }
+                DispatchQueue.main.async { appState.saveToNewSlot(content: .fileReference(url: url)) }
+            }
+            return true
+        }
+        let type = UTType.hotslotPanelDrag.identifier
+        guard let provider = providers.first(where: { $0.hasItemConformingToTypeIdentifier(type) }) else {
+            return false
+        }
+        provider.loadDataRepresentation(forTypeIdentifier: type) { data, _ in
+            guard let data, let payload = try? JSONDecoder().decode(PanelDragPayload.self, from: data) else { return }
+            DispatchQueue.main.async {
+                switch payload {
+                case .historyItem(let id):
+                    guard let content = appState.historyStore.item(id: id)?.content else { return }
+                    appState.saveToNewSlot(content: content)
+                case .slot(let source, let library):
+                    // Un slot soltado en «Nuevo slot» pasa al final de su propia biblioteca.
+                    guard library == appState.libraryWorkspace.workspace.activeLibraryId else { return }
+                    appState.moveSlotToEnd(from: source)
+                }
+            }
+        }
+        return true
     }
 }
 
@@ -764,6 +918,32 @@ private struct SlotHeaderActionChip: View {
             .background {
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
                     .fill(plate)
+            }
+    }
+}
+
+
+/// Cuando dos slots se intercambian: pulso de escala y aro naranja para que se note qué pasó.
+private struct SwapFlashModifier: ViewModifier {
+    var isSwapped: Bool
+    @State private var pulse = false
+
+    func body(content: Content) -> some View {
+        content
+            .overlay {
+                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
+                    .strokeBorder(SlotsColor.naranja, lineWidth: 3)
+                    .opacity(isSwapped ? 1 : 0)
+                    .allowsHitTesting(false)
+            }
+            .scaleEffect(pulse ? 1.04 : 1)
+            .animation(.easeOut(duration: 0.5), value: isSwapped)
+            .onChange(of: isSwapped) { _, swapped in
+                guard swapped else { return }
+                withAnimation(.spring(response: 0.22, dampingFraction: 0.45)) { pulse = true }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.22) {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) { pulse = false }
+                }
             }
     }
 }

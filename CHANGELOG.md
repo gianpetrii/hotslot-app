@@ -2,6 +2,13 @@
 
 ## Sin publicar
 
+### Más slots
+
+- Cada biblioteca puede tener más de 5 slots. Los primeros 5 conservan el atajo según su posición; del 6 en adelante van debajo de una línea «Sin atajo» y la zona de slots tiene scroll.
+- La card punteada «Nuevo slot» está siempre al final. Con un clic o con ⌘N crea un slot nuevo con el nombre en edición: Enter lo guarda, Esc lo descarta y ⌘V guarda ahí lo que tengas copiado.
+- Arrastrar algo del historial, o un archivo, sobre «Nuevo slot» crea un slot con ese contenido. «Guardar portapapeles» también crea un slot al final.
+- Arrastrar un slot sobre otro lo mueve y corre a los demás, en lugar de intercambiar sus contenidos. Si queda entre los 5 primeros, avisa con qué atajo quedó.
+
 ## [1.1.0] — 2026-11-11
 
 ### iCloud

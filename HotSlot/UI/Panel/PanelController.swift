@@ -116,6 +116,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
 
         openGeneration += 1
         appState.libraryDrag = nil
+        appState.pendingNewSlot = nil
         if appState.isInlineEditing {
             appState.endInlineEdit(save: true)
         }
@@ -174,6 +175,25 @@ final class PanelController: NSWindowController, NSWindowDelegate {
                 if event.keyCode == 36 || event.keyCode == 76 { // Return / Enter: guardar
                     self.appState.endInlineEdit(save: true)
                     window?.makeFirstResponder(nil)
+                    return nil
+                }
+            }
+            let isCommandOnly = event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .command
+            let hasModalOpen = self.appState.isNewLibraryFormPresented
+                || self.appState.renameLibraryTarget != nil
+                || self.appState.deleteLibraryConfirmation != nil
+            if isCommandOnly, !hasModalOpen {
+                if event.keyCode == 45 { // ⌘N: slot nuevo
+                    if self.appState.isInlineEditing { self.appState.endInlineEdit(save: true) }
+                    self.appState.createSlotAndEditName()
+                    return nil
+                }
+                if event.keyCode == 9, self.appState.pendingNewSlot != nil { // ⌘V sobre un slot nuevo
+                    if self.appState.isInlineEditing {
+                        self.appState.endInlineEdit(save: true)
+                        self.window?.makeFirstResponder(nil)
+                    }
+                    self.appState.saveClipboardToPendingSlot()
                     return nil
                 }
             }

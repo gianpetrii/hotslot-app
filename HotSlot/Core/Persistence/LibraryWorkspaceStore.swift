@@ -334,6 +334,21 @@ final class LibraryWorkspaceStore {
         return true
     }
 
+    /// Intercambia las posiciones de dos slots (con su contenido, nombre y fondo). Los demás no se mueven.
+    @discardableResult
+    func swapSlots(libraryId: UUID, _ a: Int, _ b: Int) -> Bool {
+        guard a != b,
+              let ia = workspace.slots.firstIndex(where: { $0.libraryId == libraryId && $0.order == a }),
+              let ib = workspace.slots.firstIndex(where: { $0.libraryId == libraryId && $0.order == b }) else { return false }
+        let now = Date()
+        workspace.slots[ia].order = b
+        workspace.slots[ia].updatedAt = now
+        workspace.slots[ib].order = a
+        workspace.slots[ib].updatedAt = now
+        save()
+        return true
+    }
+
     /// Deja las posiciones de una biblioteca en 1…N, sin huecos, respetando el orden actual.
     private func renumberSlots(in libraryId: UUID) {
         let now = Date()

@@ -145,7 +145,7 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 | [x] | P2 | Colores de slot (#111111, #E2501D, #E7DED2, Piedra #E6E3DE predeterminado) con círculo; primera línea de la card con las palabras |
 | [x] | P2 | Ajustes con el marco nuevo, transición entre pestañas y Atajos simplificado |
 | [x] | P1 | Arrastrar un ítem del historial no siempre arrancaba al primer clic: el arrastre solo valía sobre el texto; ahora cubre toda la fila. Validado por Gianluca |
-| [ ] | P1 | **Más slots por biblioteca** (documento de Dante): slots ilimitados, atajos solo en los 5 primeros, grilla con scroll, card «Nuevo slot», reordenar moviendo. Choca con «slots fijos» como mensaje principal y con el gating de slots 2–5 |
+| [~] | P1 | **Más slots por biblioteca** (documento de Dante): hecho en la rama `mas-slots` (modelo, grilla con scroll, «Nuevo slot», ⌘N, ⌘V, soltar del historial, reordenar moviendo). Falta validar y afinar con los HTML y el video de Dante (flip al guardar, animación de reordenar con cards que se deslizan, slot de imagen de 2 filas). Decidido: slots ilimitados para todos, con licencia al mes; el notch muestra solo los primeros 5 |
 | [ ] | P2 | Papelera para recuperar slots borrados (recomendado: sincronizada por iCloud, vaciado a los 30 días) |
 | [ ] | P2 | Dark mode con Liquid Glass más oscuro |
 | [ ] | P2 | Landing: página de descarga según la imagen de Dante |

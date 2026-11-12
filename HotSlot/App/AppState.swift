@@ -1,5 +1,12 @@
 import AppKit
 import Foundation
+import KeyboardShortcuts
+
+/// Pide a la grilla que muestre un slot. `token` hace que dos pedidos al mismo slot sean distintos.
+struct SlotScrollTarget: Equatable {
+    let index: Int
+    let token = UUID()
+}
 
 enum SettingsTab: Int {
     case hotkeys = 0
@@ -65,6 +72,12 @@ final class AppState {
     var inlineEditShouldSave = true
     /// Ventana delante de la cual mostrar el aviso de Accesibilidad (onboarding / ajustes).
     weak var accessibilityPresentingWindow: NSWindow?
+
+    /// Slot recién creado que espera nombre o contenido: ⌘V lo llena y Esc lo descarta.
+    var pendingNewSlot: Int?
+    /// La grilla hace scroll hasta este slot.
+    var slotScrollTarget: SlotScrollTarget?
+    var swapHighlight: SwapHighlight?
 
     /// Sheet del panel: elegir slot cuando «Guardar portapapeles» y no hay vacíos.
     var isSaveClipboardSlotPickerPresented = false
@@ -335,19 +348,112 @@ final class AppState {
         (1 ... SlotStore.slotCount).first { slotStore.content(at: $0) == nil }
     }
 
+    /// «Guardar portapapeles»: usa el primer slot vacío; si están todos ocupados, crea uno al final.
     func saveClipboardFromPanel() {
-        guard clipboardService.currentContent() != nil else {
+        guard let content = clipboardService.currentContent() else {
             showToast("Nada en el portapapeles")
             FeedbackSound.play(.pasteFailed)
             return
         }
-        if let empty = firstEmptySlotIndex() {
-            guard let content = clipboardService.currentContent() else { return }
+        if let empty = slotStore.allSlots.first(where: { $0.content == nil && $0.index != pendingNewSlot })?.index {
             saveToSlot(index: empty, content: content)
+            slotScrollTarget = SlotScrollTarget(index: empty)
+            UsageEventLog.shared.record("guardar_portapapeles", screen: "mac_panel", detail: "slot_\(empty)")
+        } else if saveToNewSlot(content: content) != nil {
             UsageEventLog.shared.record("guardar_portapapeles", screen: "mac_panel")
+        }
+    }
+
+    // MARK: - Slots nuevos
+
+    /// Nuevo slot vacío al final, con el nombre en edición. Devuelve su posición.
+    @discardableResult
+    func createSlotAndEditName() -> Int? {
+        guard ensureCanUseSlot(slotStore.totalSlotCount + 1) else { return nil }
+        if let previous = pendingNewSlot, slotStore.content(at: previous) == nil,
+           slotStore.slot(at: previous).map({ !SlotCardCopy.hasCustomLabel($0) }) == true {
+            // Había uno nuevo sin usar: no se acumulan slots vacíos sin nombre.
+            discardPendingNewSlot()
+        }
+        guard let order = slotStore.addSlot() else { return nil }
+        pendingNewSlot = order
+        slotScrollTarget = SlotScrollTarget(index: order)
+        UsageEventLog.shared.record("slot_nuevo", screen: "mac_panel", detail: "\(order)")
+        return order
+    }
+
+    /// Esc sobre un slot nuevo sin nombre ni contenido: vuelve a ser «Nuevo slot».
+    func discardPendingNewSlot() {
+        guard let order = pendingNewSlot else { return }
+        pendingNewSlot = nil
+        if slotStore.content(at: order) == nil {
+            slotStore.removeSlot(index: order)
+        }
+    }
+
+    /// Crea un slot al final con `content` y avisa «Guardado».
+    @discardableResult
+    func saveToNewSlot(content: ClipContent) -> Int? {
+        guard ensureCanUseSlot(slotStore.totalSlotCount + 1) else { return nil }
+        guard let order = slotStore.addSlot() else { return nil }
+        saveToSlot(index: order, content: content)
+        slotScrollTarget = SlotScrollTarget(index: order)
+        return order
+    }
+
+    /// ⌘V con un slot nuevo a la vista: guarda el portapapeles ahí.
+    func saveClipboardToPendingSlot() {
+        guard let order = pendingNewSlot else { return }
+        guard let content = clipboardService.currentContent() else {
+            showToast("Nada en el portapapeles")
+            FeedbackSound.play(.pasteFailed)
             return
         }
-        isSaveClipboardSlotPickerPresented = true
+        pendingNewSlot = nil
+        saveToSlot(index: order, content: content)
+    }
+
+    /// Dos slots que acaban de intercambiarse: la grilla los resalta un momento.
+    struct SwapHighlight: Equatable {
+        let indices: Set<Int>
+        let token = UUID()
+    }
+
+    /// Intercambia dos slots (contenido, nombre y fondo); los demás quedan donde estaban.
+    /// Un slot que pasa a ocupar una de las 5 primeras posiciones toma ese atajo.
+    func reorderSlot(from source: Int, to destination: Int) {
+        guard source != destination else { return }
+        let sourceTitle = slotDisplayTitle(at: source)
+        let destinationTitle = slotDisplayTitle(at: destination)
+        let limit = SlotStore.slotCount
+        guard slotStore.swapSlots(source, destination) else { return }
+        UsageEventLog.shared.record("slot_reordenar", detail: "\(source)<->\(destination)")
+        let marker = SwapHighlight(indices: [source, destination])
+        swapHighlight = marker
+        FeedbackSound.play(.saved)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.1) { [weak self] in
+            if self?.swapHighlight == marker { self?.swapHighlight = nil }
+        }
+        // El que llegó a una posición con atajo (desde una sin atajo) lo avisa.
+        func shortcut(_ position: Int) -> String {
+            let name = KeyboardShortcuts.Name.pasteSlotNames[position - 1]
+            return KeyboardShortcuts.Shortcut(name: name)?.description ?? ""
+        }
+        if destination <= limit, source > limit {
+            presentNotch(.plain("\(sourceTitle ?? "Slot \(destination)") · ahora \(shortcut(destination))"))
+        } else if source <= limit, destination > limit {
+            presentNotch(.plain("\(destinationTitle ?? "Slot \(source)") · ahora \(shortcut(source))"))
+        } else {
+            presentNotch(.plain("\(sourceTitle ?? "Slot \(source)") ⇄ \(destinationTitle ?? "Slot \(destination)")"))
+        }
+    }
+
+    /// Manda un slot al final de la biblioteca; los demás se corren para tapar el hueco.
+    func moveSlotToEnd(from source: Int) {
+        let last = slotStore.totalSlotCount
+        guard source != last, slotStore.moveSlot(from: source, to: last) else { return }
+        UsageEventLog.shared.record("slot_reordenar", detail: "\(source)->fin")
+        slotScrollTarget = SlotScrollTarget(index: last)
     }
 
     func saveClipboardToSlot(_ index: Int, replaceExisting: Bool) {
