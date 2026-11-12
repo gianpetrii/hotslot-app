@@ -2,6 +2,14 @@
 
 ## Sin publicar
 
+## [1.1.0] — 2026-11-11
+
+### iCloud
+
+- Las bibliotecas y los slots se sincronizan entre tus dispositivos por tu cuenta de iCloud, con tu base privada. El historial no se sincroniza.
+- Un slot con un archivo guardado en otro dispositivo se ve con su nombre y «Solo en otro dispositivo»; el archivo no viaja.
+- Requiere macOS 15 o posterior.
+
 ### Panel
 
 - Renombrar un slot es con clic derecho > «Renombrar…»; el clic en el título ya no abre la edición.
