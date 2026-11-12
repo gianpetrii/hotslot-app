@@ -355,7 +355,7 @@ struct PanelView: View {
             return
         }
         if isSearching {
-            if let slot = appState.slotStore.slots.first(where: { $0.matchesSearch(searchText) && $0.content != nil }) {
+            if let slot = appState.slotStore.allSlots.first(where: { $0.matchesSearch(searchText) && $0.content != nil }) {
                 appState.pasteSlot(index: slot.index, panelController: panelController)
                 return
             }

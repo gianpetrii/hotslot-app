@@ -12,38 +12,106 @@ struct SlotGridView: View {
         !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    /// Margen para que la sombra del hover no se corte en el borde de la zona con scroll.
+    private let shadowSide: CGFloat = 12
+    private let shadowVertical: CGFloat = 8
+
     var body: some View {
         GeometryReader { geometry in
             let gap = SlotsSpace.entreCards
             let columnWidth = (geometry.size.width - gap * 2) / 3
+            // Las filas tienen alto fijo: con 5 slots la grilla llena justo la vista.
             let rowHeight = (geometry.size.height - gap) / 2
+            let extraSlots = appState.slotStore.allSlots.filter { $0.index > SlotStore.slotCount }
 
-            HStack(spacing: gap) {
-                slotCell(index: 1)
-                    .frame(width: columnWidth, height: rowHeight * 2 + gap)
+            ScrollViewReader { proxy in
+                ScrollView(.vertical) {
+                    VStack(spacing: gap) {
+                        mosaic(columnWidth: columnWidth, rowHeight: rowHeight, gap: gap)
+                            .frame(height: rowHeight * 2 + gap)
+                            .id(Self.topAnchor)
 
-                VStack(spacing: gap) {
-                    HStack(spacing: gap) {
-                        slotCell(index: 2)
-                            .frame(width: columnWidth, height: rowHeight)
-                        slotCell(index: 3)
-                            .frame(width: columnWidth, height: rowHeight)
+                        if !extraSlots.isEmpty {
+                            noShortcutDivider
+                        }
+
+                        LazyVGrid(
+                            columns: Array(repeating: GridItem(.fixed(columnWidth), spacing: gap), count: 3),
+                            spacing: gap
+                        ) {
+                            ForEach(extraSlots) { slot in
+                                slotCell(index: slot.index)
+                                    .frame(height: rowHeight)
+                                    .id(slot.index)
+                            }
+                            NewSlotCardView(onCreate: {
+                                guard appState.slotStore.addSlot() != nil else { return }
+                                DispatchQueue.main.async {
+                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                        proxy.scrollTo(Self.newSlotAnchor, anchor: .bottom)
+                                    }
+                                }
+                            })
+                            .frame(height: rowHeight)
+                            .id(Self.newSlotAnchor)
+                        }
                     }
-                    HStack(spacing: gap) {
-                        slotCell(index: 4)
-                            .frame(width: columnWidth, height: rowHeight)
-                        slotCell(index: 5)
-                            .frame(width: columnWidth, height: rowHeight)
-                    }
+                    .padding(.horizontal, shadowSide)
+                    .padding(.vertical, shadowVertical)
+                }
+                .scrollIndicators(.automatic)
+                // El recorte es más ancho que la grilla; el contenido vuelve a su lugar con el padding de adentro.
+                .padding(.horizontal, -shadowSide)
+                .padding(.vertical, -shadowVertical)
+                .onChange(of: appState.isPanelVisible) { _, visible in
+                    if visible { proxy.scrollTo(Self.topAnchor, anchor: .top) }
                 }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
+    private static let newSlotAnchor = "new-slot"
+    private static let topAnchor = "grid-top"
+
+    /// Los 5 slots con atajo: el 1 alto a la izquierda y los otros cuatro en 2x2.
+    private func mosaic(columnWidth: CGFloat, rowHeight: CGFloat, gap: CGFloat) -> some View {
+        HStack(spacing: gap) {
+            slotCell(index: 1)
+                .frame(width: columnWidth, height: rowHeight * 2 + gap)
+
+            VStack(spacing: gap) {
+                HStack(spacing: gap) {
+                    slotCell(index: 2)
+                        .frame(width: columnWidth, height: rowHeight)
+                    slotCell(index: 3)
+                        .frame(width: columnWidth, height: rowHeight)
+                }
+                HStack(spacing: gap) {
+                    slotCell(index: 4)
+                        .frame(width: columnWidth, height: rowHeight)
+                    slotCell(index: 5)
+                        .frame(width: columnWidth, height: rowHeight)
+                }
+            }
+        }
+    }
+
+    private var noShortcutDivider: some View {
+        HStack(spacing: 12) {
+            Rectangle().fill(SlotsColor.tinta.opacity(0.14)).frame(height: 1)
+            Text("Sin atajo · arrastrá un slot arriba de esta línea para darle uno")
+                .font(.system(size: 12))
+                .foregroundStyle(SlotsColor.textoSecundario)
+                .fixedSize()
+            Rectangle().fill(SlotsColor.tinta.opacity(0.14)).frame(height: 1)
+        }
+        .frame(height: 24)
+    }
+
     @ViewBuilder
     private func slotCell(index: Int) -> some View {
-        if let slot = appState.slotStore.slots.first(where: { $0.index == index }) {
+        if let slot = appState.slotStore.allSlots.first(where: { $0.index == index }) {
             SlotCardView(
                 slot: slot,
                 otherLibraries: appState.libraryWorkspace.workspace.libraries
@@ -118,16 +186,12 @@ private struct SlotCardView: View {
 
     private var hasContent: Bool { slot.content != nil }
 
-    private var pasteShortcut: KeyboardShortcuts.Name {
-        KeyboardShortcuts.Name.pasteSlotNames[slot.index - 1]
-    }
-
-    private var copyShortcut: KeyboardShortcuts.Name {
-        KeyboardShortcuts.Name.copyToSlotNames[slot.index - 1]
-    }
-
-    private var visibleShortcut: KeyboardShortcuts.Name {
-        hasContent ? pasteShortcut : copyShortcut
+    /// Solo los primeros 5 slots tienen atajo, por posición.
+    private var visibleShortcut: KeyboardShortcuts.Name? {
+        guard (1...SlotStore.slotCount).contains(slot.index) else { return nil }
+        return hasContent
+            ? KeyboardShortcuts.Name.pasteSlotNames[slot.index - 1]
+            : KeyboardShortcuts.Name.copyToSlotNames[slot.index - 1]
     }
 
     var body: some View {
@@ -211,7 +275,7 @@ private struct SlotCardView: View {
             return Self.acceptDrop(providers) { payload in
                 switch payload {
                 case .slot(let source, let sourceLibrary):
-                    guard (1...SlotStore.slotCount).contains(source) else { return }
+                    guard source >= 1 else { return }
                     let activeLibrary = appState.libraryWorkspace.workspace.activeLibraryId
                     if sourceLibrary == activeLibrary {
                         guard source != slot.index else { return }
@@ -280,15 +344,26 @@ private struct SlotCardView: View {
 
             Spacer(minLength: 4)
 
-            Button {
-                isEditingShortcuts = true
-            } label: {
-                SlotHandoffShortcutChip(name: visibleShortcut, ink: headerChipInk, plate: headerChipPlate)
-            }
-            .buttonStyle(.plain)
-            .help(hasContent ? "Atajo pegar · clic para editar ambos" : "Atajo guardar · clic para editar ambos")
-            .popover(isPresented: $isEditingShortcuts, arrowEdge: .leading) {
-                SlotShortcutEditorPopover(slotIndex: slot.index)
+            if let visibleShortcut {
+                Button {
+                    isEditingShortcuts = true
+                } label: {
+                    SlotHandoffShortcutChip(name: visibleShortcut, ink: headerChipInk, plate: headerChipPlate)
+                }
+                .buttonStyle(.plain)
+                .help(hasContent ? "Atajo pegar · clic para editar ambos" : "Atajo guardar · clic para editar ambos")
+                .popover(isPresented: $isEditingShortcuts, arrowEdge: .leading) {
+                    SlotShortcutEditorPopover(slotIndex: slot.index)
+                }
+            } else {
+                Text("Sin atajo")
+                    .font(SlotsFont.etiqueta)
+                    .foregroundStyle(headerChipInk.opacity(0.8))
+                    .padding(.horizontal, 5)
+                    .frame(minHeight: HotSlotDesign.slotHeaderChipHeight)
+                    .background {
+                        RoundedRectangle(cornerRadius: 6, style: .continuous).fill(headerChipPlate)
+                    }
             }
         }
     }
@@ -604,6 +679,67 @@ private struct SlotCardView: View {
     private var isImageContent: Bool {
         if case .image = slot.content { return true }
         return false
+    }
+}
+
+/// Última card de la grilla: crea un slot vacío al final de la biblioteca.
+private struct NewSlotCardView: View {
+    let onCreate: () -> Void
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: onCreate) {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .top) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(isHovering ? Color.white : SlotsColor.tinta)
+                        .frame(width: 40, height: 40)
+                        .background {
+                            Circle().fill(isHovering ? SlotsColor.tinta : Color.clear)
+                        }
+                        .overlay {
+                            Circle().strokeBorder(SlotsColor.tinta.opacity(isHovering ? 0 : 0.3), lineWidth: 1.5)
+                        }
+                    Spacer(minLength: 0)
+                    Text("⌘N")
+                        .font(SlotsFont.etiqueta)
+                        .foregroundStyle(SlotsColor.textoSecundario)
+                        .padding(.horizontal, 5)
+                        .frame(minHeight: HotSlotDesign.slotHeaderChipHeight)
+                        .background {
+                            RoundedRectangle(cornerRadius: 6, style: .continuous).fill(SlotsColor.teclaFondo)
+                        }
+                }
+                Spacer(minLength: 0)
+                Text("Nuevo slot")
+                    .font(SlotsFont.tituloCard)
+                    .foregroundStyle(SlotsColor.tinta)
+                Text("Clic o ⌘N")
+                    .font(.system(size: 13))
+                    .foregroundStyle(SlotsColor.textoSecundario)
+                    .padding(.top, 2)
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .background {
+                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
+                    .fill(Color.white.opacity(isHovering ? 0.6 : 0.28))
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
+                    .strokeBorder(
+                        SlotsColor.tinta.opacity(isHovering ? 0.5 : 0.24),
+                        style: StrokeStyle(lineWidth: 1.5, dash: [7, 5])
+                    )
+            }
+            .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .keyboardShortcut("n", modifiers: .command)
+        .onHover { isHovering = $0 }
+        .animation(.easeOut(duration: 0.12), value: isHovering)
+        .help("Nuevo slot al final de la biblioteca")
     }
 }
 

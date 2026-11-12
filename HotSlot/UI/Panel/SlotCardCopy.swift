@@ -109,6 +109,8 @@ enum SlotCardCopy {
     }
 
     static func emptyHint(slotIndex: Int) -> String {
+        // Del 6 en adelante no hay atajo para guardar.
+        guard slotIndex <= SlotStore.slotCount else { return "Soltá algo acá" }
         let letters = ["A", "S", "D", "Q", "W"]
         let letter = letters.indices.contains(slotIndex - 1) ? letters[slotIndex - 1] : "A"
         if slotIndex == 1 {
