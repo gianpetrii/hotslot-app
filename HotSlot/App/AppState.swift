@@ -5,6 +5,14 @@ enum SettingsTab: Int {
     case hotkeys = 0
     case general = 2
     case permissions = 3
+
+    var title: String {
+        switch self {
+        case .general: "General"
+        case .hotkeys: "Atajos"
+        case .permissions: "Permisos"
+        }
+    }
 }
 
 struct LibraryDragSession: Equatable {

@@ -19,33 +19,45 @@ struct SettingsView: View {
     @State private var licensed = Entitlements.hasFullAccess
 
     var body: some View {
-        NavigationSplitView {
-            List(selection: $selectedTab) {
-                Label("General", systemImage: "gearshape")
-                    .tag(SettingsTab.general)
-                Label("Atajos", systemImage: "keyboard")
-                    .tag(SettingsTab.hotkeys)
-                Label("Permisos", systemImage: "lock.shield")
-                    .tag(SettingsTab.permissions)
-            }
-            .listStyle(.sidebar)
-            .navigationSplitViewColumnWidth(min: 168, ideal: 188, max: 220)
-        } detail: {
-            Group {
-                switch selectedTab {
-                case .general:
-                    generalTab
-                case .hotkeys:
-                    HotkeysSettingsView()
-                        .padding()
-                case .permissions:
-                    permissionsTab
+        HStack(alignment: .top, spacing: 0) {
+            sidebar
+                .frame(width: 188)
+
+            VStack(alignment: .leading, spacing: SlotsSpace.s) {
+                Text(selectedTab.title)
+                    .font(SlotsFont.tituloPantalla(true))
+                    .foregroundStyle(SlotsColor.tinta)
+                    .padding(.horizontal, SlotsSpace.l)
+                    .id("title-\(selectedTab.rawValue)")
+                    .transition(.opacity.combined(with: .offset(x: 16)))
+
+                Group {
+                    switch selectedTab {
+                    case .general:
+                        generalTab
+                    case .hotkeys:
+                        HotkeysSettingsView()
+                    case .permissions:
+                        permissionsTab
+                    }
                 }
+                .id("tab-\(selectedTab.rawValue)")
+                .transition(.opacity.combined(with: .offset(x: 16)))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(SlotsColor.papel.opacity(0.35))
+            .animation(.easeOut(duration: 0.22), value: selectedTab)
+            .clipped()
+            .padding(.top, SlotsSpace.m)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
         .frame(width: 720, height: 540)
+        .background {
+            LinearGradient(
+                colors: [Color(slotsHex: 0xEFE7DC), Color(slotsHex: 0xE7DED2)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
         .onAppear {
             confirmLibraryDelete = AppSettings.load().confirmLibraryDelete
             clickItemAction = AppSettings.load().clickItemAction
@@ -53,6 +65,51 @@ struct SettingsView: View {
                 selectedTab = pending
                 appState.pendingSettingsTab = nil
             }
+        }
+    }
+
+    private var sidebar: some View {
+        VStack(alignment: .leading, spacing: SlotsSpace.s) {
+            ForEach([SettingsTab.general, .hotkeys, .permissions], id: \.self) { tab in
+                Button {
+                    withAnimation(.easeOut(duration: 0.22)) { selectedTab = tab }
+                } label: {
+                    HStack {
+                        Text(tab.title)
+                            .font(SlotsFont.textoUI)
+                        Spacer(minLength: 4)
+                        if tab == .permissions, accessibilityTrusted {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(.white)
+                                .frame(width: 22, height: 22)
+                                .background(Circle().fill(SlotsColor.naranja))
+                        }
+                    }
+                    .padding(.horizontal, SlotsSpace.m)
+                    .frame(height: 44)
+                    .foregroundStyle(selectedTab == tab ? Color.white : SlotsColor.tinta)
+                    .background {
+                        Capsule(style: .continuous)
+                            .fill(selectedTab == tab ? SlotsColor.tinta : Color.white.opacity(0.7))
+                    }
+                    .contentShape(Capsule(style: .continuous))
+                }
+                .buttonStyle(.plain)
+            }
+
+            Spacer(minLength: 0)
+
+            Text("\(BrandDisplay.name) \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")")
+                .font(SlotsFont.etiqueta)
+                .foregroundStyle(SlotsColor.textoSecundario)
+                .padding(.leading, SlotsSpace.xs)
+        }
+        .padding(.horizontal, SlotsSpace.m)
+        .padding(.top, SlotsSpace.xl)
+        .padding(.bottom, SlotsSpace.m)
+        .onReceive(Timer.publish(every: 1.5, on: .main, in: .common).autoconnect()) { _ in
+            accessibilityTrusted = AccessibilityPermission.isTrusted
         }
     }
 
@@ -193,6 +250,7 @@ struct SettingsView: View {
                     }
                 }
                 .formStyle(.grouped)
+                .scrollContentBackground(.hidden)
             }
             .onAppear { scrollToLicenseIfNeeded(using: proxy) }
             .onChange(of: selectedTab) { _, tab in
@@ -200,7 +258,6 @@ struct SettingsView: View {
                 scrollToLicenseIfNeeded(using: proxy)
             }
         }
-        .padding()
     }
 
     @ViewBuilder
@@ -266,7 +323,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .padding()
+        .scrollContentBackground(.hidden)
         .onAppear { accessibilityTrusted = AccessibilityPermission.isTrusted }
         .onReceive(Timer.publish(every: 1.5, on: .main, in: .common).autoconnect()) { _ in
             accessibilityTrusted = AccessibilityPermission.isTrusted
