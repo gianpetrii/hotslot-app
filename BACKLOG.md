@@ -135,6 +135,21 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 
 ---
 
+## Correcciones de Dante V1 macOS (nov 2026)
+
+| Estado | Pri | Tarea |
+|--------|-----|-------|
+| [x] | P1 | Renombrar slot solo con clic derecho; apertura/cierre y cambio de biblioteca más rápidos; esquinas del degradé; sin sombra rectangular; alineación del historial |
+| [x] | P1 | Copiar: sonido y aviso al instante; avisos unificados en la barra del notch; notch se cierra más rápido |
+| [x] | P1 | Soltar slot o ítem del historial sobre otra biblioteca → primer slot vacío (o aviso); corregido el intercambio errado al esperar sobre la pastilla |
+| [x] | P2 | Colores de slot (#111111, #E2501D, #E7DED2, Piedra #E6E3DE predeterminado) con círculo; primera línea de la card con las palabras |
+| [x] | P2 | Ajustes con el marco nuevo, transición entre pestañas y Atajos simplificado |
+| [ ] | P1 | Arrastrar un ítem del historial no siempre arranca al primer clic (sospecha: la fila se expande con el hover; falta probar) |
+| [ ] | P1 | **Más slots por biblioteca** (documento de Dante): slots ilimitados, atajos solo en los 5 primeros, grilla con scroll, card «Nuevo slot», reordenar moviendo. Choca con «slots fijos» como mensaje principal y con el gating de slots 2–5 |
+| [ ] | P2 | Papelera para recuperar slots borrados (recomendado: sincronizada por iCloud, vaciado a los 30 días) |
+| [ ] | P2 | Dark mode con Liquid Glass más oscuro |
+| [ ] | P2 | Landing: página de descarga según la imagen de Dante |
+
 ## Panel UX — validación Gianluca (nov 2026)
 
 Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en otros `.md` salvo `REVISION-PANEL-PARA-DANTE.md` cuando toque Dante.

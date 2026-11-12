@@ -1,5 +1,27 @@
 # Changelog
 
+## Sin publicar
+
+### Panel
+
+- Renombrar un slot es con clic derecho > «Renombrar…»; el clic en el título ya no abre la edición.
+- Las esquinas de un slot con degradé quedan limpias y se quitó la sombra rectangular detrás del panel.
+- Abrir y cerrar el panel y cambiar de biblioteca son más rápidos, y el clic en una biblioteca responde al primer intento.
+- «Historial» y «Arrastrá a un slot» quedan alineados con los bordes de las filas.
+- La primera línea de una card de texto muestra la cantidad de palabras. El fondo predeterminado de los slots es Piedra (#E6E3DE) y los colores a elegir son los de Dante, con un círculo de muestra.
+- Soltar un slot o un ítem del historial sobre otra biblioteca lo guarda en su primer slot vacío; si no hay, avisa. Al esperar sobre una biblioteca y soltar en un slot, se mueve el slot que arrastrabas.
+
+### Avisos
+
+- Al copiar, el sonido y el aviso salen en el instante del clic y el panel se cierra en paralelo.
+- Todos los avisos salen en una barra negra pegada al borde de arriba (con número de slot, nombre y estado cuando corresponde). Si el aviso del notch está apagado, se usa el cartel del panel.
+- La barra de slots del notch se cierra más rápido.
+
+### Ajustes
+
+- Rediseño: barra lateral de cápsulas, título grande y transición entre pestañas. Atajos queda con el atajo del panel y los conflictos; los de cada slot se editan desde el panel.
+- Al cerrar Ajustes, el panel que se reabre se puede cerrar con Esc.
+
 ## [1.0.0] — 2026-11-08
 
 La primera versión completa de Slots.
