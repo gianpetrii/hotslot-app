@@ -2,6 +2,15 @@ import Foundation
 
 /// Archivos y carpetas guardados como referencia (ruta + bookmark).
 extension ClipContent {
+    /// Ruta ficticia de un archivo que solo está en otro dispositivo: nunca existe, y tras ella va el nombre.
+    static let remoteOnlyPathPrefix = "/@solo-en-otro-dispositivo/"
+
+    /// El slot llegó por iCloud con el nombre del archivo, pero el archivo está en otro dispositivo.
+    var isRemoteOnlyFile: Bool {
+        guard case .file(let path, _) = self else { return false }
+        return path.hasPrefix(Self.remoteOnlyPathPrefix)
+    }
+
     /// Referencia a `url`. El bookmark permite encontrarlo si se renombra o se mueve.
     static func fileReference(url: URL) -> ClipContent {
         let bookmark = try? url.bookmarkData(options: [], includingResourceValuesForKeys: nil, relativeTo: nil)
@@ -44,6 +53,7 @@ extension ClipContent {
     /// «PDF · 2,4 MB», «Carpeta» o «No encontrado».
     var fileDetail: String {
         guard case .file = self else { return "" }
+        if isRemoteOnlyFile { return "Solo en otro dispositivo" }
         guard let url = resolvedFileURL else { return "No encontrado" }
         if isFolder { return "Carpeta" }
         let ext = url.pathExtension.uppercased()

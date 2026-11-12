@@ -115,6 +115,7 @@ final class WorkspaceDatabase {
                     meta: entity.meta,
                     filePath: reference?.path,
                     fileBookmark: reference?.bookmark,
+                    fileName: entity.fileName,
                     cardBackgroundHex: entity.cardBackgroundHex,
                     createdAt: entity.createdAt,
                     updatedAt: entity.updatedAt

@@ -210,7 +210,9 @@ final class AppState {
     private func activateContent(_ content: ClipContent, slotIndex: Int?, panelController: PanelController) {
         if content.isMissingFile {
             FeedbackSound.play(.pasteFailed)
-            presentNotch(.plain("El archivo ya no está en su lugar"))
+            presentNotch(.plain(content.isRemoteOnlyFile
+                ? "Este archivo está en otro dispositivo"
+                : "El archivo ya no está en su lugar"))
             return
         }
         let close = {

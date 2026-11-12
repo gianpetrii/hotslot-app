@@ -40,6 +40,8 @@ struct SlotRecord: Codable, Identifiable, Equatable, Sendable {
     /// Archivo guardado como referencia (`kind == .file`).
     var filePath: String? = nil
     var fileBookmark: Data? = nil
+    /// Nombre del archivo. Viaja por iCloud; la ruta no: en otro dispositivo el slot se ve como «Solo en otro dispositivo».
+    var fileName: String? = nil
     /// Fondo elegido en la card. `nil` es el predeterminado.
     var cardBackgroundHex: String? = nil
     var createdAt: Date
@@ -52,6 +54,7 @@ struct SlotRecord: Codable, Identifiable, Equatable, Sendable {
         imageFileName = nil
         filePath = nil
         fileBookmark = nil
+        fileName = nil
         switch content {
         case nil:
             kind = .text
@@ -67,8 +70,14 @@ struct SlotRecord: Codable, Identifiable, Equatable, Sendable {
             meta = "Imagen"
         case .file(let path, let bookmark):
             kind = .file
-            filePath = path
-            fileBookmark = bookmark
+            if path.hasPrefix(ClipContent.remoteOnlyPathPrefix) {
+                // Archivo que está en otro dispositivo: se conserva solo el nombre.
+                fileName = String(path.dropFirst(ClipContent.remoteOnlyPathPrefix.count))
+            } else {
+                filePath = path
+                fileBookmark = bookmark
+                fileName = (path as NSString).lastPathComponent
+            }
             meta = content?.typeLabel
         }
         updatedAt = now
@@ -83,8 +92,13 @@ struct SlotRecord: Codable, Identifiable, Equatable, Sendable {
             guard let imageFileName else { return nil }
             return .image(fileName: imageFileName)
         case .file:
-            guard let filePath, !filePath.isEmpty else { return nil }
-            return .file(path: filePath, bookmark: fileBookmark)
+            if let filePath, !filePath.isEmpty {
+                return .file(path: filePath, bookmark: fileBookmark)
+            }
+            if let fileName, !fileName.isEmpty {
+                return .file(path: ClipContent.remoteOnlyPathPrefix + fileName, bookmark: nil)
+            }
+            return nil
         }
     }
 }

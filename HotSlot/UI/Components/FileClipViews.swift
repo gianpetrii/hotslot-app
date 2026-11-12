@@ -18,6 +18,10 @@ struct FileClipIconView: View {
                     .interpolation(.high)
                     .aspectRatio(contentMode: .fit)
                     .task(id: url.path) { await loadThumbnail(for: url) }
+            } else if content.isRemoteOnlyFile {
+                Image(systemName: "icloud")
+                    .font(.system(size: side * 0.6, weight: .regular))
+                    .foregroundStyle(SlotsColor.textoSecundario)
             } else {
                 Image(systemName: "questionmark.folder")
                     .font(.system(size: side * 0.6, weight: .regular))

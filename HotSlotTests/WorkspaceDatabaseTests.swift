@@ -59,6 +59,31 @@ final class WorkspaceDatabaseTests: XCTestCase {
         XCTAssertEqual(slot.fileBookmark, Data([1, 2, 3]))
     }
 
+    func testFileSlotOnAnotherDeviceShowsNameAsRemoteOnly() throws {
+        let database = try XCTUnwrap(WorkspaceDatabase())
+        var workspace = SlotsWorkspace.empty()
+        workspace.slots[0].setContent(.file(path: "/Users/yo/Docs/informe.pdf", bookmark: nil))
+        database.write(workspace)
+
+        // Otro dispositivo: llegan los datos pero no la ruta local.
+        LocalFileReferences.save([:])
+        let loaded = try XCTUnwrap(database.load())
+        let slot = try XCTUnwrap(loaded.slots.first { $0.id == workspace.slots[0].id })
+        let content = try XCTUnwrap(slot.clipContent())
+        XCTAssertTrue(content.isRemoteOnlyFile)
+        XCTAssertEqual(content.fileName, "informe.pdf")
+        XCTAssertEqual(content.fileDetail, "Solo en otro dispositivo")
+        XCTAssertNil(slot.filePath)
+    }
+
+    func testSavingRemoteOnlyFileKeepsOnlyTheName() {
+        var record = SlotsWorkspace.empty().slots[0]
+        record.setContent(.file(path: ClipContent.remoteOnlyPathPrefix + "informe.pdf", bookmark: nil))
+        XCTAssertNil(record.filePath)
+        XCTAssertEqual(record.fileName, "informe.pdf")
+        XCTAssertTrue(record.clipContent()?.isRemoteOnlyFile == true)
+    }
+
     func testImageBytesTravelAndComeBackAsAFile() throws {
         let database = try XCTUnwrap(WorkspaceDatabase())
         var workspace = SlotsWorkspace.empty()

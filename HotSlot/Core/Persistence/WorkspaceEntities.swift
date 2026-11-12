@@ -70,7 +70,7 @@ final class SlotEntity {
         cardBackgroundHex = record.cardBackgroundHex
         createdAt = record.createdAt
         updatedAt = record.updatedAt
-        fileName = record.filePath.map { ($0 as NSString).lastPathComponent }
+        fileName = record.fileName ?? record.filePath.map { ($0 as NSString).lastPathComponent }
 
         if record.imageFileName != imageFileName || (record.imageFileName != nil && imageData == nil) {
             imageFileName = record.imageFileName

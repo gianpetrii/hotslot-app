@@ -301,6 +301,7 @@ final class LibraryWorkspaceStore {
         swap(&a.imageFileName, &b.imageFileName)
         swap(&a.filePath, &b.filePath)
         swap(&a.fileBookmark, &b.fileBookmark)
+        swap(&a.fileName, &b.fileName)
         swap(&a.linkURL, &b.linkURL)
         swap(&a.meta, &b.meta)
         swap(&a.cardBackgroundHex, &b.cardBackgroundHex)

@@ -91,7 +91,6 @@ struct ClipRowView: View {
             HStack(alignment: .center, spacing: 12) {
                 panelHandoffBody
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .modifier(ClipRowInteractionModifier(isDemo: isDemo, item: item, onPaste: onPaste, handlesTap: false))
             }
 
             if isHovering || item.isPinned {
@@ -130,6 +129,9 @@ struct ClipRowView: View {
                 )
         }
         .slotsHoverLift(isHovering && !copyFlash)
+        // El arrastre cubre toda la fila, no solo el texto: antes, apretar sobre el margen no arrastraba.
+        .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .modifier(ClipRowInteractionModifier(isDemo: isDemo, item: item, onPaste: onPaste, handlesTap: false))
         .onTapGesture {
             guard !isDemo else { return }
             var transaction = Transaction()
