@@ -58,6 +58,11 @@ final class SlotEntity {
         apply(record)
     }
 
+    /// Slot de arranque que nadie tocó: fecha 0 y sin contenido.
+    var isPristineSeed: Bool {
+        updatedAt.timeIntervalSince1970 == 0 && textPayload == nil && imageFileName == nil && fileName == nil
+    }
+
     /// Copia los campos del slot. La imagen se lee del disco solo si cambió.
     func apply(_ record: SlotRecord) {
         libraryId = record.libraryId

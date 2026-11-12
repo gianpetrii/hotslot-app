@@ -95,6 +95,7 @@
 		EBA347C9D5C19D60C12938B7 /* HotSlotDesign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BB751CC74D313DB9ADAC577 /* HotSlotDesign.swift */; };
 		EC20C7D32EF891BFFABBD98E /* NotchShelfView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F94875672160E6886F1A1B0 /* NotchShelfView.swift */; };
 		EC2FD2696FBFC7620CC1C497 /* ClipRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3610897210D290C688FA1D3C /* ClipRowView.swift */; };
+		EDCE1110A455CEB1540813D7 /* MoreSlotsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6238F039A823EDE67ECCA77A /* MoreSlotsTests.swift */; };
 		F174F34D35409CF75ACF645E /* OnboardingDemos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1560171CDCA17C9B5AF77D26 /* OnboardingDemos.swift */; };
 		F3DF1B41ADC0380D87AF4D07 /* SlotGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F806ECE71FCC38E52033D0F /* SlotGridView.swift */; };
 		F5876299FFE1C74613AB4747 /* MenuBarHint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA75780C3AA9A0FD9726A77 /* MenuBarHint.swift */; };
@@ -151,6 +152,7 @@
 		5ADDD4E48114E1FE234BB150 /* CloudKitProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitProbe.swift; sourceTree = "<group>"; };
 		5BD5D3779C3ADA48B9820C77 /* HistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStore.swift; sourceTree = "<group>"; };
 		5D886AD42BBF26566EF79845 /* SlotCardCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotCardCopy.swift; sourceTree = "<group>"; };
+		6238F039A823EDE67ECCA77A /* MoreSlotsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreSlotsTests.swift; sourceTree = "<group>"; };
 		644A9655A112A4CEB512EA84 /* ShortcutBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutBadge.swift; sourceTree = "<group>"; };
 		67CCD20A269221ECF634E755 /* UsageEventLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageEventLog.swift; sourceTree = "<group>"; };
 		6F80607680DE710540140313 /* InterTight-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InterTight-Medium.ttf"; sourceTree = "<group>"; };
@@ -359,6 +361,7 @@
 			children = (
 				E337777E4CDCB5C2D945FE7B /* ClipItemTests.swift */,
 				904BC54DEB4EA0FB71573C0A /* HistoryStoreTests.swift */,
+				6238F039A823EDE67ECCA77A /* MoreSlotsTests.swift */,
 				71C0DE85941092439A8BE875 /* PasteboardRichTextTests.swift */,
 				099675B8BFE15486169F4C0B /* SlotStoreTests.swift */,
 				E6611E81B03FD128CF983626 /* WorkspaceDatabaseTests.swift */,
@@ -668,6 +671,7 @@
 			files = (
 				6D6DA5397C868548D19A305D /* ClipItemTests.swift in Sources */,
 				B7A96F91F33FE780998A9FD9 /* HistoryStoreTests.swift in Sources */,
+				EDCE1110A455CEB1540813D7 /* MoreSlotsTests.swift in Sources */,
 				028AFCE7E42D780057C6E8FD /* PasteboardRichTextTests.swift in Sources */,
 				2C243CEF754FA0B312FCF6AD /* SlotStoreTests.swift in Sources */,
 				61A1F47699DC6F24EFC2B605 /* WorkspaceDatabaseTests.swift in Sources */,

@@ -84,6 +84,46 @@ final class WorkspaceDatabaseTests: XCTestCase {
         XCTAssertTrue(record.clipContent()?.isRemoteOnlyFile == true)
     }
 
+    private func slotRecord(library: UUID, order: Int, text: String, at seconds: TimeInterval) -> SlotRecord {
+        let date = Date(timeIntervalSince1970: seconds)
+        var record = SlotRecord(
+            id: UUID(), libraryId: library, order: order, title: "Slot \(order)", kind: .empty,
+            textPayload: nil, imageFileName: nil, linkURL: nil, meta: nil, createdAt: date, updatedAt: date
+        )
+        record.setContent(.text(text), now: date)
+        return record
+    }
+
+    func testTwoDevicesAddingTheSamePositionKeepBothContents() throws {
+        let database = try XCTUnwrap(WorkspaceDatabase())
+        var workspace = SlotsWorkspace.empty()
+        let library = workspace.libraries[0].id
+        workspace.slots.append(slotRecord(library: library, order: 6, text: "de A", at: 1_000))
+        workspace.slots.append(slotRecord(library: library, order: 6, text: "de B", at: 2_000))
+        database.write(workspace)
+
+        let loaded = try XCTUnwrap(database.load())
+        let mine = loaded.slots.filter { $0.libraryId == library }
+        XCTAssertEqual(mine.count, 7)
+        XCTAssertEqual(mine.first { $0.order == 6 }?.clipContent()?.previewText, "de A")
+        XCTAssertEqual(mine.first { $0.order == 7 }?.clipContent()?.previewText, "de B")
+    }
+
+    func testUntouchedSeedSlotsLoseAgainstRealOnesAtTheSamePosition() throws {
+        let database = try XCTUnwrap(WorkspaceDatabase())
+        var workspace = SlotsWorkspace.empty(now: Date(timeIntervalSince1970: 0))
+        let library = workspace.libraries[0].id
+        workspace.slots.append(slotRecord(library: library, order: 1, text: "real uno", at: 5_000))
+        workspace.slots.append(slotRecord(library: library, order: 2, text: "real dos", at: 5_000))
+        database.write(workspace)
+
+        let loaded = try XCTUnwrap(database.load())
+        let mine = loaded.slots.filter { $0.libraryId == library }
+        XCTAssertEqual(mine.count, 5)
+        XCTAssertEqual(mine.first { $0.order == 1 }?.clipContent()?.previewText, "real uno")
+        XCTAssertEqual(mine.first { $0.order == 2 }?.clipContent()?.previewText, "real dos")
+    }
+
     func testImageBytesTravelAndComeBackAsAFile() throws {
         let database = try XCTUnwrap(WorkspaceDatabase())
         var workspace = SlotsWorkspace.empty()

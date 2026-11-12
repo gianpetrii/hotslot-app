@@ -192,11 +192,27 @@ final class WorkspaceDatabase {
                 if entity === keep { survivors.append(entity) } else { context.delete(entity); changed = true }
             }
         }
-        struct Position: Hashable { let libraryId: UUID; let order: Int }
-        for group in Dictionary(grouping: survivors, by: { Position(libraryId: $0.libraryId, order: $0.order) }).values
-        where group.count > 1 {
-            let keep = group.max { $0.updatedAt < $1.updatedAt }
-            for entity in group where entity !== keep { context.delete(entity); changed = true }
+        // Dos slots en la misma posición (dos dispositivos agregaron uno a la vez): no se pierde contenido.
+        // Se descartan los de arranque intactos; si quedan varios con contenido, el más antiguo conserva
+        // la posición y los demás pasan al final, en un orden que sale igual en todos los dispositivos.
+        for (_, library) in Dictionary(grouping: survivors, by: \.libraryId) {
+            var maxOrder = library.map(\.order).max() ?? 0
+            for collision in Dictionary(grouping: library, by: \.order).values where collision.count > 1 {
+                let real = collision.filter { !$0.isPristineSeed }
+                if real.isEmpty {
+                    for extra in collision.dropFirst() { context.delete(extra); changed = true }
+                    continue
+                }
+                for seed in collision where seed.isPristineSeed { context.delete(seed); changed = true }
+                let ordered = real.sorted {
+                    ($0.createdAt, $0.uuid.uuidString) < ($1.createdAt, $1.uuid.uuidString)
+                }
+                for moved in ordered.dropFirst() {
+                    maxOrder += 1
+                    moved.order = maxOrder
+                    changed = true
+                }
+            }
         }
 
         if changed { try? context.save() }

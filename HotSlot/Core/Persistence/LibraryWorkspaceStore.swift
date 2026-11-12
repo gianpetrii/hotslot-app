@@ -118,7 +118,7 @@ final class LibraryWorkspaceStore {
                     libraryId: id,
                     order: slotOrder,
                     title: "Slot \(slotOrder)",
-                    kind: .text,
+                    kind: .empty,
                     textPayload: nil,
                     imageFileName: nil,
                     linkURL: nil,
@@ -267,6 +267,82 @@ final class LibraryWorkspaceStore {
         guard let idx = workspace.slots.firstIndex(where: { $0.libraryId == libraryId && $0.order == order }) else { return }
         workspace.slots[idx].setContent(content)
         save()
+    }
+
+    // MARK: - Slots ilimitados
+
+    /// Cuántos slots tiene una biblioteca.
+    func slotCount(in libraryId: UUID) -> Int {
+        workspace.slots.filter { $0.libraryId == libraryId }.count
+    }
+
+    /// Agrega un slot al final de la biblioteca, vacío o con `content`. Devuelve su posición.
+    @discardableResult
+    func addSlot(toLibraryId libraryId: UUID, content: ClipContent? = nil, title: String? = nil) -> Int? {
+        guard workspace.libraries.contains(where: { $0.id == libraryId }) else { return nil }
+        let now = Date()
+        let order = (workspace.slots.filter { $0.libraryId == libraryId }.map(\.order).max() ?? 0) + 1
+        var record = SlotRecord(
+            id: UUID(),
+            libraryId: libraryId,
+            order: order,
+            title: title ?? "Slot \(order)",
+            kind: .empty,
+            textPayload: nil,
+            imageFileName: nil,
+            linkURL: nil,
+            meta: nil,
+            createdAt: now,
+            updatedAt: now
+        )
+        if let content { record.setContent(content, now: now) }
+        workspace.slots.append(record)
+        save()
+        return order
+    }
+
+    /// Quita un slot y baja una posición a los que venían después, así los atajos siguen a la posición.
+    @discardableResult
+    func removeSlot(libraryId: UUID, order: Int) -> Bool {
+        guard let idx = workspace.slots.firstIndex(where: { $0.libraryId == libraryId && $0.order == order }) else {
+            return false
+        }
+        workspace.slots.remove(at: idx)
+        renumberSlots(in: libraryId)
+        save()
+        return true
+    }
+
+    /// Mueve el slot (con su contenido, nombre y fondo) de la posición `from` a `to`.
+    /// Los demás se corren. Es distinto de intercambiar: el atajo sigue a la posición.
+    @discardableResult
+    func moveSlot(libraryId: UUID, from: Int, to: Int) -> Bool {
+        var ordered = slots(for: libraryId)
+        guard from != to,
+              let fromIdx = ordered.firstIndex(where: { $0.order == from }),
+              (1...ordered.count).contains(to) else { return false }
+        let moved = ordered.remove(at: fromIdx)
+        ordered.insert(moved, at: to - 1)
+        let now = Date()
+        for (offset, record) in ordered.enumerated() where record.order != offset + 1 {
+            if let idx = workspace.slots.firstIndex(where: { $0.id == record.id }) {
+                workspace.slots[idx].order = offset + 1
+                workspace.slots[idx].updatedAt = now
+            }
+        }
+        save()
+        return true
+    }
+
+    /// Deja las posiciones de una biblioteca en 1…N, sin huecos, respetando el orden actual.
+    private func renumberSlots(in libraryId: UUID) {
+        let now = Date()
+        for (offset, record) in slots(for: libraryId).enumerated() where record.order != offset + 1 {
+            if let idx = workspace.slots.firstIndex(where: { $0.id == record.id }) {
+                workspace.slots[idx].order = offset + 1
+                workspace.slots[idx].updatedAt = now
+            }
+        }
     }
 
     /// Pasa un slot con contenido a otra biblioteca, con su contenido, nombre y fondo.

@@ -1,10 +1,11 @@
 import Foundation
 
-/// Los 5 slots fijos de la biblioteca activa.
+/// Los slots de la biblioteca activa. Los primeros 5 tienen atajo.
 /// No guarda nada propio: lee y escribe directamente en el workspace, que es la única fuente de verdad.
 @MainActor
 @Observable
 final class SlotStore {
+    /// Cuántos slots tienen atajo (por posición). Una biblioteca puede tener más.
     static let slotCount = 5
 
     private let workspace: LibraryWorkspaceStore
@@ -18,7 +19,7 @@ final class SlotStore {
         self.init(workspace: LibraryWorkspaceStore())
     }
 
-    /// Siempre 5, ordenados. Si a la biblioteca le faltara alguno, se muestra vacío.
+    /// Los 5 slots con atajo, ordenados. Si a la biblioteca le faltara alguno, se muestra vacío.
     var slots: [Slot] {
         let records = workspace.activeSlots()
         return (1...Self.slotCount).map { index in
@@ -34,8 +35,39 @@ final class SlotStore {
         }
     }
 
+    /// Todos los slots de la biblioteca activa, ordenados por posición.
+    var allSlots: [Slot] {
+        workspace.activeSlots().map { record in
+            Slot(
+                index: record.order,
+                label: record.title,
+                content: record.clipContent(),
+                cardBackgroundHex: record.cardBackgroundHex
+            )
+        }
+    }
+
+    var totalSlotCount: Int { workspace.slotCount(in: workspace.workspace.activeLibraryId) }
+
+    /// Agrega un slot al final de la biblioteca activa. Devuelve su posición.
+    @discardableResult
+    func addSlot(content: ClipContent? = nil) -> Int? {
+        workspace.addSlot(toLibraryId: workspace.workspace.activeLibraryId, content: content)
+    }
+
+    @discardableResult
+    func removeSlot(index: Int) -> Bool {
+        workspace.removeSlot(libraryId: workspace.workspace.activeLibraryId, order: index)
+    }
+
+    /// Mueve el slot a otra posición; los demás se corren.
+    @discardableResult
+    func moveSlot(from: Int, to: Int) -> Bool {
+        workspace.moveSlot(libraryId: workspace.workspace.activeLibraryId, from: from, to: to)
+    }
+
     func slot(at index: Int) -> Slot? {
-        slots.first { $0.index == index }
+        allSlots.first { $0.index == index }
     }
 
     func updateLabel(index: Int, label: String) {

@@ -6,6 +6,8 @@ enum SlotKind: String, Codable, Sendable, CaseIterable {
     case image
     case color
     case file
+    /// Slot sin contenido (recién creado o vaciado).
+    case empty
 }
 
 /// Biblioteca de slots (Trabajo, Personal, …).
@@ -57,7 +59,7 @@ struct SlotRecord: Codable, Identifiable, Equatable, Sendable {
         fileName = nil
         switch content {
         case nil:
-            kind = .text
+            kind = .empty
             meta = nil
         case .text(let string):
             kind = string.hasPrefix("http") ? .link : .text
@@ -98,6 +100,8 @@ struct SlotRecord: Codable, Identifiable, Equatable, Sendable {
             if let fileName, !fileName.isEmpty {
                 return .file(path: ClipContent.remoteOnlyPathPrefix + fileName, bookmark: nil)
             }
+            return nil
+        case .empty:
             return nil
         }
     }
@@ -159,7 +163,7 @@ struct SlotsWorkspace: Codable, Equatable, Sendable {
                         libraryId: library.id,
                         order: order,
                         title: "Slot \(order)",
-                        kind: .text,
+                        kind: .empty,
                         textPayload: nil,
                         imageFileName: nil,
                         linkURL: nil,
