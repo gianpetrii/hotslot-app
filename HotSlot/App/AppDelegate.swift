@@ -212,6 +212,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self.appState?.focusTracker.capture()
             self.panelController?.show()
             self.appState?.isPanelVisible = true
+            // Al volver a modo menú la app pierde el foco; sin esto Esc no llega al panel reabierto.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+                NSApp.activate(ignoringOtherApps: true)
+                self?.panelController?.window?.makeKeyAndOrderFront(nil)
+            }
         }
 
         if shouldReopenPanelAfterUtility {
