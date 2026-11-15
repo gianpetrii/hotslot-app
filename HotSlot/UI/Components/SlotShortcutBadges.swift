@@ -9,11 +9,11 @@ struct SlotShortcutBadges: View {
     @State private var isHovering = false
 
     private var pasteName: KeyboardShortcuts.Name {
-        KeyboardShortcuts.Name.pasteSlotNames[slotIndex - 1]
+        KeyboardShortcuts.Name.pasteSlotName(slotIndex)
     }
 
     private var copyName: KeyboardShortcuts.Name {
-        KeyboardShortcuts.Name.copyToSlotNames[slotIndex - 1]
+        KeyboardShortcuts.Name.copyToSlotName(slotIndex)
     }
 
     var body: some View {

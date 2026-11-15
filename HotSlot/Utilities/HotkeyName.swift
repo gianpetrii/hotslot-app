@@ -24,8 +24,25 @@ extension KeyboardShortcuts.Name {
         [.copyToSlot1, .copyToSlot2, .copyToSlot3, .copyToSlot4, .copyToSlot5]
     }
 
+    /// Los slots 6 en adelante no traen atajo: el usuario puede asignarles uno (hasta este número de posición).
+    static let maxShortcutSlot = 60
+
+    /// Atajo de pegar del slot en esa posición. Del 6 en adelante no tiene valor por defecto.
+    static func pasteSlotName(_ index: Int) -> KeyboardShortcuts.Name {
+        index <= pasteSlotNames.count ? pasteSlotNames[index - 1] : Self("pasteSlot\(index)")
+    }
+
+    /// Atajo de guardar del slot en esa posición. Del 6 en adelante no tiene valor por defecto.
+    static func copyToSlotName(_ index: Int) -> KeyboardShortcuts.Name {
+        index <= copyToSlotNames.count ? copyToSlotNames[index - 1] : Self("copyToSlot\(index)")
+    }
+
+    /// Posiciones sin atajo de fábrica que el usuario puede configurar.
+    private static var extraSlotRange: ClosedRange<Int> { (pasteSlotNames.count + 1) ... maxShortcutSlot }
+
     static var allShortcutNames: [KeyboardShortcuts.Name] {
         [.togglePanel] + pasteSlotNames + copyToSlotNames
+            + extraSlotRange.map(pasteSlotName) + extraSlotRange.map(copyToSlotName)
     }
 
     /// Restaura todos los atajos a los valores por defecto del código.

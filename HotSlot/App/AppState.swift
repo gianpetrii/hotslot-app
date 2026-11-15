@@ -78,6 +78,10 @@ final class AppState {
     /// La grilla hace scroll hasta este slot.
     var slotScrollTarget: SlotScrollTarget?
     var swapHighlight: SwapHighlight?
+    /// Sube cada vez que se abre la barra del notch: vuelve a la primera página de slots.
+    var notchOpenCount = 0
+    /// Pedido de cambio de página desde la rueda del mouse sobre la barra (+1 / -1).
+    var notchPageRequest: Int?
 
     /// Sheet del panel: elegir slot cuando «Guardar portapapeles» y no hay vacíos.
     var isSaveClipboardSlotPickerPresented = false
@@ -446,6 +450,24 @@ final class AppState {
         } else {
             presentNotch(.plain("\(sourceTitle ?? "Slot \(source)") ⇄ \(destinationTitle ?? "Slot \(destination)")"))
         }
+    }
+
+    /// Elimina un slot sin atajo de fábrica (6 en adelante). Lo que tenía pasa al historial y los siguientes suben un lugar.
+    func deleteSlot(index: Int) {
+        guard index > SlotStore.slotCount, slotStore.slot(at: index) != nil else { return }
+        if let previous = slotStore.content(at: index) {
+            historyStore.add(
+                ClipItem(
+                    content: previous,
+                    createdAt: Date(),
+                    sourceAppName: BrandDisplay.name,
+                    sourceAppBundleID: Bundle.main.bundleIdentifier
+                )
+            )
+        }
+        guard slotStore.removeSlot(index: index) else { return }
+        UsageEventLog.shared.record("slot_eliminar", detail: "\(index)")
+        showToast("Slot eliminado")
     }
 
     /// Manda un slot al final de la biblioteca; los demás se corren para tapar el hueco.

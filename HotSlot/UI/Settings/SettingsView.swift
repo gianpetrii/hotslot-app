@@ -52,11 +52,13 @@ struct SettingsView: View {
         }
         .frame(width: 720, height: 540)
         .background {
-            LinearGradient(
-                colors: [Color(slotsHex: 0xEFE7DC), Color(slotsHex: 0xE7DED2)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+            // Mismo vidrio que el panel y el notch.
+            ZStack {
+                SlotsColor.vidrioTinte
+                VisualEffectBackground(material: .hudWindow, blendingMode: .behindWindow, cornerRadius: 0)
+                    .opacity(0.85)
+            }
+            .ignoresSafeArea()
         }
         .onAppear {
             confirmLibraryDelete = AppSettings.load().confirmLibraryDelete

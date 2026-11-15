@@ -24,6 +24,8 @@ struct SlotGridView: View {
 
     @State private var scrollMetrics = ScrollMetrics()
     @State private var scrollPosition = ScrollPosition()
+    /// Posición de cada card (por número de slot) dentro del contenido, para animar el intercambio.
+    @State private var cardFrames: [Int: CGRect] = [:]
     @State private var gridFrame: CGRect = .zero
 
     /// Franja (en pt) donde, mientras arrastrás, la grilla se desplaza sola.
@@ -86,6 +88,7 @@ struct SlotGridView: View {
                     }
                     .padding(.horizontal, shadowSide)
                     .padding(.vertical, shadowVertical)
+                    .coordinateSpace(name: Self.contentSpace)
                 }
                 .scrollIndicators(.hidden)
                 .scrollPosition($scrollPosition)
@@ -149,6 +152,7 @@ struct SlotGridView: View {
         }
     }
 
+    private static let contentSpace = "slotGridContent"
     private static let newSlotAnchor = "new-slot"
     private static let topAnchor = "grid-top"
 
@@ -178,7 +182,7 @@ struct SlotGridView: View {
     private var noShortcutDivider: some View {
         HStack(spacing: 12) {
             Rectangle().fill(SlotsColor.tinta.opacity(0.14)).frame(height: 1)
-            Text("Sin atajo · arrastrá un slot arriba de esta línea para darle uno")
+            Text("Sin atajo de fábrica · asignale uno desde la card o arrastralo arriba de esta línea")
                 .font(.system(size: 12))
                 .foregroundStyle(SlotsColor.textoSecundario)
                 .fixedSize()
@@ -231,11 +235,28 @@ struct SlotGridView: View {
                 },
                 onDiscardNew: {
                     appState.discardPendingNewSlot()
-                }
+                },
+                onDelete: slot.index > SlotStore.slotCount && slot.content == nil ? {
+                    withAnimation(.easeInOut(duration: 0.22)) { appState.deleteSlot(index: slot.index) }
+                } : nil
             )
             .opacity(slotSearchOpacity(for: slot))
-            .modifier(SwapFlashModifier(isSwapped: appState.swapHighlight?.indices.contains(index) == true))
+            .onGeometryChange(for: CGRect.self) { $0.frame(in: .named(Self.contentSpace)) } action: { cardFrames[index] = $0 }
+            .modifier(SwapFlashModifier(isSwapped: isSwapped(index), travel: swapTravel(for: index)))
+            .zIndex(isSwapped(index) ? 1 : 0)
         }
+    }
+
+    private func isSwapped(_ index: Int) -> Bool {
+        appState.swapHighlight?.indices.contains(index) == true
+    }
+
+    /// Cuánto se desplaza la card desde el lugar del otro slot hasta el suyo.
+    private func swapTravel(for index: Int) -> CGSize {
+        guard let indices = appState.swapHighlight?.indices, indices.contains(index),
+              let other = indices.first(where: { $0 != index }),
+              let mine = cardFrames[index], let theirs = cardFrames[other] else { return .zero }
+        return CGSize(width: theirs.minX - mine.minX, height: theirs.minY - mine.minY)
     }
 
     private func slotSearchOpacity(for slot: Slot) -> Double {
@@ -258,6 +279,8 @@ private struct SlotCardView: View {
     let onReplaceFromClipboard: () -> Void
     let onMoveToLibrary: (UUID) -> Void
     let onDiscardNew: () -> Void
+    /// Solo los slots sin atajo de fábrica (6 en adelante) se pueden eliminar.
+    var onDelete: (() -> Void)?
     @State private var didStartNewSlotEdit = false
     @State private var isHovering = false
     @State private var isDropTarget = false
@@ -281,12 +304,15 @@ private struct SlotCardView: View {
         beginLabelEdit()
     }
 
-    /// Solo los primeros 5 slots tienen atajo, por posición.
+    /// Atajo que muestra la card, por posición. Los primeros 5 traen uno de fábrica;
+    /// del 6 en adelante solo si el usuario se lo asignó.
     private var visibleShortcut: KeyboardShortcuts.Name? {
-        guard (1...SlotStore.slotCount).contains(slot.index) else { return nil }
-        return hasContent
-            ? KeyboardShortcuts.Name.pasteSlotNames[slot.index - 1]
-            : KeyboardShortcuts.Name.copyToSlotNames[slot.index - 1]
+        let name = hasContent
+            ? KeyboardShortcuts.Name.pasteSlotName(slot.index)
+            : KeyboardShortcuts.Name.copyToSlotName(slot.index)
+        if slot.index <= SlotStore.slotCount { return name }
+        _ = appState.shortcutEpoch
+        return KeyboardShortcuts.getShortcut(for: name) == nil ? nil : name
     }
 
     var body: some View {
@@ -424,7 +450,14 @@ private struct SlotCardView: View {
 
     private var headerRow: some View {
         HStack(alignment: .center, spacing: 6) {
-            if hasContent, isHovering {
+            if let onDelete, isHovering {
+                Button(action: onDelete) {
+                    SlotHeaderActionChip(systemImage: "trash", foreground: headerChipInk, plate: headerChipPlate)
+                }
+                .buttonStyle(.plain)
+                .help("Eliminar slot")
+                .transition(.opacity.combined(with: .scale(scale: 0.88)))
+            } else if hasContent, isHovering {
                 Button(action: onClear) {
                     SlotHeaderActionChip(systemImage: "xmark", foreground: headerChipInk, plate: headerChipPlate)
                 }
@@ -453,14 +486,24 @@ private struct SlotCardView: View {
                     SlotShortcutEditorPopover(slotIndex: slot.index)
                 }
             } else {
-                Text("Sin atajo")
-                    .font(SlotsFont.etiqueta)
-                    .foregroundStyle(headerChipInk.opacity(0.8))
-                    .padding(.horizontal, 5)
-                    .frame(minHeight: HotSlotDesign.slotHeaderChipHeight)
-                    .background {
-                        RoundedRectangle(cornerRadius: 6, style: .continuous).fill(headerChipPlate)
-                    }
+                // Sin atajo de fábrica: un clic abre el editor para asignarle uno.
+                Button {
+                    isEditingShortcuts = true
+                } label: {
+                    Text("+ Atajo")
+                        .font(SlotsFont.etiqueta)
+                        .foregroundStyle(headerChipInk.opacity(0.8))
+                        .padding(.horizontal, 5)
+                        .frame(minHeight: HotSlotDesign.slotHeaderChipHeight)
+                        .background {
+                            RoundedRectangle(cornerRadius: 6, style: .continuous).fill(headerChipPlate)
+                        }
+                }
+                .buttonStyle(.plain)
+                .help("Este slot no tiene atajo · clic para asignarle uno")
+                .popover(isPresented: $isEditingShortcuts, arrowEdge: .leading) {
+                    SlotShortcutEditorPopover(slotIndex: slot.index)
+                }
             }
         }
     }
@@ -563,6 +606,9 @@ private struct SlotCardView: View {
         Button(appState.settings.clickItemAction == .copyToClipboard ? "Copiar" : "Pegar") { confirmCopy() }
         if hasContent {
             Button("Vaciar slot", role: .destructive) { onClear() }
+        }
+        if let onDelete {
+            Button("Eliminar slot", role: .destructive) { onDelete() }
         }
     }
 
@@ -897,7 +943,7 @@ private struct NewSlotCardView: View {
     }
 }
 
-private struct SlotReadableText: ViewModifier {
+struct SlotReadableText: ViewModifier {
     var onDark: Bool
 
     func body(content: Content) -> some View {
@@ -926,7 +972,8 @@ private struct SlotHeaderActionChip: View {
 /// Cuando dos slots se intercambian: pulso de escala y aro naranja para que se note qué pasó.
 private struct SwapFlashModifier: ViewModifier {
     var isSwapped: Bool
-    @State private var pulse = false
+    var travel: CGSize = .zero
+    @State private var offset: CGSize = .zero
 
     func body(content: Content) -> some View {
         content
@@ -936,14 +983,15 @@ private struct SwapFlashModifier: ViewModifier {
                     .opacity(isSwapped ? 1 : 0)
                     .allowsHitTesting(false)
             }
-            .scaleEffect(pulse ? 1.04 : 1)
+            .offset(offset)
             .animation(.easeOut(duration: 0.5), value: isSwapped)
             .onChange(of: isSwapped) { _, swapped in
                 guard swapped else { return }
-                withAnimation(.spring(response: 0.22, dampingFraction: 0.45)) { pulse = true }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.22) {
-                    withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) { pulse = false }
-                }
+                // La card arranca en el lugar del otro slot y se desliza al suyo.
+                var instant = Transaction()
+                instant.disablesAnimations = true
+                withTransaction(instant) { offset = travel }
+                withAnimation(.spring(response: 0.42, dampingFraction: 0.82)) { offset = .zero }
             }
     }
 }

@@ -58,6 +58,7 @@ final class NotchShelfController {
         let shelfView = NotchShelfHitView { [weak self] inside in
             self?.setPointerInside(inside)
         }
+        shelfView.onScroll = { [weak self] direction in self?.appState.notchPageRequest = direction }
         shelfView.frame = hosting.frame
         shelfView.addSubview(hosting)
         shelf.contentView = shelfView
@@ -158,10 +159,11 @@ final class NotchShelfController {
     }
 
     private func setPointerInside(_ inside: Bool) {
+        // Con la barra cerrándose no se reabre: solo el notch (o un arrastre de archivo) la abre.
+        guard isOpen else { return }
         if inside || pointerIsInShelfZone() {
             hideWork?.cancel()
             hideWork = nil
-            show()
         } else {
             scheduleHide()
         }
@@ -173,6 +175,8 @@ final class NotchShelfController {
         startHoverWatch()
         if isOpen { return }
         isOpen = true
+        shelfPanel.ignoresMouseEvents = false
+        appState.notchOpenCount += 1
         Telemetry.notchOpened()
         let open = shelfFrame(on: screen, open: true)
         let closed = shelfFrame(on: screen, open: false)
@@ -194,7 +198,7 @@ final class NotchShelfController {
             self.hide(animated: true)
         }
         hideWork = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: work)
+        DispatchQueue.main.asyncAfter(deadline: .now() + NotchShelfMetrics.hideDelay, execute: work)
     }
 
     /// Mientras la barra está abierta, la posición real del mouse manda (el tracking se pierde al taparse).
@@ -255,6 +259,7 @@ final class NotchShelfController {
         if !force, pointerIsInShelfZone() { return }
         guard isOpen, let shelfPanel, let screen = anchorScreen() else { return }
         isOpen = false
+        shelfPanel.ignoresMouseEvents = true   // mientras se desvanece no debe reaccionar al mouse
         pointer.location = nil
         let closed = shelfFrame(on: screen, open: false)
         guard animated else {
@@ -265,7 +270,7 @@ final class NotchShelfController {
             return
         }
         NSAnimationContext.runAnimationGroup({ context in
-            context.duration = HotSlotDesign.closeDuration
+            context.duration = NotchShelfMetrics.closeDuration
             context.timingFunction = HotSlotDesign.closeTiming
             shelfPanel.animator().setFrame(closed, display: true)
             shelfPanel.animator().alphaValue = 0
@@ -347,6 +352,9 @@ final class NotchShelfPointer {
 
 private final class NotchShelfHitView: NSView {
     var onInside: (Bool) -> Void
+    /// Rueda o trackpad: +1 página siguiente, -1 anterior.
+    var onScroll: ((Int) -> Void)?
+    private var scrollAccumulator: CGFloat = 0
 
     init(onInside: @escaping (Bool) -> Void) {
         self.onInside = onInside
@@ -367,6 +375,16 @@ private final class NotchShelfHitView: NSView {
             owner: self,
             userInfo: nil
         ))
+    }
+
+    override func scrollWheel(with event: NSEvent) {
+        // Vertical (rueda) u horizontal (trackpad): cada ~24 pt acumulados pasan una página.
+        let delta = abs(event.scrollingDeltaY) >= abs(event.scrollingDeltaX) ? -event.scrollingDeltaY : -event.scrollingDeltaX
+        scrollAccumulator += delta
+        if event.phase == .ended || event.phase == .cancelled { scrollAccumulator = 0 }
+        guard abs(scrollAccumulator) >= 24 else { return }
+        onScroll?(scrollAccumulator > 0 ? 1 : -1)
+        scrollAccumulator = 0
     }
 
     override func mouseEntered(with event: NSEvent) { onInside(true) }

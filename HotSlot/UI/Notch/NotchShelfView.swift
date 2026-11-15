@@ -41,21 +41,32 @@ struct NotchShelfView: View {
     let onOpenPanel: () -> Void
 
     @State private var isOpenPanelHovering = false
+    @State private var page = 0
+    @State private var pageDirection = 1
 
     var body: some View {
         let shape = RoundedRectangle(cornerRadius: NotchShelfMetrics.shelfCorner, style: .continuous)
 
         VStack(alignment: .leading, spacing: NotchShelfMetrics.sectionGap) {
-            HStack(spacing: NotchShelfMetrics.gap) {
-                ForEach(appState.slotStore.slots) { slot in
-                    NotchShelfTile(
-                        slot: slot,
-                        pointer: pointer,
-                        onActivate: { onActivateSlot(slot.index) },
-                        onDropFile: { url in onDropFile(slot.index, url) }
-                    )
+            // Cada página trae hasta 5 slots; al cambiar de página la fila entra desde el lado hacia donde vas.
+            ZStack(alignment: .leading) {
+                HStack(spacing: NotchShelfMetrics.gap) {
+                    ForEach(pageSlots) { slot in
+                        NotchShelfTile(
+                            slot: slot,
+                            pointer: pointer,
+                            onActivate: { onActivateSlot(slot.index) },
+                            onDropFile: { url in onDropFile(slot.index, url) }
+                        )
+                    }
                 }
+                .id(page)
+                .transition(.asymmetric(
+                    insertion: .modifier(active: ShiftFade(x: CGFloat(pageDirection) * 56, opacity: 0), identity: ShiftFade(x: 0, opacity: 1)),
+                    removal: .modifier(active: ShiftFade(x: CGFloat(-pageDirection) * 56, opacity: 0), identity: ShiftFade(x: 0, opacity: 1))
+                ))
             }
+            .frame(width: NotchShelfMetrics.contentWidth - NotchShelfMetrics.pad * 2, height: NotchShelfMetrics.tile, alignment: .leading)
 
             HStack(spacing: SlotsSpace.m) {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -76,6 +87,8 @@ struct NotchShelfView: View {
                     .padding(.horizontal, 2)
                 }
                 .scrollClipDisabled()
+
+                if pageCount > 1 { pager }
 
                 openPanelButton
             }
@@ -105,6 +118,45 @@ struct NotchShelfView: View {
         .frame(width: NotchShelfMetrics.panelWidth, height: NotchShelfMetrics.panelHeight)
         .coordinateSpace(name: shelfSpace)
         .ignoresSafeArea()
+        .onChange(of: appState.notchOpenCount) { _, _ in page = 0 }
+        .onChange(of: activeId) { _, _ in goToPage(0) }
+        .onChange(of: pageCount) { _, count in if page >= count { page = max(0, count - 1) } }
+        .onChange(of: appState.notchPageRequest) { _, request in
+            guard let request else { return }
+            goToPage(page + request)
+            appState.notchPageRequest = nil
+        }
+    }
+
+    // MARK: Páginas
+
+    private var pageCount: Int {
+        max(1, (appState.slotStore.totalSlotCount + NotchShelfMetrics.pageSize - 1) / NotchShelfMetrics.pageSize)
+    }
+
+    private var pageSlots: [Slot] {
+        let start = page * NotchShelfMetrics.pageSize
+        return appState.slotStore.allSlots.filter { $0.index > start && $0.index <= start + NotchShelfMetrics.pageSize }
+    }
+
+    private func goToPage(_ target: Int) {
+        let clamped = min(max(target, 0), pageCount - 1)
+        guard clamped != page else { return }
+        pageDirection = clamped > page ? 1 : -1
+        withAnimation(.easeInOut(duration: 0.22)) { page = clamped }
+    }
+
+    /// Flechas y «1/3»: mismo estilo que el botón de abrir el panel.
+    private var pager: some View {
+        HStack(spacing: SlotsSpace.s) {
+            NotchPageButton(systemImage: "chevron.left", isEnabled: page > 0, pointer: pointer) { goToPage(page - 1) }
+            Text("\(page + 1)/\(pageCount)")
+                .font(SlotsFont.etiqueta)
+                .foregroundStyle(SlotsColor.textoSecundario)
+                .monospacedDigit()
+                .contentTransition(.numericText())
+            NotchPageButton(systemImage: "chevron.right", isEnabled: page < pageCount - 1, pointer: pointer) { goToPage(page + 1) }
+        }
     }
 
     // MARK: Datos
@@ -135,6 +187,44 @@ struct NotchShelfView: View {
         .slotsHoverLift(isOpenPanelHovering, scales: true)
         .animation(.easeOut(duration: 0.16), value: isOpenPanelHovering)
         .pointerHover(pointer, isHovering: $isOpenPanelHovering)
+    }
+}
+
+/// Desplazamiento + fundido para el cambio de página.
+private struct ShiftFade: ViewModifier {
+    let x: CGFloat
+    let opacity: Double
+    func body(content: Content) -> some View {
+        content.offset(x: x).opacity(opacity)
+    }
+}
+
+private struct NotchPageButton: View {
+    let systemImage: String
+    let isEnabled: Bool
+    let pointer: NotchShelfPointer
+    let action: () -> Void
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(SlotsColor.textoSecundario)
+                .frame(width: SlotsRadius.controlAlto, height: SlotsRadius.controlAlto)
+                .background {
+                    Circle()
+                        .fill(Color.white.opacity(0.85))
+                        .overlay { Circle().strokeBorder(Color.black.opacity(0.12), lineWidth: 1) }
+                }
+        }
+        .buttonStyle(.plain)
+        .disabled(!isEnabled)
+        .opacity(isEnabled ? 1 : 0.35)
+        .slotsHoverLift(isHovering && isEnabled, scales: true)
+        .animation(.easeOut(duration: 0.16), value: isHovering)
+        .animation(.easeOut(duration: 0.16), value: isEnabled)
+        .pointerHover(pointer, isHovering: $isHovering)
     }
 }
 
@@ -187,23 +277,26 @@ private struct NotchShelfTile: View {
                             .font(SlotsFont.etiqueta)
                             .foregroundStyle(prefersLight ? Color.white.opacity(0.85) : SlotsColor.textoSecundario)
                             .lineLimit(1)
+                            .modifier(SlotReadableText(onDark: prefersLight))
                         Spacer(minLength: 0)
                         // Solo lectura: enseña el atajo. Se edita desde el panel.
-                        SlotHandoffShortcutChip(
-                            name: hasContent
-                                ? KeyboardShortcuts.Name.pasteSlotNames[slot.index - 1]
-                                : KeyboardShortcuts.Name.copyToSlotNames[slot.index - 1],
-                            ink: SlotsColor.textoSecundario,
-                            plate: prefersLight ? Color.white.opacity(0.9) : SlotsColor.teclaFondo
-                        )
-                        .layoutPriority(1)
+                        // Sin sombra sobre la pastilla: la sombra del texto la dejaba sucia sobre imágenes y colores.
+                        if let shortcutName {
+                            SlotHandoffShortcutChip(
+                                name: shortcutName,
+                                ink: SlotsColor.textoSecundario,
+                                plate: prefersLight ? Color.white.opacity(0.92) : SlotsColor.teclaFondo
+                            )
+                            .layoutPriority(1)
+                        }
                     }
 
                     if case .file = slot.content, let content = slot.content {
                         FileClipIconView(content: content, side: 40)
                         Text(content.fileName)
                             .font(SlotsFont.etiqueta)
-                            .foregroundStyle(SlotsColor.tinta)
+                            .foregroundStyle(prefersLight ? Color.white : SlotsColor.tinta)
+                            .modifier(SlotReadableText(onDark: prefersLight))
                             .lineLimit(1)
                             .truncationMode(.middle)
                     } else if let preview = SlotCardCopy.contentBodyPreview(for: slot), !isImage {
@@ -212,6 +305,7 @@ private struct NotchShelfTile: View {
                             .foregroundStyle(prefersLight ? Color.white : SlotsColor.tinta)
                             .lineLimit(3)
                             .multilineTextAlignment(.leading)
+                            .modifier(SlotReadableText(onDark: prefersLight))
                     } else if !hasContent {
                         // Sin botón de guardar: el clic en un slot vacío guarda el portapapeles.
                         Text("Clic para guardar el portapapeles")
@@ -228,8 +322,8 @@ private struct NotchShelfTile: View {
                         .foregroundStyle(titleColor)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
+                        .modifier(SlotReadableText(onDark: prefersLight))
                 }
-                .shadow(color: Color.black.opacity(prefersLight ? 0.55 : 0), radius: 5, y: 1)
                 .padding(SlotsSpace.s + 4)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .background { scrims }
@@ -273,6 +367,15 @@ private struct NotchShelfTile: View {
     }
 
     // MARK: Propiedades del slot
+
+    /// Atajo visible: los primeros 5 siempre; del 6 en adelante solo si el usuario se lo asignó.
+    private var shortcutName: KeyboardShortcuts.Name? {
+        let name = hasContent
+            ? KeyboardShortcuts.Name.pasteSlotName(slot.index)
+            : KeyboardShortcuts.Name.copyToSlotName(slot.index)
+        if slot.index <= SlotStore.slotCount { return name }
+        return KeyboardShortcuts.getShortcut(for: name) == nil ? nil : name
+    }
 
     private var hasContent: Bool { slot.content != nil }
 

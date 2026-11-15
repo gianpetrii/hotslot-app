@@ -34,6 +34,10 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             settingsWindow.level = NSWindow.Level(rawValue: NSWindow.Level.floating.rawValue + 2)
             settingsWindow.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
             settingsWindow.animationBehavior = .none
+            // Fondo de vidrio como el del panel: la ventana deja ver el escritorio desenfocado.
+            settingsWindow.isOpaque = false
+            settingsWindow.backgroundColor = .clear
+            settingsWindow.titlebarAppearsTransparent = true
             settingsWindow.contentMinSize = WindowPlacement.settingsWindowSize
             settingsWindow.contentMaxSize = WindowPlacement.settingsWindowSize
             window = settingsWindow

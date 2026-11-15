@@ -6,8 +6,12 @@
 
 - Cada biblioteca puede tener más de 5 slots. Los primeros 5 conservan el atajo según su posición; del 6 en adelante van debajo de una línea «Sin atajo» y la zona de slots tiene scroll.
 - La card punteada «Nuevo slot» está siempre al final. Con un clic o con ⌘N crea un slot nuevo con el nombre en edición: Enter lo guarda, Esc lo descarta y ⌘V guarda ahí lo que tengas copiado.
-- Arrastrar algo del historial, o un archivo, sobre «Nuevo slot» crea un slot con ese contenido. «Guardar portapapeles» también crea un slot al final.
-- Arrastrar un slot sobre otro lo mueve y corre a los demás, en lugar de intercambiar sus contenidos. Si queda entre los 5 primeros, avisa con qué atajo quedó.
+- Arrastrar algo del historial, o un archivo, sobre «Nuevo slot» crea un slot con ese contenido. «Guardar portapapeles» usa el primer slot vacío y, si están todos ocupados, crea uno al final.
+- Arrastrar un slot sobre otro los intercambia (contenido, nombre y fondo) y el resto queda igual; las dos cards se deslizan al lugar de la otra con un aro naranja y el notch avisa. Si uno llega a los 5 primeros, avisa con qué atajo quedó.
+- Al arrastrar cerca del borde de la grilla, esta se desplaza sola.
+- Los slots del 6 en adelante pueden tener atajos propios: sin atajo de fábrica, se asignan desde «+ Atajo» en la card.
+- Los slots vacíos del 6 en adelante se pueden eliminar (tacho en la card o menú «Eliminar slot») y los siguientes suben un lugar; si tienen contenido, la cruz los vacía primero.
+- El notch pasa de página con flechas, la rueda o el trackpad cuando hay más de 5 slots; se cierra más rápido y los atajos sobre imágenes y colores se leen limpios.
 
 ## [1.1.0] — 2026-11-11
 

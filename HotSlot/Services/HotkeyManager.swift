@@ -51,5 +51,15 @@ final class HotkeyManager {
                 }
             }
         }
+
+        // Slots 6+: sin atajo hasta que el usuario les asigne uno (sin atajo no se registra nada en el sistema).
+        for index in (KeyboardShortcuts.Name.pasteSlotNames.count + 1) ... KeyboardShortcuts.Name.maxShortcutSlot {
+            KeyboardShortcuts.onKeyUp(for: KeyboardShortcuts.Name.pasteSlotName(index)) { [weak self] in
+                Task { @MainActor in self?.onPasteSlot?(index) }
+            }
+            KeyboardShortcuts.onKeyUp(for: KeyboardShortcuts.Name.copyToSlotName(index)) { [weak self] in
+                Task { @MainActor in self?.onCopyToSlot?(index) }
+            }
+        }
     }
 }
