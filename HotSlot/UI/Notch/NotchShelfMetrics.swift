@@ -3,11 +3,14 @@ import Foundation
 
 /// Medidas de la barra del notch, tomadas de los tokens del panel (`SlotsSpace`, `SlotsRadius`).
 enum NotchShelfMetrics {
-    static let tile: CGFloat = 128
+    /// Cards apaisadas: mantienen el ancho y bajan el alto para que la barra sea menos invasiva.
+    static let tileWidth: CGFloat = 128
+    static let tileHeight: CGFloat = 88
     static let tileCorner: CGFloat = SlotsRadius.card
     static let gap: CGFloat = SlotsSpace.entreCards
     static let pad: CGFloat = SlotsSpace.l
-    static let sectionGap: CGFloat = SlotsSpace.m
+    static let padVertical: CGFloat = 18
+    static let sectionGap: CGFloat = 12
     static let libraryHeight: CGFloat = SlotsRadius.controlAlto
     static let shelfCorner: CGFloat = SlotsRadius.ventana
     static let shadowPad: CGFloat = 44
@@ -17,8 +20,8 @@ enum NotchShelfMetrics {
     static let closeDuration: TimeInterval = 0.1
     static let hideDelay: TimeInterval = 0.04
 
-    static let contentWidth: CGFloat  = pad * 2 + tile * 5 + gap * 4
-    static let contentHeight: CGFloat = pad + tile + sectionGap + libraryHeight + pad
+    static let contentWidth: CGFloat  = pad * 2 + tileWidth * 5 + gap * 4
+    static let contentHeight: CGFloat = padVertical + tileHeight + sectionGap + libraryHeight + padVertical
 
     static let panelWidth: CGFloat  = contentWidth  + shadowPad * 2
     static let panelHeight: CGFloat = contentHeight + shadowPad * 2

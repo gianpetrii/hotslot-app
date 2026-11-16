@@ -1104,7 +1104,7 @@ struct SlotReadableText: ViewModifier {
     }
 }
 
-private struct SlotHeaderActionChip: View {
+struct SlotHeaderActionChip: View {
     let systemImage: String
     var foreground: Color
     var plate: Color
