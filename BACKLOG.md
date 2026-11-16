@@ -7,10 +7,10 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 ## Decisiones de producto (alineación Oct 2025 — actualizado)
 
 - **Versión 1.0.0 publicada (nov 2026):** primera versión completa. Sync con iPhone y la app iOS quedan para la siguiente.
-- **Monetización:** **30 días** de prueba → **USD 10** pago único (Lemon, `Entitlements.swift`). **UI de licencia visible**; no retomar cambios de gating/compra hasta cerrar el rediseño (ver `docs/DECISIONES-REDISENO.md`).
+- **Monetización:** **30 días** de prueba → **USD 10** pago único (Lemon, `Entitlements.swift`). **UI de licencia visible**; no retomar cambios de gating/compra hasta cerrar el rediseño (ver `docs/notas/DECISIONES-REDISENO.md`).
 - **Mensaje público:** **slots fijos** como lead; historial + búsqueda como complemento.
 - **Distribución:** DMG notarizado + GitHub Releases.
-- **Rediseño (nov 2026):** handoff Dante **fuera del repo** — enlace en `docs/HANDOFF-README.md`; **solo macOS primero**, iOS después.
+- **Rediseño (nov 2026):** handoff Dante **fuera del repo** — enlace en `docs/notas/HANDOFF-README.md`; **solo macOS primero**, iOS después.
 - **Fuera del build de usabilidad:** Sync, compras visibles, modo oscuro, iPad.
 
 ---
@@ -71,9 +71,9 @@ Estado: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho
 | [x] | P2 | Onboarding de primera vez (tour saltables, repetible) |
 | [ ] | P3 | Grabar referencia del Clipboard nativo y afinar timing |
 
-## Rediseño Slots (handoff Dante · ver `docs/HANDOFF-README.md`)
+## Rediseño Slots (handoff Dante · ver `docs/notas/HANDOFF-README.md`)
 
-Objetivo: **build de prueba de usabilidad en Mac**. Alcance y acuerdos: `docs/DECISIONES-REDISENO.md`. Lo que **Dante** debe validar explícitamente: `docs/REVISION-PANEL-PARA-DANTE.md` (solo ítems que cargue Gianluca).
+Objetivo: **build de prueba de usabilidad en Mac**. Alcance y acuerdos: `docs/notas/DECISIONES-REDISENO.md`. Lo que **Dante** debe validar explícitamente: `docs/notas/REVISION-PANEL-PARA-DANTE.md` (solo ítems que cargue Gianluca).
 
 | Estado | Etapa | Alcance (macOS primero) |
 |--------|-------|-------------------------|
@@ -84,7 +84,7 @@ Objetivo: **build de prueba de usabilidad en Mac**. Alcance y acuerdos: `docs/DE
 | [x] | **4** | Panel Mac handoff (header, bibliotecas, guardar portapapeles, onboarding 3, ajustes sidebar, arranque) |
 | [~] | **5** | Humo Mac, versión, DMG, guía de prueba final |
 
-## Landing web (handoff Dante · `docs/slots-landing/`)
+## Landing web (handoff Dante · `docs/diseno/landing-dante/`)
 
 Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en GitHub Releases (`/releases/latest`).
 
@@ -94,7 +94,7 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 | [x] | P1 | Enlaces **Beta Mac** y **Privacidad** (`privacy.html`) en nav y pie |
 | [x] | P1 | **Cambio de idioma:** al pasar de español a inglés (y al revés) la página se funde, el texto cambia oculto y vuelve. El scroll se queda en el mismo tramo. Sin animación si el sistema la reduce |
 | [x] | P1 | **Barra del notch:** al pasar el mouse por el notch (o el centro de la barra de menú) baja una barra con los 5 slots en cuadrados iguales, con el mismo estilo del panel, y las bibliotecas debajo para cambiar de vista. Clic en slot con contenido copia o pega según Ajustes; en slot vacío guarda el portapapeles. Chip de atajo de solo lectura. Un botón redondo abre el panel completo. Se cierra sola tras cualquier clic y no se abre con el panel, Ajustes o el onboarding visibles. Sin historial, sin edición ni arrastre: eso queda en el panel. Validado por Gianluca |
-| [ ] | P1 | **Formspree / waitlist:** pegar `WAITLIST_ENDPOINT` (ver `slots-landing/LEEME.md`) |
+| [ ] | P1 | **Formspree / waitlist:** pegar `WAITLIST_ENDPOINT` (ver `docs/diseno/landing-dante/LEEME.md`) |
 | [ ] | P2 | **og:image** 1200×630 para compartir en redes |
 | [ ] | P2 | Validar promesas de lista (beta, preventa, mes gratis) con producto — LEEME §5 |
 | [ ] | P2 | Deploy Vercel tras push; smoke ES/EN, móvil, formulario |
@@ -173,7 +173,7 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 | [x] | V18 | **Hover unificado:** sombra más marcada y agrandado del 2 % en slots, pills y botones redondos (panel y notch). Las filas del historial solo cambian la sombra. Re-validación de V13. Validado por Gianluca |
 | [x] | P2 | **Hover del historial:** la sombra se cortaba en los costados (el scroll la recortaba) y se veía una sombra en las letras (fondo translúcido). Ahora la lista tiene margen para la sombra y la fila pasa a papel opaco al pasar el mouse, como las cards. Validado por Gianluca |
 
-**Dante (solo si Gianluca lo pide):** reorden de bibliotecas → `docs/REVISION-PANEL-PARA-DANTE.md`.
+**Dante (solo si Gianluca lo pide):** reorden de bibliotecas → `docs/notas/REVISION-PANEL-PARA-DANTE.md`.
 
 ---
 
@@ -203,7 +203,7 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 | [ ] | P2 | **Sonido al guardar** — documentar toggle “Sonidos de acciones”; opcional sonido distinto guardar vs pegar si confunden |
 | [ ] | P3 | Atajo clicable extra en barra (además del icono) — evaluar si aporta o satura la menu bar |
 | [ ] | P3 | “Slots libres” en UI tipo Dynamic Island — **no aplica en Mac**; en iPhone sería otro producto |
-| [~] | P1 | **Analytics (importante):** hecho en código, falta activarlo. (1) Landing: Vercel Web Analytics en `index`, `privacy` y `purchase` (hay que activarlo en el proyecto de Vercel y, si cambia `docs/slots-landing/`, repetir el script en la fuente). (2) Descargas: `scripts/download-stats.sh`. (3) In-app: TelemetryDeck, **opt-in** (apagado por defecto, aviso único tras el onboarding y sección «Privacidad» en Ajustes). Inactiva hasta pegar el App ID en `Telemetry.appID`. Política de privacidad actualizada. Eventos: `App.launched`, `Slot.saved`, `Slot.firstSaved`, `Slot.used` (panel, atajo o notch), `Notch.opened`, `Library.created`, `License.purchaseClicked`, `License.activated`. Nunca contenido ni nombres |
+| [~] | P1 | **Analytics (importante):** hecho en código, falta activarlo. (1) Landing: Vercel Web Analytics en `index`, `privacy` y `purchase` (hay que activarlo en el proyecto de Vercel y, si cambia `docs/diseno/landing-dante/`, repetir el script en la fuente). (2) Descargas: `scripts/download-stats.sh`. (3) In-app: TelemetryDeck, **opt-in** (apagado por defecto, aviso único tras el onboarding y sección «Privacidad» en Ajustes). Inactiva hasta pegar el App ID en `Telemetry.appID`. Política de privacidad actualizada. Eventos: `App.launched`, `Slot.saved`, `Slot.firstSaved`, `Slot.used` (panel, atajo o notch), `Notch.opened`, `Library.created`, `License.purchaseClicked`, `License.activated`. Nunca contenido ni nombres |
 | [x] | P1 | **Limpieza de Ajustes:** se quitó la pestaña «Slots», la sección «Depuración», el diagnóstico de Accesibilidad y el botón de probar el aviso. Nueva sección «Barra del notch» con interruptor. Validado por Gianluca |
 | [x] | P1 | **Slots en una sola fuente (preparación de iOS):** `SlotStore` lee y escribe en el workspace; se eliminó el copiado con `slots.json`, que se migra una vez con copia de seguridad en `Backups/`. Validado por Gianluca |
 

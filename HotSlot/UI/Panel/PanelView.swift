@@ -53,6 +53,7 @@ struct PanelView: View {
                                 )
                                 .padding(.top, HotSlotDesign.panelColumnTopInset)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .zIndex(2)
 
                                 HistoryListView(
                                     historyStore: appState.historyStore,
