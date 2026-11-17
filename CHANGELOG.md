@@ -1,6 +1,6 @@
 # Changelog
 
-## Sin publicar
+## [1.2.0] — 2026-11-16
 
 ### Más slots
 
@@ -11,7 +11,19 @@
 - Al arrastrar cerca del borde de la grilla, esta se desplaza sola.
 - Los slots del 6 en adelante pueden tener atajos propios: sin atajo de fábrica, se asignan desde «+ Atajo» en la card.
 - Los slots vacíos del 6 en adelante se pueden eliminar (tacho en la card o menú «Eliminar slot») y los siguientes suben un lugar; si tienen contenido, la cruz los vacía primero.
-- El notch pasa de página con flechas, la rueda o el trackpad cuando hay más de 5 slots; se cierra más rápido y los atajos sobre imágenes y colores se leen limpios.
+- Un slot nuevo, o uno que recibe contenido, entra con un pequeño «pop» y un halo cálido, igual en el panel y en el notch.
+
+### Notch
+
+- La barra es más baja: las cards son apaisadas y muestran menos información (sin el texto de tipo y tamaño). Al pasar el mouse aparece la cruz para vaciar un slot, o el tacho en los slots vacíos del 6 en adelante.
+- Con más de 5 slots, pasa de página con la rueda, el trackpad o las flechas ▲▼ de la derecha; la fila se desliza en vertical, como el scroll del panel.
+- Al final de la lista hay un tile «Nuevo slot»: un clic guarda el portapapeles en un slot nuevo sin cerrar la barra.
+- Las bibliotecas se pueden crear (+), renombrar, mover, reordenar arrastrando y eliminar arrastrando al tacho o con clic derecho, como en el panel.
+- Los nombres largos de biblioteca se acortan y, con muchas, la fila se desplaza hasta la activa sin pisar los botones (también en el panel).
+
+### Ajustes
+
+- La ventana tiene vidrio hasta arriba y un borde fino, y los botones de cerrar y minimizar responden.
 
 ## [1.1.0] — 2026-11-11
 
