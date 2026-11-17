@@ -398,6 +398,41 @@ final class LibraryWorkspaceStore {
         swap(&a.cardBackgroundHex, &b.cardBackgroundHex)
     }
 
+    // MARK: - Edición por id (iPhone)
+
+    func slot(id: UUID) -> SlotRecord? {
+        workspace.slots.first { $0.id == id }
+    }
+
+    /// Edita un slot de cualquier biblioteca y guarda.
+    func updateSlot(id: UUID, _ change: (inout SlotRecord) -> Void) {
+        guard let idx = workspace.slots.firstIndex(where: { $0.id == id }) else { return }
+        change(&workspace.slots[idx])
+        workspace.slots[idx].updatedAt = Date()
+        save()
+    }
+
+    /// Deshacer: deja el slot como estaba. Si ya no existe, vuelve a su posición y los siguientes se corren.
+    func restoreSlot(_ record: SlotRecord) {
+        let now = Date()
+        var restored = record
+        restored.updatedAt = now
+        if let idx = workspace.slots.firstIndex(where: { $0.id == record.id }) {
+            restored.order = workspace.slots[idx].order
+            restored.libraryId = workspace.slots[idx].libraryId
+            workspace.slots[idx] = restored
+        } else {
+            guard workspace.libraries.contains(where: { $0.id == record.libraryId }) else { return }
+            for idx in workspace.slots.indices
+            where workspace.slots[idx].libraryId == record.libraryId && workspace.slots[idx].order >= record.order {
+                workspace.slots[idx].order += 1
+                workspace.slots[idx].updatedAt = now
+            }
+            workspace.slots.append(restored)
+        }
+        save()
+    }
+
     private func save() {
         if let database {
             seedPending = false

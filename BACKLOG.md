@@ -273,3 +273,36 @@ Fuente: [portapapeles / Magnific — Flaticon](https://www.flaticon.es/icono-gra
 - **Error** (escritorio/Finder, sin destino, o slot vacío) — Bubble (`Pop.aiff`).
 - **Guardado en slot** — Funky (`Funk.aiff`).
 - Hover y peek no suenan. El toggle «Sonidos de acciones» los silencia todos.
+
+
+## iPhone (rama `ios-app`)
+
+### Licencia y compra — qué haría falta (no implementado)
+
+- Hoy el iPhone no tiene gating: todo está desbloqueado. El Mac usa Lemon Squeezy (`LemonLicenseService`), que no sirve en iOS (las reglas de la App Store piden compra dentro de la app para desbloquear funciones).
+- Decidir primero: ¿el pago único cubre Mac e iPhone? Si sí, hace falta **compra universal** (mismo bundle id en las dos apps, hoy el iPhone es `com.hotslot.app.ios`) o un chequeo cruzado.
+- Implementar con StoreKit 2: producto no consumible, `Transaction.currentEntitlements` al abrir, restaurar compras, y un protocolo `LicenseChecking` para enchufarlo sin tocar las pantallas.
+- Si se vende Sync como suscripción: el estado de la suscripción tiene que vivir en StoreKit (no en iCloud) y el chequeo hacerlo cada app por su cuenta.
+- Puntos donde pondría el chequeo: crear slots nuevos pasado un límite, widgets/controles/atajos, y la hoja Ajustes (estado y «Restaurar compra»).
+
+### Teclado personalizado — propuesta (no implementado)
+
+- Viable para pegar slots sin cambiar de app: extensión de teclado que lee el App Group y usa `textDocumentProxy.insertText` (texto y links) o el portapapeles para imágenes.
+- Costo de privacidad: para leer el App Group necesita «Permitir acceso completo», que genera desconfianza; sin eso no ve los slots. Memoria limitada (~60 MB) y no ve CloudKit: depende de que la app ya haya sincronizado.
+- Recomendación: dejarlo para después de la primera versión. El Botón de Acción, los widgets interactivos y Back Tap ya cubren «copiar rápido y pegar».
+
+### Pendiente de iPhone
+
+Implementar a futuro: telemetría, licencia/compra universal (StoreKit 2), teclado personalizado, botones «Nuevo slot» y «Pegar portapapeles» en el widget, contenido de archivos entre dispositivos (hoy solo viaja el nombre).
+
+Falta testear en dispositivo:
+
+- Sync Mac ↔ iPhone en ambos sentidos (texto, imagen y archivo «Solo en otro dispositivo»), con el Mac instalado desde el DMG (Producción).
+- Widget: que el toque copie sin abrir la app (si iOS lo bloquea, volver a abrir la app), ✓ «Copiado», flechas, tamaños chico/mediano/grande y colores de fondo.
+- Controles (Centro de Control y pantalla de bloqueo), Atajos «Abrir Slots» y «Copiar slot» (tarjeta de «Copiado»), Back Tap y Botón de Acción.
+- Intercambio animado: card flotante, aterrizaje y desplazada (portado del Mac); reordenar bibliotecas arrastrando.
+- Color de fondo desde el menú, «Vaciar slot» y «Eliminar slot», «Editar» con cambio a imagen.
+- Nuevo slot con imagen de Fotos y con archivo; hex como Color.
+- VoiceOver y «Reducir movimiento».
+- iOS 18 real (Xcode solo trae simuladores de iOS 26 y 27).
+- Tests del Mac después de los últimos cambios.

@@ -23,6 +23,13 @@ extension ClipContent {
         if FileManager.default.fileExists(atPath: path) {
             return URL(fileURLWithPath: path)
         }
+        #if os(iOS)
+        // En iPhone el contenedor puede cambiar de ruta: lo que importa es la parte que sigue a `Files/`.
+        if let range = path.range(of: "/\(AppSupportDirectory.appName)/Files/") {
+            let moved = AppSupportDirectory.files.appendingPathComponent(String(path[range.upperBound...]))
+            if FileManager.default.fileExists(atPath: moved.path) { return moved }
+        }
+        #endif
         guard let bookmark else { return nil }
         var stale = false
         guard let url = try? URL(

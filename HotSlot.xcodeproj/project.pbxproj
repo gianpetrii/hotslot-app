@@ -8,85 +8,146 @@
 
 /* Begin PBXBuildFile section */
 		003A2BE4D6462A153F7A0CEF /* WindowPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EA47E2008017DE5FF000B6 /* WindowPlacement.swift */; };
+		008DE6FEB365349644A6627C /* SlotStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9A9011DB770E6FC4D679E0 /* SlotStore.swift */; };
 		019623A7A6E5EB1500424F3E /* Entitlements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E95D5C5C8ED642326A14E21 /* Entitlements.swift */; };
+		022F0AA872FE23DC7573D40C /* SlotsTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB4DE44FB364BE31AE4AB230 /* SlotsTheme.swift */; };
 		028AFCE7E42D780057C6E8FD /* PasteboardRichTextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71C0DE85941092439A8BE875 /* PasteboardRichTextTests.swift */; };
 		0406A938ED357E36FF7439CC /* PanelToggleShortcutPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01FDA6C53C0892B195D5FD13 /* PanelToggleShortcutPopover.swift */; };
+		054DD02DA512456EB3372084 /* WorkspaceDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C1319726E784661D6EB74D /* WorkspaceDatabase.swift */; };
+		055CB04B6C26AD6F11287340 /* SlotsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E58CC52539FFAA4D49A253 /* SlotsScreen.swift */; };
+		06D2FA2D9BBED48CE5A99571 /* SlotsWorkspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF799F2F656ACAB2C251FCE /* SlotsWorkspace.swift */; };
 		06F67C3631616988E770F6FB /* FocusTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8525EE734D2017094138ADBD /* FocusTracker.swift */; };
+		07C2D0B9D1E015943DA83BDF /* WorkspaceDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C1319726E784661D6EB74D /* WorkspaceDatabase.swift */; };
 		088DC064FEA5470DEF668AA9 /* DeleteLibraryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAA0E362F8D30646F3F7C48 /* DeleteLibraryFormView.swift */; };
-		0C1B4C7C4F79CBF6E95CDA42 /* ClipContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41FC0ED81ECB6C60BC9AA3FF /* ClipContent.swift */; };
 		0F4960AE9ACE09E69E7E203C /* FileClipViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = C349BC8D5A0BB79D81326F87 /* FileClipViews.swift */; };
 		12C677E12D06E670A5FA29DA /* ClipboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB823AC3606502B337159418 /* ClipboardService.swift */; };
 		15E13B782F856BE19618FD98 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858AB04884B62F4C91EF2DF9 /* AppState.swift */; };
+		1616303E4EEAF2FABE9DE0A6 /* SlotsTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB4DE44FB364BE31AE4AB230 /* SlotsTheme.swift */; };
+		16562824EDC61CA89E90200E /* SlotsTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3202C6BC0302E36DC5DF2252 /* SlotsTypography.swift */; };
 		18006E349309415F307A5D15 /* SlotPeekView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DECF19C0558E479917409747 /* SlotPeekView.swift */; };
-		1831E0CCBA952305EFEE0AF7 /* SlotsWorkspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8791B78D4ECD0F3FCA7B987 /* SlotsWorkspace.swift */; };
+		190C232657324142739D8022 /* SlotClipboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7694F1C3336660276030FD67 /* SlotClipboard.swift */; };
 		1B17E199882E6BF6729D5C9F /* ShortcutConflict.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0D7BCF8AAD91BA51ABE18E6 /* ShortcutConflict.swift */; };
 		1BEBD40631434B777BF77F74 /* BackdropController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8108F534EC224E3BA83D449B /* BackdropController.swift */; };
 		1C5BFE8EC5F7FDF09AFCA4AE /* NotchShelfController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40CD0B60757E63BD68A2371 /* NotchShelfController.swift */; };
+		1C7E1906FFE45E0AE5300449 /* WorkspaceDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C1319726E784661D6EB74D /* WorkspaceDatabase.swift */; };
+		1D82BFEF7BB786F65B8BD7C2 /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D712D1B59B02FFFD16ACB70 /* Slot.swift */; };
 		1DA555C067A4C4FEC925FF5B /* PanelFloatingLibraryTrash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A64BAFFA5139B4A87269AD /* PanelFloatingLibraryTrash.swift */; };
 		1EB231A326C88DBB560DCA62 /* PanelDragPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73024E80E174C79983E6A25D /* PanelDragPayload.swift */; };
+		1FE0351F3AC71103165E63A8 /* AppSupportDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA59D873B16A10120FE14F9 /* AppSupportDirectory.swift */; };
+		23A20F46EAADFF0E42FF9004 /* SlotsPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D1AD1C80A5B5AE2DEBD405 /* SlotsPalette.swift */; };
+		2418C648A7E6CD831A029998 /* SlotsPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D1AD1C80A5B5AE2DEBD405 /* SlotsPalette.swift */; };
 		2666AEEE1C23121AC660B2AC /* PanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A911DBA98261441FF883EE51 /* PanelView.swift */; };
-		287527053D120850751E787F /* WorkspaceDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F0672A4F4935A538769C17 /* WorkspaceDatabase.swift */; };
+		29D4B442F2AF4179FDC93D29 /* LibraryWorkspaceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB86823B4EA51029F1EBA0 /* LibraryWorkspaceStore.swift */; };
 		2C243CEF754FA0B312FCF6AD /* SlotStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099675B8BFE15486169F4C0B /* SlotStoreTests.swift */; };
 		2C38077E80456117487988E8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B7E7A2B2C7D507EFD132F1 /* SettingsView.swift */; };
+		2FAFBF0E880DEF9B6A037560 /* SlotCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EC848DF2B5C35159A1E56A /* SlotCardView.swift */; };
+		30DB0DFD08E34B379659D3FB /* ClipItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CB06B4FA082A4DB7CFCB8D /* ClipItem.swift */; };
 		3349436229CCD5233793196B /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4446EF048FFED63B26C12887 /* HotkeyManager.swift */; };
+		348D85CEC6255FFF5692DFC0 /* InterTight-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6F80607680DE710540140313 /* InterTight-Medium.ttf */; };
+		3503CA335D21DD366FCCD39C /* HexColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8222723249BE027757A35B1 /* HexColor.swift */; };
 		3726AD86BCF2F30C02228F26 /* FeedbackSound.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB00CAB33F7731154F7391F1 /* FeedbackSound.swift */; };
 		3A4860090D5B92CEEAEF8713 /* AccessibilityGrantSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC799AE46B9D3C3037098D02 /* AccessibilityGrantSection.swift */; };
+		3E211D647EC7B47717400C3B /* InterTight-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 20B797933714326535479FA7 /* InterTight-Regular.ttf */; };
+		41F07A0E6F719FD89B617F4E /* SlotCardText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97810321A8C39A8076F3BA4F /* SlotCardText.swift */; };
+		4307570FB9E8F198EC50F40B /* HexColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1509BFAEE5E15121F90CA461 /* HexColorTests.swift */; };
 		43D29E4D7E7FF8E4255EFFA2 /* ClipThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C245D2B39A6052D9B218842 /* ClipThumbnailView.swift */; };
+		4496AE66A8584FCBEC81FAC1 /* SlotsWorkspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF799F2F656ACAB2C251FCE /* SlotsWorkspace.swift */; };
+		45380CB0797C3F89E3977E8F /* CopiedToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 469B2F2C6F27A005618476C0 /* CopiedToast.swift */; };
+		4608F7A7F3CFCDB73C643187 /* ClipContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276F70223CAAED7C4F3BD24E /* ClipContent.swift */; };
 		46D1ED282C7A266DAB17B65B /* RichTextStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D898BA6E058E622CFC3A9A3 /* RichTextStore.swift */; };
 		48FF3AE212D43762C2E8D8DC /* DevelopmentAppInstall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C10887751663046E3AD0188 /* DevelopmentAppInstall.swift */; };
-		49C78F83358BF7303078E667 /* FileClip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F78009613A3AD51F468256 /* FileClip.swift */; };
+		4A1396D9F83F86D60E3C7C9F /* SlotGridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4FA6C1C45A715C8AE60E90F /* SlotGridLayout.swift */; };
 		4B9572F6AA1ECE0D715425CC /* RenameLibraryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB997A5ED34633E84820B74 /* RenameLibraryFormView.swift */; };
 		4E6D2FEDBE82D87BFE0FC36D /* NotchNotice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6B29BEA4868030AF4ADA383 /* NotchNotice.swift */; };
+		4FF60B881DEA5D7C1E63375C /* SlotsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E056027640CC0F9844904BA /* SlotsWidget.swift */; };
 		51661401F91CFF3E1F9E5C79 /* LemonLicenseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893CB5382B7CBEF716185C1F /* LemonLicenseService.swift */; };
+		5850C469218AF6DA4B841C3F /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B3DBE61570EA7753BE0D7BD /* AppModel.swift */; };
+		58A03F500E754B35E2D35BE5 /* WorkspaceEntities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B881EF89B0D5A0094FDEDE /* WorkspaceEntities.swift */; };
 		5A14D5F57B0B72252A3272D1 /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3383874D55B3B03906F05B76 /* OnboardingWindowController.swift */; };
 		5A7458632B0A0E2FB4810EAB /* HotkeyName.swift in Sources */ = {isa = PBXBuildFile; fileRef = F694AB71C18F22C86D117ACC /* HotkeyName.swift */; };
-		5F03F3682880EE8CB86A7501 /* SlotStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F74883603B94FB2FCCA0073 /* SlotStore.swift */; };
-		5F54E5810EE5E19A94501C02 /* SlotsPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0053E366473B0BCE5341CE9 /* SlotsPalette.swift */; };
+		5B20FFE70173BA7D88D46696 /* ClipItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CB06B4FA082A4DB7CFCB8D /* ClipItem.swift */; };
 		601143B29971E9F1B4963725 /* NewLibraryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D990A1EB5D5AAA6C60B70D8 /* NewLibraryFormView.swift */; };
+		6068D7A5268503E1A7FFCC44 /* WorkspaceEntities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B881EF89B0D5A0094FDEDE /* WorkspaceEntities.swift */; };
 		60BCAF886C1D755BAF4F57B0 /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = D9564164F8FDDB85AA2D2816 /* TelemetryDeck */; };
 		61A1F47699DC6F24EFC2B605 /* WorkspaceDatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6611E81B03FD128CF983626 /* WorkspaceDatabaseTests.swift */; };
 		626F2AD7F73EF8432A0D67D7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B880BD3AB5B57E6D542F8B5F /* Assets.xcassets */; };
+		63A33D7C8CEA3F384A5A76DE /* SlotStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9A9011DB770E6FC4D679E0 /* SlotStore.swift */; };
 		666961C01803DCEA644EF356 /* ShortcutBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644A9655A112A4CEB512EA84 /* ShortcutBadge.swift */; };
 		67A7DB765E43FE0A8431F019 /* SaveClipboardSlotPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F7D2094D67542CF6B99B29B /* SaveClipboardSlotPickerSheet.swift */; };
+		688238C85BD20C4B7E921E1A /* SharedAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 38328734E27DB5D9D5B79090 /* SharedAssets.xcassets */; };
 		6D6DA5397C868548D19A305D /* ClipItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E337777E4CDCB5C2D945FE7B /* ClipItemTests.swift */; };
-		6EDC9EDB77022AEF8951BC41 /* AppSupportDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEB4689A3F7F6A221FFD94DF /* AppSupportDirectory.swift */; };
 		709457F1F7152675FEE4A77B /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841CFFDFFFAA50088B8764E1 /* StatusBarController.swift */; };
 		74695771CEBCEED13F7F3906 /* UsageEventLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67CCD20A269221ECF634E755 /* UsageEventLog.swift */; };
+		770283D3344C9750703E244D /* SharedAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 38328734E27DB5D9D5B79090 /* SharedAssets.xcassets */; };
+		7828936BEC353BA181BE4395 /* ClipContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276F70223CAAED7C4F3BD24E /* ClipContent.swift */; };
+		7B34986206ED735A400EF5CC /* SlotsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF8F414B8C76E67DD150726 /* SlotsApp.swift */; };
 		7B4453623160AFCB24671301 /* CloudKitProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ADDD4E48114E1FE234BB150 /* CloudKitProbe.swift */; };
+		7B7E0D843B7CAF7586BC5489 /* ClipItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CB06B4FA082A4DB7CFCB8D /* ClipItem.swift */; };
+		7B886D8CF0764A0925BE7CF2 /* SlotsShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B74252CCBB9B165DC15020 /* SlotsShortcuts.swift */; };
+		7BA249E552FEA1653792D3B5 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7FAF7089BC20C0292C4DC3 /* RootView.swift */; };
 		7BF8D66985DA3B637EC97587 /* PasteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CF8C198E8B698B91A020C3 /* PasteService.swift */; };
 		7C70678EEE4AD2EEFE68A29F /* PanelModalOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC816C077BA5FF7063ABC6F /* PanelModalOverlay.swift */; };
 		7D09BF2DF35F201E3F7FFD36 /* VisualEffectBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345006B5580B09DB4988D950 /* VisualEffectBackground.swift */; };
-		8050B51FEBAEB5B66FDE5DF5 /* SlotsTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19FC870A2B9262688DDFDF1B /* SlotsTheme.swift */; };
+		7E56325E197CC1735408363C /* SlotStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9A9011DB770E6FC4D679E0 /* SlotStore.swift */; };
+		7F361AF5971568F22F3E3133 /* SlotsIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4119C07A2A5CD6EA69966 /* SlotsIntents.swift */; };
+		7FE019D6F44FF4F2C604C0C1 /* SlotClipboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7694F1C3336660276030FD67 /* SlotClipboard.swift */; };
+		805CCA61CD5B75157300D857 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E49B638E43A951450D6B0EC /* Assets.xcassets */; };
 		81F6F26B31F98E6784CE3628 /* SlotShortcutBadges.swift in Sources */ = {isa = PBXBuildFile; fileRef = D70A90D118E367AF3930724F /* SlotShortcutBadges.swift */; };
-		828285DAB8290A808F7BA17A /* LibraryWorkspaceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87CBD757296379230AE7AC7A /* LibraryWorkspaceStore.swift */; };
+		88E93B74A7628FDEC691592B /* EmptyLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D0BD4FF88CA860EBA2562C /* EmptyLibraryView.swift */; };
 		8A1E4F5E452F9201228BA817 /* PanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD50D3AD7653F5FCEE0C092 /* PanelController.swift */; };
-		8AD33E79675CC9C6D12CAE99 /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3D4575494AD564C842B7E3 /* Slot.swift */; };
+		8AD599FD8A75133D9FCEDA0B /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D712D1B59B02FFFD16ACB70 /* Slot.swift */; };
+		8BC55A4D96A528EE7FB397AE /* SlotsIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4119C07A2A5CD6EA69966 /* SlotsIntents.swift */; };
+		8FDE2566B6AA820FFDAD8E3F /* LibraryWorkspaceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB86823B4EA51029F1EBA0 /* LibraryWorkspaceStore.swift */; };
 		8FF03433C9CE0E0D64619F77 /* HistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5705E3CE6DEACE6C0251D749 /* HistoryListView.swift */; };
 		91351D337157BD655C397576 /* InterTight-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CFB47B1DB3239FAF3E7E19E6 /* InterTight-SemiBold.ttf */; };
+		91490F53C2647F397DCD852B /* IPhoneSlotEditingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3E94A6D86C70BE575E9CBF /* IPhoneSlotEditingTests.swift */; };
 		9570DF8FCE70BA5E0E073256 /* SlotShortcutEditorPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9DFD560300A4A9E50B68A52 /* SlotShortcutEditorPopover.swift */; };
 		95DD54393C0079F7466465F7 /* PanelSearchHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D9721B8E7B78F14E68B6D5 /* PanelSearchHeader.swift */; };
-		95E7E65FE86C2DE8D9E63B69 /* WorkspaceEntities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B4A39DBE858EBA6C607B55 /* WorkspaceEntities.swift */; };
 		95FEEB80A71D1446BFDBCD27 /* InterTight-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6F80607680DE710540140313 /* InterTight-Medium.ttf */; };
-		98F6E095AE516BDCB9DEB19E /* ClipItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9978112D3F44AE2BCE41F5E /* ClipItem.swift */; };
+		9688217A1BC3DD9F4F6764DB /* SlotsTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB4DE44FB364BE31AE4AB230 /* SlotsTheme.swift */; };
 		9973A44BCB5E1A715BC15A84 /* PanelLibraryBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DCFDD565B98C8B5733679A0 /* PanelLibraryBar.swift */; };
 		999AA44F8AF5D7EDD8CA8B74 /* HotSlotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51184CDE4DE57A7C42AA1D1 /* HotSlotApp.swift */; };
+		9C5BFB6CBE9DFEFC7D48C469 /* AppSupportDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA59D873B16A10120FE14F9 /* AppSupportDirectory.swift */; };
+		A336FAE0720E0DF8E91C2404 /* InterTight-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 20B797933714326535479FA7 /* InterTight-Regular.ttf */; };
+		A3EC5187E0BCDBE27AC30FD4 /* SharedAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 38328734E27DB5D9D5B79090 /* SharedAssets.xcassets */; };
 		A4444F4B642C0155DD82A848 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89452FF5E5C474F90625C4C3 /* AppDelegate.swift */; };
 		A52EB6844570257DB70152C2 /* AccessibilityPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4528F5EDD7002053F6D7D2AC /* AccessibilityPermission.swift */; };
+		A8565B9EFBCEBED32157E894 /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D712D1B59B02FFFD16ACB70 /* Slot.swift */; };
 		A8AE9AF960E27653C8416182 /* Telemetry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7412C6D8E3680205603B447 /* Telemetry.swift */; };
 		AAB02DE1F528DDBEB6CA3EE0 /* BrandDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585B27068C55611BF34BD149 /* BrandDisplay.swift */; };
+		B02A7EDBDB72EA5C89364914 /* SheetComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7860174C55426F53F4005D22 /* SheetComponents.swift */; };
+		B4C6A34BA9CC87F8BC42362C /* FileClip.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BA225DE11264376D0372D3 /* FileClip.swift */; };
 		B7A96F91F33FE780998A9FD9 /* HistoryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904BC54DEB4EA0FB71573C0A /* HistoryStoreTests.swift */; };
+		B9DF6C181F7B5ED4F9EE63F4 /* LibraryWorkspaceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB86823B4EA51029F1EBA0 /* LibraryWorkspaceStore.swift */; };
+		BBD37161D8BF269573970BDA /* NewLibrarySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FA7A8FB4C24128881C7EF8 /* NewLibrarySheet.swift */; };
 		BE931C778F5553DF67F0481B /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49192713FE49EA8C0DC9E8D /* EmptyStateView.swift */; };
+		BF407AF24E6951B106F7AE9C /* FileClip.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BA225DE11264376D0372D3 /* FileClip.swift */; };
 		BF910DD20209DE85A5D2976D /* onboarding-demo.png in Resources */ = {isa = PBXBuildFile; fileRef = 27819786F66292E2771CA28D /* onboarding-demo.png */; };
+		C46BC2DA3D17A3925BA0E8F0 /* HexColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8222723249BE027757A35B1 /* HexColor.swift */; };
 		C4701F22F4DF19F9D5457B39 /* PasteboardHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00C6BACA1F9F56E6F6098EF7 /* PasteboardHelper.swift */; };
+		C4AFDBF4918B43898CC55EB3 /* InterTight-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CFB47B1DB3239FAF3E7E19E6 /* InterTight-SemiBold.ttf */; };
+		C645EFD8E30D6CBD402D265D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6DC067C79829C2C48D771AC7 /* LaunchScreen.storyboard */; };
 		C647F72E936F2AB4EA222FCB /* RenameSlotFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C2958641416FFA9829EAD4 /* RenameSlotFormView.swift */; };
 		C849A14A7263DAE9DD9E6797 /* WindowInteractionViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB3B1E51A97B17A7772E768 /* WindowInteractionViews.swift */; };
 		C892DEF7905F0C9D07D2EAB4 /* HotkeysSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C232CD058B6607F39574953 /* HotkeysSettingsView.swift */; };
 		CBA4F163FFFA6AB36342AEAA /* LaunchSplashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830BEFF3258CA1569A340731 /* LaunchSplashController.swift */; };
 		CDCC4BC8F2CB2B20B54B4F94 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 68A08721B90AA8DAEF581ABC /* Sparkle */; };
 		CE22760276774C6B27A032C5 /* HistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD5D3779C3ADA48B9820C77 /* HistoryStore.swift */; };
+		D2D98DA843D9C2360AB0F3E1 /* SlotsPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D1AD1C80A5B5AE2DEBD405 /* SlotsPalette.swift */; };
+		D6189D815B50431148336E1C /* InterTight-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6F80607680DE710540140313 /* InterTight-Medium.ttf */; };
 		D810C7327C80F74198279734 /* SlotCardCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D886AD42BBF26566EF79845 /* SlotCardCopy.swift */; };
+		DA4D16FD86CA79F6DB3DCDE9 /* NewSlotSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC802583C33070EF060FEB1 /* NewSlotSheet.swift */; };
+		DA625A4D3E449422ABB10854 /* SlotImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0F5DDB9791277CA73101E3 /* SlotImageLoader.swift */; };
+		DB22BE39EDB2165863217190 /* SlotsWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CFA9396FC05E6CA3586C8935 /* SlotsWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		DC0D90F039A824B06FAB70AD /* ClipboardReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBB61745C61F2A160BE8D24 /* ClipboardReader.swift */; };
 		DD176F09A23EF962DF1A68A9 /* MenuBarGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 279A89FD0850AFC9891FEE6D /* MenuBarGuide.swift */; };
+		DFF36B646AEB7D0FD1A1DF1C /* FileClip.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BA225DE11264376D0372D3 /* FileClip.swift */; };
+		E144C3E070C945D3E739F974 /* ClipContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276F70223CAAED7C4F3BD24E /* ClipContent.swift */; };
+		E150AE077B8FAA4E3D2E0185 /* LibraryBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C983994A4BBF179E46AB6FE7 /* LibraryBar.swift */; };
+		E1D5047EA9D4A3B670C20258 /* InterTight-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CFB47B1DB3239FAF3E7E19E6 /* InterTight-SemiBold.ttf */; };
+		E3030FD8ABF2C4C8E80C578E /* SettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6956A65F3E000FBB04DE13 /* SettingsSheet.swift */; };
 		E3C1B25F547214457D59A281 /* DeveloperMenuActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2013A4CBF10BC877FFB0ABA /* DeveloperMenuActions.swift */; };
+		E4AE96AB2962438B97D6BC2C /* SlotsWorkspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF799F2F656ACAB2C251FCE /* SlotsWorkspace.swift */; };
 		E4EF388A93D722D36DE2BA7F /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD36EA0DCFD93B6DFACE95B8 /* AppSettings.swift */; };
 		E7ADCDF4133C8D6377C65B29 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = C4BD315A42A86DEEE9D248F0 /* KeyboardShortcuts */; };
 		E899C89CE016CCA5D19AD507 /* InterTight-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 20B797933714326535479FA7 /* InterTight-Regular.ttf */; };
@@ -96,14 +157,23 @@
 		EC20C7D32EF891BFFABBD98E /* NotchShelfView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F94875672160E6886F1A1B0 /* NotchShelfView.swift */; };
 		EC2FD2696FBFC7620CC1C497 /* ClipRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3610897210D290C688FA1D3C /* ClipRowView.swift */; };
 		EDCE1110A455CEB1540813D7 /* MoreSlotsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6238F039A823EDE67ECCA77A /* MoreSlotsTests.swift */; };
+		EF6B995E1BC9C7F187742DFD /* AppSupportDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA59D873B16A10120FE14F9 /* AppSupportDirectory.swift */; };
 		F174F34D35409CF75ACF645E /* OnboardingDemos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1560171CDCA17C9B5AF77D26 /* OnboardingDemos.swift */; };
 		F3DF1B41ADC0380D87AF4D07 /* SlotGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F806ECE71FCC38E52033D0F /* SlotGridView.swift */; };
+		F50F3158C845988BE5A358E7 /* HexColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8222723249BE027757A35B1 /* HexColor.swift */; };
 		F5876299FFE1C74613AB4747 /* MenuBarHint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA75780C3AA9A0FD9726A77 /* MenuBarHint.swift */; };
 		F5B44D9C82D3CB4398737ED5 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B4D0B6EDEEE5D11496E08B /* ToastView.swift */; };
+		F885056C40E0C0CD4C6C2D5A /* DebugSampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E08A644B397C5F630A3A771A /* DebugSampleData.swift */; };
 		F9163EACFBBA158DB5AE7001 /* ShortcutRecorderPopoverLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B3E4B4A9B27D5894373219 /* ShortcutRecorderPopoverLayout.swift */; };
 		F956A4D89D12BE17B6D6BB23 /* PanelHeaderBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBEB360BA0C811221C1D6DE1 /* PanelHeaderBlock.swift */; };
+		FA04CBEE80E14AA04CF7B4EF /* SlotImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0F5DDB9791277CA73101E3 /* SlotImageLoader.swift */; };
+		FB58B1EDE9A9FFADDE8100E7 /* EditSlotSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F74006E45C40E989E8B993B1 /* EditSlotSheet.swift */; };
 		FBF94D623D607AB7DEA87A6B /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22F605BFD20A8EF2DA9C242 /* OnboardingView.swift */; };
+		FC1F95E3FF82AC0D0497B08B /* SlotsControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59399EF0FBEE488A29A47E00 /* SlotsControls.swift */; };
+		FDDF517EC557CCFECC614490 /* SlotsWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6993D08161A8E2585916274D /* SlotsWidgetsBundle.swift */; };
+		FE7C2D811830BEE3A78D87B1 /* WorkspaceEntities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B881EF89B0D5A0094FDEDE /* WorkspaceEntities.swift */; };
 		FFBFB1C9C580218BDE90C2AB /* NotchShelfMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74BC4D986E08A1EDDC991937 /* NotchShelfMetrics.swift */; };
+		FFCAC1302C03AC62C9964CB2 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9967662EA8DF15C9FDAD5D4D /* LoadingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -114,80 +184,136 @@
 			remoteGlobalIDString = 248EBB8D02FD34E70AE77CA1;
 			remoteInfo = HotSlot;
 		};
+		A2F684487420D70E9D28A71F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F41394C2295FC1022024C727 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B21F9A0F6D8BB3C6AE17D7F7;
+			remoteInfo = SlotsWidgets;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2A9C6DACDD1905406335B4BE /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				DB22BE39EDB2165863217190 /* SlotsWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		00C6BACA1F9F56E6F6098EF7 /* PasteboardHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardHelper.swift; sourceTree = "<group>"; };
 		01FDA6C53C0892B195D5FD13 /* PanelToggleShortcutPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelToggleShortcutPopover.swift; sourceTree = "<group>"; };
 		05B3E4B4A9B27D5894373219 /* ShortcutRecorderPopoverLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderPopoverLayout.swift; sourceTree = "<group>"; };
 		099675B8BFE15486169F4C0B /* SlotStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotStoreTests.swift; sourceTree = "<group>"; };
+		0B9A9011DB770E6FC4D679E0 /* SlotStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotStore.swift; sourceTree = "<group>"; };
 		0E95D5C5C8ED642326A14E21 /* Entitlements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entitlements.swift; sourceTree = "<group>"; };
 		0F806ECE71FCC38E52033D0F /* SlotGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotGridView.swift; sourceTree = "<group>"; };
+		0FF8F414B8C76E67DD150726 /* SlotsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsApp.swift; sourceTree = "<group>"; };
+		1509BFAEE5E15121F90CA461 /* HexColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexColorTests.swift; sourceTree = "<group>"; };
 		1560171CDCA17C9B5AF77D26 /* OnboardingDemos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingDemos.swift; sourceTree = "<group>"; };
-		19FC870A2B9262688DDFDF1B /* SlotsTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsTheme.swift; sourceTree = "<group>"; };
-		20B4A39DBE858EBA6C607B55 /* WorkspaceEntities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceEntities.swift; sourceTree = "<group>"; };
 		20B797933714326535479FA7 /* InterTight-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InterTight-Regular.ttf"; sourceTree = "<group>"; };
+		20B881EF89B0D5A0094FDEDE /* WorkspaceEntities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceEntities.swift; sourceTree = "<group>"; };
 		23A64BAFFA5139B4A87269AD /* PanelFloatingLibraryTrash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelFloatingLibraryTrash.swift; sourceTree = "<group>"; };
-		23F78009613A3AD51F468256 /* FileClip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileClip.swift; sourceTree = "<group>"; };
+		276F70223CAAED7C4F3BD24E /* ClipContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipContent.swift; sourceTree = "<group>"; };
 		27819786F66292E2771CA28D /* onboarding-demo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "onboarding-demo.png"; sourceTree = "<group>"; };
 		279A89FD0850AFC9891FEE6D /* MenuBarGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarGuide.swift; sourceTree = "<group>"; };
 		2CAA0E362F8D30646F3F7C48 /* DeleteLibraryFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteLibraryFormView.swift; sourceTree = "<group>"; };
 		2DCFDD565B98C8B5733679A0 /* PanelLibraryBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelLibraryBar.swift; sourceTree = "<group>"; };
-		2F74883603B94FB2FCCA0073 /* SlotStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotStore.swift; sourceTree = "<group>"; };
+		2E056027640CC0F9844904BA /* SlotsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsWidget.swift; sourceTree = "<group>"; };
+		2EE1CD7B8F496EB7DD4FAECE /* SlotsWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SlotsWidgets.entitlements; sourceTree = "<group>"; };
+		3202C6BC0302E36DC5DF2252 /* SlotsTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsTypography.swift; sourceTree = "<group>"; };
 		3383874D55B3B03906F05B76 /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWindowController.swift; sourceTree = "<group>"; };
 		345006B5580B09DB4988D950 /* VisualEffectBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectBackground.swift; sourceTree = "<group>"; };
 		34E2890514C24B67964E419A /* SampleDataFixture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleDataFixture.swift; sourceTree = "<group>"; };
 		3610897210D290C688FA1D3C /* ClipRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipRowView.swift; sourceTree = "<group>"; };
+		37EC848DF2B5C35159A1E56A /* SlotCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotCardView.swift; sourceTree = "<group>"; };
+		38328734E27DB5D9D5B79090 /* SharedAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SharedAssets.xcassets; sourceTree = "<group>"; };
+		3D7FAF7089BC20C0292C4DC3 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		40B7E7A2B2C7D507EFD132F1 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		41FC0ED81ECB6C60BC9AA3FF /* ClipContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipContent.swift; sourceTree = "<group>"; };
+		43BE55AF3B8E19E29FD63597 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		4446EF048FFED63B26C12887 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
 		4528F5EDD7002053F6D7D2AC /* AccessibilityPermission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPermission.swift; sourceTree = "<group>"; };
+		469B2F2C6F27A005618476C0 /* CopiedToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopiedToast.swift; sourceTree = "<group>"; };
+		46B74252CCBB9B165DC15020 /* SlotsShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsShortcuts.swift; sourceTree = "<group>"; };
 		4BA75780C3AA9A0FD9726A77 /* MenuBarHint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarHint.swift; sourceTree = "<group>"; };
 		4BC816C077BA5FF7063ABC6F /* PanelModalOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelModalOverlay.swift; sourceTree = "<group>"; };
-		4D3D4575494AD564C842B7E3 /* Slot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
-		52F0672A4F4935A538769C17 /* WorkspaceDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceDatabase.swift; sourceTree = "<group>"; };
+		4EF799F2F656ACAB2C251FCE /* SlotsWorkspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsWorkspace.swift; sourceTree = "<group>"; };
 		55EA47E2008017DE5FF000B6 /* WindowPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowPlacement.swift; sourceTree = "<group>"; };
 		5705E3CE6DEACE6C0251D749 /* HistoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryListView.swift; sourceTree = "<group>"; };
 		585B27068C55611BF34BD149 /* BrandDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandDisplay.swift; sourceTree = "<group>"; };
+		59399EF0FBEE488A29A47E00 /* SlotsControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsControls.swift; sourceTree = "<group>"; };
 		5ADDD4E48114E1FE234BB150 /* CloudKitProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitProbe.swift; sourceTree = "<group>"; };
 		5BD5D3779C3ADA48B9820C77 /* HistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStore.swift; sourceTree = "<group>"; };
 		5D886AD42BBF26566EF79845 /* SlotCardCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotCardCopy.swift; sourceTree = "<group>"; };
+		5EBB61745C61F2A160BE8D24 /* ClipboardReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardReader.swift; sourceTree = "<group>"; };
 		6238F039A823EDE67ECCA77A /* MoreSlotsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreSlotsTests.swift; sourceTree = "<group>"; };
+		63E0217BA9B7761E4DA0D991 /* Slots.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Slots.entitlements; sourceTree = "<group>"; };
 		644A9655A112A4CEB512EA84 /* ShortcutBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutBadge.swift; sourceTree = "<group>"; };
 		67CCD20A269221ECF634E755 /* UsageEventLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageEventLog.swift; sourceTree = "<group>"; };
+		6993D08161A8E2585916274D /* SlotsWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsWidgetsBundle.swift; sourceTree = "<group>"; };
+		6B3DBE61570EA7753BE0D7BD /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		6D712D1B59B02FFFD16ACB70 /* Slot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
+		6DC067C79829C2C48D771AC7 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		6EA59D873B16A10120FE14F9 /* AppSupportDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSupportDirectory.swift; sourceTree = "<group>"; };
 		6F80607680DE710540140313 /* InterTight-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InterTight-Medium.ttf"; sourceTree = "<group>"; };
 		6F94875672160E6886F1A1B0 /* NotchShelfView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchShelfView.swift; sourceTree = "<group>"; };
+		6FC802583C33070EF060FEB1 /* NewSlotSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSlotSheet.swift; sourceTree = "<group>"; };
 		71C0DE85941092439A8BE875 /* PasteboardRichTextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardRichTextTests.swift; sourceTree = "<group>"; };
 		73024E80E174C79983E6A25D /* PanelDragPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelDragPayload.swift; sourceTree = "<group>"; };
 		74BC4D986E08A1EDDC991937 /* NotchShelfMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchShelfMetrics.swift; sourceTree = "<group>"; };
+		7694F1C3336660276030FD67 /* SlotClipboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotClipboard.swift; sourceTree = "<group>"; };
+		7860174C55426F53F4005D22 /* SheetComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetComponents.swift; sourceTree = "<group>"; };
+		79D0BD4FF88CA860EBA2562C /* EmptyLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyLibraryView.swift; sourceTree = "<group>"; };
+		7E49B638E43A951450D6B0EC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7F7D2094D67542CF6B99B29B /* SaveClipboardSlotPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveClipboardSlotPickerSheet.swift; sourceTree = "<group>"; };
 		8108F534EC224E3BA83D449B /* BackdropController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackdropController.swift; sourceTree = "<group>"; };
 		830BEFF3258CA1569A340731 /* LaunchSplashController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchSplashController.swift; sourceTree = "<group>"; };
 		841CFFDFFFAA50088B8764E1 /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
 		8525EE734D2017094138ADBD /* FocusTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusTracker.swift; sourceTree = "<group>"; };
 		858AB04884B62F4C91EF2DF9 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
-		87CBD757296379230AE7AC7A /* LibraryWorkspaceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryWorkspaceStore.swift; sourceTree = "<group>"; };
+		88968E8F6363C71DC976494F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		893CB5382B7CBEF716185C1F /* LemonLicenseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LemonLicenseService.swift; sourceTree = "<group>"; };
 		89452FF5E5C474F90625C4C3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8BB751CC74D313DB9ADAC577 /* HotSlotDesign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotSlotDesign.swift; sourceTree = "<group>"; };
 		8C10887751663046E3AD0188 /* DevelopmentAppInstall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevelopmentAppInstall.swift; sourceTree = "<group>"; };
 		8D898BA6E058E622CFC3A9A3 /* RichTextStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextStore.swift; sourceTree = "<group>"; };
+		8F3E94A6D86C70BE575E9CBF /* IPhoneSlotEditingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPhoneSlotEditingTests.swift; sourceTree = "<group>"; };
+		8FFB86823B4EA51029F1EBA0 /* LibraryWorkspaceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryWorkspaceStore.swift; sourceTree = "<group>"; };
 		904BC54DEB4EA0FB71573C0A /* HistoryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStoreTests.swift; sourceTree = "<group>"; };
+		97810321A8C39A8076F3BA4F /* SlotCardText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotCardText.swift; sourceTree = "<group>"; };
+		9967662EA8DF15C9FDAD5D4D /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		9C232CD058B6607F39574953 /* HotkeysSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeysSettingsView.swift; sourceTree = "<group>"; };
 		9C245D2B39A6052D9B218842 /* ClipThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipThumbnailView.swift; sourceTree = "<group>"; };
 		9D990A1EB5D5AAA6C60B70D8 /* NewLibraryFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewLibraryFormView.swift; sourceTree = "<group>"; };
 		9EB3B1E51A97B17A7772E768 /* WindowInteractionViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowInteractionViews.swift; sourceTree = "<group>"; };
+		9F6956A65F3E000FBB04DE13 /* SettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSheet.swift; sourceTree = "<group>"; };
+		A0B4119C07A2A5CD6EA69966 /* SlotsIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsIntents.swift; sourceTree = "<group>"; };
 		A3D8A3FBDC8BD6954875D49B /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		A51184CDE4DE57A7C42AA1D1 /* HotSlotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotSlotApp.swift; sourceTree = "<group>"; };
 		A6CF8C198E8B698B91A020C3 /* PasteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteService.swift; sourceTree = "<group>"; };
 		A7412C6D8E3680205603B447 /* Telemetry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Telemetry.swift; sourceTree = "<group>"; };
-		A8791B78D4ECD0F3FCA7B987 /* SlotsWorkspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsWorkspace.swift; sourceTree = "<group>"; };
 		A911DBA98261441FF883EE51 /* PanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelView.swift; sourceTree = "<group>"; };
+		AB4DE44FB364BE31AE4AB230 /* SlotsTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsTheme.swift; sourceTree = "<group>"; };
+		AC0F5DDB9791277CA73101E3 /* SlotImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotImageLoader.swift; sourceTree = "<group>"; };
+		B2D1316BB4DE807DAEF3BE55 /* SlotsIOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SlotsIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3D1AD1C80A5B5AE2DEBD405 /* SlotsPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsPalette.swift; sourceTree = "<group>"; };
 		B880BD3AB5B57E6D542F8B5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BD36EA0DCFD93B6DFACE95B8 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		C349BC8D5A0BB79D81326F87 /* FileClipViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileClipViews.swift; sourceTree = "<group>"; };
+		C4FA6C1C45A715C8AE60E90F /* SlotGridLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotGridLayout.swift; sourceTree = "<group>"; };
+		C6CB06B4FA082A4DB7CFCB8D /* ClipItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipItem.swift; sourceTree = "<group>"; };
+		C8BA225DE11264376D0372D3 /* FileClip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileClip.swift; sourceTree = "<group>"; };
+		C983994A4BBF179E46AB6FE7 /* LibraryBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryBar.swift; sourceTree = "<group>"; };
 		CB00CAB33F7731154F7391F1 /* FeedbackSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackSound.swift; sourceTree = "<group>"; };
 		CBEB360BA0C811221C1D6DE1 /* PanelHeaderBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelHeaderBlock.swift; sourceTree = "<group>"; };
+		CFA9396FC05E6CA3586C8935 /* SlotsWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = SlotsWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFB47B1DB3239FAF3E7E19E6 /* InterTight-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InterTight-SemiBold.ttf"; sourceTree = "<group>"; };
 		D1A146B669DE65CF68ECF5A0 /* HotSlot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HotSlot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D22F605BFD20A8EF2DA9C242 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -196,6 +322,7 @@
 		D9DFD560300A4A9E50B68A52 /* SlotShortcutEditorPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotShortcutEditorPopover.swift; sourceTree = "<group>"; };
 		DA7465C8DDE3F479100918D6 /* HotSlotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HotSlotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DECF19C0558E479917409747 /* SlotPeekView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotPeekView.swift; sourceTree = "<group>"; };
+		E08A644B397C5F630A3A771A /* DebugSampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSampleData.swift; sourceTree = "<group>"; };
 		E0D7BCF8AAD91BA51ABE18E6 /* ShortcutConflict.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutConflict.swift; sourceTree = "<group>"; };
 		E2013A4CBF10BC877FFB0ABA /* DeveloperMenuActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperMenuActions.swift; sourceTree = "<group>"; };
 		E2D9721B8E7B78F14E68B6D5 /* PanelSearchHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelSearchHeader.swift; sourceTree = "<group>"; };
@@ -203,18 +330,20 @@
 		E40CD0B60757E63BD68A2371 /* NotchShelfController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchShelfController.swift; sourceTree = "<group>"; };
 		E49192713FE49EA8C0DC9E8D /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		E6611E81B03FD128CF983626 /* WorkspaceDatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceDatabaseTests.swift; sourceTree = "<group>"; };
-		E9978112D3F44AE2BCE41F5E /* ClipItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipItem.swift; sourceTree = "<group>"; };
+		E8C1319726E784661D6EB74D /* WorkspaceDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceDatabase.swift; sourceTree = "<group>"; };
 		EBD50D3AD7653F5FCEE0C092 /* PanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelController.swift; sourceTree = "<group>"; };
-		F0053E366473B0BCE5341CE9 /* SlotsPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsPalette.swift; sourceTree = "<group>"; };
 		F3B4D0B6EDEEE5D11496E08B /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		F5C2958641416FFA9829EAD4 /* RenameSlotFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenameSlotFormView.swift; sourceTree = "<group>"; };
 		F694AB71C18F22C86D117ACC /* HotkeyName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyName.swift; sourceTree = "<group>"; };
 		F6B29BEA4868030AF4ADA383 /* NotchNotice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchNotice.swift; sourceTree = "<group>"; };
+		F6FA7A8FB4C24128881C7EF8 /* NewLibrarySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewLibrarySheet.swift; sourceTree = "<group>"; };
+		F74006E45C40E989E8B993B1 /* EditSlotSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSlotSheet.swift; sourceTree = "<group>"; };
 		F7773DBEB2E5A96B5FE72436 /* Slots.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Slots.entitlements; sourceTree = "<group>"; };
+		F8222723249BE027757A35B1 /* HexColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexColor.swift; sourceTree = "<group>"; };
+		F8E58CC52539FFAA4D49A253 /* SlotsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsScreen.swift; sourceTree = "<group>"; };
 		FAB997A5ED34633E84820B74 /* RenameLibraryFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenameLibraryFormView.swift; sourceTree = "<group>"; };
 		FB823AC3606502B337159418 /* ClipboardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardService.swift; sourceTree = "<group>"; };
 		FC799AE46B9D3C3037098D02 /* AccessibilityGrantSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityGrantSection.swift; sourceTree = "<group>"; };
-		FEB4689A3F7F6A221FFD94DF /* AppSupportDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSupportDirectory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -231,6 +360,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		04B8FBCA84DB9267D4047C09 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				6EA59D873B16A10120FE14F9 /* AppSupportDirectory.swift */,
+				8FFB86823B4EA51029F1EBA0 /* LibraryWorkspaceStore.swift */,
+				0B9A9011DB770E6FC4D679E0 /* SlotStore.swift */,
+				E8C1319726E784661D6EB74D /* WorkspaceDatabase.swift */,
+				20B881EF89B0D5A0094FDEDE /* WorkspaceEntities.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
 		2A104B474347457D6B881CBD /* UI */ = {
 			isa = PBXGroup;
 			children = (
@@ -243,6 +384,16 @@
 				821A95698B389315DDFCEE8C /* StatusBar */,
 			);
 			path = UI;
+			sourceTree = "<group>";
+		};
+		2AA84E1EE05F02DCBD754E85 /* SlotsIOSShared */ = {
+			isa = PBXGroup;
+			children = (
+				7694F1C3336660276030FD67 /* SlotClipboard.swift */,
+				AC0F5DDB9791277CA73101E3 /* SlotImageLoader.swift */,
+				A0B4119C07A2A5CD6EA69966 /* SlotsIntents.swift */,
+			);
+			path = SlotsIOSShared;
 			sourceTree = "<group>";
 		};
 		2DED8D49FB1D37970A81C10A /* Components */ = {
@@ -266,28 +417,21 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
-		3854B9F5FC857FBF526801B4 /* Design */ = {
+		44F232BB1FFDD8198034601E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				F0053E366473B0BCE5341CE9 /* SlotsPalette.swift */,
-				19FC870A2B9262688DDFDF1B /* SlotsTheme.swift */,
+				7E49B638E43A951450D6B0EC /* Assets.xcassets */,
+				88968E8F6363C71DC976494F /* Info.plist */,
+				6DC067C79829C2C48D771AC7 /* LaunchScreen.storyboard */,
+				63E0217BA9B7761E4DA0D991 /* Slots.entitlements */,
 			);
-			path = Design;
-			sourceTree = "<group>";
-		};
-		3C2084513F10BD40EF722575 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				A8791B78D4ECD0F3FCA7B987 /* SlotsWorkspace.swift */,
-			);
-			path = Models;
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		5054FA23AFDC791295B69AD6 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
 				4528F5EDD7002053F6D7D2AC /* AccessibilityPermission.swift */,
-				FEB4689A3F7F6A221FFD94DF /* AppSupportDirectory.swift */,
 				585B27068C55611BF34BD149 /* BrandDisplay.swift */,
 				8C10887751663046E3AD0188 /* DevelopmentAppInstall.swift */,
 				0E95D5C5C8ED642326A14E21 /* Entitlements.swift */,
@@ -333,6 +477,26 @@
 			path = App;
 			sourceTree = "<group>";
 		};
+		7773EBEF753DA692A8267C1B /* SlotsWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				43BE55AF3B8E19E29FD63597 /* Info.plist */,
+				59399EF0FBEE488A29A47E00 /* SlotsControls.swift */,
+				2E056027640CC0F9844904BA /* SlotsWidget.swift */,
+				2EE1CD7B8F496EB7DD4FAECE /* SlotsWidgets.entitlements */,
+				6993D08161A8E2585916274D /* SlotsWidgetsBundle.swift */,
+			);
+			path = SlotsWidgets;
+			sourceTree = "<group>";
+		};
+		78FE8BB6CD118A2003F049C3 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				38328734E27DB5D9D5B79090 /* SharedAssets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		821A95698B389315DDFCEE8C /* StatusBar */ = {
 			isa = PBXGroup;
 			children = (
@@ -346,7 +510,6 @@
 			children = (
 				67ADB4B16B3ADC1676D37015 /* App */,
 				E7538569533C823CCF5486FC /* Core */,
-				3854B9F5FC857FBF526801B4 /* Design */,
 				DA4D9D603FB4B0BDDE4F747C /* Models */,
 				A397B00E18767437A6B1BB47 /* Resources */,
 				D5D765B896D121F867F67D97 /* Services */,
@@ -360,7 +523,9 @@
 			isa = PBXGroup;
 			children = (
 				E337777E4CDCB5C2D945FE7B /* ClipItemTests.swift */,
+				1509BFAEE5E15121F90CA461 /* HexColorTests.swift */,
 				904BC54DEB4EA0FB71573C0A /* HistoryStoreTests.swift */,
+				8F3E94A6D86C70BE575E9CBF /* IPhoneSlotEditingTests.swift */,
 				6238F039A823EDE67ECCA77A /* MoreSlotsTests.swift */,
 				71C0DE85941092439A8BE875 /* PasteboardRichTextTests.swift */,
 				099675B8BFE15486169F4C0B /* SlotStoreTests.swift */,
@@ -385,6 +550,48 @@
 				34E2890514C24B67964E419A /* SampleDataFixture.swift */,
 			);
 			path = Fixtures;
+			sourceTree = "<group>";
+		};
+		9D90B1667282D54759B4CE28 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				469B2F2C6F27A005618476C0 /* CopiedToast.swift */,
+				F74006E45C40E989E8B993B1 /* EditSlotSheet.swift */,
+				79D0BD4FF88CA860EBA2562C /* EmptyLibraryView.swift */,
+				C983994A4BBF179E46AB6FE7 /* LibraryBar.swift */,
+				9967662EA8DF15C9FDAD5D4D /* LoadingView.swift */,
+				F6FA7A8FB4C24128881C7EF8 /* NewLibrarySheet.swift */,
+				6FC802583C33070EF060FEB1 /* NewSlotSheet.swift */,
+				9F6956A65F3E000FBB04DE13 /* SettingsSheet.swift */,
+				7860174C55426F53F4005D22 /* SheetComponents.swift */,
+				97810321A8C39A8076F3BA4F /* SlotCardText.swift */,
+				37EC848DF2B5C35159A1E56A /* SlotCardView.swift */,
+				C4FA6C1C45A715C8AE60E90F /* SlotGridLayout.swift */,
+				F8E58CC52539FFAA4D49A253 /* SlotsScreen.swift */,
+				3202C6BC0302E36DC5DF2252 /* SlotsTypography.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		9F5A1A66BCB4965059F0B5E6 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				6B3DBE61570EA7753BE0D7BD /* AppModel.swift */,
+				E08A644B397C5F630A3A771A /* DebugSampleData.swift */,
+				3D7FAF7089BC20C0292C4DC3 /* RootView.swift */,
+				0FF8F414B8C76E67DD150726 /* SlotsApp.swift */,
+				46B74252CCBB9B165DC15020 /* SlotsShortcuts.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A1F571B0E46A01B2113C0B4E /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				B3D1AD1C80A5B5AE2DEBD405 /* SlotsPalette.swift */,
+				AB4DE44FB364BE31AE4AB230 /* SlotsTheme.swift */,
+			);
+			path = Design;
 			sourceTree = "<group>";
 		};
 		A397B00E18767437A6B1BB47 /* Resources */ = {
@@ -443,14 +650,25 @@
 			path = Notch;
 			sourceTree = "<group>";
 		};
-		C4E0BD8C5089F52C12C74B0B /* Persistence */ = {
+		CA1411D4E57DCA0C02C5C4D6 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				87CBD757296379230AE7AC7A /* LibraryWorkspaceStore.swift */,
-				52F0672A4F4935A538769C17 /* WorkspaceDatabase.swift */,
-				20B4A39DBE858EBA6C607B55 /* WorkspaceEntities.swift */,
+				5EBB61745C61F2A160BE8D24 /* ClipboardReader.swift */,
 			);
-			path = Persistence;
+			path = Services;
+			sourceTree = "<group>";
+		};
+		CD05AF6125967C956473D82E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				276F70223CAAED7C4F3BD24E /* ClipContent.swift */,
+				C6CB06B4FA082A4DB7CFCB8D /* ClipItem.swift */,
+				C8BA225DE11264376D0372D3 /* FileClip.swift */,
+				F8222723249BE027757A35B1 /* HexColor.swift */,
+				6D712D1B59B02FFFD16ACB70 /* Slot.swift */,
+				4EF799F2F656ACAB2C251FCE /* SlotsWorkspace.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		D5D765B896D121F867F67D97 /* Services */ = {
@@ -462,7 +680,6 @@
 				4446EF048FFED63B26C12887 /* HotkeyManager.swift */,
 				893CB5382B7CBEF716185C1F /* LemonLicenseService.swift */,
 				A6CF8C198E8B698B91A020C3 /* PasteService.swift */,
-				2F74883603B94FB2FCCA0073 /* SlotStore.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -471,10 +688,6 @@
 			isa = PBXGroup;
 			children = (
 				BD36EA0DCFD93B6DFACE95B8 /* AppSettings.swift */,
-				41FC0ED81ECB6C60BC9AA3FF /* ClipContent.swift */,
-				E9978112D3F44AE2BCE41F5E /* ClipItem.swift */,
-				23F78009613A3AD51F468256 /* FileClip.swift */,
-				4D3D4575494AD564C842B7E3 /* Slot.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -484,6 +697,10 @@
 			children = (
 				8FC6C55879F9CDFE22815A4F /* HotSlot */,
 				8FFF4A07E08798AB00DF2DCB /* HotSlotTests */,
+				F86D44F54CEF9BD1FC70F15B /* Shared */,
+				F0165C35A0C6DE31E035626A /* SlotsIOS */,
+				2AA84E1EE05F02DCBD754E85 /* SlotsIOSShared */,
+				7773EBEF753DA692A8267C1B /* SlotsWidgets */,
 				E5031C35BCD2C1773CCBABD3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -493,6 +710,8 @@
 			children = (
 				D1A146B669DE65CF68ECF5A0 /* HotSlot.app */,
 				DA7465C8DDE3F479100918D6 /* HotSlotTests.xctest */,
+				B2D1316BB4DE807DAEF3BE55 /* SlotsIOS.app */,
+				CFA9396FC05E6CA3586C8935 /* SlotsWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -503,10 +722,19 @@
 				E2013A4CBF10BC877FFB0ABA /* DeveloperMenuActions.swift */,
 				90D79007D5D359CA787E2A2B /* Analytics */,
 				976AC17085E6E35088A4A28D /* Fixtures */,
-				3C2084513F10BD40EF722575 /* Models */,
-				C4E0BD8C5089F52C12C74B0B /* Persistence */,
 			);
 			path = Core;
+			sourceTree = "<group>";
+		};
+		F0165C35A0C6DE31E035626A /* SlotsIOS */ = {
+			isa = PBXGroup;
+			children = (
+				9F5A1A66BCB4965059F0B5E6 /* App */,
+				44F232BB1FFDD8198034601E /* Resources */,
+				CA1411D4E57DCA0C02C5C4D6 /* Services */,
+				9D90B1667282D54759B4CE28 /* UI */,
+			);
+			path = SlotsIOS;
 			sourceTree = "<group>";
 		};
 		F26BDB29C229E2B9CAFCA297 /* Fonts */ = {
@@ -517,6 +745,17 @@
 				CFB47B1DB3239FAF3E7E19E6 /* InterTight-SemiBold.ttf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		F86D44F54CEF9BD1FC70F15B /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				A1F571B0E46A01B2113C0B4E /* Design */,
+				CD05AF6125967C956473D82E /* Models */,
+				04B8FBCA84DB9267D4047C09 /* Persistence */,
+				78FE8BB6CD118A2003F049C3 /* Resources */,
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -546,6 +785,24 @@
 			productReference = D1A146B669DE65CF68ECF5A0 /* HotSlot.app */;
 			productType = "com.apple.product-type.application";
 		};
+		B21F9A0F6D8BB3C6AE17D7F7 /* SlotsWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C4E68D007FC3FE5A7127237F /* Build configuration list for PBXNativeTarget "SlotsWidgets" */;
+			buildPhases = (
+				5B9D38066A14BFF493BD1016 /* Sources */,
+				EE02F9E9EFA8E454A4BDB828 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SlotsWidgets;
+			packageProductDependencies = (
+			);
+			productName = SlotsWidgets;
+			productReference = CFA9396FC05E6CA3586C8935 /* SlotsWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		DCAFD1C1F50920E7DEEB036D /* HotSlotTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D15CFFC112FC1BE16321C5C /* Build configuration list for PBXNativeTarget "HotSlotTests" */;
@@ -564,6 +821,26 @@
 			productReference = DA7465C8DDE3F479100918D6 /* HotSlotTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		F833474A6C33359CA8D1C9E5 /* SlotsIOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F0FD71C86AB9CD0769DF23F8 /* Build configuration list for PBXNativeTarget "SlotsIOS" */;
+			buildPhases = (
+				12F2D01217AAAFD4850E707A /* Sources */,
+				A272478AD09E500D3C59CC5E /* Resources */,
+				2A9C6DACDD1905406335B4BE /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8C5917B16276D52C4B0BC19B /* PBXTargetDependency */,
+			);
+			name = SlotsIOS;
+			packageProductDependencies = (
+			);
+			productName = SlotsIOS;
+			productReference = B2D1316BB4DE807DAEF3BE55 /* SlotsIOS.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -577,7 +854,15 @@
 						DevelopmentTeam = 53M8KYX8G4;
 						ProvisioningStyle = Automatic;
 					};
+					B21F9A0F6D8BB3C6AE17D7F7 = {
+						DevelopmentTeam = 53M8KYX8G4;
+						ProvisioningStyle = Automatic;
+					};
 					DCAFD1C1F50920E7DEEB036D = {
+						DevelopmentTeam = 53M8KYX8G4;
+						ProvisioningStyle = Automatic;
+					};
+					F833474A6C33359CA8D1C9E5 = {
 						DevelopmentTeam = 53M8KYX8G4;
 						ProvisioningStyle = Automatic;
 					};
@@ -604,11 +889,26 @@
 			targets = (
 				248EBB8D02FD34E70AE77CA1 /* HotSlot */,
 				DCAFD1C1F50920E7DEEB036D /* HotSlotTests */,
+				F833474A6C33359CA8D1C9E5 /* SlotsIOS */,
+				B21F9A0F6D8BB3C6AE17D7F7 /* SlotsWidgets */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		A272478AD09E500D3C59CC5E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				805CCA61CD5B75157300D857 /* Assets.xcassets in Resources */,
+				348D85CEC6255FFF5692DFC0 /* InterTight-Medium.ttf in Resources */,
+				3E211D647EC7B47717400C3B /* InterTight-Regular.ttf in Resources */,
+				C4AFDBF4918B43898CC55EB3 /* InterTight-SemiBold.ttf in Resources */,
+				C645EFD8E30D6CBD402D265D /* LaunchScreen.storyboard in Resources */,
+				688238C85BD20C4B7E921E1A /* SharedAssets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EB7366E1C45497CFEC2C7A59 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -617,7 +917,19 @@
 				95FEEB80A71D1446BFDBCD27 /* InterTight-Medium.ttf in Resources */,
 				E899C89CE016CCA5D19AD507 /* InterTight-Regular.ttf in Resources */,
 				91351D337157BD655C397576 /* InterTight-SemiBold.ttf in Resources */,
+				770283D3344C9750703E244D /* SharedAssets.xcassets in Resources */,
 				BF910DD20209DE85A5D2976D /* onboarding-demo.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE02F9E9EFA8E454A4BDB828 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6189D815B50431148336E1C /* InterTight-Medium.ttf in Resources */,
+				A336FAE0720E0DF8E91C2404 /* InterTight-Regular.ttf in Resources */,
+				E1D5047EA9D4A3B670C20258 /* InterTight-SemiBold.ttf in Resources */,
+				A3EC5187E0BCDBE27AC30FD4 /* SharedAssets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -665,12 +977,83 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		12F2D01217AAAFD4850E707A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5850C469218AF6DA4B841C3F /* AppModel.swift in Sources */,
+				EF6B995E1BC9C7F187742DFD /* AppSupportDirectory.swift in Sources */,
+				4608F7A7F3CFCDB73C643187 /* ClipContent.swift in Sources */,
+				5B20FFE70173BA7D88D46696 /* ClipItem.swift in Sources */,
+				DC0D90F039A824B06FAB70AD /* ClipboardReader.swift in Sources */,
+				45380CB0797C3F89E3977E8F /* CopiedToast.swift in Sources */,
+				F885056C40E0C0CD4C6C2D5A /* DebugSampleData.swift in Sources */,
+				FB58B1EDE9A9FFADDE8100E7 /* EditSlotSheet.swift in Sources */,
+				88E93B74A7628FDEC691592B /* EmptyLibraryView.swift in Sources */,
+				B4C6A34BA9CC87F8BC42362C /* FileClip.swift in Sources */,
+				3503CA335D21DD366FCCD39C /* HexColor.swift in Sources */,
+				E150AE077B8FAA4E3D2E0185 /* LibraryBar.swift in Sources */,
+				8FDE2566B6AA820FFDAD8E3F /* LibraryWorkspaceStore.swift in Sources */,
+				FFCAC1302C03AC62C9964CB2 /* LoadingView.swift in Sources */,
+				BBD37161D8BF269573970BDA /* NewLibrarySheet.swift in Sources */,
+				DA4D16FD86CA79F6DB3DCDE9 /* NewSlotSheet.swift in Sources */,
+				7BA249E552FEA1653792D3B5 /* RootView.swift in Sources */,
+				E3030FD8ABF2C4C8E80C578E /* SettingsSheet.swift in Sources */,
+				B02A7EDBDB72EA5C89364914 /* SheetComponents.swift in Sources */,
+				1D82BFEF7BB786F65B8BD7C2 /* Slot.swift in Sources */,
+				41F07A0E6F719FD89B617F4E /* SlotCardText.swift in Sources */,
+				2FAFBF0E880DEF9B6A037560 /* SlotCardView.swift in Sources */,
+				7FE019D6F44FF4F2C604C0C1 /* SlotClipboard.swift in Sources */,
+				4A1396D9F83F86D60E3C7C9F /* SlotGridLayout.swift in Sources */,
+				FA04CBEE80E14AA04CF7B4EF /* SlotImageLoader.swift in Sources */,
+				008DE6FEB365349644A6627C /* SlotStore.swift in Sources */,
+				7B34986206ED735A400EF5CC /* SlotsApp.swift in Sources */,
+				8BC55A4D96A528EE7FB397AE /* SlotsIntents.swift in Sources */,
+				D2D98DA843D9C2360AB0F3E1 /* SlotsPalette.swift in Sources */,
+				055CB04B6C26AD6F11287340 /* SlotsScreen.swift in Sources */,
+				7B886D8CF0764A0925BE7CF2 /* SlotsShortcuts.swift in Sources */,
+				9688217A1BC3DD9F4F6764DB /* SlotsTheme.swift in Sources */,
+				16562824EDC61CA89E90200E /* SlotsTypography.swift in Sources */,
+				E4AE96AB2962438B97D6BC2C /* SlotsWorkspace.swift in Sources */,
+				1C7E1906FFE45E0AE5300449 /* WorkspaceDatabase.swift in Sources */,
+				FE7C2D811830BEE3A78D87B1 /* WorkspaceEntities.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B9D38066A14BFF493BD1016 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1FE0351F3AC71103165E63A8 /* AppSupportDirectory.swift in Sources */,
+				E144C3E070C945D3E739F974 /* ClipContent.swift in Sources */,
+				30DB0DFD08E34B379659D3FB /* ClipItem.swift in Sources */,
+				BF407AF24E6951B106F7AE9C /* FileClip.swift in Sources */,
+				C46BC2DA3D17A3925BA0E8F0 /* HexColor.swift in Sources */,
+				B9DF6C181F7B5ED4F9EE63F4 /* LibraryWorkspaceStore.swift in Sources */,
+				A8565B9EFBCEBED32157E894 /* Slot.swift in Sources */,
+				190C232657324142739D8022 /* SlotClipboard.swift in Sources */,
+				DA625A4D3E449422ABB10854 /* SlotImageLoader.swift in Sources */,
+				7E56325E197CC1735408363C /* SlotStore.swift in Sources */,
+				FC1F95E3FF82AC0D0497B08B /* SlotsControls.swift in Sources */,
+				7F361AF5971568F22F3E3133 /* SlotsIntents.swift in Sources */,
+				23A20F46EAADFF0E42FF9004 /* SlotsPalette.swift in Sources */,
+				1616303E4EEAF2FABE9DE0A6 /* SlotsTheme.swift in Sources */,
+				4FF60B881DEA5D7C1E63375C /* SlotsWidget.swift in Sources */,
+				FDDF517EC557CCFECC614490 /* SlotsWidgetsBundle.swift in Sources */,
+				06D2FA2D9BBED48CE5A99571 /* SlotsWorkspace.swift in Sources */,
+				07C2D0B9D1E015943DA83BDF /* WorkspaceDatabase.swift in Sources */,
+				6068D7A5268503E1A7FFCC44 /* WorkspaceEntities.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		88976BA868EBEC67452124B4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				6D6DA5397C868548D19A305D /* ClipItemTests.swift in Sources */,
+				4307570FB9E8F198EC50F40B /* HexColorTests.swift in Sources */,
 				B7A96F91F33FE780998A9FD9 /* HistoryStoreTests.swift in Sources */,
+				91490F53C2647F397DCD852B /* IPhoneSlotEditingTests.swift in Sources */,
 				EDCE1110A455CEB1540813D7 /* MoreSlotsTests.swift in Sources */,
 				028AFCE7E42D780057C6E8FD /* PasteboardRichTextTests.swift in Sources */,
 				2C243CEF754FA0B312FCF6AD /* SlotStoreTests.swift in Sources */,
@@ -687,11 +1070,11 @@
 				A4444F4B642C0155DD82A848 /* AppDelegate.swift in Sources */,
 				E4EF388A93D722D36DE2BA7F /* AppSettings.swift in Sources */,
 				15E13B782F856BE19618FD98 /* AppState.swift in Sources */,
-				6EDC9EDB77022AEF8951BC41 /* AppSupportDirectory.swift in Sources */,
+				9C5BFB6CBE9DFEFC7D48C469 /* AppSupportDirectory.swift in Sources */,
 				1BEBD40631434B777BF77F74 /* BackdropController.swift in Sources */,
 				AAB02DE1F528DDBEB6CA3EE0 /* BrandDisplay.swift in Sources */,
-				0C1B4C7C4F79CBF6E95CDA42 /* ClipContent.swift in Sources */,
-				98F6E095AE516BDCB9DEB19E /* ClipItem.swift in Sources */,
+				7828936BEC353BA181BE4395 /* ClipContent.swift in Sources */,
+				7B7E0D843B7CAF7586BC5489 /* ClipItem.swift in Sources */,
 				EC2FD2696FBFC7620CC1C497 /* ClipRowView.swift in Sources */,
 				43D29E4D7E7FF8E4255EFFA2 /* ClipThumbnailView.swift in Sources */,
 				12C677E12D06E670A5FA29DA /* ClipboardService.swift in Sources */,
@@ -702,9 +1085,10 @@
 				BE931C778F5553DF67F0481B /* EmptyStateView.swift in Sources */,
 				019623A7A6E5EB1500424F3E /* Entitlements.swift in Sources */,
 				3726AD86BCF2F30C02228F26 /* FeedbackSound.swift in Sources */,
-				49C78F83358BF7303078E667 /* FileClip.swift in Sources */,
+				DFF36B646AEB7D0FD1A1DF1C /* FileClip.swift in Sources */,
 				0F4960AE9ACE09E69E7E203C /* FileClipViews.swift in Sources */,
 				06F67C3631616988E770F6FB /* FocusTracker.swift in Sources */,
+				F50F3158C845988BE5A358E7 /* HexColor.swift in Sources */,
 				8FF03433C9CE0E0D64619F77 /* HistoryListView.swift in Sources */,
 				CE22760276774C6B27A032C5 /* HistoryStore.swift in Sources */,
 				999AA44F8AF5D7EDD8CA8B74 /* HotSlotApp.swift in Sources */,
@@ -714,7 +1098,7 @@
 				C892DEF7905F0C9D07D2EAB4 /* HotkeysSettingsView.swift in Sources */,
 				CBA4F163FFFA6AB36342AEAA /* LaunchSplashController.swift in Sources */,
 				51661401F91CFF3E1F9E5C79 /* LemonLicenseService.swift in Sources */,
-				828285DAB8290A808F7BA17A /* LibraryWorkspaceStore.swift in Sources */,
+				29D4B442F2AF4179FDC93D29 /* LibraryWorkspaceStore.swift in Sources */,
 				DD176F09A23EF962DF1A68A9 /* MenuBarGuide.swift in Sources */,
 				F5876299FFE1C74613AB4747 /* MenuBarHint.swift in Sources */,
 				601143B29971E9F1B4963725 /* NewLibraryFormView.swift in Sources */,
@@ -746,16 +1130,16 @@
 				666961C01803DCEA644EF356 /* ShortcutBadge.swift in Sources */,
 				1B17E199882E6BF6729D5C9F /* ShortcutConflict.swift in Sources */,
 				F9163EACFBBA158DB5AE7001 /* ShortcutRecorderPopoverLayout.swift in Sources */,
-				8AD33E79675CC9C6D12CAE99 /* Slot.swift in Sources */,
+				8AD599FD8A75133D9FCEDA0B /* Slot.swift in Sources */,
 				D810C7327C80F74198279734 /* SlotCardCopy.swift in Sources */,
 				F3DF1B41ADC0380D87AF4D07 /* SlotGridView.swift in Sources */,
 				18006E349309415F307A5D15 /* SlotPeekView.swift in Sources */,
 				81F6F26B31F98E6784CE3628 /* SlotShortcutBadges.swift in Sources */,
 				9570DF8FCE70BA5E0E073256 /* SlotShortcutEditorPopover.swift in Sources */,
-				5F03F3682880EE8CB86A7501 /* SlotStore.swift in Sources */,
-				5F54E5810EE5E19A94501C02 /* SlotsPalette.swift in Sources */,
-				8050B51FEBAEB5B66FDE5DF5 /* SlotsTheme.swift in Sources */,
-				1831E0CCBA952305EFEE0AF7 /* SlotsWorkspace.swift in Sources */,
+				63A33D7C8CEA3F384A5A76DE /* SlotStore.swift in Sources */,
+				2418C648A7E6CD831A029998 /* SlotsPalette.swift in Sources */,
+				022F0AA872FE23DC7573D40C /* SlotsTheme.swift in Sources */,
+				4496AE66A8584FCBEC81FAC1 /* SlotsWorkspace.swift in Sources */,
 				709457F1F7152675FEE4A77B /* StatusBarController.swift in Sources */,
 				A8AE9AF960E27653C8416182 /* Telemetry.swift in Sources */,
 				F5B44D9C82D3CB4398737ED5 /* ToastView.swift in Sources */,
@@ -763,8 +1147,8 @@
 				7D09BF2DF35F201E3F7FFD36 /* VisualEffectBackground.swift in Sources */,
 				C849A14A7263DAE9DD9E6797 /* WindowInteractionViews.swift in Sources */,
 				003A2BE4D6462A153F7A0CEF /* WindowPlacement.swift in Sources */,
-				287527053D120850751E787F /* WorkspaceDatabase.swift in Sources */,
-				95E7E65FE86C2DE8D9E63B69 /* WorkspaceEntities.swift in Sources */,
+				054DD02DA512456EB3372084 /* WorkspaceDatabase.swift in Sources */,
+				58A03F500E754B35E2D35BE5 /* WorkspaceEntities.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -775,6 +1159,11 @@
 			isa = PBXTargetDependency;
 			target = 248EBB8D02FD34E70AE77CA1 /* HotSlot */;
 			targetProxy = 5E029734373EB4EC83F64B1E /* PBXContainerItemProxy */;
+		};
+		8C5917B16276D52C4B0BC19B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B21F9A0F6D8BB3C6AE17D7F7 /* SlotsWidgets */;
+			targetProxy = A2F684487420D70E9D28A71F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -793,6 +1182,29 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.hotslot.app.tests;
 				SDKROOT = macosx;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Slots.app/Contents/MacOS/Slots";
+			};
+			name = Debug;
+		};
+		061BB9622BDC6D8C4AC1D79A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SlotsIOS/Resources/Slots.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = SlotsIOS/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hotslot.app;
+				PRODUCT_MODULE_NAME = SlotsIOS;
+				PRODUCT_NAME = Slots;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -862,17 +1274,38 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.9;
 			};
 			name = Release;
+		};
+		5CD3A803CA311918490EC2D7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SlotsWidgets/SlotsWidgets.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = SlotsWidgets/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hotslot.app.widgets;
+				PRODUCT_NAME = SlotsWidgets;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
 		};
 		6C5859794EF505BC9C2C3188 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -888,6 +1321,50 @@
 				PRODUCT_MODULE_NAME = HotSlot;
 				PRODUCT_NAME = Slots;
 				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		951D6E8B12B3EDF0D8CEFBA0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SlotsIOS/Resources/Slots.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = SlotsIOS/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hotslot.app;
+				PRODUCT_MODULE_NAME = SlotsIOS;
+				PRODUCT_NAME = Slots;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		99F489025BF8716280AB7219 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SlotsWidgets/SlotsWidgets.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = SlotsWidgets/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hotslot.app.widgets;
+				PRODUCT_NAME = SlotsWidgets;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -963,13 +1440,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.9;
@@ -997,11 +1474,29 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		C4E68D007FC3FE5A7127237F /* Build configuration list for PBXNativeTarget "SlotsWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5CD3A803CA311918490EC2D7 /* Debug */,
+				99F489025BF8716280AB7219 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		ED1CD970D01D813000053B99 /* Build configuration list for PBXProject "HotSlot" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CA6F3BEDED548E4B93E57D5D /* Debug */,
 				2A8BFB1EA7317366EE601337 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F0FD71C86AB9CD0769DF23F8 /* Build configuration list for PBXNativeTarget "SlotsIOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				061BB9622BDC6D8C4AC1D79A /* Debug */,
+				951D6E8B12B3EDF0D8CEFBA0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

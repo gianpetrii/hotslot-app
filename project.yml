@@ -3,6 +3,7 @@ options:
   bundleIdPrefix: com.hotslot
   deploymentTarget:
     macOS: "15.0"
+    iOS: "18.0"
   xcodeVersion: "15.0"
   createIntermediateGroups: true
 
@@ -33,6 +34,8 @@ targets:
     platform: macOS
     sources:
       - path: HotSlot
+      # Modelos, persistencia y tema que comparten el Mac y el iPhone.
+      - path: Shared
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.hotslot.app
@@ -83,7 +86,104 @@ targets:
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Slots.app/Contents/MacOS/Slots"
         BUNDLE_LOADER: "$(TEST_HOST)"
 
+  # App de iPhone. Comparte `Shared/` y las fuentes con el Mac.
+  SlotsIOS:
+    type: application
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - path: SlotsIOS
+      - path: SlotsIOSShared
+      - path: Shared
+      - path: HotSlot/Resources/Fonts
+        buildPhase: resources
+    dependencies:
+      - target: SlotsWidgets
+        embed: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.hotslot.app
+        PRODUCT_NAME: Slots
+        PRODUCT_MODULE_NAME: SlotsIOS
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    info:
+      path: SlotsIOS/Resources/Info.plist
+      properties:
+        CFBundleDevelopmentRegion: es
+        CFBundleDisplayName: Slots
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        ITSAppUsesNonExemptEncryption: false
+        LSApplicationCategoryType: public.app-category.productivity
+        UILaunchStoryboardName: LaunchScreen
+        # El modo oscuro no está diseñado: se fuerza el claro.
+        UIUserInterfaceStyle: Light
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UIAppFonts:
+          - InterTight-Regular.ttf
+          - InterTight-Medium.ttf
+          - InterTight-SemiBold.ttf
+        # Avisos silenciosos de CloudKit para sincronizar en segundo plano.
+        UIBackgroundModes:
+          - remote-notification
+    entitlements:
+      path: SlotsIOS/Resources/Slots.entitlements
+      properties:
+        com.apple.developer.icloud-container-identifiers:
+          - iCloud.com.hotslot.app
+        com.apple.developer.icloud-services:
+          - CloudKit
+        aps-environment: development
+        # Datos compartidos con los widgets y los atajos.
+        com.apple.security.application-groups:
+          - group.com.hotslot.app
+
+  # Widgets, controles y atajos de iPhone. Leen la base del App Group sin iCloud.
+  SlotsWidgets:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - path: SlotsWidgets
+      - path: SlotsIOSShared
+      - path: Shared
+      - path: HotSlot/Resources/Fonts
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.hotslot.app.widgets
+        PRODUCT_NAME: SlotsWidgets
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1"
+        SKIP_INSTALL: YES
+    info:
+      path: SlotsWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Slots
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        UIAppFonts:
+          - InterTight-Regular.ttf
+          - InterTight-Medium.ttf
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: SlotsWidgets/SlotsWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.hotslot.app
+
 schemes:
+  SlotsIOS:
+    build:
+      targets:
+        SlotsIOS: all
   HotSlot:
     build:
       targets:

@@ -22,11 +22,12 @@ final class WorkspaceDatabase {
     private var importWaiters: [() -> Void] = []
 
     /// `nil` si la base no se pudo abrir: el llamador sigue con el JSON de siempre.
-    init?() {
+    /// `syncsWithCloud: false` abre la misma base sin iCloud: lo usan los widgets y atajos, que solo leen.
+    init?(syncsWithCloud override: Bool? = nil) {
         let schema = Schema([LibraryEntity.self, SlotEntity.self])
         let url = AppSupportDirectory.root.appendingPathComponent("Workspace.store")
         // Tests: base local, sin tocar iCloud.
-        let syncs = AppSupportDirectory.rootOverride == nil
+        let syncs = override ?? (AppSupportDirectory.rootOverride == nil)
         syncsWithCloud = syncs
         let cloud: ModelConfiguration.CloudKitDatabase = syncs ? .private(Self.cloudContainerID) : .none
         let configuration = ModelConfiguration(schema: schema, url: url, cloudKitDatabase: cloud)
@@ -89,8 +90,9 @@ final class WorkspaceDatabase {
 
     /// El workspace guardado, o `nil` si la base está vacía.
     /// Antes de armarlo fusiona duplicados (mismo id, o dos slots en la misma posición): gana el más reciente.
-    func load() -> SlotsWorkspace? {
-        mergeDuplicates()
+    /// `mergingDuplicates: false` no escribe nada (widgets y atajos).
+    func load(mergingDuplicates: Bool = true) -> SlotsWorkspace? {
+        if mergingDuplicates { mergeDuplicates() }
 
         let libraries = ((try? context.fetch(FetchDescriptor<LibraryEntity>())) ?? []).map(\.library)
         guard !libraries.isEmpty else { return nil }

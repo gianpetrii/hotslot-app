@@ -4,6 +4,9 @@ import Foundation
 /// Rutas en Application Support para persistencia local.
 enum AppSupportDirectory {
     static let appName = "HotSlot"
+    #if os(iOS)
+    static let appGroupID = "group.com.hotslot.app"
+    #endif
 
     /// Override para tests unitarios.
     static var rootOverride: URL?
@@ -12,7 +15,13 @@ enum AppSupportDirectory {
 
     static var root: URL {
         if let rootOverride { return rootOverride }
+        #if os(iOS)
+        // En iPhone los datos van al App Group: los leen también los widgets y los atajos.
+        let base = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID)
+            ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        #else
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        #endif
         let url = base.appendingPathComponent(appName, isDirectory: true)
         try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
@@ -20,6 +29,13 @@ enum AppSupportDirectory {
 
     static var images: URL {
         let url = root.appendingPathComponent("Images", isDirectory: true)
+        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        return url
+    }
+
+    /// Archivos guardados en slots desde el iPhone (se copian acá para poder copiarlos después).
+    static var files: URL {
+        let url = root.appendingPathComponent("Files", isDirectory: true)
         try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }

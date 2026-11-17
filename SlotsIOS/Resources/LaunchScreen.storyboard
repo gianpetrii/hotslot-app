@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!-- Igual al primer cuadro de `LoadingView`: degradé + slot de vidrio centrado. -->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController id="01J-lp-oVM" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" image="DegradeNaranja" translatesAutoresizingMaskIntoConstraints="NO" id="bgI-mg-001">
+                                <rect key="frame" x="-286" y="-366" width="688" height="1233"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="bgI-mg-001" secondAttribute="height" multiplier="665:1192" id="asp-ct-001"/>
+                                </constraints>
+                            </imageView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="LaunchCard" translatesAutoresizingMaskIntoConstraints="NO" id="crd-mg-001">
+                                <rect key="frame" x="-21.5" y="188" width="436" height="476"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="436" id="crd-wd-001"/>
+                                    <constraint firstAttribute="height" constant="476" id="crd-ht-001"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.066666666666666666" green="0.066666666666666666" blue="0.066666666666666666" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="bgI-mg-001" firstAttribute="width" secondItem="Ze5-6b-2t3" secondAttribute="width" multiplier="1.75" id="bgw-ct-001"/>
+                            <constraint firstItem="bgI-mg-001" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" multiplier="0.2949" id="bgx-ct-001"/>
+                            <constraint firstItem="bgI-mg-001" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" multiplier="0.5877" id="bgy-ct-001"/>
+                            <constraint firstItem="crd-mg-001" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="crx-ct-001"/>
+                            <constraint firstItem="crd-mg-001" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="cry-ct-001"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="53" y="375"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="DegradeNaranja" width="719" height="1200"/>
+        <image name="LaunchCard" width="436" height="476"/>
+    </resources>
+</document>
