@@ -102,7 +102,40 @@ struct SlotsHoverLift: ViewModifier {
     }
 }
 
+/// Un slot acaba de recibir contenido (o nacer): un «pop» breve con un halo cálido que se apaga.
+/// Lo usan el panel y el notch para que el aviso de guardado se sienta igual en los dos.
+struct SlotArrivalEffect: ViewModifier {
+    let isActive: Bool
+    @State private var progress: CGFloat = 0
+
+    func body(content: Content) -> some View {
+        content
+            .scaleEffect(1 + 0.05 * progress)
+            .shadow(color: SlotsColor.naranja.opacity(0.5 * progress), radius: 16 * progress)
+            .onAppear { if isActive { play() } }
+            .onChange(of: isActive) { _, active in if active { play() } }
+    }
+
+    private func play() {
+        withAnimation(.spring(response: 0.26, dampingFraction: 0.55)) { progress = 1 }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            withAnimation(.easeOut(duration: 0.55)) { progress = 0 }
+        }
+    }
+}
+
+/// Entrada de un slot nuevo: crece desde un poco más chico mientras aparece.
+extension AnyTransition {
+    static var slotArrival: AnyTransition {
+        .scale(scale: 0.82).combined(with: .opacity)
+    }
+}
+
 extension View {
+    func slotArrival(_ isActive: Bool) -> some View {
+        modifier(SlotArrivalEffect(isActive: isActive))
+    }
+
     func slotsHoverLift(_ isActive: Bool, scales: Bool = false) -> some View {
         modifier(SlotsHoverLift(isActive: isActive, scales: scales))
     }

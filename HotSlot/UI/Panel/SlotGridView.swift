@@ -154,12 +154,14 @@ struct SlotGridView: View {
                             ForEach(extraSlots) { slot in
                                 slotCell(index: slot.index)
                                     .frame(height: rowHeight)
+                                    .transition(.slotArrival)
                                     .id(slot.index)
                             }
                             NewSlotCardView(appState: appState)
                             .frame(height: rowHeight)
                             .id(Self.newSlotAnchor)
                         }
+                        .animation(.spring(response: 0.4, dampingFraction: 0.78), value: extraSlots.map(\.index))
                     }
                     .padding(.horizontal, shadowSide)
                     .padding(.vertical, shadowVertical)
@@ -275,6 +277,7 @@ struct SlotGridView: View {
                 .onGeometryChange(for: CGRect.self) { $0.frame(in: .named(Self.contentSpace)) } action: { cardFrames[index] = $0 }
                 // Durante el intercambio las dos cards se dibujan encima de todo (ver `swapOverlay`); acá queda el hueco.
                 .opacity(isSwapped(index) ? 0 : (appState.slotDragSource?.index == index ? 0.35 : 1))
+                .slotArrival(appState.slotArrival?.index == index)
         }
     }
 

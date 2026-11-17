@@ -36,17 +36,24 @@ struct PanelLibraryBar: View {
 
     var body: some View {
         HStack(spacing: SlotsSpace.m) {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: SlotsSpace.s) {
-                    ForEach(displayedLibraries) { library in
-                        libraryPill(library)
+            ScrollViewReader { proxy in
+                // Con muchas bibliotecas la fila se desplaza y se recorta antes del botón de guardar.
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: SlotsSpace.s) {
+                        ForEach(displayedLibraries) { library in
+                            libraryPill(library)
+                                .id(library.id)
+                        }
+                        addLibraryButton
                     }
-                    addLibraryButton
+                    .padding(.vertical, 16)
+                    .padding(.horizontal, 8)
                 }
-                .padding(.vertical, 16)
-                .padding(.horizontal, 8)
+                .onChange(of: activeId) { _, id in
+                    withAnimation(.easeInOut(duration: 0.25)) { proxy.scrollTo(id, anchor: .center) }
+                }
+                .onAppear { proxy.scrollTo(activeId, anchor: .center) }
             }
-            .scrollClipDisabled()
             .background {
                 GeometryReader { geo in
                     Color.clear
@@ -339,6 +346,10 @@ struct LibraryPillLabel: View {
         HStack(spacing: SlotsSpace.s) {
             Text(name)
                 .font(SlotsFont.textoUI)
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .frame(maxWidth: 180, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
             Text("\(count)")
                 .font(SlotsFont.etiqueta)
                 .foregroundStyle(isActive ? Color.white : SlotsColor.tinta)

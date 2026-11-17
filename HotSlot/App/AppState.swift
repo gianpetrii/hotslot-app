@@ -84,6 +84,10 @@ final class AppState {
     var notchOpenCount = 0
     /// Pedido de cambio de página desde la rueda del mouse sobre la barra (+1 / -1).
     var notchPageRequest: Int?
+    /// Se arrastra una biblioteca en el notch: la barra no se cierra aunque el cursor baje al tacho.
+    var notchLibraryDragging = false
+    /// Slot que acaba de recibir contenido: el panel y el notch lo destacan un momento.
+    var slotArrival: SlotArrival?
 
     /// Sheet del panel: elegir slot cuando «Guardar portapapeles» y no hay vacíos.
     var isSaveClipboardSlotPickerPresented = false
@@ -330,6 +334,19 @@ final class AppState {
         openSettings?()
     }
 
+    struct SlotArrival: Equatable {
+        let index: Int
+        let token = UUID()
+    }
+
+    private func markSlotArrival(_ index: Int) {
+        let arrival = SlotArrival(index: index)
+        slotArrival = arrival
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
+            if self?.slotArrival == arrival { self?.slotArrival = nil }
+        }
+    }
+
     func saveToSlot(index: Int, content: ClipContent, announce: Bool = true, archivePreviousToHistory: Bool = false) {
         guard ensureCanUseSlot(index) else { return }
         if archivePreviousToHistory, let previous = slotStore.content(at: index) {
@@ -345,6 +362,7 @@ final class AppState {
         slotStore.saveContent(index: index, content: content)
         Telemetry.slotSaved(content)
         if announce {
+            markSlotArrival(index)
             FeedbackSound.play(.saved)
             presentNotch(.saved(slotIndex: index, title: slotDisplayTitle(at: index)))
         }

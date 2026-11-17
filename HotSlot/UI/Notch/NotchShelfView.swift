@@ -42,6 +42,7 @@ struct NotchShelfView: View {
     let onRenameLibrary: (Library) -> Void
     let onDeleteLibrary: (Library) -> Void
     let onNewLibrary: () -> Void
+    let onNewSlot: () -> Void
 
     @State private var isOpenPanelHovering = false
     @State private var libraryDrag: NotchLibraryDrag?
@@ -57,9 +58,15 @@ struct NotchShelfView: View {
 
         VStack(alignment: .leading, spacing: NotchShelfMetrics.sectionGap) {
             // Cada página trae hasta 5 slots; al cambiar de página la fila entra desde el lado hacia donde vas.
+            HStack(spacing: NotchShelfMetrics.gap) {
             ZStack(alignment: .leading) {
                 HStack(spacing: NotchShelfMetrics.gap) {
-                    ForEach(pageSlots) { slot in
+                    ForEach(pageEntries) { entry in
+                        switch entry {
+                        case .newSlot:
+                            NotchNewSlotTile(pointer: pointer, action: onNewSlot)
+                                .transition(.slotArrival)
+                        case .slot(let slot):
                         NotchShelfTile(
                             slot: slot,
                             pointer: pointer,
@@ -70,32 +77,50 @@ struct NotchShelfView: View {
                                 ? { withAnimation(.easeInOut(duration: 0.22)) { appState.deleteSlot(index: slot.index) } }
                                 : nil
                         )
+                        .slotArrival(appState.slotArrival?.index == slot.index)
+                        .transition(.slotArrival)
+                        }
                     }
+                    .animation(.spring(response: 0.4, dampingFraction: 0.78), value: pageEntries.map(\.id))
                 }
                 .id(page)
                 .transition(.asymmetric(
-                    insertion: .modifier(active: ShiftFade(x: CGFloat(pageDirection) * 56, opacity: 0), identity: ShiftFade(x: 0, opacity: 1)),
-                    removal: .modifier(active: ShiftFade(x: CGFloat(-pageDirection) * 56, opacity: 0), identity: ShiftFade(x: 0, opacity: 1))
+                    insertion: .modifier(active: ShiftFade(y: CGFloat(pageDirection) * 48, opacity: 0), identity: ShiftFade(y: 0, opacity: 1)),
+                    removal: .modifier(active: ShiftFade(y: CGFloat(-pageDirection) * 48, opacity: 0), identity: ShiftFade(y: 0, opacity: 1))
                 ))
             }
-            .frame(width: NotchShelfMetrics.contentWidth - NotchShelfMetrics.pad * 2, height: NotchShelfMetrics.tileHeight, alignment: .leading)
+            .frame(width: NotchShelfMetrics.tileWidth * 5 + NotchShelfMetrics.gap * 4, height: NotchShelfMetrics.tileHeight, alignment: .leading)
+            .clipped()
+
+            // Columna fija: ocupa su lugar siempre para que la barra no cambie de ancho al aparecer una segunda página.
+            Group { if pageCount > 1 { pager } else { Color.clear } }
+                .frame(width: NotchShelfMetrics.pagerWidth, height: NotchShelfMetrics.tileHeight)
+            }
 
             HStack(spacing: SlotsSpace.m) {
+                ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: SlotsSpace.s) {
                         ForEach(Array(libraries.enumerated()), id: \.element.id) { position, library in
                             libraryPill(library, at: position)
+                                .id(library.id)
                         }
-                        NotchPageButton(systemImage: "plus", isEnabled: libraryDrag == nil, pointer: pointer, action: onNewLibrary)
-                            .help("Nueva biblioteca")
                     }
                     .padding(.horizontal, 2)
+                    .padding(.vertical, 6)
                 }
-                .scrollClipDisabled()
+                // El recorte horizontal evita que una pill larga tape los botones; el vertical deja lugar al realce.
+                .padding(.vertical, -6)
+                .onChange(of: activeId) { _, id in
+                    withAnimation(.easeInOut(duration: 0.25)) { proxy.scrollTo(id, anchor: .center) }
+                }
+                .onAppear { proxy.scrollTo(activeId, anchor: .center) }
+                }
 
-                if pageCount > 1 { pager }
+                NotchPageButton(systemImage: "plus", isEnabled: libraryDrag == nil, pointer: pointer, action: onNewLibrary)
+                    .help("Nueva biblioteca")
 
-                if libraryDrag != nil { libraryTrash } else { openPanelButton }
+                openPanelButton
             }
             .frame(height: NotchShelfMetrics.libraryHeight)
             .onPreferenceChange(NotchPillFramesKey.self) { latestPillFrames = $0 }
@@ -120,11 +145,26 @@ struct NotchShelfView: View {
         .overlay {
             shape.strokeBorder(Color.white.opacity(0.75), lineWidth: 1)
         }
-        // La ventana de AppKit es más grande: el margen aloja la sombra.
+        // La ventana de AppKit es más grande: el margen aloja la sombra (y el tacho al arrastrar una biblioteca).
         .padding(NotchShelfMetrics.shadowPad)
-        .frame(width: NotchShelfMetrics.panelWidth, height: NotchShelfMetrics.panelHeight)
+        .frame(width: NotchShelfMetrics.panelWidth, height: NotchShelfMetrics.panelHeight, alignment: .top)
+        .overlay(alignment: .bottom) {
+            if libraryDrag != nil, libraryDrag?.settling != true {
+                // Debajo de la barra, con aire: la ventana tiene una franja extra para él.
+                libraryTrash
+                    .padding(.bottom, NotchShelfMetrics.shadowPad / 2 + 4)
+                    .transition(.opacity.combined(with: .scale(scale: 0.8)))
+            }
+        }
+        .overlay(alignment: .topLeading) { floatingLibraryPill }
         .coordinateSpace(name: shelfSpace)
         .ignoresSafeArea()
+        .onChange(of: libraryDrag?.id) { _, id in appState.notchLibraryDragging = id != nil }
+        .onChange(of: appState.slotScrollTarget) { _, target in
+            // Un slot recién creado: la barra va a la página donde quedó.
+            guard let target else { return }
+            goToPage((target.index - 1) / NotchShelfMetrics.pageSize)
+        }
         .onChange(of: appState.notchOpenCount) { _, _ in page = 0 }
         .onChange(of: activeId) { _, _ in goToPage(0) }
         .onChange(of: pageCount) { _, count in if page >= count { page = max(0, count - 1) } }
@@ -138,12 +178,19 @@ struct NotchShelfView: View {
     // MARK: Páginas
 
     private var pageCount: Int {
-        max(1, (appState.slotStore.totalSlotCount + NotchShelfMetrics.pageSize - 1) / NotchShelfMetrics.pageSize)
+        max(1, (appState.slotStore.totalSlotCount + 1 + NotchShelfMetrics.pageSize - 1) / NotchShelfMetrics.pageSize)
     }
 
-    private var pageSlots: [Slot] {
+    /// Los slots de la página; al final de todos va el tile «Nuevo slot».
+    private var pageEntries: [PageEntry] {
         let start = page * NotchShelfMetrics.pageSize
-        return appState.slotStore.allSlots.filter { $0.index > start && $0.index <= start + NotchShelfMetrics.pageSize }
+        var entries: [PageEntry] = appState.slotStore.allSlots
+            .filter { $0.index > start && $0.index <= start + NotchShelfMetrics.pageSize }
+            .map { .slot($0) }
+        if entries.count < NotchShelfMetrics.pageSize, start + entries.count == appState.slotStore.totalSlotCount {
+            entries.append(.newSlot)
+        }
+        return entries
     }
 
     private func goToPage(_ target: Int) {
@@ -155,14 +202,14 @@ struct NotchShelfView: View {
 
     /// Flechas y «1/3»: mismo estilo que el botón de abrir el panel.
     private var pager: some View {
-        HStack(spacing: SlotsSpace.s) {
-            NotchPageButton(systemImage: "chevron.left", isEnabled: page > 0, pointer: pointer) { goToPage(page - 1) }
+        VStack(spacing: 4) {
+            NotchPageButton(systemImage: "chevron.up", isEnabled: page > 0, pointer: pointer, size: NotchShelfMetrics.pagerWidth) { goToPage(page - 1) }
             Text("\(page + 1)/\(pageCount)")
                 .font(SlotsFont.etiqueta)
                 .foregroundStyle(SlotsColor.textoSecundario)
                 .monospacedDigit()
                 .contentTransition(.numericText())
-            NotchPageButton(systemImage: "chevron.right", isEnabled: page < pageCount - 1, pointer: pointer) { goToPage(page + 1) }
+            NotchPageButton(systemImage: "chevron.down", isEnabled: page < pageCount - 1, pointer: pointer, size: NotchShelfMetrics.pagerWidth) { goToPage(page + 1) }
         }
     }
 
@@ -189,10 +236,9 @@ struct NotchShelfView: View {
                 Color.clear.preference(key: NotchPillFramesKey.self, value: [library.id: geo.frame(in: .named(shelfSpace))])
             }
         }
-        .opacity(libraryDrag?.id == library.id ? 0.92 : 1)
-        .shadow(color: .black.opacity(libraryDrag?.id == library.id ? 0.22 : 0), radius: 8, y: 4)
+        // La pill que arrastrás se dibuja aparte (flota libre sobre la barra); acá queda su huella.
+        .opacity(libraryDrag?.id == library.id ? 0.28 : 1)
         .offset(x: dragOffset(for: library, at: position))
-        .zIndex(libraryDrag?.id == library.id ? 1 : 0)
         .animation(.spring(response: 0.28, dampingFraction: 0.82), value: libraryDrag?.insert)
         .gesture(
             DragGesture(minimumDistance: 10, coordinateSpace: .named(shelfSpace))
@@ -202,9 +248,8 @@ struct NotchShelfView: View {
     }
 
     private func dragOffset(for library: Library, at position: Int) -> CGFloat {
-        guard let drag = libraryDrag else { return 0 }
-        if library.id == drag.id { return drag.settleOffset ?? drag.translation }
-        guard drag.settleOffset == nil, let width = dragStartFrames[drag.id]?.width else { return 0 }
+        guard let drag = libraryDrag, library.id != drag.id else { return 0 }
+        guard !drag.settling, let width = dragStartFrames[drag.id]?.width else { return 0 }
         let shift = width + SlotsSpace.s
         if drag.insert > drag.origin, position > drag.origin, position <= drag.insert { return -shift }
         if drag.insert < drag.origin, position >= drag.insert, position < drag.origin { return shift }
@@ -215,48 +260,72 @@ struct NotchShelfView: View {
         if libraryDrag == nil {
             guard let origin = libraries.firstIndex(where: { $0.id == library.id }) else { return }
             dragStartFrames = latestPillFrames
-            libraryDrag = NotchLibraryDrag(id: library.id, origin: origin, insert: origin, translation: 0, location: value.location)
+            libraryDrag = NotchLibraryDrag(id: library.id, origin: origin, insert: origin, translation: .zero, location: value.location)
         }
-        guard var drag = libraryDrag, drag.id == library.id, drag.settleOffset == nil,
+        guard var drag = libraryDrag, drag.id == library.id, !drag.settling,
               let startFrame = dragStartFrames[library.id] else { return }
-        drag.translation = value.translation.width
+        drag.translation = value.translation
         drag.location = value.location
-        let center = startFrame.midX + drag.translation
-        let others = libraries.filter { $0.id != library.id }
-        drag.insert = others.filter { (dragStartFrames[$0.id]?.midX ?? .infinity) < center }.count
+        // Lejos de la fila (camino al tacho) la pill no reordena: vuelve a su lugar de origen.
+        let nearRow = abs(value.location.y - startFrame.midY) < NotchShelfMetrics.libraryHeight
+        if nearRow {
+            let center = startFrame.midX + value.translation.width
+            let others = libraries.filter { $0.id != library.id }
+            drag.insert = others.filter { (dragStartFrames[$0.id]?.midX ?? .infinity) < center }.count
+        } else {
+            drag.insert = drag.origin
+        }
         libraryDrag = drag
     }
 
     private func finishLibraryDrag(_ library: Library) {
-        guard let drag = libraryDrag, drag.id == library.id, drag.settleOffset == nil else { return }
+        guard let drag = libraryDrag, drag.id == library.id, !drag.settling,
+              let startFrame = dragStartFrames[library.id] else { return }
         if trashFrame.insetBy(dx: -10, dy: -10).contains(drag.location) {
             libraryDrag = nil
             onDeleteLibrary(library)
             return
         }
-        guard drag.insert != drag.origin else {
-            withAnimation(.spring(response: 0.28, dampingFraction: 0.82)) { libraryDrag = nil }
-            return
+        // Aterriza en su lugar (el nuevo si cambió el orden).
+        var delta: CGFloat = 0
+        if drag.insert != drag.origin {
+            let range = drag.insert > drag.origin ? (drag.origin + 1)...drag.insert : drag.insert...(drag.origin - 1)
+            let shifted = range.reduce(CGFloat(0)) { total, position in
+                total + (dragStartFrames[libraries[position].id]?.width ?? 0) + SlotsSpace.s
+            }
+            delta = drag.insert > drag.origin ? shifted : -shifted
         }
-        // La pill queda donde la soltaste y se acomoda en su lugar nuevo.
-        let range = drag.insert > drag.origin ? (drag.origin + 1)...drag.insert : drag.insert...(drag.origin - 1)
-        let shifted = range.reduce(CGFloat(0)) { total, position in
-            total + (dragStartFrames[libraries[position].id]?.width ?? 0) + SlotsSpace.s
-        }
-        let delta = drag.insert > drag.origin ? shifted : -shifted
         var settling = drag
-        settling.settleOffset = drag.translation - delta
+        settling.settling = true
         var instant = Transaction()
         instant.disablesAnimations = true
         withTransaction(instant) {
-            appState.moveLibrary(id: library.id, toIndex: drag.insert)
+            if drag.insert != drag.origin { appState.moveLibrary(id: library.id, toIndex: drag.insert) }
             libraryDrag = settling
         }
         withAnimation(.spring(response: 0.3, dampingFraction: 0.82)) {
-            libraryDrag?.settleOffset = 0
+            libraryDrag?.translation = CGSize(width: delta, height: 0)
         }
+        _ = startFrame
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.34) {
-            if libraryDrag?.settleOffset == 0 { libraryDrag = nil }
+            if libraryDrag?.settling == true { libraryDrag = nil }
+        }
+    }
+
+    /// La pill arrastrada: sigue al cursor en cualquier dirección, por encima de la barra.
+    @ViewBuilder
+    private var floatingLibraryPill: some View {
+        if let drag = libraryDrag, let frame = dragStartFrames[drag.id],
+           let library = libraries.first(where: { $0.id == drag.id }) {
+            LibraryPillLabel(
+                name: library.name,
+                count: appState.libraryWorkspace.filledSlotCount(in: library.id),
+                isActive: library.id == activeId
+            )
+            .frame(width: frame.width, height: frame.height)
+            .shadow(color: .black.opacity(0.24), radius: 10, y: 5)
+            .offset(x: frame.minX + drag.translation.width, y: frame.minY + drag.translation.height)
+            .allowsHitTesting(false)
         }
     }
 
@@ -266,7 +335,7 @@ struct NotchShelfView: View {
         return Image(systemName: targeted ? "trash.fill" : "trash")
             .font(.system(size: 14, weight: .semibold))
             .foregroundStyle(targeted ? SlotsColor.naranja : SlotsColor.textoSecundario)
-            .frame(width: SlotsRadius.controlAlto, height: SlotsRadius.controlAlto)
+            .frame(width: 40, height: 40)
             .background {
                 Circle()
                     .fill(targeted ? SlotsColor.cardOscura : Color.white.opacity(0.85))
@@ -322,10 +391,10 @@ struct NotchShelfView: View {
 
 /// Desplazamiento + fundido para el cambio de página.
 private struct ShiftFade: ViewModifier {
-    let x: CGFloat
+    let y: CGFloat
     let opacity: Double
     func body(content: Content) -> some View {
-        content.offset(x: x).opacity(opacity)
+        content.offset(y: y).opacity(opacity)
     }
 }
 
@@ -333,6 +402,7 @@ private struct NotchPageButton: View {
     let systemImage: String
     let isEnabled: Bool
     let pointer: NotchShelfPointer
+    var size: CGFloat = SlotsRadius.controlAlto
     let action: () -> Void
     @State private var isHovering = false
 
@@ -341,7 +411,7 @@ private struct NotchPageButton: View {
             Image(systemName: systemImage)
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(SlotsColor.textoSecundario)
-                .frame(width: SlotsRadius.controlAlto, height: SlotsRadius.controlAlto)
+                .frame(width: size, height: size)
                 .background {
                     Circle()
                         .fill(Color.white.opacity(0.85))
@@ -358,16 +428,62 @@ private struct NotchPageButton: View {
     }
 }
 
+private enum PageEntry: Identifiable {
+    case slot(Slot)
+    case newSlot
+
+    var id: String {
+        switch self {
+        case .slot(let slot): "slot-\(slot.index)"
+        case .newSlot: "nuevo"
+        }
+    }
+}
+
+/// «Nuevo slot» al final de la lista: un clic guarda el portapapeles en un slot nuevo.
+private struct NotchNewSlotTile: View {
+    let pointer: NotchShelfPointer
+    let action: () -> Void
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 6) {
+                Image(systemName: "plus")
+                    .font(.system(size: 16, weight: .semibold))
+                Text("Nuevo slot")
+                    .font(.custom("InterTight-Medium", size: 14))
+            }
+            .foregroundStyle(SlotsColor.textoSecundario)
+            .frame(width: NotchShelfMetrics.tileWidth, height: NotchShelfMetrics.tileHeight)
+            .background {
+                RoundedRectangle(cornerRadius: NotchShelfMetrics.tileCorner, style: .continuous)
+                    .fill(Color.white.opacity(isHovering ? 0.6 : 0.28))
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: NotchShelfMetrics.tileCorner, style: .continuous)
+                    .strokeBorder(Color.black.opacity(isHovering ? 0.5 : 0.24), style: StrokeStyle(lineWidth: 1.5, dash: [7, 5]))
+            }
+            .contentShape(RoundedRectangle(cornerRadius: NotchShelfMetrics.tileCorner, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .slotsHoverLift(isHovering, scales: true)
+        .animation(.easeOut(duration: 0.16), value: isHovering)
+        .pointerHover(pointer, isHovering: $isHovering)
+        .help("Guarda el portapapeles en un slot nuevo")
+    }
+}
+
 // MARK: - Pill de biblioteca
 
 private struct NotchLibraryDrag {
     let id: UUID
     let origin: Int
     var insert: Int
-    var translation: CGFloat
+    var translation: CGSize
     var location: CGPoint
-    /// Tras soltar: desfase con el que la pill aterriza en su lugar nuevo (y va a 0).
-    var settleOffset: CGFloat?
+    /// Ya se soltó: la pill flotante aterriza en su lugar.
+    var settling = false
 }
 
 private struct NotchPillFramesKey: PreferenceKey {

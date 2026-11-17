@@ -9,6 +9,8 @@ enum NotchShelfMetrics {
     static let tileCorner: CGFloat = SlotsRadius.card
     static let gap: CGFloat = SlotsSpace.entreCards
     static let pad: CGFloat = SlotsSpace.l
+    /// Columna de la derecha con las flechas de página.
+    static let pagerWidth: CGFloat = 32
     static let padVertical: CGFloat = 18
     static let sectionGap: CGFloat = 12
     static let libraryHeight: CGFloat = SlotsRadius.controlAlto
@@ -20,9 +22,11 @@ enum NotchShelfMetrics {
     static let closeDuration: TimeInterval = 0.1
     static let hideDelay: TimeInterval = 0.04
 
-    static let contentWidth: CGFloat  = pad * 2 + tileWidth * 5 + gap * 4
+    static let contentWidth: CGFloat  = pad * 2 + tileWidth * 5 + gap * 4 + gap + pagerWidth
     static let contentHeight: CGFloat = padVertical + tileHeight + sectionGap + libraryHeight + padVertical
 
     static let panelWidth: CGFloat  = contentWidth  + shadowPad * 2
-    static let panelHeight: CGFloat = contentHeight + shadowPad * 2
+    /// Franja bajo la barra para el tacho que aparece al arrastrar una biblioteca.
+    static let trashZone: CGFloat = 60
+    static let panelHeight: CGFloat = contentHeight + shadowPad * 2 + trashZone
 }

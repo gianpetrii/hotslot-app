@@ -52,7 +52,8 @@ final class NotchShelfController {
                 onOpenPanel: { [weak self] in self?.openPanel() },
                 onRenameLibrary: { [weak self] library in self?.renameLibrary(library) },
                 onDeleteLibrary: { [weak self] library in self?.deleteLibrary(library) },
-                onNewLibrary: { [weak self] in self?.newLibrary() }
+                onNewLibrary: { [weak self] in self?.newLibrary() },
+                onNewSlot: { [weak self] in self?.newSlot() }
             )
             .environment(appState)
         )
@@ -150,6 +151,16 @@ final class NotchShelfController {
         } else {
             appState.requestDeleteLibrary(library)
         }
+    }
+
+    /// «Nuevo slot»: guarda el portapapeles en un slot nuevo (nombre y atajo se editan después en el panel).
+    /// La barra queda abierta: el usuario ve el slot nuevo y puede seguir con otra cosa.
+    private func newSlot() {
+        guard let content = appState.clipboardService.currentContent() else {
+            appState.presentNotch(.plain("Nada en el portapapeles"))
+            return
+        }
+        _ = appState.saveToNewSlot(content: content)
     }
 
     /// El formulario de nueva biblioteca vive en el panel.
@@ -293,9 +304,13 @@ final class NotchShelfController {
 
     /// Zona que la mantiene abierta: gatillo + barra, con un margen alrededor.
     private func pointerIsInShelfZone() -> Bool {
+        if appState.notchLibraryDragging { return true }
         guard let screen = anchorScreen() else { return false }
-        let glass = shelfFrame(on: screen, open: true)
+        var glass = shelfFrame(on: screen, open: true)
             .insetBy(dx: NotchShelfMetrics.shadowPad, dy: NotchShelfMetrics.shadowPad)
+        // La franja del tacho (abajo) no cuenta: solo la usa el arrastre de una biblioteca.
+        glass.origin.y += NotchShelfMetrics.trashZone
+        glass.size.height -= NotchShelfMetrics.trashZone
         let zone = hitFrame(on: screen)
             .union(glass)
             .insetBy(dx: -8, dy: -6)
