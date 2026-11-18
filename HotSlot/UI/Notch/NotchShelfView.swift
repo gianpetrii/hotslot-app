@@ -90,7 +90,12 @@ struct NotchShelfView: View {
                 ))
             }
             .frame(width: NotchShelfMetrics.tileWidth * 5 + NotchShelfMetrics.gap * 4, height: NotchShelfMetrics.tileHeight, alignment: .leading)
+            // El recorte de la animación de página deja un margen: si no, el halo y el «pop» del slot nuevo se cortan.
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
             .clipped()
+            .padding(.horizontal, -14)
+            .padding(.vertical, -12)
 
             // Columna fija: ocupa su lugar siempre para que la barra no cambie de ancho al aparecer una segunda página.
             Group { if pageCount > 1 { pager } else { Color.clear } }

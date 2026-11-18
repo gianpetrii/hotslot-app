@@ -70,8 +70,6 @@ struct PanelView: View {
                             .padding(.horizontal, HotSlotDesign.horizontalPadding)
                             .frame(maxHeight: .infinity)
                             .opacity(appState.panelBodyRevealed ? 1 : 0.35)
-                            .id("body-\(appState.librarySwitchRevision)")
-                            .transition(.opacity.combined(with: .scale(scale: 0.992)))
 
                             PanelLibraryBar(appState: appState)
                         }
@@ -319,21 +317,21 @@ struct PanelView: View {
 
         DispatchQueue.main.async {
             guard generation == unfoldGeneration else { return }
-            withAnimation(.spring(response: 0.2, dampingFraction: 0.86)) {
+            withAnimation(.spring(response: 0.14, dampingFraction: 0.88)) {
                 revealWidth = HotSlotDesign.panelWidth
             }
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + HotSlotDesign.openRightDuration) {
             guard generation == unfoldGeneration else { return }
-            withAnimation(.spring(response: 0.24, dampingFraction: 0.88)) {
+            withAnimation(.spring(response: 0.17, dampingFraction: 0.9)) {
                 revealHeight = HotSlotDesign.panelHeight
                 appState.panelBodyRevealed = true
             }
             isSearchFocused = true
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + HotSlotDesign.openRightDuration + 0.32) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + HotSlotDesign.openRightDuration + 0.2) {
             guard generation == unfoldGeneration else { return }
             revealWidth = HotSlotDesign.panelWidth
             revealHeight = HotSlotDesign.panelHeight

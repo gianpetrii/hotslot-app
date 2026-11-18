@@ -98,7 +98,7 @@ final class PanelController: NSWindowController, NSWindowDelegate {
         UsageEventLog.shared.record("panel_abrir", screen: "mac_panel")
 
         NSAnimationContext.runAnimationGroup({ context in
-            context.duration = 0.11
+            context.duration = 0.08
             context.timingFunction = CAMediaTimingFunction(name: .easeOut)
             window.animator().alphaValue = 1
         }, completionHandler: { [weak self] in

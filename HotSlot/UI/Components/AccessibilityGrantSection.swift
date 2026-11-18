@@ -24,23 +24,17 @@ struct AccessibilityGrantSection: View {
     private var settingsBody: some View {
         Group {
             if isTrusted {
-                Button("Administrar en Ajustes del Sistema") {
+                SettingsPillButton(title: "Administrar en Ajustes del Sistema") {
+                    appState.suppressSettingsAutoClose()
                     AccessibilityPermission.openSettings()
                 }
             } else {
-                Button(primaryButtonTitle) {
+                SettingsPillButton(title: primaryButtonTitle, kind: .primary) {
                     requestAccessibilityFromUI()
                 }
-                Button("Abrir panel de Accesibilidad en Ajustes…") {
+                SettingsPillButton(title: "Abrir panel de Accesibilidad en Ajustes…") {
+                    appState.suppressSettingsAutoClose()
                     AccessibilityPermission.openSettings()
-                }
-                Text(AccessibilityPermissionCopy.promptFirst)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                if DevelopmentAppInstall.runsFromDerivedData {
-                    Text("Desde Xcode, macOS casi nunca muestra el aviso TCC: el botón principal copia a `/Applications/Slots.app` y relanza la app desde ahí.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
                 }
             }
         }
@@ -77,6 +71,7 @@ struct AccessibilityGrantSection: View {
     }
 
     private func requestAccessibilityFromUI() {
+        appState.suppressSettingsAutoClose()
         DispatchQueue.main.async {
             if DevelopmentAppInstall.runsFromDerivedData {
                 switch DevelopmentAppInstall.copyCurrentBuildToApplications() {

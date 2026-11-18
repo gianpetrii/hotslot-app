@@ -167,6 +167,7 @@ struct SlotGridView: View {
                     .padding(.vertical, shadowVertical)
                     .coordinateSpace(name: Self.contentSpace)
                     .overlay(alignment: .topLeading) { swapOverlay }
+                    .background(HideNativeScrollers())
                 }
                 .scrollIndicators(.hidden)
                 .scrollPosition($scrollPosition)
@@ -188,6 +189,9 @@ struct SlotGridView: View {
                 .overlay(alignment: .topTrailing) { scrollThumb }
                 .onChange(of: appState.isPanelVisible) { _, visible in
                     if visible { proxy.scrollTo(Self.topAnchor, anchor: .top) }
+                }
+                .onChange(of: appState.librarySwitchRevision) { _, _ in
+                    proxy.scrollTo(Self.topAnchor, anchor: .top)
                 }
                 .onChange(of: appState.slotScrollTarget) { _, target in
                     guard let target else { return }
@@ -226,7 +230,8 @@ struct SlotGridView: View {
                 .fill(SlotsColor.tinta.opacity(0.28))
                 .frame(width: 5, height: thumbHeight)
                 .offset(y: progress * (metrics.viewport - thumbHeight))
-                .padding(.trailing, 3)
+                // Centrada en el hueco entre la grilla y el historial (el recorte llega `shadowSide` más allá).
+                .padding(.trailing, shadowSide - (HotSlotDesign.panelBodyGap / 2 + 2.5))
                 .allowsHitTesting(false)
         }
     }

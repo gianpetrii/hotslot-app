@@ -83,6 +83,7 @@ struct HistoryListView: View {
                         .padding(.bottom, SlotsSpace.m)
                         .padding(.horizontal, shadowSide)
                         .padding(.top, shadowTop)
+                        .background(HideNativeScrollers())
                     }
                     .scrollIndicators(.hidden)
                     // El recorte de la lista es más ancho que la columna; el contenido vuelve a su lugar con el padding de arriba.

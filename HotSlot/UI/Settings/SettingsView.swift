@@ -18,16 +18,15 @@ struct SettingsView: View {
     @State private var licenseKeyInput = AppSettings.load().licenseKey ?? ""
     @State private var licensed = Entitlements.hasFullAccess
 
-    var body: some View {
-        HStack(alignment: .top, spacing: 0) {
-            sidebar
-                .frame(width: 188)
+    @State private var showClearHistoryConfirmation = false
 
-            VStack(alignment: .leading, spacing: SlotsSpace.s) {
-                Text(selectedTab.title)
-                    .font(SlotsFont.tituloPantalla(true))
-                    .foregroundStyle(SlotsColor.tinta)
-                    .padding(.horizontal, SlotsSpace.l)
+    var body: some View {
+        HStack(alignment: .top, spacing: 24) {
+            sidebar
+                .frame(width: 180)
+
+            VStack(alignment: .leading, spacing: 0) {
+                SettingsTabTitle(text: selectedTab.title)
                     .id("title-\(selectedTab.rawValue)")
                     .transition(.opacity.combined(with: .offset(x: 16)))
 
@@ -47,28 +46,29 @@ struct SettingsView: View {
             }
             .animation(.easeOut(duration: 0.22), value: selectedTab)
             .clipped()
-            .padding(.top, SlotsSpace.m)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
+        .padding(.horizontal, 32)
         // Deja libre la franja de los tres botones de la ventana (el vidrio llega hasta arriba).
-        .padding(.top, 28)
-        .frame(width: 720, height: 540)
+        .padding(.top, 36)
+        .padding(.bottom, 28)
+        .frame(width: WindowPlacement.settingsWindowSize.width, height: WindowPlacement.settingsWindowSize.height)
         .background {
-            // Mismo vidrio que el panel y el notch.
+            // Vidrio con valores fijos (sin material que cambie con lo que hay detrás): ver handoff de Ajustes.
             ZStack {
-                SlotsColor.vidrioTinte
                 VisualEffectBackground(material: .hudWindow, blendingMode: .behindWindow, cornerRadius: 0)
-                    .opacity(0.85)
+                Color(slotsHex: 0xF6F1EB, opacity: 0.6)
             }
             .ignoresSafeArea()
         }
         .overlay {
             // Borde fino para que se note dónde termina la ventana.
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .strokeBorder(SlotsColor.tinta.opacity(0.18), lineWidth: 1)
+                .strokeBorder(Color.white.opacity(0.75), lineWidth: 1)
                 .ignoresSafeArea()
                 .allowsHitTesting(false)
         }
+        .environment(\.colorScheme, .light)
         .onAppear {
             confirmLibraryDelete = AppSettings.load().confirmLibraryDelete
             clickItemAction = AppSettings.load().clickItemAction
@@ -80,188 +80,223 @@ struct SettingsView: View {
     }
 
     private var sidebar: some View {
-        VStack(alignment: .leading, spacing: SlotsSpace.s) {
+        VStack(alignment: .leading, spacing: 6) {
             ForEach([SettingsTab.general, .hotkeys, .permissions], id: \.self) { tab in
-                Button {
+                SettingsSidebarItem(
+                    title: tab.title,
+                    isSelected: selectedTab == tab,
+                    badge: tab == .permissions ? (accessibilityTrusted ? .ok : .missing) : .none
+                ) {
                     withAnimation(.easeOut(duration: 0.22)) { selectedTab = tab }
-                } label: {
-                    HStack {
-                        Text(tab.title)
-                            .font(SlotsFont.textoUI)
-                        Spacer(minLength: 4)
-                        if tab == .permissions, accessibilityTrusted {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundStyle(.white)
-                                .frame(width: 22, height: 22)
-                                .background(Circle().fill(SlotsColor.naranja))
-                        }
-                    }
-                    .padding(.horizontal, SlotsSpace.m)
-                    .frame(height: 44)
-                    .foregroundStyle(selectedTab == tab ? Color.white : SlotsColor.tinta)
-                    .background {
-                        Capsule(style: .continuous)
-                            .fill(selectedTab == tab ? SlotsColor.tinta : Color.white.opacity(0.7))
-                    }
-                    .contentShape(Capsule(style: .continuous))
                 }
-                .buttonStyle(.plain)
             }
 
             Spacer(minLength: 0)
 
             Text("\(BrandDisplay.name) \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")")
-                .font(SlotsFont.etiqueta)
+                .font(SettingsStyle.regular(12))
                 .foregroundStyle(SlotsColor.textoSecundario)
                 .padding(.leading, SlotsSpace.xs)
         }
-        .padding(.horizontal, SlotsSpace.m)
-        .padding(.top, SlotsSpace.xl)
-        .padding(.bottom, SlotsSpace.m)
         .onReceive(Timer.publish(every: 1.5, on: .main, in: .common).autoconnect()) { _ in
             accessibilityTrusted = AccessibilityPermission.isTrusted
         }
     }
 
+    private func saveSetting(_ change: (inout AppSettings) -> Void) {
+        var settings = AppSettings.load()
+        change(&settings)
+        settings.save()
+    }
+
+    private func linkRow(_ title: String, detail: String? = nil, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            SettingsRow(title: title, detail: detail) {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(SettingsStyle.chevron)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
     private var generalTab: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                Form {
-                    Section("Inicio") {
-                        Toggle("Abrir al iniciar sesión", isOn: $launchAtLogin)
-                            .onChange(of: launchAtLogin) { _, newValue in
-                                updateLaunchAtLogin(newValue)
+                VStack(alignment: .leading, spacing: 24) {
+                    SettingsSection("Inicio") {
+                        SettingsCard {
+                            SettingsRow(title: "Abrir al iniciar sesión") {
+                                SettingsSwitch(isOn: $launchAtLogin)
                             }
-                        Toggle("Mostrar aviso en el notch", isOn: $showNotchNotice)
-                            .onChange(of: showNotchNotice) { _, newValue in
-                                var settings = AppSettings.load()
-                                settings.showNotchNotice = newValue
-                                settings.save()
+                            SettingsRow(
+                                title: "Mostrar aviso en el notch",
+                                detail: "Aviso breve arriba al centro, bajo el notch o la barra de menú. Negro al confirmar, naranja si pide una acción."
+                            ) {
+                                SettingsSwitch(isOn: $showNotchNotice)
                             }
-                        Text("Aviso breve arriba al centro, bajo el notch o la barra de menú. Negro al confirmar, naranja si pide una acción.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        }
+                    }
+                    .onChange(of: launchAtLogin) { _, newValue in updateLaunchAtLogin(newValue) }
+                    .onChange(of: showNotchNotice) { _, newValue in
+                        saveSetting { $0.showNotchNotice = newValue }
                     }
 
-                    Section("Barra del notch") {
-                        Toggle("Mostrar la barra al pasar el mouse por el notch", isOn: $showNotchShelf)
-                            .onChange(of: showNotchShelf) { _, newValue in
-                                var settings = AppSettings.load()
-                                settings.showNotchShelf = newValue
-                                settings.save()
-                                NotificationCenter.default.post(name: .notchShelfSettingChanged, object: nil)
+                    SettingsSection("Barra del notch") {
+                        SettingsCard {
+                            SettingsRow(
+                                title: "Mostrar la barra al pasar el mouse por el notch",
+                                detail: "Muestra tus slots y bibliotecas al pasar por el notch (o el centro de la barra de menú). También se abre al arrastrar un archivo hacia ahí."
+                            ) {
+                                SettingsSwitch(isOn: $showNotchShelf)
                             }
-                        Text("Muestra tus slots y bibliotecas al pasar por el notch (o el centro de la barra de menú). También se abre al arrastrar un archivo hacia ahí.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        }
+                    }
+                    .onChange(of: showNotchShelf) { _, newValue in
+                        saveSetting { $0.showNotchShelf = newValue }
+                        NotificationCenter.default.post(name: .notchShelfSettingChanged, object: nil)
                     }
 
-                    Section("Licencia") {
-                        licenseSectionBody
+                    SettingsSection("Licencia") {
+                        SettingsCard {
+                            licenseSectionBody
+                        }
                     }
                     .id("settings-license")
 
-                    Section("Barra de menú") {
-                        Text("macOS no permite fijar el ícono de \(BrandDisplay.name) por código. Arrastralo con ⌘ hacia la derecha (junto al reloj) para que no lo reemplacen otros íconos.")
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-                        Button("Cómo mantener \(BrandDisplay.name) visible…") {
-                            MenuBarGuide.present()
+                    SettingsSection("Barra de menú") {
+                        SettingsCard {
+                            linkRow(
+                                "Cómo mantener \(BrandDisplay.name) visible…",
+                                detail: "macOS no permite fijar el ícono de \(BrandDisplay.name) por código. Arrastralo con ⌘ hacia la derecha (junto al reloj) para que no lo reemplacen otros íconos."
+                            ) {
+                                appState.suppressSettingsAutoClose()
+                                MenuBarGuide.present()
+                            }
                         }
                     }
 
-                    Section("Al hacer clic en un slot o el historial") {
-                        Picker("Acción", selection: $clickItemAction) {
-                            ForEach(ClickItemAction.allCases) { action in
-                                Text(action.title).tag(action)
+                    SettingsSection("Al hacer clic en un slot o el historial") {
+                        SettingsCard {
+                            SettingsRow(title: "Acción", detail: clickItemAction.caption) {
+                                SettingsPicker(
+                                    options: ClickItemAction.allCases.map { ($0, $0.title) },
+                                    selection: $clickItemAction
+                                )
                             }
                         }
-                        .pickerStyle(.radioGroup)
-                        .onChange(of: clickItemAction) { _, newValue in
-                            var current = AppSettings.load()
-                            current.clickItemAction = newValue
-                            current.save()
-                        }
-                        Text(clickItemAction.caption)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                    }
+                    .onChange(of: clickItemAction) { _, newValue in
+                        saveSetting { $0.clickItemAction = newValue }
                     }
 
-                    Section("Bibliotecas") {
-                        Toggle("Confirmar antes de eliminar una biblioteca", isOn: $confirmLibraryDelete)
-                            .onChange(of: confirmLibraryDelete) { _, newValue in
-                                appState.setConfirmLibraryDelete(newValue)
+                    SettingsSection("Bibliotecas") {
+                        SettingsCard {
+                            SettingsRow(title: "Confirmar antes de eliminar una biblioteca") {
+                                SettingsSwitch(isOn: $confirmLibraryDelete)
                             }
-                    }
-
-                    Section("Historial") {
-                        Stepper("Límite: \(historyLimit) ítems", value: $historyLimit, in: 10...500, step: 10)
-                            .onChange(of: historyLimit) { _, newValue in
-                                var settings = AppSettings.load()
-                                settings.historyLimit = newValue
-                                settings.save()
-                                appState.historyStore.historyLimit = newValue
-                            }
-
-                        Button("Vaciar historial", role: .destructive) {
-                            appState.historyStore.clear()
                         }
                     }
+                    .onChange(of: confirmLibraryDelete) { _, newValue in
+                        appState.setConfirmLibraryDelete(newValue)
+                    }
 
-                    Section("Sonido") {
-                        Toggle("Sonidos de acciones", isOn: $playSound)
-                            .onChange(of: playSound) { _, newValue in
-                                var settings = AppSettings.load()
-                                settings.playSoundOnPaste = newValue
-                                settings.save()
+                    SettingsSection("Historial") {
+                        SettingsCard {
+                            SettingsRow(title: "Límite: \(historyLimit) ítems") {
+                                SettingsStepper(value: $historyLimit, range: 10...500, step: 10)
                             }
-                        Text("Pegar, guardar en un slot o cuando no se puede completar la acción.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                            SettingsRow(title: "Vaciar historial", destructive: true) {
+                                SettingsPillButton(title: "Vaciar") {
+                                    showClearHistoryConfirmation = true
+                                }
+                            }
+                        }
+                    }
+                    .onChange(of: historyLimit) { _, newValue in
+                        saveSetting { $0.historyLimit = newValue }
+                        appState.historyStore.historyLimit = newValue
+                    }
+
+                    SettingsSection("Sonido") {
+                        SettingsCard {
+                            SettingsRow(
+                                title: "Sonidos de acciones",
+                                detail: "Pegar, guardar en un slot o cuando no se puede completar la acción."
+                            ) {
+                                SettingsSwitch(isOn: $playSound)
+                            }
+                        }
+                    }
+                    .onChange(of: playSound) { _, newValue in
+                        saveSetting { $0.playSoundOnPaste = newValue }
                     }
 
                     if Telemetry.isConfigured {
-                        Section("Privacidad") {
-                            Toggle("Compartir uso anónimo", isOn: $analyticsEnabled)
-                                .onChange(of: analyticsEnabled) { _, newValue in
-                                    var settings = AppSettings.load()
-                                    settings.analyticsEnabled = newValue
-                                    settings.hasAnsweredAnalyticsPrompt = true
-                                    settings.save()
-                                    Telemetry.consentChanged()
+                        SettingsSection("Privacidad") {
+                            SettingsCard {
+                                SettingsRow(
+                                    title: "Compartir uso anónimo",
+                                    detail: "Cuenta qué funciones se usan, sin enviar lo que copiás, nombres de archivos, bibliotecas o slots, ni quién sos. Apagado por defecto."
+                                ) {
+                                    SettingsSwitch(isOn: $analyticsEnabled)
                                 }
-                            Text("Cuenta qué funciones se usan, sin enviar lo que copiás, nombres de archivos, bibliotecas o slots, ni quién sos. Apagado por defecto.")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                            Link("Política de privacidad", destination: Self.privacyURL)
+                                linkRow("Política de privacidad") {
+                                    appState.suppressSettingsAutoClose(for: 30)
+                                    NSWorkspace.shared.open(Self.privacyURL)
+                                }
+                            }
+                        }
+                        .onChange(of: analyticsEnabled) { _, newValue in
+                            saveSetting {
+                                $0.analyticsEnabled = newValue
+                                $0.hasAnsweredAnalyticsPrompt = true
+                            }
+                            Telemetry.consentChanged()
                         }
                     }
 
-                    Section("Ayuda") {
-                        Button("Cómo usar \(BrandDisplay.name)") {
-                            appState.openOnboarding?()
+                    SettingsSection("Ayuda") {
+                        SettingsCard {
+                            linkRow("Cómo usar \(BrandDisplay.name)") {
+                                appState.openTutorial?()
+                            }
                         }
                     }
 
-                    Section {
-                        LabeledContent("Versión", value: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
-                    } header: {
-                        Text("Acerca de")
-                    } footer: {
-                        Link(destination: Self.iconAttributionURL) {
+                    SettingsSection("Acerca de") {
+                        SettingsCard {
+                            SettingsRow(title: "Versión") {
+                                SettingsValue(text: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
+                            }
+                        }
+                        Button {
+                            appState.suppressSettingsAutoClose(for: 30)
+                            NSWorkspace.shared.open(Self.iconAttributionURL)
+                        } label: {
                             Text("Reporte iconos creados por Magnific - Flaticon")
-                                .font(.caption)
-                                .foregroundStyle(.tertiary)
-                                .multilineTextAlignment(.leading)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .font(SettingsStyle.regular(13))
+                                .foregroundStyle(SlotsColor.textoSecundario)
+                                .padding(.horizontal, 4)
                         }
                         .buttonStyle(.plain)
-                        .focusable(false)
                     }
                 }
-                .formStyle(.grouped)
-                .scrollContentBackground(.hidden)
+                .padding(.bottom, 8)
+            }
+            .scrollIndicators(.hidden)
+            .confirmationDialog(
+                "¿Vaciar el historial?",
+                isPresented: $showClearHistoryConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Vaciar historial", role: .destructive) {
+                    appState.historyStore.clear()
+                }
+                Button("Cancelar", role: .cancel) {}
+            } message: {
+                Text("Se borran los ítems del historial. Los slots no se tocan.")
             }
             .onAppear { scrollToLicenseIfNeeded(using: proxy) }
             .onChange(of: selectedTab) { _, tab in
@@ -275,24 +310,24 @@ struct SettingsView: View {
     private var licenseSectionBody: some View {
         if Entitlements.hasFullAccess {
             if AppSettings.load().isLicensed {
-                Label("Compra activa", systemImage: "checkmark.seal.fill")
-                    .foregroundStyle(.green)
+                SettingsTextRow(text: "Compra activa")
             } else if let end = Entitlements.trialEndsAt {
-                Text("Prueba gratuita hasta \(end.formatted(date: .abbreviated, time: .omitted))")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
+                SettingsTextRow(text: "Prueba gratuita hasta \(end.formatted(date: .abbreviated, time: .omitted))")
             }
         } else {
-            Text("La prueba terminó. Comprá una licencia (USD 10, pago único) o seguí usando solo el slot 1.")
-                .font(.callout)
-                .foregroundStyle(.secondary)
+            SettingsTextRow(text: "La prueba terminó. Comprá una licencia (USD 10, pago único) o seguí usando solo el slot 1.")
         }
 
-        TextField("Clave del email de compra (UUID)", text: $licenseKeyInput)
-            .textFieldStyle(.roundedBorder)
+        SettingsRow(title: "Clave del email de compra (UUID)") {
+            SettingsTextField(placeholder: "", text: $licenseKeyInput, width: 250)
+        }
 
-        HStack {
-            Button("Activar licencia") {
+        HStack(spacing: 8) {
+            Spacer()
+            SettingsPillButton(title: "Comprar…") {
+                appState.openPurchasePage()
+            }
+            SettingsPillButton(title: "Activar licencia", kind: .primary) {
                 Task {
                     if let error = await Entitlements.activateLicenseKeyOnline(licenseKeyInput) {
                         appState.showToast(error)
@@ -302,10 +337,8 @@ struct SettingsView: View {
                     }
                 }
             }
-            Button("Comprar…") {
-                appState.openPurchasePage()
-            }
         }
+        .padding(.vertical, 14)
     }
 
     private func scrollToLicenseIfNeeded(using proxy: ScrollViewProxy) {
@@ -319,22 +352,37 @@ struct SettingsView: View {
     }
 
     private var permissionsTab: some View {
-        Form {
-            Section("Accesibilidad") {
-                LabeledContent("Estado") {
-                    Text(accessibilityTrusted ? "Concedido" : "No concedido")
-                        .foregroundStyle(accessibilityTrusted ? Color.green : Color.orange)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                SettingsSection("Accesibilidad") {
+                    SettingsCard {
+                        SettingsRow(
+                            title: "Estado",
+                            detail: "Hace falta para pegar automáticamente el ítem elegido en la app donde estabas."
+                        ) {
+                            SettingsPermissionChip(granted: accessibilityTrusted) {
+                                appState.suppressSettingsAutoClose()
+                                AccessibilityPermission.requestAccessForPaste(focusWindow: appState.accessibilityPresentingWindow)
+                            }
+                        }
+                        SettingsRow(title: accessibilityTrusted ? "Permiso concedido" : "Cómo darlo") {
+                            VStack(alignment: .trailing, spacing: 8) {
+                                AccessibilityGrantSection(isTrusted: $accessibilityTrusted, style: .settingsForm)
+                            }
+                        }
+                    }
                 }
 
-                Text("Hace falta para pegar automáticamente el ítem elegido en la app donde estabas.")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-
-                AccessibilityGrantSection(isTrusted: $accessibilityTrusted, style: .settingsForm)
+                if !accessibilityTrusted {
+                    SettingsNote(text: AccessibilityPermissionCopy.promptFirst)
+                    if DevelopmentAppInstall.runsFromDerivedData {
+                        SettingsNote(text: "Desde Xcode, macOS casi nunca muestra el aviso TCC: el botón principal copia a /Applications/Slots.app y relanza la app desde ahí.")
+                    }
+                }
             }
+            .padding(.bottom, 8)
         }
-        .formStyle(.grouped)
-        .scrollContentBackground(.hidden)
+        .scrollIndicators(.hidden)
         .onAppear { accessibilityTrusted = AccessibilityPermission.isTrusted }
         .onReceive(Timer.publish(every: 1.5, on: .main, in: .common).autoconnect()) { _ in
             accessibilityTrusted = AccessibilityPermission.isTrusted
@@ -357,5 +405,52 @@ struct SettingsView: View {
         } catch {
             appState.showToast("No se pudo configurar inicio automático")
         }
+    }
+}
+
+/// Pill del menú lateral: 48 de alto, activa en negro.
+struct SettingsSidebarItem: View {
+    enum Badge { case none, ok, missing }
+
+    let title: String
+    let isSelected: Bool
+    var badge: Badge = .none
+    let action: () -> Void
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                Text(title)
+                    .font(SettingsStyle.medium(15))
+                Spacer(minLength: 4)
+                switch badge {
+                case .none:
+                    EmptyView()
+                case .ok:
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(width: 22, height: 22)
+                        .background(Circle().fill(SlotsColor.naranja))
+                case .missing:
+                    Text("!")
+                        .font(SettingsStyle.semibold(12))
+                        .foregroundStyle(.white)
+                        .frame(width: 22, height: 22)
+                        .background(Circle().fill(SlotsColor.tinta))
+                }
+            }
+            .padding(.horizontal, 16)
+            .frame(height: 48)
+            .foregroundStyle(isSelected ? Color.white : SlotsColor.tinta)
+            .background {
+                Capsule(style: .continuous)
+                    .fill(isSelected ? SlotsColor.tinta : Color.white.opacity(isHovering ? 0.8 : 0.5))
+            }
+            .contentShape(Capsule(style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovering = $0 }
     }
 }

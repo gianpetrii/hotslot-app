@@ -46,9 +46,11 @@ struct PanelLibraryBar: View {
                         }
                         addLibraryButton
                     }
-                    .padding(.vertical, 16)
+                    // Aire de sobra para la sombra del hover; se compensa para no mover la barra.
+                    .padding(.vertical, 32)
                     .padding(.horizontal, 8)
                 }
+                .padding(.vertical, -16)
                 .onChange(of: activeId) { _, id in
                     withAnimation(.easeInOut(duration: 0.25)) { proxy.scrollTo(id, anchor: .center) }
                 }

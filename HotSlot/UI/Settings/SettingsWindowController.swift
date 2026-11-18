@@ -10,6 +10,9 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     private var appState: AppState?
     private var onDismiss: (() -> Void)?
     private var isAnimating = false
+    /// La última vez se cerró por perder el foco: no hay que reabrir el panel detrás.
+    private(set) var closedByFocusLoss = false
+    private var afterDismiss: (() -> Void)?
     /// Misma posición para Ajustes, Licencia, etc. mientras el panel siga en esa pantalla.
     private var lockedPlacementFrame: NSRect?
 
@@ -20,6 +23,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     ) {
         self.appState = appState
         self.onDismiss = onDismiss
+        closedByFocusLoss = false
 
         if window == nil {
             let settingsWindow = NSWindow(
@@ -39,6 +43,8 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             settingsWindow.backgroundColor = .clear
             settingsWindow.titlebarAppearsTransparent = true
             settingsWindow.titleVisibility = .hidden
+            // Siempre la versión clara, como el resto de la app.
+            settingsWindow.appearance = NSAppearance(named: .aqua)
             settingsWindow.contentMinSize = WindowPlacement.settingsWindowSize
             settingsWindow.contentMaxSize = WindowPlacement.settingsWindowSize
             window = settingsWindow
@@ -125,6 +131,27 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         return false
     }
 
+    /// Cierra Ajustes sin reabrir el panel y, ya cerrada, ejecuta `then`.
+    func dismissForTutorial(then: @escaping () -> Void) {
+        guard let window, window.isVisible else { then(); return }
+        afterDismiss = then
+        closedByFocusLoss = true
+        _ = windowShouldClose(window)
+    }
+
+    /// Clic afuera o en otra app: se cierra solo, salvo mientras hay una hoja, un aviso del sistema o una página externa.
+    func windowDidResignKey(_ notification: Notification) {
+        guard let window = notification.object as? NSWindow, window === self.window else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+            guard let self, let window = self.window, window.isVisible, !self.isAnimating else { return }
+            if window.isKeyWindow || window.attachedSheet != nil { return }
+            if NSApp.keyWindow?.sheetParent === window { return }
+            if let until = self.appState?.settingsAutoCloseSuppressedUntil, until > Date() { return }
+            self.closedByFocusLoss = true
+            _ = self.windowShouldClose(window)
+        }
+    }
+
     private func installContent(in window: NSWindow) {
         guard let appState else { return }
         if window.contentViewController == nil {
@@ -154,6 +181,9 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             let reopen = onDismiss
             onDismiss = nil
             reopen?()
+            let next = afterDismiss
+            afterDismiss = nil
+            next?()
         }
     }
 }

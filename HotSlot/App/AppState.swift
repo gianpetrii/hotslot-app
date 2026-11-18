@@ -57,6 +57,8 @@ final class AppState {
     var panelBodyRevealed = false
     var openSettings: (() -> Void)?
     var openOnboarding: (() -> Void)?
+    /// Tutorial de primera vez (también desde Ajustes › Ayuda).
+    var openTutorial: (() -> Void)?
     /// Pestaña a abrir la próxima vez que se muestren Ajustes (p. ej. tras el tour).
     var pendingSettingsTab: SettingsTab?
     /// Versión nueva encontrada en segundo plano. Sparkle no la muestra sola en apps de barra de menú.
@@ -72,6 +74,12 @@ final class AppState {
     var inlineEditShouldSave = true
     /// Ventana delante de la cual mostrar el aviso de Accesibilidad (onboarding / ajustes).
     weak var accessibilityPresentingWindow: NSWindow?
+    /// Ajustes se cierra al perder el foco; mientras dura un aviso del sistema o una página externa no.
+    var settingsAutoCloseSuppressedUntil = Date.distantPast
+
+    func suppressSettingsAutoClose(for seconds: TimeInterval = 20) {
+        settingsAutoCloseSuppressedUntil = Date().addingTimeInterval(seconds)
+    }
 
     /// Slot recién creado que espera nombre o contenido: ⌘V lo llena y Esc lo descarta.
     var pendingNewSlot: Int?
@@ -321,6 +329,7 @@ final class AppState {
     }
 
     func openPurchasePage() {
+        suppressSettingsAutoClose(for: 30)
         Telemetry.purchaseClicked()
         NSWorkspace.shared.open(Entitlements.purchaseURL)
     }

@@ -150,6 +150,34 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 | [ ] | P2 | Dark mode con Liquid Glass más oscuro |
 | [ ] | P2 | Landing: página de descarga según la imagen de Dante |
 
+## Tanda 1.3.0 — correcciones de Dante del 18/11 + pendientes de Gianluca
+
+Material de Dante en `dante-revision/` (no se commitea): Ajustes v2, Tutorial v5, Cuenta v1 y la nota «SLOTS correcciones 18-11».
+
+### Hecho (sin commitear, falta que Gianluca lo valide en Xcode)
+
+| Estado | Pri | Tarea |
+|--------|-----|-------|
+| [~] | P1 | **Ajustes v2:** vidrio con valores fijos (sin material que cambie con el fondo), Inter Tight, menú lateral, cards y filas del paquete de Dante (`SettingsKit.swift`), ventana 820×660 |
+| [~] | P1 | **Ajustes se cierra al clickear afuera o en otra app** (no mientras hay un diálogo, el aviso de Accesibilidad o una página externa) |
+| [~] | P1 | **Panel:** dos barras de scroll (queda la fina, centrada en el hueco), sombra del hover de las pills cortada abajo, cambio de biblioteca más fluido (sin reconstruir la vista), apertura más rápida |
+| [~] | P2 | **Vaciar historial** ahora pide confirmación (regla de Dante para acciones que borran) |
+
+### Pendiente
+
+| Estado | Pri | Tarea |
+|--------|-----|-------|
+| [ ] | P1 | **Landing: descarga directa del último DMG.** Hoy «Beta Mac» y «Descargar beta» van a la página de GitHub. Se puede: GitHub sirve `/releases/latest/download/<archivo>`, pero el DMG lleva la versión en el nombre (`Slots-1.2.0.dmg`). Plan: que `scripts/release-direct.sh` suba además una copia `Slots.dmg` en cada release, apuntar los dos links de `docs/index.html` a `https://github.com/gianpetrii/hotslot-app/releases/latest/download/Slots.dmg`, y subir `Slots.dmg` a la 1.2.0 ya publicada. Las descargas se siguen contando en GitHub. Hacerlo antes de la próxima release |
+| [ ] | P1 | **Copiar el feedback de copiado de la app iOS** al clic en un slot (panel y notch), para que sea igual en las dos plataformas. A Gianluca le gusta más que el actual del Mac. Mirar cómo lo hace iOS (rama `claude/xenodochial-leakey-6582a6`) |
+| [~] | P1 | **Tutorial de primera vez (v5 de Dante):** hecho en `HotSlot/UI/Tutorial/` — bienvenida, pop-up y recorrido de 8 pasos sobre un panel de muestra en memoria (no toca los datos del usuario); flag `tutorialVisto`; aparece tras el onboarding y se repite desde Ajustes › General › Ayuda. Falta validarlo en pantalla (blur, tiempos, teclado). Paquete: `dante-revision/tutorial` |
+| [ ] | P1 | **Animación de llegada de un slot en el notch** (pop + halo naranja): funciona en el panel, no se ve en el notch. Hay un cambio sin commitear en `NotchShelfView.swift` que no lo arregló |
+| [ ] | P1 | **Slots de tamaño variable / filas editables** (slot 1 cuadrado para que entren 6, opción horizontal). Disruptivo: confirmar el diseño antes de empezar |
+| [ ] | P2 | **Grabador de atajos propio** con el estilo de Dante (campo de 40, borde naranja al grabar). Hoy se usa el grabador nativo de la librería. Tarea aparte, cuando Gianluca lo pida |
+| [ ] | P2 | **Ventana de Ajustes sin marco** para tener radio 32 como el panel (hoy usa las esquinas de macOS). Ya se lo comentó Gianluca a Dante; decidir con él |
+| [ ] | P2 | **Control de número en Ajustes** (límite del historial, 10 a 500): la hoja de componentes de Dante no tiene uno; Gianluca le pide que lo sume |
+| [ ] | P2 | **Cuenta (v1 de Dante):** inicio de sesión opcional con Apple, Google o email (código de 6 números) y pestaña Ajustes › Cuenta. Necesita decidir el backend antes. Paquete: `dante-revision/cuenta` |
+| [ ] | P3 | Pendientes provisionales de Dante: flip de 400 ms al guardar con ⌘V (proponemos fundido de 200 ms + «Guardado»), imágenes de 2 filas en slots 6+, alto de fila 218 / panel fijo |
+
 ## Panel UX — validación Gianluca (nov 2026)
 
 Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en otros `.md` salvo `REVISION-PANEL-PARA-DANTE.md` cuando toque Dante.
