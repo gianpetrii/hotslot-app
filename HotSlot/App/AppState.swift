@@ -95,6 +95,8 @@ final class AppState {
     /// Se arrastra una biblioteca en el notch: la barra no se cierra aunque el cursor baje al tacho.
     var notchLibraryDragging = false
     /// Slot que acaba de recibir contenido: el panel y el notch lo destacan un momento.
+    /// Slot recién copiado con un clic: la card muestra «Copiado», igual que en iOS. Se limpia al reabrir el panel.
+    var copiedSlotIndex: Int?
     var slotArrival: SlotArrival?
 
     /// Sheet del panel: elegir slot cuando «Guardar portapapeles» y no hay vacíos.

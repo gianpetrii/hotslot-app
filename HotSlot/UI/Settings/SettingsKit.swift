@@ -47,7 +47,7 @@ struct SettingsSection<Content: View>: View {
         VStack(alignment: .leading, spacing: 10) {
             if let title {
                 Text(title)
-                    .font(SettingsStyle.medium(13))
+                    .font(SettingsStyle.medium(12))
                     .foregroundStyle(SlotsColor.textoSecundario)
                     .padding(.horizontal, 4)
             }
@@ -92,16 +92,16 @@ struct SettingsRow<Control: View>: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 0) {
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(title)
-                    .font(SettingsStyle.medium(17))
-                    .tracking(-0.17)
+                    .font(SettingsStyle.medium(15))
+                    .tracking(-0.15)
                     .foregroundStyle(destructive ? SlotsColor.oxido : SlotsColor.tinta)
                     .fixedSize(horizontal: false, vertical: true)
                 if let detail {
                     Text(detail)
-                        .font(SettingsStyle.regular(13))
-                        .lineSpacing(3)
+                        .font(SettingsStyle.regular(12))
+                        .lineSpacing(2.5)
                         .foregroundStyle(SlotsColor.textoSecundario)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -109,7 +109,8 @@ struct SettingsRow<Control: View>: View {
             Spacer(minLength: 24)
             control()
         }
-        .padding(.vertical, 14)
+        
+        .padding(.vertical, 12)
         .opacity(disabled ? 0.4 : 1)
         .allowsHitTesting(!disabled)
     }
@@ -121,11 +122,11 @@ struct SettingsTextRow: View {
 
     var body: some View {
         Text(text)
-            .font(SettingsStyle.medium(17))
-            .tracking(-0.17)
+            .font(SettingsStyle.medium(15))
+            .tracking(-0.15)
             .foregroundStyle(SlotsColor.textoSecundario)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.vertical, 14)
+            .padding(.vertical, 12)
     }
 }
 
@@ -141,8 +142,8 @@ struct SettingsNote: View {
                 .frame(width: 22, height: 22)
                 .background(Circle().fill(SlotsColor.tinta))
             Text(text)
-                .font(SettingsStyle.regular(13))
-                .lineSpacing(3)
+                .font(SettingsStyle.regular(12))
+                .lineSpacing(2.5)
                 .foregroundStyle(SlotsColor.textoTerciario)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -167,11 +168,11 @@ struct SettingsSwitch: View {
                     .fill(isOn ? SlotsColor.naranja : SettingsStyle.apagado)
                 Circle()
                     .fill(Color.white)
-                    .frame(width: 24, height: 24)
+                    .frame(width: 20, height: 20)
                     .shadow(color: SlotsColor.tinta.opacity(0.25), radius: 1.5, y: 1)
                     .padding(2)
             }
-            .frame(width: 46, height: 28)
+            .frame(width: 40, height: 24)
             .contentShape(Capsule())
         }
         .buttonStyle(.plain)
@@ -194,10 +195,10 @@ struct SettingsOptions<Value: Hashable>: View {
                     withAnimation(.easeOut(duration: 0.14)) { selection = option.value }
                 } label: {
                     Text(option.title)
-                        .font(SettingsStyle.medium(14))
+                        .font(SettingsStyle.medium(13))
                         .foregroundStyle(active ? SlotsColor.tinta : SlotsColor.textoSecundario)
-                        .padding(.horizontal, 14)
-                        .frame(height: 30)
+                        .padding(.horizontal, 12)
+                        .frame(height: 26)
                         .background {
                             if active {
                                 RoundedRectangle(cornerRadius: 9, style: .continuous)
@@ -228,14 +229,14 @@ struct SettingsPicker<Value: Hashable>: View {
         } label: {
             HStack(spacing: 8) {
                 Text(options.first { $0.value == selection }?.title ?? "")
-                    .font(SettingsStyle.medium(15))
+                    .font(SettingsStyle.medium(13))
                     .foregroundStyle(SlotsColor.tinta)
                 Image(systemName: "chevron.down")
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(SlotsColor.textoSecundario)
             }
             .padding(.horizontal, 12)
-            .frame(height: 36)
+            .frame(height: 32)
             .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(SettingsStyle.campo))
             .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).strokeBorder(SettingsStyle.borde, lineWidth: 1))
         }
@@ -255,10 +256,10 @@ struct SettingsTextField: View {
     var body: some View {
         TextField("", text: $text, prompt: Text(placeholder).foregroundStyle(SlotsColor.textoSecundario.opacity(0.6)))
             .textFieldStyle(.plain)
-            .font(SettingsStyle.regular(15))
+            .font(SettingsStyle.regular(13))
             .foregroundStyle(SlotsColor.tinta)
-            .padding(.horizontal, 14)
-            .frame(width: width, height: 40)
+            .padding(.horizontal, 12)
+            .frame(width: width, height: 34)
             .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(SettingsStyle.campo))
             .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(SettingsStyle.borde, lineWidth: 1))
     }
@@ -275,10 +276,10 @@ struct SettingsPillButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(SettingsStyle.medium(14))
+                .font(SettingsStyle.medium(13))
                 .foregroundStyle(kind == .primary ? Color.white : SlotsColor.tinta)
-                .padding(.horizontal, 16)
-                .frame(height: 36)
+                .padding(.horizontal, 14)
+                .frame(height: 32)
                 .background(Capsule(style: .continuous).fill(kind == .primary ? SlotsColor.tinta : SettingsStyle.opciones))
                 .contentShape(Capsule(style: .continuous))
         }
@@ -296,7 +297,7 @@ struct SettingsPermissionChip: View {
             HStack(spacing: 6) {
                 Circle().fill(SlotsColor.naranja).frame(width: 6, height: 6)
                 Text("Concedido")
-                    .font(SettingsStyle.medium(14))
+                    .font(SettingsStyle.medium(13))
                     .foregroundStyle(SlotsColor.tinta)
             }
             .padding(.horizontal, 12)
@@ -305,7 +306,7 @@ struct SettingsPermissionChip: View {
         } else {
             Button { action?() } label: {
                 Text("Dar permiso")
-                    .font(SettingsStyle.medium(14))
+                    .font(SettingsStyle.medium(13))
                     .foregroundStyle(.white)
                     .padding(.horizontal, 14)
                     .frame(height: 28)
@@ -322,7 +323,7 @@ struct SettingsValue: View {
 
     var body: some View {
         Text(text)
-            .font(SettingsStyle.regular(15))
+            .font(SettingsStyle.regular(13))
             .foregroundStyle(SlotsColor.textoSecundario)
     }
 }
@@ -337,9 +338,9 @@ struct SettingsStepper: View {
         HStack(spacing: 0) {
             stepButton("minus") { value = max(range.lowerBound, value - step) }
             Text("\(value)")
-                .font(SettingsStyle.medium(14))
+                .font(SettingsStyle.medium(13))
                 .foregroundStyle(SlotsColor.tinta)
-                .frame(minWidth: 44)
+                .frame(minWidth: 40)
                 .monospacedDigit()
             stepButton("plus") { value = min(range.upperBound, value + step) }
         }
@@ -352,7 +353,7 @@ struct SettingsStepper: View {
             Image(systemName: symbol)
                 .font(.system(size: 11, weight: .semibold))
                 .foregroundStyle(SlotsColor.tinta)
-                .frame(width: 34, height: 30)
+                .frame(width: 30, height: 26)
                 .background(RoundedRectangle(cornerRadius: 9, style: .continuous).fill(Color.white))
                 .contentShape(Rectangle())
         }

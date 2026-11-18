@@ -426,7 +426,7 @@ struct SettingsSidebarItem: View {
         Button(action: action) {
             HStack {
                 Text(title)
-                    .font(SettingsStyle.medium(15))
+                    .font(SettingsStyle.medium(14))
                 Spacer(minLength: 4)
                 switch badge {
                 case .none:
@@ -446,7 +446,7 @@ struct SettingsSidebarItem: View {
                 }
             }
             .padding(.horizontal, 16)
-            .frame(height: 48)
+            .frame(height: 44)
             .foregroundStyle(isSelected ? Color.white : SlotsColor.tinta)
             .background {
                 Capsule(style: .continuous)

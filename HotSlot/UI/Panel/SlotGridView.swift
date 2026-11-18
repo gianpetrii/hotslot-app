@@ -414,6 +414,14 @@ private struct SlotCardView: View {
 
     private var hasContent: Bool { slot.content != nil }
 
+    /// Esta card es la que se acaba de copiar con un clic (feedback igual al de iOS).
+    private var isCopied: Bool { appState.copiedSlotIndex == slot.index }
+    /// Hay otra card copiada: esta se apaga para que se note cuál fue.
+    private var isDimmedByCopy: Bool {
+        guard let copied = appState.copiedSlotIndex else { return false }
+        return copied != slot.index
+    }
+
     /// Slot que acaba de crearse con «Nuevo slot» y todavía no tiene contenido.
     private var isNewlyCreated: Bool {
         appState.pendingNewSlot == slot.index && !hasContent
@@ -494,7 +502,13 @@ private struct SlotCardView: View {
                 .opacity(copyFlash ? 1 : 0)
                 .allowsHitTesting(false)
         }
-        .slotsHoverLift(isHovering && hasContent && !copyFlash, scales: true)
+        .slotsHoverLift(isHovering && hasContent && !copyFlash && !isCopied, scales: true)
+        // Recién copiada: se achica un poco con un resplandor naranja; las otras se apagan.
+        .scaleEffect(isCopied ? 0.97 : 1)
+        .shadow(color: Color(slotsHex: 0xE2470F).opacity(isCopied ? 0.35 : 0), radius: 15, y: 14)
+        .opacity(isDimmedByCopy ? 0.55 : 1)
+        .zIndex(isCopied ? 1 : 0)
+        .animation(.easeOut(duration: 0.08), value: appState.copiedSlotIndex)
         .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
         .onTapGesture {
             if isEditingLabel {
@@ -530,10 +544,13 @@ private struct SlotCardView: View {
             }
         }
         .onChange(of: appState.isPanelVisible) { _, visible in
-            guard visible, copyFlash else { return }
+            guard visible else { return }
             var transaction = Transaction()
             transaction.disablesAnimations = true
-            withTransaction(transaction) { copyFlash = false }
+            withTransaction(transaction) {
+                copyFlash = false
+                appState.copiedSlotIndex = nil
+            }
         }
         .onChange(of: appState.inlineEditSession) { _, _ in
             guard isEditingLabel else { return }
@@ -573,7 +590,14 @@ private struct SlotCardView: View {
 
             Spacer(minLength: 4)
 
-            if let visibleShortcut {
+            if isCopied {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(prefersLightContent ? SlotsColor.naranja : Color.white)
+                    .frame(width: 24, height: 24)
+                    .background(Circle().fill(prefersLightContent ? Color.white : SlotsColor.naranja))
+                    .transition(.scale(scale: 0.6).combined(with: .opacity))
+            } else if let visibleShortcut {
                 Button {
                     isEditingShortcuts = true
                 } label: {
@@ -621,9 +645,14 @@ private struct SlotCardView: View {
             onPaste()
             return
         }
-        var transaction = Transaction()
-        transaction.disablesAnimations = true
-        withTransaction(transaction) { copyFlash = true }
+        if appState.settings.clickItemAction == .copyToClipboard {
+            // Feedback de iOS: «Copiado» en el título, tilde y resplandor. Aparece al instante; el cierre del panel no cambia.
+            withAnimation(.easeOut(duration: 0.08)) { appState.copiedSlotIndex = slot.index }
+        } else {
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) { copyFlash = true }
+        }
         onPaste()
     }
 
@@ -653,7 +682,7 @@ private struct SlotCardView: View {
                         .onSubmit { commitLabelEdit() }
                         .transition(.opacity.combined(with: .scale(scale: 0.98)))
                 } else {
-                    Text(SlotCardCopy.visibleCardTitle(for: slot))
+                    Text(isCopied ? "Copiado" : SlotCardCopy.visibleCardTitle(for: slot))
                         .font(SlotsFont.tituloCard)
                         .foregroundStyle(titleColor)
                         .lineLimit(2)
