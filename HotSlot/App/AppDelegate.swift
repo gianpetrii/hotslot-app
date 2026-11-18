@@ -11,6 +11,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     var appState: AppState?
     let settingsWindowController = SettingsWindowController()
     let onboardingWindowController = OnboardingWindowController()
+    let tutorialWindowController = TutorialWindowController()
     private var updaterController: SPUStandardUpdaterController?
     private var shouldReopenPanelAfterUtility = false
     private var shouldPresentPanelAfterLaunch = false
@@ -69,10 +70,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 )
             }
         }
+        state.openTutorial = { [weak self] in
+            self?.presentTutorial()
+        }
         state.openOnboarding = { [weak self] in
             guard let self, let state = self.appState else { return }
             self.presentUtilityWindow(hidePanelFirst: true) { reopen in
                 self.onboardingWindowController.show(appState: state) { openPanel in
+                    // La primera vez, después del onboarding viene el tutorial (que termina abriendo el panel).
+                    if !AppSettings.load().tutorialVisto {
+                        self.presentTutorial()
+                        return
+                    }
                     NSApp.setActivationPolicy(.accessory)
                     self.statusBarController?.refreshVisibility()
                     guard openPanel else {
@@ -147,6 +156,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @MainActor
     private func continueMainFlow(onboardingPending: Bool, userOpened: Bool) {
+        #if DEBUG
+        // Para revisar el tutorial sin pasar por el onboarding: -slotsTutorialDemo
+        if ProcessInfo.processInfo.arguments.contains("-slotsTutorialDemo") {
+            DispatchQueue.main.async { [weak self] in self?.presentTutorial() }
+            return
+        }
+        #endif
         if onboardingPending {
             DispatchQueue.main.async { [weak self] in
                 self?.appState?.openOnboarding?()
@@ -192,6 +208,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    /// Tutorial de primera vez. Si Ajustes está abierto, primero se cierra.
+    @MainActor
+    func presentTutorial() {
+        guard let state = appState, !tutorialWindowController.isVisible else { return }
+        let start = { [weak self] in
+            guard let self else { return }
+            self.tutorialWindowController.show(appState: state) { [weak self] in
+                guard let self else { return }
+                var settings = AppSettings.load()
+                settings.tutorialVisto = true
+                settings.save()
+                NSApp.setActivationPolicy(.accessory)
+                self.statusBarController?.refreshVisibility()
+                state.hotkeyManager.applyStoredShortcuts()
+                // Los dos caminos terminan en el panel.
+                state.focusTracker.captureForUpcomingPaste()
+                self.panelController?.show()
+                state.isPanelVisible = true
+            }
+        }
+        if settingsWindowController.isVisible {
+            settingsWindowController.dismissForTutorial(then: start)
+        } else {
+            start()
+        }
+    }
+
     @MainActor
     func checkForUpdates() {
         updaterController?.checkForUpdates(nil)
@@ -208,7 +251,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             guard let self else { return }
             NSApp.setActivationPolicy(.accessory)
             self.statusBarController?.refreshVisibility()
-            guard self.shouldReopenPanelAfterUtility else { return }
+            guard self.shouldReopenPanelAfterUtility, !self.settingsWindowController.closedByFocusLoss else { return }
             self.appState?.focusTracker.capture()
             self.panelController?.show()
             self.appState?.isPanelVisible = true

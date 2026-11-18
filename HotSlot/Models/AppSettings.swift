@@ -36,6 +36,8 @@ struct AppSettings: Codable, Equatable {
     var debugClipboard: Bool
     var hasCompletedOnboarding: Bool
     var hasSeenMenuBarHint: Bool
+    /// El tutorial de primera vez ya se vio (o se salteó).
+    var tutorialVisto: Bool
     var firstInstallDate: Date?
     var licenseKey: String?
     var isLicensed: Bool
@@ -53,6 +55,7 @@ struct AppSettings: Codable, Equatable {
         debugClipboard: false,
         hasCompletedOnboarding: false,
         hasSeenMenuBarHint: false,
+        tutorialVisto: false,
         firstInstallDate: nil,
         licenseKey: nil,
         isLicensed: false
@@ -64,7 +67,7 @@ struct AppSettings: Codable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case historyLimit, launchAtLogin, playSoundOnPaste, showNotchNotice, showNotchShelf, clickItemAction, debugClipboard, hasCompletedOnboarding, hasSeenMenuBarHint
-        case firstInstallDate, licenseKey, isLicensed, confirmLibraryDelete, analyticsEnabled, hasAnsweredAnalyticsPrompt
+        case tutorialVisto, firstInstallDate, licenseKey, isLicensed, confirmLibraryDelete, analyticsEnabled, hasAnsweredAnalyticsPrompt
     }
 
     init(
@@ -77,6 +80,7 @@ struct AppSettings: Codable, Equatable {
         debugClipboard: Bool,
         hasCompletedOnboarding: Bool,
         hasSeenMenuBarHint: Bool = false,
+        tutorialVisto: Bool = false,
         firstInstallDate: Date? = nil,
         licenseKey: String? = nil,
         isLicensed: Bool = false,
@@ -93,6 +97,7 @@ struct AppSettings: Codable, Equatable {
         self.debugClipboard = debugClipboard
         self.hasCompletedOnboarding = hasCompletedOnboarding
         self.hasSeenMenuBarHint = hasSeenMenuBarHint
+        self.tutorialVisto = tutorialVisto
         self.firstInstallDate = firstInstallDate
         self.licenseKey = licenseKey
         self.isLicensed = isLicensed
@@ -112,6 +117,8 @@ struct AppSettings: Codable, Equatable {
         debugClipboard = try container.decodeIfPresent(Bool.self, forKey: .debugClipboard) ?? false
         hasCompletedOnboarding = try container.decodeIfPresent(Bool.self, forKey: .hasCompletedOnboarding) ?? false
         hasSeenMenuBarHint = try container.decodeIfPresent(Bool.self, forKey: .hasSeenMenuBarHint) ?? false
+        // Quien ya usaba Slots antes del tutorial no lo ve solo.
+        tutorialVisto = try container.decodeIfPresent(Bool.self, forKey: .tutorialVisto) ?? hasCompletedOnboarding
         firstInstallDate = try container.decodeIfPresent(Date.self, forKey: .firstInstallDate)
         licenseKey = try container.decodeIfPresent(String.self, forKey: .licenseKey)
         isLicensed = try container.decodeIfPresent(Bool.self, forKey: .isLicensed) ?? false
