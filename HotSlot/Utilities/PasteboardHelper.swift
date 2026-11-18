@@ -1,4 +1,5 @@
 import AppKit
+import ImageIO
 import CryptoKit
 import UniformTypeIdentifiers
 
@@ -80,9 +81,33 @@ enum PasteboardHelper {
         return pasteboard.changeCount
     }
 
+    /// Miniaturas ya decodificadas. Antes cada render de una card o fila leía y decodificaba la imagen
+    /// completa desde disco en el hilo principal, y eso era una fuente de trabas en el panel.
+    private static let imageCache: NSCache<NSString, NSImage> = {
+        let cache = NSCache<NSString, NSImage>()
+        cache.totalCostLimit = 160 * 1024 * 1024
+        return cache
+    }()
+
+    /// Imagen para mostrar (no para pegar): reducida a 1600 px como máximo y guardada en memoria.
     static func loadImage(named fileName: String) -> NSImage? {
+        let key = fileName as NSString
+        if let cached = imageCache.object(forKey: key) { return cached }
+
         let url = AppSupportDirectory.images.appendingPathComponent(fileName)
-        return NSImage(contentsOf: url)
+        let options: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceShouldCacheImmediately: true,
+            kCGImageSourceThumbnailMaxPixelSize: 1600,
+        ]
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else {
+            return NSImage(contentsOf: url)
+        }
+        let image = NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height))
+        imageCache.setObject(image, forKey: key, cost: cgImage.width * cgImage.height * 4)
+        return image
     }
 
     @discardableResult

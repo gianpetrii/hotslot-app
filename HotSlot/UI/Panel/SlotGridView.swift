@@ -50,6 +50,8 @@ struct SlotGridView: View {
     /// Cada cuadro: sigue el cursor mientras se arrastra un slot, cierra el arrastre si se soltó sin destino
     /// y desplaza la grilla si el cursor está cerca de un borde.
     private func dragTick() {
+        // Con el panel cerrado y sin arrastre no hay nada que revisar (el reloj corre 40 veces por segundo).
+        guard appState.isPanelVisible || appState.slotDragSource != nil || dragCursor != nil else { return }
         let pressed = NSEvent.pressedMouseButtons & 1 != 0
         if appState.slotDragSource != nil {
             if pressed {
