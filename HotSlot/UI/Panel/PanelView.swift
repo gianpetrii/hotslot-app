@@ -210,6 +210,8 @@ struct PanelView: View {
                 count: appState.libraryWorkspace.filledSlotCount(in: library.id),
                 isActive: library.id == appState.libraryWorkspace.workspace.activeLibraryId
             )
+            // Con el tamaño de la pill original: sin esto el nombre se estira al ancho máximo.
+            .frame(width: drag.startFrame.width, height: drag.startFrame.height)
             .shadow(color: Color.black.opacity(drag.isSettling ? 0.04 : 0.18), radius: drag.isSettling ? 4 : 14, y: drag.isSettling ? 1 : 6)
             .scaleEffect(overTrash ? 0.6 : (drag.isSettling ? 1 : 1.04))
             .opacity(overTrash ? 0.75 : 1)

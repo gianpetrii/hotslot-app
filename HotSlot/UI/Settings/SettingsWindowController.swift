@@ -87,6 +87,12 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             return
         }
 
+        #if DEBUG
+        if let dir = UserDefaults.standard.string(forKey: "slotsSettingsSnapDir") {
+            snapshotTabs(of: window, into: dir)
+        }
+        #endif
+
         window.alphaValue = 0
         window.makeKeyAndOrderFront(nil)
 
@@ -96,6 +102,22 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             self?.schedulePlacementReassertion()
         }
     }
+
+    #if DEBUG
+    /// Solo para comparar con el diseño sin permiso de grabación de pantalla.
+    private func snapshotTabs(of window: NSWindow, into dir: String) {
+        try? FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
+        func capture(_ name: String) {
+            guard let view = window.contentView,
+                  let rep = view.bitmapImageRepForCachingDisplay(in: view.bounds) else { return }
+            view.cacheDisplay(in: view.bounds, to: rep)
+            try? rep.representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: dir).appendingPathComponent(name))
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { capture("general.png") }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) { [weak self] in self?.appState?.pendingSettingsTab = .hotkeys; NotificationCenter.default.post(name: .init("slotsSnapTab"), object: nil) }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.6) { capture("atajos.png") }
+    }
+    #endif
 
     private func applyLockedPlacement(_ frame: NSRect, to window: NSWindow) {
         window.setFrame(frame, display: true)

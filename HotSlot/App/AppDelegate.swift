@@ -157,6 +157,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @MainActor
     private func continueMainFlow(onboardingPending: Bool, userOpened: Bool) {
         #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-slotsSettingsDemo") {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in self?.appState?.openSettings?() }
+            return
+        }
+        #endif
+        #if DEBUG
         // Para revisar el tutorial sin pasar por el onboarding: -slotsTutorialDemo
         if ProcessInfo.processInfo.arguments.contains("-slotsTutorialDemo") {
             DispatchQueue.main.async { [weak self] in self?.presentTutorial() }

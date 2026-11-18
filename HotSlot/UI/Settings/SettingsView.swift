@@ -69,6 +69,11 @@ struct SettingsView: View {
                 .allowsHitTesting(false)
         }
         .environment(\.colorScheme, .light)
+        #if DEBUG
+        .onReceive(NotificationCenter.default.publisher(for: .init("slotsSnapTab"))) { _ in
+            if let pending = appState.pendingSettingsTab { selectedTab = pending; appState.pendingSettingsTab = nil }
+        }
+        #endif
         .onAppear {
             confirmLibraryDelete = AppSettings.load().confirmLibraryDelete
             clickItemAction = AppSettings.load().clickItemAction
@@ -81,6 +86,8 @@ struct SettingsView: View {
 
     private var sidebar: some View {
         VStack(alignment: .leading, spacing: 6) {
+            // Los botones de la ventana quedan arriba; el menú arranca debajo, como en el diseño.
+            Spacer().frame(height: 40)
             ForEach([SettingsTab.general, .hotkeys, .permissions], id: \.self) { tab in
                 SettingsSidebarItem(
                     title: tab.title,
@@ -124,7 +131,7 @@ struct SettingsView: View {
     private var generalTab: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
+                VStack(alignment: .leading, spacing: 27) {
                     SettingsSection("Inicio") {
                         SettingsCard {
                             SettingsRow(title: "Abrir al iniciar sesión") {
@@ -319,7 +326,7 @@ struct SettingsView: View {
         }
 
         SettingsRow(title: "Clave del email de compra (UUID)") {
-            SettingsTextField(placeholder: "", text: $licenseKeyInput, width: 250)
+            SettingsTextField(placeholder: "", text: $licenseKeyInput, width: 232)
         }
 
         HStack(spacing: 8) {

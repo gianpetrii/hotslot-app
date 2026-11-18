@@ -25,8 +25,10 @@ struct SettingsTabTitle: View {
             .tracking(-2.56)
             .foregroundStyle(SlotsColor.tinta)
             .lineLimit(1)
-            .minimumScaleFactor(0.6)
+            // Alto de línea 0,92: el texto se queda en 64 pt y sobresale un poco, sin achicarse.
+            .fixedSize()
             .frame(height: 64 * 0.92, alignment: .leading)
+            .offset(y: 10)
             .padding(.bottom, 18)
     }
 }
@@ -89,8 +91,8 @@ struct SettingsRow<Control: View>: View {
     @ViewBuilder var control: () -> Control
 
     var body: some View {
-        HStack(alignment: .center, spacing: 24) {
-            VStack(alignment: .leading, spacing: 3) {
+        HStack(alignment: .center, spacing: 0) {
+            VStack(alignment: .leading, spacing: 5) {
                 Text(title)
                     .font(SettingsStyle.medium(17))
                     .tracking(-0.17)
@@ -99,7 +101,7 @@ struct SettingsRow<Control: View>: View {
                 if let detail {
                     Text(detail)
                         .font(SettingsStyle.regular(13))
-                        .lineSpacing(1.4)
+                        .lineSpacing(3)
                         .foregroundStyle(SlotsColor.textoSecundario)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -140,6 +142,7 @@ struct SettingsNote: View {
                 .background(Circle().fill(SlotsColor.tinta))
             Text(text)
                 .font(SettingsStyle.regular(13))
+                .lineSpacing(3)
                 .foregroundStyle(SlotsColor.textoTerciario)
                 .fixedSize(horizontal: false, vertical: true)
         }
