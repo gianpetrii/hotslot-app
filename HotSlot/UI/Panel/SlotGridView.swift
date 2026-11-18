@@ -508,7 +508,6 @@ private struct SlotCardView: View {
         .shadow(color: Color(slotsHex: 0xE2470F).opacity(isCopied ? 0.35 : 0), radius: 15, y: 14)
         .opacity(isDimmedByCopy ? 0.55 : 1)
         .zIndex(isCopied ? 1 : 0)
-        .animation(.easeOut(duration: 0.08), value: appState.copiedSlotIndex)
         .contentShape(RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous))
         .onTapGesture {
             if isEditingLabel {
@@ -646,8 +645,10 @@ private struct SlotCardView: View {
             return
         }
         if appState.settings.clickItemAction == .copyToClipboard {
-            // Feedback de iOS: «Copiado» en el título, tilde y resplandor. Aparece al instante; el cierre del panel no cambia.
-            withAnimation(.easeOut(duration: 0.08)) { appState.copiedSlotIndex = slot.index }
+            // Feedback de iOS: «Copiado» en el título, tilde y resplandor. Aparece de golpe, sin animación; la duración del cierre del panel no cambia.
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) { appState.copiedSlotIndex = slot.index }
         } else {
             var transaction = Transaction()
             transaction.disablesAnimations = true

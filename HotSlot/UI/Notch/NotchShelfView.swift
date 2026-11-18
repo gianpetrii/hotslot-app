@@ -70,6 +70,8 @@ struct NotchShelfView: View {
                         NotchShelfTile(
                             slot: slot,
                             pointer: pointer,
+                            copiedIndex: appState.copiedSlotIndex,
+                            onCopyFeedback: { appState.copiedSlotIndex = slot.index },
                             onActivate: { onActivateSlot(slot.index) },
                             onDropFile: { url in onDropFile(slot.index, url) },
                             onClear: { withAnimation(.easeInOut(duration: 0.22)) { appState.slotStore.clearSlot(index: slot.index) } },
@@ -539,6 +541,9 @@ private struct NotchShelfLibraryPill: View {
 private struct NotchShelfTile: View {
     let slot: Slot
     let pointer: NotchShelfPointer
+    /// Slot recién copiado con un clic (feedback igual al del panel y al de iOS).
+    let copiedIndex: Int?
+    let onCopyFeedback: () -> Void
     let onActivate: () -> Void
     let onDropFile: (URL) -> Void
     let onClear: () -> Void
@@ -547,6 +552,9 @@ private struct NotchShelfTile: View {
     @State private var isHovering = false
     @State private var isDropTarget = false
     @State private var pressScale: CGFloat = 1
+
+    private var isCopied: Bool { copiedIndex == slot.index }
+    private var isDimmedByCopy: Bool { copiedIndex != nil && copiedIndex != slot.index }
 
     private var radius: CGFloat { NotchShelfMetrics.tileCorner }
 
@@ -562,7 +570,13 @@ private struct NotchShelfTile: View {
                         Spacer(minLength: 0)
                         // Solo lectura: enseña el atajo. Se edita desde el panel.
                         // Sin sombra sobre la pastilla: la sombra del texto la dejaba sucia sobre imágenes y colores.
-                        if let shortcutName {
+                        if isCopied {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(prefersLight ? SlotsColor.naranja : Color.white)
+                                .frame(width: 22, height: 22)
+                                .background(Circle().fill(prefersLight ? Color.white : SlotsColor.naranja))
+                        } else if let shortcutName {
                             SlotHandoffShortcutChip(
                                 name: shortcutName,
                                 ink: SlotsColor.textoSecundario,
@@ -592,7 +606,7 @@ private struct NotchShelfTile: View {
 
                     Spacer(minLength: 0)
 
-                    Text(SlotCardCopy.visibleCardTitle(for: slot))
+                    Text(isCopied ? "Copiado" : SlotCardCopy.visibleCardTitle(for: slot))
                         .font(.custom("InterTight-Medium", size: 14))
                         .foregroundStyle(titleColor)
                         .lineLimit(1)
@@ -626,8 +640,10 @@ private struct NotchShelfTile: View {
             return true
         }
         .animation(.easeOut(duration: 0.12), value: isDropTarget)
-        .scaleEffect(pressScale)
-        .slotsHoverLift((isHovering || isDropTarget) && (hasContent || isDropTarget), scales: true)
+        .scaleEffect(pressScale * (isCopied ? 0.97 : 1))
+        .shadow(color: Color(slotsHex: 0xE2470F).opacity(isCopied ? 0.35 : 0), radius: 12, y: 8)
+        .opacity(isDimmedByCopy ? 0.55 : 1)
+        .slotsHoverLift((isHovering || isDropTarget) && (hasContent || isDropTarget) && !isCopied, scales: true)
         .animation(.spring(response: 0.28, dampingFraction: 0.86), value: isHovering)
         .pointerHover(pointer, isHovering: $isHovering)
     }
@@ -657,6 +673,12 @@ private struct NotchShelfTile: View {
     // MARK: Acción
 
     private func press() {
+        // «Copiado» sale en el instante del clic, antes de que la barra empiece a cerrarse.
+        if hasContent, AppSettings.load().clickItemAction == .copyToClipboard {
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) { onCopyFeedback() }
+        }
         withAnimation(.easeOut(duration: 0.07)) { pressScale = 0.92 }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) { pressScale = 1 }

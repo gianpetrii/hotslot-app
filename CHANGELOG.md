@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.3.0] — 2026-11-18
+
+### Ajustes
+
+- Rediseño completo con el sistema de Dante: vidrio con valores fijos (no cambia con lo que haya detrás), tipografía Inter Tight, menú lateral, cards y filas, interruptores y botones nuevos.
+- La ventana ya no tiene marco ni los botones de macOS: esquinas de radio 32, se mueve arrastrando el fondo y se cierra con Esc, ⌘W o un clic afuera. Esc o clic afuera vuelve al panel; otro Esc o clic afuera cierra el panel.
+- Vaciar el historial ahora pide confirmación.
+
+### Tutorial de primera vez
+
+- Después del onboarding aparece una bienvenida y un recorrido de 8 pasos sobre un panel de ejemplo que no toca tus slots ni tu historial. Se puede volver a ver desde Ajustes › General › Ayuda.
+
+### Panel
+
+- Al copiar un slot con un clic: el título pasa a «Copiado», aparece un tilde y un resplandor naranja, y las otras cards se apagan (igual que en el iPhone). También en las cards del notch.
+- Una sola barra de scroll fina, centrada entre los slots y el historial.
+- Cambiar de biblioteca es más rápido y ya no se traba; el panel se abre más rápido.
+- Al levantar una biblioteca para reordenarla ya no se estira.
+- La sombra de las bibliotecas al pasar el mouse ya no se corta.
+
 ## [1.2.0] — 2026-11-16
 
 ### Más slots

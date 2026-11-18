@@ -235,6 +235,7 @@ final class NotchShelfController {
         startHoverWatch()
         if isOpen { return }
         isOpen = true
+        appState.copiedSlotIndex = nil
         shelfPanel.ignoresMouseEvents = false
         appState.notchOpenCount += 1
         Telemetry.notchOpened()

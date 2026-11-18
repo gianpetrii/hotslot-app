@@ -251,11 +251,14 @@ final class AppState {
         let close = {
             switch self.settings.clickItemAction {
             case .copyToClipboard:
-                // Sonido y aviso en el instante del clic; el panel se cierra en paralelo.
+                // Sonido y aviso en el instante del clic. El cierre arranca un fotograma después para que
+                // «Copiado» llegue a pintarse; su duración no cambia.
                 self.pasteService.copyToClipboard(content: content, slotIndex: slotIndex)
                 self.focusTracker.clearPasteDestination()
-                panelController.hide(animated: true) {
-                    self.isPanelVisible = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.045) {
+                    panelController.hide(animated: true) {
+                        self.isPanelVisible = false
+                    }
                 }
             case .pasteAtFocus:
                 guard self.ensureAccessibilityForPaste() else { return }
