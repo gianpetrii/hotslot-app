@@ -49,23 +49,21 @@ struct SettingsView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
         .padding(.horizontal, 32)
-        // Deja libre la franja de los tres botones de la ventana (el vidrio llega hasta arriba).
-        .padding(.top, 36)
-        .padding(.bottom, 28)
+        .padding(.top, 32)
+        .padding(.bottom, 32)
         .frame(width: WindowPlacement.settingsWindowSize.width, height: WindowPlacement.settingsWindowSize.height)
         .background {
             // Vidrio con valores fijos (sin material que cambie con lo que hay detrás): ver handoff de Ajustes.
             ZStack {
-                VisualEffectBackground(material: .hudWindow, blendingMode: .behindWindow, cornerRadius: 0)
+                VisualEffectBackground(material: .hudWindow, blendingMode: .behindWindow, cornerRadius: SlotsRadius.ventana)
                 Color(slotsHex: 0xF6F1EB, opacity: 0.6)
             }
-            .ignoresSafeArea()
+            .clipShape(RoundedRectangle(cornerRadius: SlotsRadius.ventana, style: .continuous))
         }
         .overlay {
             // Borde fino para que se note dónde termina la ventana.
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            RoundedRectangle(cornerRadius: SlotsRadius.ventana, style: .continuous)
                 .strokeBorder(Color.white.opacity(0.75), lineWidth: 1)
-                .ignoresSafeArea()
                 .allowsHitTesting(false)
         }
         .environment(\.colorScheme, .light)
@@ -86,8 +84,7 @@ struct SettingsView: View {
 
     private var sidebar: some View {
         VStack(alignment: .leading, spacing: 6) {
-            // Los botones de la ventana quedan arriba; el menú arranca debajo, como en el diseño.
-            Spacer().frame(height: 40)
+            Spacer().frame(height: 6)
             ForEach([SettingsTab.general, .hotkeys, .permissions], id: \.self) { tab in
                 SettingsSidebarItem(
                     title: tab.title,

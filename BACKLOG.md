@@ -173,7 +173,7 @@ Material de Dante en `dante-revision/` (no se commitea): Ajustes v2, Tutorial v5
 | [ ] | P1 | **Animación de llegada de un slot en el notch** (pop + halo naranja): funciona en el panel, no se ve en el notch. Hay un cambio sin commitear en `NotchShelfView.swift` que no lo arregló |
 | [ ] | P1 | **Slots de tamaño variable / filas editables** (slot 1 cuadrado para que entren 6, opción horizontal). Disruptivo: confirmar el diseño antes de empezar |
 | [ ] | P2 | **Grabador de atajos propio** con el estilo de Dante (campo de 40, borde naranja al grabar). Hoy se usa el grabador nativo de la librería. Tarea aparte, cuando Gianluca lo pida |
-| [ ] | P2 | **Ventana de Ajustes sin marco** para tener radio 32 como el panel (hoy usa las esquinas de macOS). Ya se lo comentó Gianluca a Dante; decidir con él |
+| [x] | P2 | **Ventana de Ajustes sin marco** (radio 32, sin botones de cerrar/minimizar/zoom; se cierra con Esc, ⌘W o clic afuera; se mueve arrastrando el fondo). Decidido con Dante. Falta que Gianluca la revise |
 | [ ] | P2 | **Control de número en Ajustes** (límite del historial, 10 a 500): la hoja de componentes de Dante no tiene uno; Gianluca le pide que lo sume |
 | [ ] | P2 | **Cuenta (v1 de Dante):** inicio de sesión opcional con Apple, Google o email (código de 6 números) y pestaña Ajustes › Cuenta. Necesita decidir el backend antes. Paquete: `dante-revision/cuenta` |
 | [ ] | P3 | Pendientes provisionales de Dante: flip de 400 ms al guardar con ⌘V (proponemos fundido de 200 ms + «Guardado»), imágenes de 2 filas en slots 6+, alto de fila 218 / panel fijo |

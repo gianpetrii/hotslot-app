@@ -4,6 +4,20 @@ import SwiftUI
 
 /// Ventana de ajustes regular. Las apps de menú bar no reciben teclas hasta pasar a `.regular`.
 final class SettingsWindowController: NSObject, NSWindowDelegate {
+    /// Ventana sin marco ni botones (diseño de Dante): se cierra con Esc, ⌘W o clic afuera.
+    private final class SettingsWindow: NSWindow {
+        override var canBecomeKey: Bool { true }
+        override var canBecomeMain: Bool { true }
+
+        override func cancelOperation(_ sender: Any?) {
+            _ = delegate?.windowShouldClose?(self)
+        }
+
+        override func performClose(_ sender: Any?) {
+            _ = delegate?.windowShouldClose?(self)
+        }
+    }
+
     private var window: NSWindow?
 
     var isVisible: Bool { window?.isVisible == true }
@@ -26,9 +40,9 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         closedByFocusLoss = false
 
         if window == nil {
-            let settingsWindow = NSWindow(
+            let settingsWindow = SettingsWindow(
                 contentRect: NSRect(origin: .zero, size: WindowPlacement.settingsWindowSize),
-                styleMask: [.titled, .closable, .miniaturizable, .fullSizeContentView],
+                styleMask: [.borderless],
                 backing: .buffered,
                 defer: false
             )
@@ -41,8 +55,8 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             // Fondo de vidrio como el del panel: la ventana deja ver el escritorio desenfocado.
             settingsWindow.isOpaque = false
             settingsWindow.backgroundColor = .clear
-            settingsWindow.titlebarAppearsTransparent = true
-            settingsWindow.titleVisibility = .hidden
+            settingsWindow.hasShadow = true
+            settingsWindow.isMovableByWindowBackground = true
             // Siempre la versión clara, como el resto de la app.
             settingsWindow.appearance = NSAppearance(named: .aqua)
             settingsWindow.contentMinSize = WindowPlacement.settingsWindowSize
