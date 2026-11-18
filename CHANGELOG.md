@@ -1,17 +1,29 @@
 # Changelog
 
-## Sin publicar
+## [1.2.0] — 2026-11-16
 
 ### Más slots
 
 - Cada biblioteca puede tener más de 5 slots. Los primeros 5 conservan el atajo según su posición; del 6 en adelante van debajo de una línea «Sin atajo» y la zona de slots tiene scroll.
 - La card punteada «Nuevo slot» está siempre al final. Con un clic o con ⌘N crea un slot nuevo con el nombre en edición: Enter lo guarda, Esc lo descarta y ⌘V guarda ahí lo que tengas copiado.
 - Arrastrar algo del historial, o un archivo, sobre «Nuevo slot» crea un slot con ese contenido. «Guardar portapapeles» usa el primer slot vacío y, si están todos ocupados, crea uno al final.
-- Arrastrar un slot sobre otro los intercambia (contenido, nombre y fondo) y el resto queda igual; las dos cards se deslizan al lugar de la otra con un aro naranja y el notch avisa. Si uno llega a los 5 primeros, avisa con qué atajo quedó.
+- Arrastrar un slot sobre otro los intercambia (contenido, nombre y fondo) y el resto queda igual; el slot arrastrado se asienta en su lugar desde donde lo soltaste y, después, el otro viaja al lugar libre; el notch avisa. Si uno llega a los 5 primeros, avisa con qué atajo quedó.
 - Al arrastrar cerca del borde de la grilla, esta se desplaza sola.
 - Los slots del 6 en adelante pueden tener atajos propios: sin atajo de fábrica, se asignan desde «+ Atajo» en la card.
 - Los slots vacíos del 6 en adelante se pueden eliminar (tacho en la card o menú «Eliminar slot») y los siguientes suben un lugar; si tienen contenido, la cruz los vacía primero.
-- El notch pasa de página con flechas, la rueda o el trackpad cuando hay más de 5 slots; se cierra más rápido y los atajos sobre imágenes y colores se leen limpios.
+- Un slot nuevo, o uno que recibe contenido, entra con un pequeño «pop» y un halo cálido, igual en el panel y en el notch.
+
+### Notch
+
+- La barra es más baja: las cards son apaisadas y muestran menos información (sin el texto de tipo y tamaño). Al pasar el mouse aparece la cruz para vaciar un slot, o el tacho en los slots vacíos del 6 en adelante.
+- Con más de 5 slots, pasa de página con la rueda, el trackpad o las flechas ▲▼ de la derecha; la fila se desliza en vertical, como el scroll del panel.
+- Al final de la lista hay un tile «Nuevo slot»: un clic guarda el portapapeles en un slot nuevo sin cerrar la barra.
+- Las bibliotecas se pueden crear (+), renombrar, mover, reordenar arrastrando y eliminar arrastrando al tacho o con clic derecho, como en el panel.
+- Los nombres largos de biblioteca se acortan y, con muchas, la fila se desplaza hasta la activa sin pisar los botones (también en el panel).
+
+### Ajustes
+
+- La ventana tiene vidrio hasta arriba y un borde fino, y los botones de cerrar y minimizar responden.
 
 ## [1.1.0] — 2026-11-11
 

@@ -1,6 +1,6 @@
 # Decisiones — rediseño Slots (nov 2026)
 
-Acuerdos entre Gianluca y desarrollo tras Etapa 0 y el handoff de Dante (descarga externa: `docs/HANDOFF-README.md`).
+Acuerdos entre Gianluca y desarrollo tras Etapa 0 y el handoff de Dante (descarga externa: `docs/notas/HANDOFF-README.md`).
 
 ## Alcance inmediato
 
@@ -46,4 +46,4 @@ Reemplazo **incremental** del panel actual (no big-bang en un solo PR): tokens �
 - Fuente de verdad de comportamiento: `01-docs/flujos.md` dentro del zip del handoff.
 - Medidas y copy: HTML en `05-flujos/html/` y `02-diseno/html-referencia/`.
 - Tokens Swift del handoff → `HotSlot/Design/SlotsTheme.swift`.
-- Validación de diseño con Dante: solo lo que Gianluca cargue en `docs/REVISION-PANEL-PARA-DANTE.md`.
+- Validación de diseño con Dante: solo lo que Gianluca cargue en `docs/notas/REVISION-PANEL-PARA-DANTE.md`.

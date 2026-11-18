@@ -50,6 +50,8 @@ struct SettingsView: View {
             .padding(.top, SlotsSpace.m)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
+        // Deja libre la franja de los tres botones de la ventana (el vidrio llega hasta arriba).
+        .padding(.top, 28)
         .frame(width: 720, height: 540)
         .background {
             // Mismo vidrio que el panel y el notch.
@@ -59,6 +61,13 @@ struct SettingsView: View {
                     .opacity(0.85)
             }
             .ignoresSafeArea()
+        }
+        .overlay {
+            // Borde fino para que se note dónde termina la ventana.
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(SlotsColor.tinta.opacity(0.18), lineWidth: 1)
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
         }
         .onAppear {
             confirmLibraryDelete = AppSettings.load().confirmLibraryDelete

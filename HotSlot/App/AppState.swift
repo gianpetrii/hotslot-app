@@ -78,10 +78,16 @@ final class AppState {
     /// La grilla hace scroll hasta este slot.
     var slotScrollTarget: SlotScrollTarget?
     var swapHighlight: SwapHighlight?
+    /// Slot que se está arrastrando ahora (lo fija la card al empezar el arrastre).
+    var slotDragSource: (index: Int, libraryId: UUID, grab: CGPoint, size: CGSize)?
     /// Sube cada vez que se abre la barra del notch: vuelve a la primera página de slots.
     var notchOpenCount = 0
     /// Pedido de cambio de página desde la rueda del mouse sobre la barra (+1 / -1).
     var notchPageRequest: Int?
+    /// Se arrastra una biblioteca en el notch: la barra no se cierra aunque el cursor baje al tacho.
+    var notchLibraryDragging = false
+    /// Slot que acaba de recibir contenido: el panel y el notch lo destacan un momento.
+    var slotArrival: SlotArrival?
 
     /// Sheet del panel: elegir slot cuando «Guardar portapapeles» y no hay vacíos.
     var isSaveClipboardSlotPickerPresented = false
@@ -328,6 +334,19 @@ final class AppState {
         openSettings?()
     }
 
+    struct SlotArrival: Equatable {
+        let index: Int
+        let token = UUID()
+    }
+
+    private func markSlotArrival(_ index: Int) {
+        let arrival = SlotArrival(index: index)
+        slotArrival = arrival
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
+            if self?.slotArrival == arrival { self?.slotArrival = nil }
+        }
+    }
+
     func saveToSlot(index: Int, content: ClipContent, announce: Bool = true, archivePreviousToHistory: Bool = false) {
         guard ensureCanUseSlot(index) else { return }
         if archivePreviousToHistory, let previous = slotStore.content(at: index) {
@@ -343,6 +362,7 @@ final class AppState {
         slotStore.saveContent(index: index, content: content)
         Telemetry.slotSaved(content)
         if announce {
+            markSlotArrival(index)
             FeedbackSound.play(.saved)
             presentNotch(.saved(slotIndex: index, title: slotDisplayTitle(at: index)))
         }
@@ -420,23 +440,35 @@ final class AppState {
     /// Dos slots que acaban de intercambiarse: la grilla los resalta un momento.
     struct SwapHighlight: Equatable {
         let indices: Set<Int>
+        /// Posición donde cayó el slot arrastrado (su card ya "aterriza" ahí sin viajar).
+        let landed: Int
+        /// Dónde se soltó, respecto del centro de esa card: de ahí arranca el aterrizaje.
+        var landOffset: CGSize = .zero
+        var landScale: CGSize = CGSize(width: 1, height: 1)
+        /// Falso en el primer cuadro (pose de partida), verdadero cuando arranca la animación.
+        var running = false
         let token = UUID()
     }
 
     /// Intercambia dos slots (contenido, nombre y fondo); los demás quedan donde estaban.
     /// Un slot que pasa a ocupar una de las 5 primeras posiciones toma ese atajo.
-    func reorderSlot(from source: Int, to destination: Int) {
+    func reorderSlot(from source: Int, to destination: Int, dropOffset: CGSize = .zero, dropScale: CGSize = CGSize(width: 1, height: 1)) {
         guard source != destination else { return }
         let sourceTitle = slotDisplayTitle(at: source)
         let destinationTitle = slotDisplayTitle(at: destination)
         let limit = SlotStore.slotCount
         guard slotStore.swapSlots(source, destination) else { return }
         UsageEventLog.shared.record("slot_reordenar", detail: "\(source)<->\(destination)")
-        let marker = SwapHighlight(indices: [source, destination])
+        let marker = SwapHighlight(indices: [source, destination], landed: destination, landOffset: dropOffset, landScale: dropScale)
         swapHighlight = marker
+        // Un instante después, la pose de partida pasa a la final y se anima.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) { [weak self] in
+            guard self?.swapHighlight?.token == marker.token else { return }
+            self?.swapHighlight?.running = true
+        }
         FeedbackSound.play(.saved)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.1) { [weak self] in
-            if self?.swapHighlight == marker { self?.swapHighlight = nil }
+            if self?.swapHighlight?.token == marker.token { self?.swapHighlight = nil }
         }
         // El que llegó a una posición con atajo (desde una sin atajo) lo avisa.
         func shortcut(_ position: Int) -> String {

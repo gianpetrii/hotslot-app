@@ -24,7 +24,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         if window == nil {
             let settingsWindow = NSWindow(
                 contentRect: NSRect(origin: .zero, size: WindowPlacement.settingsWindowSize),
-                styleMask: [.titled, .closable, .miniaturizable],
+                styleMask: [.titled, .closable, .miniaturizable, .fullSizeContentView],
                 backing: .buffered,
                 defer: false
             )
@@ -38,6 +38,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             settingsWindow.isOpaque = false
             settingsWindow.backgroundColor = .clear
             settingsWindow.titlebarAppearsTransparent = true
+            settingsWindow.titleVisibility = .hidden
             settingsWindow.contentMinSize = WindowPlacement.settingsWindowSize
             settingsWindow.contentMaxSize = WindowPlacement.settingsWindowSize
             window = settingsWindow

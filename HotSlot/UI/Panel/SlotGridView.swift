@@ -27,30 +27,105 @@ struct SlotGridView: View {
     /// Posición de cada card (por número de slot) dentro del contenido, para animar el intercambio.
     @State private var cardFrames: [Int: CGRect] = [:]
     @State private var gridFrame: CGRect = .zero
+    /// Cursor (en coordenadas de la grilla) mientras se arrastra un slot; la card flotante lo sigue.
+    @State private var dragCursor: CGPoint?
+    @State private var dragReleasedAt: Date?
 
     /// Franja (en pt) donde, mientras arrastrás, la grilla se desplaza sola.
     private static let autoScrollZone: CGFloat = 56
 
-    /// Mientras hay un clic sostenido (arrastre) cerca del borde de la grilla, la desplaza.
-    private func autoScrollWhileDragging() {
-        guard NSEvent.pressedMouseButtons & 1 != 0, appState.isPanelVisible, gridFrame.height > 0,
-              let window = NSApp.windows.first(where: { $0.isVisible && String(describing: type(of: $0)) == "FloatingPanel" }),
-              let contentHeight = window.contentView?.bounds.height else { return }
+    /// Ventana del panel, para leer el cursor real (durante un arrastre macOS no entrega eventos de mouse).
+    private var panelWindow: NSWindow? {
+        NSApp.windows.first(where: { $0.isVisible && String(describing: type(of: $0)) == "FloatingPanel" })
+    }
+
+    /// Posición del cursor en coordenadas de la grilla (origen arriba a la izquierda).
+    private func cursorInGrid() -> CGPoint? {
+        guard let window = panelWindow, let contentHeight = window.contentView?.bounds.height,
+              gridFrame.height > 0 else { return nil }
         let point = window.convertPoint(fromScreen: NSEvent.mouseLocation)
-        guard point.x >= gridFrame.minX, point.x <= gridFrame.maxX else { return }
-        let y = contentHeight - point.y
+        return CGPoint(x: point.x - gridFrame.minX, y: contentHeight - point.y - gridFrame.minY)
+    }
+
+    /// Cada cuadro: sigue el cursor mientras se arrastra un slot, cierra el arrastre si se soltó sin destino
+    /// y desplaza la grilla si el cursor está cerca de un borde.
+    private func dragTick() {
+        let pressed = NSEvent.pressedMouseButtons & 1 != 0
+        if appState.slotDragSource != nil {
+            if pressed {
+                dragReleasedAt = nil
+                dragCursor = cursorInGrid()
+            } else if let released = dragReleasedAt {
+                // Se soltó y el drop no llegó a resolverlo: se resuelve acá por la posición del cursor.
+                if Date().timeIntervalSince(released) > 0.08, let drag = appState.slotDragSource {
+                    let destination = cardUnderCursor()
+                    appState.slotDragSource = nil
+                    if let destination, destination != drag.index, drag.libraryId == appState.libraryWorkspace.workspace.activeLibraryId {
+                        let pose = dropPose(destination: destination, grab: drag.grab, size: drag.size)
+                        appState.reorderSlot(from: drag.index, to: destination, dropOffset: pose.offset, dropScale: pose.scale)
+                    }
+                    dragReleasedAt = nil
+                    dragCursor = nil
+                }
+            } else {
+                dragReleasedAt = Date()
+            }
+        } else if dragCursor != nil {
+            dragCursor = nil
+        }
+        guard pressed, appState.isPanelVisible, let cursor = dragCursor ?? cursorInGrid() else { return }
+        guard cursor.x >= 0, cursor.x <= gridFrame.width else { return }
+        let y = cursor.y
         let zone = Self.autoScrollZone
         var delta: CGFloat = 0
-        if y > gridFrame.maxY - zone, y < gridFrame.maxY + zone {
-            delta = min(1, (y - (gridFrame.maxY - zone)) / zone) * 14
-        } else if y < gridFrame.minY + zone, y > gridFrame.minY - zone {
-            delta = -min(1, ((gridFrame.minY + zone) - y) / zone) * 14
+        if y > gridFrame.height - zone, y < gridFrame.height + zone {
+            delta = min(1, (y - (gridFrame.height - zone)) / zone) * 14
+        } else if y < zone, y > -zone {
+            delta = -min(1, (zone - y) / zone) * 14
         }
         guard delta != 0 else { return }
         let maxOffset = max(0, scrollMetrics.content - scrollMetrics.viewport)
         let target = min(max(scrollMetrics.offset + delta, 0), maxOffset)
         guard target != scrollMetrics.offset else { return }
         scrollPosition.scrollTo(y: target)
+    }
+
+    /// Slot cuya card está bajo el cursor (por posición, no por quién recibió el drop).
+    private func cardUnderCursor() -> Int? {
+        guard let cursor = cursorInGrid() else { return nil }
+        let point = CGPoint(x: cursor.x + shadowSide, y: cursor.y + shadowVertical + scrollMetrics.offset)
+        return cardFrames.first(where: { $0.value.contains(point) })?.key
+    }
+
+    /// Pose de partida del slot soltado: su esquina donde estaba la card flotante, respecto de la card destino.
+    private func dropPose(destination: Int, grab: CGPoint, size: CGSize) -> (offset: CGSize, scale: CGSize) {
+        guard let cursor = cursorInGrid(), let frame = cardFrames[destination], frame.width > 0, frame.height > 0 else {
+            return (.zero, CGSize(width: 1, height: 1))
+        }
+        // De coordenadas de la grilla a las del contenido que se desplaza.
+        let corner = CGPoint(
+            x: cursor.x - grab.x + shadowSide,
+            y: cursor.y - grab.y + shadowVertical + scrollMetrics.offset
+        )
+        let pose = (
+            offset: CGSize(width: corner.x - frame.minX, height: corner.y - frame.minY),
+            scale: CGSize(width: size.width / frame.width, height: size.height / frame.height)
+        )
+        return pose
+    }
+
+    /// El slot que se está arrastrando, dibujado por nosotros bajo el cursor (la imagen del sistema va invisible).
+    @ViewBuilder
+    private var dragFloat: some View {
+        if let drag = appState.slotDragSource, let cursor = dragCursor,
+           let slot = appState.slotStore.allSlots.first(where: { $0.index == drag.index }) {
+            slotCardView(for: slot)
+                .frame(width: drag.size.width, height: drag.size.height)
+                .shadow(color: Color.black.opacity(0.22), radius: 14, y: 6)
+                .offset(x: cursor.x - drag.grab.x, y: cursor.y - drag.grab.y)
+                .allowsHitTesting(false)
+                .transition(.opacity)
+        }
     }
 
     var body: some View {
@@ -79,21 +154,24 @@ struct SlotGridView: View {
                             ForEach(extraSlots) { slot in
                                 slotCell(index: slot.index)
                                     .frame(height: rowHeight)
+                                    .transition(.slotArrival)
                                     .id(slot.index)
                             }
                             NewSlotCardView(appState: appState)
                             .frame(height: rowHeight)
                             .id(Self.newSlotAnchor)
                         }
+                        .animation(.spring(response: 0.4, dampingFraction: 0.78), value: extraSlots.map(\.index))
                     }
                     .padding(.horizontal, shadowSide)
                     .padding(.vertical, shadowVertical)
                     .coordinateSpace(name: Self.contentSpace)
+                    .overlay(alignment: .topLeading) { swapOverlay }
                 }
                 .scrollIndicators(.hidden)
                 .scrollPosition($scrollPosition)
                 .onReceive(Timer.publish(every: 1.0 / 40.0, on: .main, in: .common).autoconnect()) { _ in
-                    autoScrollWhileDragging()
+                    dragTick()
                 }
                 .onScrollGeometryChange(for: ScrollMetrics.self) { geometry in
                     ScrollMetrics(
@@ -126,6 +204,7 @@ struct SlotGridView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .overlay(alignment: .topLeading) { dragFloat }
         .background {
             GeometryReader { proxy in
                 Color.clear
@@ -194,7 +273,16 @@ struct SlotGridView: View {
     @ViewBuilder
     private func slotCell(index: Int) -> some View {
         if let slot = appState.slotStore.allSlots.first(where: { $0.index == index }) {
-            SlotCardView(
+            slotCardView(for: slot)
+                .onGeometryChange(for: CGRect.self) { $0.frame(in: .named(Self.contentSpace)) } action: { cardFrames[index] = $0 }
+                // Durante el intercambio las dos cards se dibujan encima de todo (ver `swapOverlay`); acá queda el hueco.
+                .opacity(isSwapped(index) ? 0 : (appState.slotDragSource?.index == index ? 0.35 : 1))
+                .slotArrival(appState.slotArrival?.index == index)
+        }
+    }
+
+    private func slotCardView(for slot: Slot) -> some View {
+        SlotCardView(
                 slot: slot,
                 otherLibraries: appState.libraryWorkspace.workspace.libraries
                     .filter { $0.id != appState.libraryWorkspace.workspace.activeLibraryId }
@@ -217,8 +305,12 @@ struct SlotGridView: View {
                 onClear: {
                     appState.slotStore.clearSlot(index: slot.index)
                 },
-                onSwapFrom: { sourceIndex in
-                    appState.reorderSlot(from: sourceIndex, to: slot.index)
+                onSwapFrom: { sourceIndex, grab, size in
+                    // El sistema entrega el drop a la card donde empezó el arrastre: el destino real se resuelve por el cursor.
+                    let destination = cardUnderCursor() ?? slot.index
+                    guard destination != sourceIndex else { return }
+                    let pose = dropPose(destination: destination, grab: grab, size: size)
+                    appState.reorderSlot(from: sourceIndex, to: destination, dropOffset: pose.offset, dropScale: pose.scale)
                 },
                 onUpdateLabel: { title in
                     appState.slotStore.updateLabel(index: slot.index, label: title)
@@ -241,22 +333,43 @@ struct SlotGridView: View {
                 } : nil
             )
             .opacity(slotSearchOpacity(for: slot))
-            .onGeometryChange(for: CGRect.self) { $0.frame(in: .named(Self.contentSpace)) } action: { cardFrames[index] = $0 }
-            .modifier(SwapFlashModifier(isSwapped: isSwapped(index), travel: swapTravel(for: index)))
-            .zIndex(isSwapped(index) ? 1 : 0)
+    }
+
+    /// Las dos cards del intercambio, por encima de toda la grilla:
+    /// el slot arrastrado se asienta desde donde lo soltaste y, después, el desplazado viaja al lugar libre.
+    @ViewBuilder
+    private var swapOverlay: some View {
+        if let swap = appState.swapHighlight,
+           let other = swap.indices.first(where: { $0 != swap.landed }),
+           let landedFrame = cardFrames[swap.landed], let displacedFrame = cardFrames[other],
+           let landedSlot = appState.slotStore.allSlots.first(where: { $0.index == swap.landed }),
+           let displacedSlot = appState.slotStore.allSlots.first(where: { $0.index == other }) {
+            ZStack(alignment: .topLeading) {
+                // Abajo: el desplazado sale de debajo del arrastrado, pero pasa por encima del resto de las cards.
+                SwapFlyer(
+                    frame: displacedFrame,
+                    startOffset: CGSize(width: landedFrame.minX - displacedFrame.minX, height: landedFrame.minY - displacedFrame.minY),
+                    startScale: CGSize(width: landedFrame.width / displacedFrame.width, height: landedFrame.height / displacedFrame.height),
+                    running: swap.running,
+                    delay: 0.24,
+                    hiddenUntilMoving: true
+                ) { slotCardView(for: displacedSlot) }
+                // Arriba: el arrastrado, que arranca donde lo soltaste.
+                SwapFlyer(
+                    frame: landedFrame,
+                    startOffset: swap.landOffset,
+                    startScale: swap.landScale,
+                    running: swap.running,
+                    delay: 0,
+                    hiddenUntilMoving: false
+                ) { slotCardView(for: landedSlot) }
+            }
+            .allowsHitTesting(false)
         }
     }
 
     private func isSwapped(_ index: Int) -> Bool {
         appState.swapHighlight?.indices.contains(index) == true
-    }
-
-    /// Cuánto se desplaza la card desde el lugar del otro slot hasta el suyo.
-    private func swapTravel(for index: Int) -> CGSize {
-        guard let indices = appState.swapHighlight?.indices, indices.contains(index),
-              let other = indices.first(where: { $0 != index }),
-              let mine = cardFrames[index], let theirs = cardFrames[other] else { return .zero }
-        return CGSize(width: theirs.minX - mine.minX, height: theirs.minY - mine.minY)
     }
 
     private func slotSearchOpacity(for slot: Slot) -> Double {
@@ -273,7 +386,8 @@ private struct SlotCardView: View {
     let onSaveFile: (URL) -> Void
     let onSaveHistoryItem: (UUID) -> Void
     let onClear: () -> Void
-    let onSwapFrom: (Int) -> Void
+    /// Origen del slot arrastrado, punto por donde se lo agarró y tamaño de su card.
+    let onSwapFrom: (Int, CGPoint, CGSize) -> Void
     let onUpdateLabel: (String) -> Void
     let onSetBackground: (String?) -> Void
     let onReplaceFromClipboard: () -> Void
@@ -283,6 +397,8 @@ private struct SlotCardView: View {
     var onDelete: (() -> Void)?
     @State private var didStartNewSlotEdit = false
     @State private var isHovering = false
+    @State private var cardSize: CGSize = .zero
+    @State private var grabPoint: CGPoint = .zero
     @State private var isDropTarget = false
     @State private var isEditingShortcuts = false
     @State private var isEditingLabel = false
@@ -383,35 +499,13 @@ private struct SlotCardView: View {
             confirmCopy()
         }
         .onHover { isHovering = $0 }
-        .draggable(PanelDragPayload.slot(index: slot.index, libraryId: appState.libraryWorkspace.workspace.activeLibraryId))
-        .onDrop(of: [UTType.hotslotPanelDrag, UTType.fileURL], isTargeted: $isDropTarget) { providers in
-            // Archivo o carpeta arrastrado desde Finder u otra app.
-            if let provider = providers.first(where: { $0.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) }) {
-                _ = provider.loadObject(ofClass: URL.self) { url, _ in
-                    guard let url, url.isFileURL else { return }
-                    DispatchQueue.main.async { onSaveFile(url) }
-                }
-                return true
-            }
-            return Self.acceptDrop(providers) { payload in
-                switch payload {
-                case .slot(let source, let sourceLibrary):
-                    guard source >= 1 else { return }
-                    let activeLibrary = appState.libraryWorkspace.workspace.activeLibraryId
-                    if sourceLibrary == activeLibrary {
-                        guard source != slot.index else { return }
-                        onSwapFrom(source)
-                    } else {
-                        // Venía de otra biblioteca (el panel cambió mientras arrastrabas).
-                        appState.moveSlotToLibrary(
-                            slotIndex: source, fromLibraryId: sourceLibrary,
-                            libraryId: activeLibrary, toOrder: slot.index
-                        )
-                    }
-                case .historyItem(let id):
-                    onSaveHistoryItem(id)
-                }
-            }
+        .onContinuousHover { phase in
+            if case .active(let point) = phase { grabPoint = point }
+        }
+        .onDrag { makeDragProvider() } preview: { Color.clear.frame(width: 1, height: 1) }
+        .onGeometryChange(for: CGSize.self) { $0.size } action: { cardSize = $0 }
+        .onDrop(of: [UTType.hotslotPanelDrag, UTType.hotslotSlotDrag, UTType.fileURL], isTargeted: $isDropTarget) { providers, location in
+            handleSlotCardDrop(providers, location: location)
         }
         .animation(.spring(response: 0.28, dampingFraction: 0.86), value: isHovering)
         .animation(.easeOut(duration: 0.12), value: isDropTarget)
@@ -744,6 +838,68 @@ private struct SlotCardView: View {
         return false
     }
 
+    private func makeDragProvider() -> NSItemProvider {
+        let library = appState.libraryWorkspace.workspace.activeLibraryId
+        // El punto por donde agarraste la card: lo último que vio el mouse antes de empezar a arrastrar.
+        appState.slotDragSource = (slot.index, library, grabPoint, cardSize)
+        let data = try? JSONEncoder().encode(PanelDragPayload.slot(index: slot.index, libraryId: library))
+        let provider = NSItemProvider()
+        for type in [UTType.hotslotPanelDrag, UTType.hotslotSlotDrag] {
+            provider.registerDataRepresentation(forTypeIdentifier: type.identifier, visibility: .all) { completion in
+                completion(data, nil)
+                return nil
+            }
+        }
+        return provider
+    }
+
+    private func handleSlotCardDrop(_ providers: [NSItemProvider], location: CGPoint) -> Bool {
+        // Otro slot de este panel: se resuelve en el acto, así el movimiento arranca al soltar y no después.
+        if providers.contains(where: { $0.hasItemConformingToTypeIdentifier(UTType.hotslotSlotDrag.identifier) }),
+           let drag = appState.slotDragSource {
+            appState.slotDragSource = nil
+            let activeLibrary = appState.libraryWorkspace.workspace.activeLibraryId
+            if drag.libraryId == activeLibrary {
+                onSwapFrom(drag.index, drag.grab, drag.size)
+            } else {
+                appState.moveSlotToLibrary(
+                    slotIndex: drag.index, fromLibraryId: drag.libraryId,
+                    libraryId: activeLibrary, toOrder: slot.index
+                )
+            }
+            return true
+        }
+        // Archivo o carpeta arrastrado desde Finder u otra app.
+        if let provider = providers.first(where: { $0.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) }) {
+            _ = provider.loadObject(ofClass: URL.self) { url, _ in
+                guard let url, url.isFileURL else { return }
+                DispatchQueue.main.async { onSaveFile(url) }
+            }
+            return true
+        }
+        return Self.acceptDrop(providers) { payload in
+            switch payload {
+            case .slot(let source, let sourceLibrary):
+                guard source >= 1 else { return }
+                let activeLibrary = appState.libraryWorkspace.workspace.activeLibraryId
+                if sourceLibrary == activeLibrary {
+                    guard source != slot.index else { return }
+                    // Respaldo (arrastre sin marca de slot): se asume agarrado del centro.
+                    onSwapFrom(source, CGPoint(x: cardSize.width / 2, y: cardSize.height / 2), cardSize)
+                } else {
+                    // Venía de otra biblioteca (el panel cambió mientras arrastrabas).
+                    appState.moveSlotToLibrary(
+                        slotIndex: source, fromLibraryId: sourceLibrary,
+                        libraryId: activeLibrary, toOrder: slot.index
+                    )
+                }
+            case .historyItem(let id):
+                onSaveHistoryItem(id)
+            }
+        }
+    }
+
+
     private static func acceptDrop(
         _ providers: [NSItemProvider],
         handle: @escaping (PanelDragPayload) -> Void
@@ -951,7 +1107,7 @@ struct SlotReadableText: ViewModifier {
     }
 }
 
-private struct SlotHeaderActionChip: View {
+struct SlotHeaderActionChip: View {
     let systemImage: String
     var foreground: Color
     var plate: Color
@@ -969,29 +1125,25 @@ private struct SlotHeaderActionChip: View {
 }
 
 
-/// Cuando dos slots se intercambian: pulso de escala y aro naranja para que se note qué pasó.
-private struct SwapFlashModifier: ViewModifier {
-    var isSwapped: Bool
-    var travel: CGSize = .zero
-    @State private var offset: CGSize = .zero
+/// Card que se mueve encima de la grilla durante el intercambio. Arranca en la pose dada (posición y tamaño
+/// del otro slot, o donde lo soltaste) y llega a la suya; `delay` la hace esperar su turno.
+private struct SwapFlyer<Content: View>: View {
+    let frame: CGRect
+    let startOffset: CGSize
+    let startScale: CGSize
+    let running: Bool
+    let delay: Double
+    let hiddenUntilMoving: Bool
+    @ViewBuilder let content: () -> Content
 
-    func body(content: Content) -> some View {
-        content
-            .overlay {
-                RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
-                    .strokeBorder(SlotsColor.naranja, lineWidth: 3)
-                    .opacity(isSwapped ? 1 : 0)
-                    .allowsHitTesting(false)
-            }
-            .offset(offset)
-            .animation(.easeOut(duration: 0.5), value: isSwapped)
-            .onChange(of: isSwapped) { _, swapped in
-                guard swapped else { return }
-                // La card arranca en el lugar del otro slot y se desliza al suyo.
-                var instant = Transaction()
-                instant.disablesAnimations = true
-                withTransaction(instant) { offset = travel }
-                withAnimation(.spring(response: 0.42, dampingFraction: 0.82)) { offset = .zero }
-            }
+    var body: some View {
+        content()
+            .frame(width: frame.width, height: frame.height)
+            .scaleEffect(x: running ? 1 : startScale.width, y: running ? 1 : startScale.height, anchor: .topLeading)
+            .offset(running ? .zero : startOffset)
+            .animation(.spring(response: delay > 0 ? 0.42 : 0.34, dampingFraction: delay > 0 ? 0.84 : 0.82).delay(delay), value: running)
+            .opacity(hiddenUntilMoving && !running ? 0 : 1)
+            .animation(.easeOut(duration: 0.1).delay(delay), value: running)
+            .offset(x: frame.minX, y: frame.minY)
     }
 }

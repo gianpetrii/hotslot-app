@@ -9,6 +9,9 @@ final class NotchShelfController {
     private let panelController: PanelController
     private var shelfPanel: NSPanel?
     private var hideWork: DispatchWorkItem?
+    /// Con un menú contextual abierto el mouse sale de la barra; no debe cerrarse debajo del menú.
+    private var isMenuTracking = false
+    private var menuObservers: [NSObjectProtocol] = []
     private var hoverWatch: Timer?
     private var screenObserver: NSObjectProtocol?
     private var globalMonitor: Any?
@@ -46,7 +49,11 @@ final class NotchShelfController {
                 pointer: pointer,
                 onActivateSlot: { [weak self] index in self?.activate(slot: index) },
                 onDropFile: { [weak self] index, url in self?.saveDroppedFile(url, toSlot: index) },
-                onOpenPanel: { [weak self] in self?.openPanel() }
+                onOpenPanel: { [weak self] in self?.openPanel() },
+                onRenameLibrary: { [weak self] library in self?.renameLibrary(library) },
+                onDeleteLibrary: { [weak self] library in self?.deleteLibrary(library) },
+                onNewLibrary: { [weak self] in self?.newLibrary() },
+                onNewSlot: { [weak self] in self?.newSlot() }
             )
             .environment(appState)
         )
@@ -93,6 +100,18 @@ final class NotchShelfController {
                 if !self.isEnabled { self.hide(animated: true, force: true) }
             }
         }
+        menuObservers = [
+            NotificationCenter.default.addObserver(forName: NSMenu.didBeginTrackingNotification, object: nil, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated { self?.isMenuTracking = true }
+            },
+            NotificationCenter.default.addObserver(forName: NSMenu.didEndTrackingNotification, object: nil, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated {
+                    guard let self else { return }
+                    self.isMenuTracking = false
+                    if self.isOpen, !self.pointerIsInShelfZone() { self.scheduleHide() }
+                }
+            }
+        ]
         screenObserver = NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification,
             object: nil,
@@ -109,6 +128,47 @@ final class NotchShelfController {
             appState.replaceSlotFromClipboard(index: index)
         } else {
             appState.pasteSlot(index: index, panelController: panelController, via: .notch)
+        }
+    }
+
+    /// El formulario de renombrar vive en el panel: se abre el panel y se le pide el formulario.
+    private func renameLibrary(_ library: Library) {
+        hide(animated: true, force: true)
+        panelController.show()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [appState] in
+            appState.renameLibraryTarget = library
+        }
+    }
+
+    /// Igual que en el panel: confirma salvo que Ajustes diga lo contrario (la confirmación también vive en el panel).
+    private func deleteLibrary(_ library: Library) {
+        hide(animated: true, force: true)
+        if appState.settings.confirmLibraryDelete {
+            panelController.show()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [appState] in
+                appState.requestDeleteLibrary(library)
+            }
+        } else {
+            appState.requestDeleteLibrary(library)
+        }
+    }
+
+    /// «Nuevo slot»: guarda el portapapeles en un slot nuevo (nombre y atajo se editan después en el panel).
+    /// La barra queda abierta: el usuario ve el slot nuevo y puede seguir con otra cosa.
+    private func newSlot() {
+        guard let content = appState.clipboardService.currentContent() else {
+            appState.presentNotch(.plain("Nada en el portapapeles"))
+            return
+        }
+        _ = appState.saveToNewSlot(content: content)
+    }
+
+    /// El formulario de nueva biblioteca vive en el panel.
+    private func newLibrary() {
+        hide(animated: true, force: true)
+        panelController.show()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [appState] in
+            appState.isNewLibraryFormPresented = true
         }
     }
 
@@ -194,7 +254,7 @@ final class NotchShelfController {
     private func scheduleHide() {
         hideWork?.cancel()
         let work = DispatchWorkItem { [weak self] in
-            guard let self, !self.pointerIsInShelfZone() else { return }
+            guard let self, !self.pointerIsInShelfZone(), !self.isMenuTracking else { return }
             self.hide(animated: true)
         }
         hideWork = work
@@ -244,9 +304,13 @@ final class NotchShelfController {
 
     /// Zona que la mantiene abierta: gatillo + barra, con un margen alrededor.
     private func pointerIsInShelfZone() -> Bool {
+        if appState.notchLibraryDragging { return true }
         guard let screen = anchorScreen() else { return false }
-        let glass = shelfFrame(on: screen, open: true)
+        var glass = shelfFrame(on: screen, open: true)
             .insetBy(dx: NotchShelfMetrics.shadowPad, dy: NotchShelfMetrics.shadowPad)
+        // La franja del tacho (abajo) no cuenta: solo la usa el arrastre de una biblioteca.
+        glass.origin.y += NotchShelfMetrics.trashZone
+        glass.size.height -= NotchShelfMetrics.trashZone
         let zone = hitFrame(on: screen)
             .union(glass)
             .insetBy(dx: -8, dy: -6)
@@ -256,7 +320,7 @@ final class NotchShelfController {
     private func hide(animated: Bool, force: Bool = false) {
         hideWork?.cancel()
         hideWork = nil
-        if !force, pointerIsInShelfZone() { return }
+        if !force, pointerIsInShelfZone() || isMenuTracking { return }
         guard isOpen, let shelfPanel, let screen = anchorScreen() else { return }
         isOpen = false
         shelfPanel.ignoresMouseEvents = true   // mientras se desvanece no debe reaccionar al mouse

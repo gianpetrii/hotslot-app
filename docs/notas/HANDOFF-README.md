@@ -37,3 +37,11 @@ unzip -q ~/Downloads/slots-handoff.zip
 Xcode **no** necesita el handoff para compilar; sirve para copy, medidas y pantallas durante el rediseño.
 
 `docs/slots-handoff/` y `docs/slots-handoff*.zip` locales están en `.gitignore`.
+
+## Carpeta local `docs/dante/` (ignorada por Git)
+
+- `zips/`: los zips tal como llegan (handoff base, flujos, «Más slots», landing).
+- `entregas/`: una carpeta por entrega descomprimida (por ejemplo `entregas/05-flujos-mas-slots/`).
+- `slots-handoff/`: el handoff base descomprimido. `docs/slots-handoff` es un acceso directo a esa carpeta.
+
+Nada de esto se sube a GitHub: lo que se implemente se documenta en `CHANGELOG.md` y `BACKLOG.md`.
