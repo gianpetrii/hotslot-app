@@ -24,7 +24,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     private var appState: AppState?
     private var onDismiss: (() -> Void)?
     private var isAnimating = false
-    /// La última vez se cerró por perder el foco: no hay que reabrir el panel detrás.
+    /// Se cerró para dar paso al tutorial: no hay que reabrir el panel detrás.
     private(set) var closedByFocusLoss = false
     private var afterDismiss: (() -> Void)?
     /// Misma posición para Ajustes, Licencia, etc. mientras el panel siga en esa pantalla.
@@ -183,7 +183,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             if window.isKeyWindow || window.attachedSheet != nil { return }
             if NSApp.keyWindow?.sheetParent === window { return }
             if let until = self.appState?.settingsAutoCloseSuppressedUntil, until > Date() { return }
-            self.closedByFocusLoss = true
+            // Igual que Esc: vuelve al panel (otro clic afuera o Esc ahí cierra el panel).
             _ = self.windowShouldClose(window)
         }
     }
