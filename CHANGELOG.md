@@ -12,11 +12,18 @@
 
 - Después del onboarding aparece una bienvenida y un recorrido de 8 pasos sobre un panel de ejemplo que no toca tus slots ni tu historial. Se puede volver a ver desde Ajustes › General › Ayuda.
 
+### Notch
+
+- La barra se abre después de dejar el mouse sobre el notch (0,3 s por defecto; en Ajustes › Barra del notch se elige Rápido, Normal o Lento). Arrastrar un archivo la sigue abriendo al instante.
+- La barra cuelga del borde superior de la pantalla: un cuello del ancho del notch sube hasta arriba y se abre en curva debajo de la barra de menú, así no tapa los menús de las apps.
+
 ### Panel
 
 - Al copiar un slot con un clic: el título pasa a «Copiado», aparece un tilde y un resplandor naranja, y las otras cards se apagan (igual que en el iPhone). También en las cards del notch.
 - Una sola barra de scroll fina, centrada entre los slots y el historial.
 - Cambiar de biblioteca es más rápido y ya no se traba; el panel se abre más rápido.
+- Las imágenes de slots e historial se guardan reducidas en memoria: ya no se decodifican en cada redibujado (menos trabas).
+- «Copiado» se pinta primero y el portapapeles se escribe 30 ms después, así también se ve con imágenes pesadas.
 - Al levantar una biblioteca para reordenarla ya no se estira.
 - La sombra de las bibliotecas al pasar el mouse ya no se corta.
 

@@ -54,7 +54,9 @@ struct NotchShelfView: View {
     @State private var pageDirection = 1
 
     var body: some View {
-        let shape = RoundedRectangle(cornerRadius: NotchShelfMetrics.shelfCorner, style: .continuous)
+        let neck = appState.notchNeckHeight
+        let glassSize = CGSize(width: NotchShelfMetrics.contentWidth, height: NotchShelfMetrics.contentHeight + neck)
+        let shape = NotchGlassShape(neckWidth: appState.notchNeckWidth, neckHeight: neck)
 
         VStack(alignment: .leading, spacing: NotchShelfMetrics.sectionGap) {
             // Cada página trae hasta 5 slots; al cambiar de página la fila entra desde el lado hacia donde vas.
@@ -135,25 +137,24 @@ struct NotchShelfView: View {
         .padding(.horizontal, NotchShelfMetrics.pad)
         .padding(.vertical, NotchShelfMetrics.padVertical)
         .frame(width: NotchShelfMetrics.contentWidth, height: NotchShelfMetrics.contentHeight)
-        // Mismo vidrio, borde y sombra que `PanelChrome`.
+        // El cuello sube hasta el borde de la pantalla: el contenido arranca debajo de la barra de menú.
+        .padding(.top, neck)
+        // Mismo vidrio, borde y sombra que `PanelChrome`, con la silueta colgada del techo.
         .background {
             ZStack {
                 SlotsColor.vidrioTinte
-                VisualEffectBackground(
-                    material: .hudWindow,
-                    blendingMode: .behindWindow,
-                    cornerRadius: NotchShelfMetrics.shelfCorner
-                )
-                .opacity(0.85)
+                ShapedVisualEffectBackground(shape: shape, size: glassSize)
+                    .opacity(0.85)
             }
             .clipShape(shape)
             .shadow(color: Color(slotsHex: 0x462D14).opacity(0.22), radius: 30, y: 12)
         }
         .overlay {
-            shape.strokeBorder(Color.white.opacity(0.75), lineWidth: 1)
+            shape.stroke(Color.white.opacity(0.75), lineWidth: 2).clipShape(shape)
         }
         // La ventana de AppKit es más grande: el margen aloja la sombra (y el tacho al arrastrar una biblioteca).
-        .padding(NotchShelfMetrics.shadowPad)
+        .padding(.horizontal, NotchShelfMetrics.shadowPad)
+        .padding(.bottom, NotchShelfMetrics.shadowPad)
         .frame(width: NotchShelfMetrics.panelWidth, height: NotchShelfMetrics.panelHeight, alignment: .top)
         .overlay(alignment: .bottom) {
             if libraryDrag != nil, libraryDrag?.settling != true {

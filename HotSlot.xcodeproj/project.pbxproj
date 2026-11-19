@@ -24,6 +24,7 @@
 		1B17E199882E6BF6729D5C9F /* ShortcutConflict.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0D7BCF8AAD91BA51ABE18E6 /* ShortcutConflict.swift */; };
 		1BEBD40631434B777BF77F74 /* BackdropController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8108F534EC224E3BA83D449B /* BackdropController.swift */; };
 		1C5BFE8EC5F7FDF09AFCA4AE /* NotchShelfController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40CD0B60757E63BD68A2371 /* NotchShelfController.swift */; };
+		1CDBB1FB0335639D0E8DB02F /* NotchGlassShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A353926A94FA40C6B263C97 /* NotchGlassShape.swift */; };
 		1DA555C067A4C4FEC925FF5B /* PanelFloatingLibraryTrash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A64BAFFA5139B4A87269AD /* PanelFloatingLibraryTrash.swift */; };
 		1EB231A326C88DBB560DCA62 /* PanelDragPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73024E80E174C79983E6A25D /* PanelDragPayload.swift */; };
 		2666AEEE1C23121AC660B2AC /* PanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A911DBA98261441FF883EE51 /* PanelView.swift */; };
@@ -168,6 +169,7 @@
 		71C0DE85941092439A8BE875 /* PasteboardRichTextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardRichTextTests.swift; sourceTree = "<group>"; };
 		73024E80E174C79983E6A25D /* PanelDragPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelDragPayload.swift; sourceTree = "<group>"; };
 		74BC4D986E08A1EDDC991937 /* NotchShelfMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchShelfMetrics.swift; sourceTree = "<group>"; };
+		7A353926A94FA40C6B263C97 /* NotchGlassShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchGlassShape.swift; sourceTree = "<group>"; };
 		7F7D2094D67542CF6B99B29B /* SaveClipboardSlotPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveClipboardSlotPickerSheet.swift; sourceTree = "<group>"; };
 		8108F534EC224E3BA83D449B /* BackdropController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackdropController.swift; sourceTree = "<group>"; };
 		830BEFF3258CA1569A340731 /* LaunchSplashController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchSplashController.swift; sourceTree = "<group>"; };
@@ -458,6 +460,7 @@
 		C1E0840BC7FE699B5C116449 /* Notch */ = {
 			isa = PBXGroup;
 			children = (
+				7A353926A94FA40C6B263C97 /* NotchGlassShape.swift */,
 				F6B29BEA4868030AF4ADA383 /* NotchNotice.swift */,
 				E40CD0B60757E63BD68A2371 /* NotchShelfController.swift */,
 				74BC4D986E08A1EDDC991937 /* NotchShelfMetrics.swift */,
@@ -741,6 +744,7 @@
 				DD176F09A23EF962DF1A68A9 /* MenuBarGuide.swift in Sources */,
 				F5876299FFE1C74613AB4747 /* MenuBarHint.swift in Sources */,
 				601143B29971E9F1B4963725 /* NewLibraryFormView.swift in Sources */,
+				1CDBB1FB0335639D0E8DB02F /* NotchGlassShape.swift in Sources */,
 				4E6D2FEDBE82D87BFE0FC36D /* NotchNotice.swift in Sources */,
 				1C5BFE8EC5F7FDF09AFCA4AE /* NotchShelfController.swift in Sources */,
 				FFBFB1C9C580218BDE90C2AB /* NotchShelfMetrics.swift in Sources */,

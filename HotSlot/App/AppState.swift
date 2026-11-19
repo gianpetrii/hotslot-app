@@ -90,6 +90,9 @@ final class AppState {
     var slotDragSource: (index: Int, libraryId: UUID, grab: CGPoint, size: CGSize)?
     /// Sube cada vez que se abre la barra del notch: vuelve a la primera página de slots.
     var notchOpenCount = 0
+    /// Medidas del notch de la pantalla (las pone el controlador): alto de la barra de menú y ancho del cuello.
+    var notchNeckHeight: CGFloat = 32
+    var notchNeckWidth: CGFloat = 200
     /// Pedido de cambio de página desde la rueda del mouse sobre la barra (+1 / -1).
     var notchPageRequest: Int?
     /// Se arrastra una biblioteca en el notch: la barra no se cierra aunque el cursor baje al tacho.
@@ -251,11 +254,11 @@ final class AppState {
         let close = {
             switch self.settings.clickItemAction {
             case .copyToClipboard:
-                // Sonido y aviso en el instante del clic. El cierre arranca un fotograma después para que
-                // «Copiado» llegue a pintarse; su duración no cambia.
-                self.pasteService.copyToClipboard(content: content, slotIndex: slotIndex)
-                self.focusTracker.clearPasteDestination()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.045) {
+                // Primero se pinta «Copiado»; recién después se escribe el portapapeles (en imágenes grandes
+                // tarda) y arranca el cierre. 30 ms no se pueden notar: nadie pega tan rápido.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) {
+                    self.pasteService.copyToClipboard(content: content, slotIndex: slotIndex)
+                    self.focusTracker.clearPasteDestination()
                     panelController.hide(animated: true) {
                         self.isPanelVisible = false
                     }

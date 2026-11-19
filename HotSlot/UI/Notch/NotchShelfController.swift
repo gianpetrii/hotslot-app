@@ -30,6 +30,10 @@ final class NotchShelfController {
     private var isSuppressed: Bool { !isEnabled || appState.isPanelVisible || isBlocked() }
     /// Copia del interruptor de Ajustes: se lee en cada movimiento del mouse, así que no se decodifica cada vez.
     private var isEnabled = AppSettings.load().showNotchShelf
+    /// Cuánto hay que quedarse sobre el notch para que se abra (Ajustes › Barra del notch).
+    private var hoverDelay = AppSettings.load().notchHoverDelay
+    /// Espera de intención: se cancela si el mouse sale de la zona antes de tiempo.
+    private var intentWork: DispatchWorkItem?
     private var settingObserver: NSObjectProtocol?
 
     init(appState: AppState, panelController: PanelController) {
@@ -39,6 +43,7 @@ final class NotchShelfController {
 
     func start() {
         guard shelfPanel == nil, let screen = anchorScreen() else { return }
+        updateNeck(for: screen)
         let shelf = makePanel()
 
         // Ventana de tamaño fijo: solo se anima posición y opacidad, nunca el tamaño.
@@ -72,6 +77,9 @@ final class NotchShelfController {
         shelf.setFrame(shelfFrame(on: screen, open: false), display: false)
         shelf.alphaValue = 0
         shelfPanel = shelf
+        #if DEBUG
+        debugSnapshotIfRequested()
+        #endif
 
         globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved) { [weak self] _ in
             Task { @MainActor in self?.mouseMoved() }
@@ -97,6 +105,7 @@ final class NotchShelfController {
             Task { @MainActor in
                 guard let self else { return }
                 self.isEnabled = AppSettings.load().showNotchShelf
+                self.hoverDelay = AppSettings.load().notchHoverDelay
                 if !self.isEnabled { self.hide(animated: true, force: true) }
             }
         }
@@ -205,6 +214,7 @@ final class NotchShelfController {
 
     private func fileDragMoved() {
         guard !isOpen, !isSuppressed, pointerIsInTriggerZone(), isDraggingFiles() else { return }
+        cancelIntent()
         hideWork?.cancel()
         hideWork = nil
         show()
@@ -212,10 +222,26 @@ final class NotchShelfController {
 
     private func mouseMoved() {
         updatePointer()
-        guard !isOpen, !isSuppressed, pointerIsInTriggerZone() else { return }
+        guard !isOpen, !isSuppressed else { cancelIntent(); return }
+        guard pointerIsInTriggerZone() else { cancelIntent(); return }
         hideWork?.cancel()
         hideWork = nil
-        show()
+        // Sin espera (o con un arrastre de archivo, que ya es intención clara) se abre enseguida.
+        guard hoverDelay > 0 else { show(); return }
+        guard intentWork == nil else { return }
+        let work = DispatchWorkItem { [weak self] in
+            guard let self else { return }
+            self.intentWork = nil
+            guard !self.isOpen, !self.isSuppressed, self.pointerIsInTriggerZone() else { return }
+            self.show()
+        }
+        intentWork = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + hoverDelay, execute: work)
+    }
+
+    private func cancelIntent() {
+        intentWork?.cancel()
+        intentWork = nil
     }
 
     private func setPointerInside(_ inside: Bool) {
@@ -307,11 +333,15 @@ final class NotchShelfController {
     private func pointerIsInShelfZone() -> Bool {
         if appState.notchLibraryDragging { return true }
         guard let screen = anchorScreen() else { return false }
-        var glass = shelfFrame(on: screen, open: true)
-            .insetBy(dx: NotchShelfMetrics.shadowPad, dy: NotchShelfMetrics.shadowPad)
-        // La franja del tacho (abajo) no cuenta: solo la usa el arrastre de una biblioteca.
-        glass.origin.y += NotchShelfMetrics.trashZone
-        glass.size.height -= NotchShelfMetrics.trashZone
+        // El vidrio cuelga del borde superior de la pantalla; la franja del tacho (abajo) no cuenta.
+        let frame = shelfFrame(on: screen, open: true)
+        let glassHeight = NotchShelfMetrics.contentHeight + appState.notchNeckHeight
+        let glass = NSRect(
+            x: frame.minX + NotchShelfMetrics.shadowPad,
+            y: frame.maxY - glassHeight,
+            width: NotchShelfMetrics.contentWidth,
+            height: glassHeight
+        )
         let zone = hitFrame(on: screen)
             .union(glass)
             .insetBy(dx: -8, dy: -6)
@@ -347,8 +377,38 @@ final class NotchShelfController {
         })
     }
 
+    #if DEBUG
+    /// Solo para revisar el diseño sin permiso de grabación de pantalla.
+    private func debugSnapshotIfRequested() {
+        guard let path = UserDefaults.standard.string(forKey: "slotsNotchSnap") else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+            self?.show()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+            guard let view = self?.shelfPanel?.contentView,
+                  let rep = view.bitmapImageRepForCachingDisplay(in: view.bounds) else { return }
+            view.cacheDisplay(in: view.bounds, to: rep)
+            try? rep.representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: path))
+        }
+    }
+    #endif
+
+    /// Alto de la barra de menú y ancho del notch de esta pantalla: de ahí sale el cuello de la barra.
+    private func updateNeck(for screen: NSScreen) {
+        let hit = hitFrame(on: screen)
+        appState.notchNeckHeight = min(hit.height, NotchShelfMetrics.topAllowance)
+        if screen.safeAreaInsets.top > 24,
+           let left = screen.auxiliaryTopLeftArea, let right = screen.auxiliaryTopRightArea {
+            // El notch es lo que queda entre las dos mitades de la barra de menú.
+            appState.notchNeckWidth = max(120, screen.frame.width - left.width - right.width)
+        } else {
+            appState.notchNeckWidth = 160
+        }
+    }
+
     private func placeShelf() {
         guard let shelfPanel, let screen = anchorScreen() else { return }
+        updateNeck(for: screen)
         shelfPanel.setFrame(shelfFrame(on: screen, open: isOpen), display: true)
     }
 
@@ -373,12 +433,11 @@ final class NotchShelfController {
 
     /// Mismo tamaño abierta y cerrada. Cerrada queda subida bajo el notch y transparente.
     private func shelfFrame(on screen: NSScreen, open: Bool) -> NSRect {
-        let hit = hitFrame(on: screen)
         let width = NotchShelfMetrics.panelWidth
         let height = NotchShelfMetrics.panelHeight
         let x = screen.frame.midX - width / 2
-        // El vidrio arranca pegado al borde inferior del notch; el shadowPad absorbe la sombra.
-        let openY = hit.minY - height + NotchShelfMetrics.shadowPad
+        // La ventana arranca en el borde superior de la pantalla: el vidrio cuelga de ahí.
+        let openY = screen.frame.maxY - height
         let y = open ? openY : openY + HotSlotDesign.openSlideOffset
         return NSRect(x: x, y: y, width: width, height: height)
     }

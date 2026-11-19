@@ -32,6 +32,8 @@ struct AppSettings: Codable, Equatable {
     var showNotchNotice: Bool
     /// Barra que baja desde el notch al pasar el mouse.
     var showNotchShelf: Bool
+    /// Segundos que el mouse tiene que quedarse sobre el notch para que se abra la barra.
+    var notchHoverDelay: Double
     var clickItemAction: ClickItemAction
     var debugClipboard: Bool
     var hasCompletedOnboarding: Bool
@@ -66,7 +68,7 @@ struct AppSettings: Codable, Equatable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case historyLimit, launchAtLogin, playSoundOnPaste, showNotchNotice, showNotchShelf, clickItemAction, debugClipboard, hasCompletedOnboarding, hasSeenMenuBarHint
+        case historyLimit, launchAtLogin, playSoundOnPaste, showNotchNotice, showNotchShelf, notchHoverDelay, clickItemAction, debugClipboard, hasCompletedOnboarding, hasSeenMenuBarHint
         case tutorialVisto, firstInstallDate, licenseKey, isLicensed, confirmLibraryDelete, analyticsEnabled, hasAnsweredAnalyticsPrompt
     }
 
@@ -76,6 +78,7 @@ struct AppSettings: Codable, Equatable {
         playSoundOnPaste: Bool,
         showNotchNotice: Bool = true,
         showNotchShelf: Bool = true,
+        notchHoverDelay: Double = 0.3,
         clickItemAction: ClickItemAction = .copyToClipboard,
         debugClipboard: Bool,
         hasCompletedOnboarding: Bool,
@@ -93,6 +96,7 @@ struct AppSettings: Codable, Equatable {
         self.playSoundOnPaste = playSoundOnPaste
         self.showNotchNotice = showNotchNotice
         self.showNotchShelf = showNotchShelf
+        self.notchHoverDelay = notchHoverDelay
         self.clickItemAction = clickItemAction
         self.debugClipboard = debugClipboard
         self.hasCompletedOnboarding = hasCompletedOnboarding
@@ -113,6 +117,7 @@ struct AppSettings: Codable, Equatable {
         playSoundOnPaste = try container.decodeIfPresent(Bool.self, forKey: .playSoundOnPaste) ?? true
         showNotchNotice = try container.decodeIfPresent(Bool.self, forKey: .showNotchNotice) ?? true
         showNotchShelf = try container.decodeIfPresent(Bool.self, forKey: .showNotchShelf) ?? true
+        notchHoverDelay = try container.decodeIfPresent(Double.self, forKey: .notchHoverDelay) ?? 0.3
         clickItemAction = try container.decodeIfPresent(ClickItemAction.self, forKey: .clickItemAction) ?? .copyToClipboard
         debugClipboard = try container.decodeIfPresent(Bool.self, forKey: .debugClipboard) ?? false
         hasCompletedOnboarding = try container.decodeIfPresent(Bool.self, forKey: .hasCompletedOnboarding) ?? false

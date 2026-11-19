@@ -10,6 +10,7 @@ struct SettingsView: View {
     @State private var showNotchNotice = AppSettings.load().showNotchNotice
     @State private var historyLimit = AppSettings.load().historyLimit
     @State private var showNotchShelf = AppSettings.load().showNotchShelf
+    @State private var notchHoverDelay = AppSettings.load().notchHoverDelay
     @State private var analyticsEnabled = AppSettings.load().analyticsEnabled
     @State private var confirmLibraryDelete = AppSettings.load().confirmLibraryDelete
     @State private var clickItemAction = AppSettings.load().clickItemAction
@@ -155,7 +156,21 @@ struct SettingsView: View {
                             ) {
                                 SettingsSwitch(isOn: $showNotchShelf)
                             }
+                            SettingsRow(
+                                title: "Tiempo para abrir",
+                                detail: "Cuánto hay que dejar el mouse sobre el notch para que se abra la barra. Evita aperturas sin querer.",
+                                disabled: !showNotchShelf
+                            ) {
+                                SettingsOptions(
+                                    options: [(0.15, "Rápido"), (0.3, "Normal"), (0.6, "Lento")],
+                                    selection: $notchHoverDelay
+                                )
+                            }
                         }
+                    }
+                    .onChange(of: notchHoverDelay) { _, newValue in
+                        saveSetting { $0.notchHoverDelay = newValue }
+                        NotificationCenter.default.post(name: .notchShelfSettingChanged, object: nil)
                     }
                     .onChange(of: showNotchShelf) { _, newValue in
                         saveSetting { $0.showNotchShelf = newValue }

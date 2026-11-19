@@ -28,5 +28,7 @@ enum NotchShelfMetrics {
     static let panelWidth: CGFloat  = contentWidth  + shadowPad * 2
     /// Franja bajo la barra para el tacho que aparece al arrastrar una biblioteca.
     static let trashZone: CGFloat = 60
-    static let panelHeight: CGFloat = contentHeight + shadowPad * 2 + trashZone
+    /// Lugar para el cuello que sube hasta el borde de la pantalla (la barra de menú mide menos que esto).
+    static let topAllowance: CGFloat = 48
+    static let panelHeight: CGFloat = contentHeight + topAllowance + shadowPad + trashZone
 }
