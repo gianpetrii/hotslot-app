@@ -262,8 +262,8 @@ final class NotchShelfController {
 
         let panel = glowPanel ?? makeGlowPanel()
         glowPanel = panel
-        let width = glowModel.neckWidth + NotchHoverGlowView.margin * 2
-        let height = glowModel.neckHeight + NotchHoverGlowView.margin
+        let width = glowModel.neckWidth + 6 + NotchHoverGlowView.margin * 2
+        let height = glowModel.neckHeight + 3 + NotchHoverGlowView.margin
         panel.setFrame(
             NSRect(x: screen.frame.midX - width / 2, y: screen.frame.maxY - height, width: width, height: height),
             display: true

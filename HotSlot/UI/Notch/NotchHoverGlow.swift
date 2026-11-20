@@ -11,7 +11,7 @@ final class NotchGlowModel {
 /// Sombreado alrededor del notch: crece durante la espera y muestra que «algo está pasando»
 /// hasta que se abre la barra. Misma sombra cálida que el hover del resto de la app.
 struct NotchHoverGlowView: View {
-    static let margin: CGFloat = 40
+    static let margin: CGFloat = 56
 
     @Bindable var model: NotchGlowModel
 
@@ -26,20 +26,24 @@ struct NotchHoverGlowView: View {
         let p = model.progress
 
         ZStack(alignment: .top) {
-            // Sombra ancha y suave.
-            shape.stroke(Color(slotsHex: 0x462D14).opacity(0.5), lineWidth: 8)
-                .blur(radius: 6 + 8 * p)
-            // Borde cálido más cerca del notch.
-            shape.stroke(SlotsColor.naranja.opacity(0.55), lineWidth: 3)
-                .blur(radius: 2 + 3 * p)
+            // Halo ancho y cálido: es lo que se nota a simple vista.
+            shape.stroke(SlotsColor.naranja.opacity(0.65), lineWidth: 16)
+                .blur(radius: 10 + 10 * p)
+            // Sombra oscura para que también se vea sobre fondos claros.
+            shape.stroke(Color(slotsHex: 0x462D14).opacity(0.55), lineWidth: 10)
+                .blur(radius: 6 + 6 * p)
+            // Borde nítido pegado al notch.
+            shape.stroke(SlotsColor.naranja.opacity(0.95), lineWidth: 3)
+                .blur(radius: 1 + 2 * p)
         }
-        .frame(width: model.neckWidth, height: model.neckHeight)
-        .opacity(p)
+        // Un poco más grande que el notch, para que el borde asome a los costados y abajo.
+        .frame(width: model.neckWidth + 6, height: model.neckHeight + 3)
+        .opacity(min(1, p * 1.4))
         .padding(.horizontal, Self.margin)
         .padding(.bottom, Self.margin)
         .frame(
-            width: model.neckWidth + Self.margin * 2,
-            height: model.neckHeight + Self.margin,
+            width: model.neckWidth + 6 + Self.margin * 2,
+            height: model.neckHeight + 3 + Self.margin,
             alignment: .top
         )
         .allowsHitTesting(false)
