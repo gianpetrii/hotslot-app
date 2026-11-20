@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.1] — 2026-11-20
+
+### Notch
+
+- El sombreado que rodea el notch mientras esperás que se abra la barra ahora se nota bastante más: halo naranja, sombra oscura y un borde nítido pegado al notch.
+
 ## [1.3.0] — 2026-11-18
 
 ### Ajustes
