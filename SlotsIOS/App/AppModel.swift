@@ -28,9 +28,9 @@ final class AppModel {
 
     /// Guarda un contenido nuevo. Va al slot indicado, o al primer slot vacío de la biblioteca, o a uno nuevo al final.
     @discardableResult
-    func saveNewSlot(content: ClipContent, title: String, libraryId: UUID, intoSlotId: UUID? = nil) -> UUID? {
+    func saveNewSlot(content: ClipContent, title: String, libraryId: UUID, intoSlotId: UUID? = nil, atEnd: Bool = false) -> UUID? {
         let name = title.trimmingCharacters(in: .whitespacesAndNewlines)
-        let empty = store.slots(for: libraryId).first { $0.clipContent() == nil }
+        let empty = atEnd ? nil : store.slots(for: libraryId).first { $0.clipContent() == nil }
         let target = intoSlotId.flatMap { store.slot(id: $0) }.flatMap { $0.libraryId == libraryId ? $0 : nil } ?? empty
         if let target {
             store.updateSlot(id: target.id) { record in
@@ -71,6 +71,19 @@ final class AppModel {
             store.addSlot(toLibraryId: toLibraryId)
         }
         store.transferSlot(fromLibraryId: slot.libraryId, order: slot.order, toLibraryId: toLibraryId)
+    }
+
+    /// Manda el slot al final de su biblioteca (arrastrado sobre «Nuevo slot»).
+    func moveToEnd(slotId: UUID) {
+        guard let slot = store.slot(id: slotId) else { return }
+        store.moveSlot(libraryId: slot.libraryId, from: slot.order, to: store.slotCount(in: slot.libraryId))
+    }
+
+    /// Slot arrastrado a otra biblioteca y soltado sobre un slot de ahí: se intercambian.
+    func transfer(slotId: UUID, onto targetId: UUID) {
+        guard let source = store.slot(id: slotId), let target = store.slot(id: targetId),
+              source.libraryId != target.libraryId else { return }
+        store.transferSlot(fromLibraryId: source.libraryId, order: source.order, toLibraryId: target.libraryId, toOrder: target.order)
     }
 
     func setBackground(slotId: UUID, hex: String?) {

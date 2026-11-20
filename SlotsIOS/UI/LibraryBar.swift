@@ -10,6 +10,12 @@ struct LibraryBar: View {
     let onAdd: () -> Void
     var onRename: (Library) -> Void = { _ in }
     var onDelete: (Library) -> Void = { _ in }
+    /// Pill resaltada porque un slot arrastrado está encima.
+    var highlightedId: UUID?
+    /// Hay un slot arrastrándose: las pills lo reciben en vez de reordenarse.
+    var slotDragActive = false
+    var onSlotHover: (UUID?) -> Void = { _ in }
+    var onSlotDrop: (UUID) -> Void = { _ in }
     /// Mantener y arrastrar una pill la reordena. `index` cuenta sin la biblioteca movida.
     var onMove: (UUID, Int) -> Void = { _, _ in }
 
@@ -89,8 +95,16 @@ struct LibraryBar: View {
             target: library,
             libraries: libraries,
             draggingId: $draggingId,
-            onMove: onMove
+            slotDragActive: slotDragActive,
+            onMove: onMove,
+            onSlotHover: onSlotHover,
+            onSlotDrop: onSlotDrop
         ))
+        .overlay {
+            if highlightedId == library.id {
+                Capsule().strokeBorder(SlotsColor.naranja, style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
+            }
+        }
         .contextMenu {
             Button("Renombrar", systemImage: "pencil") { onRename(library) }
             if libraries.count > 1 {
@@ -105,18 +119,36 @@ private struct LibraryDropDelegate: DropDelegate {
     let target: Library
     let libraries: [Library]
     @Binding var draggingId: UUID?
+    let slotDragActive: Bool
     let onMove: (UUID, Int) -> Void
+    let onSlotHover: (UUID?) -> Void
+    let onSlotDrop: (UUID) -> Void
+
+    /// Una pill arrastrándose manda sobre un slot: solo se reordena entre pills.
+    private var isSlotDrag: Bool { draggingId == nil && slotDragActive }
 
     func dropEntered(info: DropInfo) {
+        if isSlotDrag {
+            onSlotHover(target.id)
+            return
+        }
         guard let from = draggingId, from != target.id,
               let targetIndex = libraries.firstIndex(where: { $0.id == target.id }) else { return }
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         onMove(from, targetIndex)
     }
 
+    func dropExited(info: DropInfo) {
+        if isSlotDrag { onSlotHover(nil) }
+    }
+
     func dropUpdated(info: DropInfo) -> DropProposal? { DropProposal(operation: .move) }
 
     func performDrop(info: DropInfo) -> Bool {
+        if isSlotDrag {
+            onSlotDrop(target.id)
+            return true
+        }
         draggingId = nil
         return true
     }

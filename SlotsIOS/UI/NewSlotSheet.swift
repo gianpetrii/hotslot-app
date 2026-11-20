@@ -10,6 +10,8 @@ struct NewSlotSheet: View {
         var slotId: UUID?
         /// Abrir ya con lo que hay en el portapapeles («Guardar como slot»).
         var useClipboard = false
+        /// Desde la card «Nuevo slot»: siempre agrega uno al final, sin llenar un hueco.
+        var atEnd = false
     }
 
     enum Kind: String, CaseIterable, Identifiable {
@@ -315,7 +317,7 @@ struct NewSlotSheet: View {
     private func save() {
         guard let content else { return }
         let title = nameEdited && !name.trimmingCharacters(in: .whitespaces).isEmpty ? name : (name.isEmpty ? suggestedName : name)
-        guard let id = model.saveNewSlot(content: content, title: title, libraryId: libraryId, intoSlotId: request.slotId) else { return }
+        guard let id = model.saveNewSlot(content: content, title: title, libraryId: libraryId, intoSlotId: request.slotId, atEnd: request.atEnd) else { return }
         onSaved(id, libraryId)
         dismiss()
     }

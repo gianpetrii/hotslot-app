@@ -3,6 +3,7 @@ import SwiftUI
 /// Ajustes mínimo: guía para abrir Slots rápido, estado de iCloud y versión.
 struct SettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @AppStorage("confirmLibraryDelete") private var confirmLibraryDelete = true
 
     private var version: String {
         let info = Bundle.main.infoDictionary
@@ -60,6 +61,13 @@ struct SettingsSheet: View {
                         "Tocá el widget para elegir la biblioteca. Tocar un slot lo copia sin abrir la app.",
                     ]
                 )
+
+                Toggle(isOn: $confirmLibraryDelete) {
+                    Text("Confirmar antes de eliminar una biblioteca")
+                        .slotsText(15)
+                        .foregroundStyle(SlotsColor.tinta)
+                }
+                .tint(SlotsColor.naranja)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Tus slots se sincronizan por iCloud con tus otros dispositivos.")

@@ -23,6 +23,13 @@ struct SlotsScreen: View {
     @State private var dragGrab: CGPoint?
     @State private var dragLastUpdate = Date()
     @State private var swapAnim: SwapAnim?
+    // Arrastrar un slot sobre una pill de biblioteca: a los 0,6 s cambia a esa biblioteca.
+    @State private var hoverPill: UUID?
+    @State private var hoverTask: Task<Void, Never>?
+    // Renombrar un slot desde el menú.
+    @State private var renamingSlot: SlotRecord?
+    @State private var slotRenameText = ""
+    @AppStorage("confirmLibraryDelete") private var confirmLibraryDelete = true
     @State private var newSlot: NewSlotSheet.Request?
     @State private var editSlot: EditSlotSheet.Request?
     @State private var showNewLibrary = false
@@ -83,7 +90,7 @@ struct SlotsScreen: View {
                             .foregroundStyle(SlotsColor.tinta)
                     }
                     if isEditing {
-                        Text("Arrastrá para reordenar · Tocá una tarjeta para editarla")
+                        Text("Arrastrá para reordenar o llevar un slot a otra biblioteca · Tocá una tarjeta para editarla · ✕ vacía el slot")
                             .slotsText(13, medium: false)
                             .foregroundStyle(SlotsColor.textoSecundario)
                             .multilineTextAlignment(.center)
@@ -98,7 +105,7 @@ struct SlotsScreen: View {
                 .transition(.opacity)
             }
             .scrollIndicators(.hidden)
-            .safeAreaInset(edge: .bottom, spacing: 0) { Color.clear.frame(height: isEditing ? 0 : 64) }
+            .safeAreaInset(edge: .bottom, spacing: 0) { Color.clear.frame(height: 64) }
         }
         .padding(.horizontal, SlotsSpace.m)
         .padding(.top, 4)
@@ -106,7 +113,7 @@ struct SlotsScreen: View {
         .overlay(alignment: .bottom) {
             VStack(spacing: SlotsSpace.s) {
                 if let undo { undoPill(undo) }
-                if !isEditing { libraryBar }
+                libraryBar
             }
         }
         .overlay(alignment: .top) { toastLayer }
@@ -128,6 +135,16 @@ struct SlotsScreen: View {
             Button("Guardar") {
                 if let renaming, !model.isLibraryNameTaken(renameText, excluding: renaming.id) {
                     store.renameLibrary(id: renaming.id, name: renameText)
+                }
+            }
+        }
+        .alert("Renombrar slot", isPresented: .init(get: { renamingSlot != nil }, set: { if !$0 { renamingSlot = nil } })) {
+            TextField("Nombre", text: $slotRenameText)
+            Button("Cancelar", role: .cancel) {}
+            Button("Guardar") {
+                if let renamingSlot {
+                    let name = slotRenameText.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !name.isEmpty { store.updateSlot(id: renamingSlot.id) { $0.title = name } }
                 }
             }
         }
@@ -208,7 +225,17 @@ struct SlotsScreen: View {
                 renameText = library.name
                 renaming = library
             },
-            onDelete: { deleting = $0 },
+            onDelete: { library in
+                if confirmLibraryDelete {
+                    deleting = library
+                } else {
+                    withAnimation(.easeInOut(duration: 0.15)) { _ = store.deleteLibrary(id: library.id) }
+                }
+            },
+            highlightedId: hoverPill,
+            slotDragActive: draggingId != nil,
+            onSlotHover: { slotHoverPill($0) },
+            onSlotDrop: { slotDroppedOnPill($0) },
             onMove: { id, index in
                 withAnimation(.easeOut(duration: 0.2)) { store.moveLibrary(id: id, toIndex: index) }
             }
@@ -217,52 +244,25 @@ struct SlotsScreen: View {
 
     // MARK: - Grilla
 
-    private func cardView(_ slot: SlotRecord, copied: Bool = false, handle: Bool = false) -> some View {
+    private func cardView(_ slot: SlotRecord, copied: Bool = false, handle: Bool = false, cross: Bool = false) -> some View {
         SlotCardView(
             slot: slot,
             isCopied: copied,
             showsHandle: handle,
+            showsCross: cross,
             isDropTarget: dropTargetId == slot.id && draggingId != slot.id
         )
     }
 
     private var isDragActive: Bool { draggingId != nil && dragCursor != nil && Date().timeIntervalSince(dragLastUpdate) < 1.5 }
 
+    /// Id con el que la card «Nuevo slot» participa de los arrastres.
+    private static let newTileId = UUID(uuidString: "00000000-0000-0000-0000-0000000000AA")!
+
     private var grid: some View {
         SlotGridLayout {
-            ForEach(slots) { slot in
-                let isCopied = copiedSlotId == slot.id
-                let hiddenBySwap = swapAnim.map { $0.landed == slot.id || $0.other == slot.id } ?? false
-                Button { tap(slot) } label: {
-                    cardView(slot, copied: isCopied, handle: isEditing)
-                }
-                .buttonStyle(SlotCardButtonStyle())
-                .contextMenu { menu(for: slot) }
-                .accessibilityAction(named: "Editar") { if slot.clipContent() != nil { editSlot = .init(slotId: slot.id) } }
-                .accessibilityAction(named: slot.clipContent() == nil ? "Eliminar" : "Vaciar") { delete(slot.id) }
-                .onGeometryChange(for: CGRect.self) { $0.frame(in: .named(Self.gridSpace)) } action: { cardFrames[slot.id] = $0 }
-                .onDrag {
-                    draggingId = slot.id
-                    dragCursor = nil
-                    dragGrab = nil
-                    let provider = NSItemProvider()
-                    // Solo sirve dentro de Slots: en otra app no suelta nada.
-                    provider.registerDataRepresentation(forTypeIdentifier: UTType.data.identifier, visibility: .ownProcess) { done in
-                        done(Data(slot.id.uuidString.utf8), nil)
-                        return nil
-                    }
-                    return provider
-                } preview: {
-                    // La card que se mueve la dibuja Slots, no el sistema.
-                    Color.clear.frame(width: 1, height: 1)
-                }
-                .slotRowSpan(SlotCardView.rowSpan(for: slot))
-                .scaleEffect(isCopied ? 0.97 : (newSlotId == slot.id ? 0.9 : 1))
-                .shadow(color: Color(slotsHex: 0xE2470F).opacity(isCopied ? 0.35 : 0), radius: 15, y: 14)
-                .opacity(hiddenBySwap || newSlotId == slot.id ? 0
-                         : (isDragActive && draggingId == slot.id ? 0.35 : (copiedSlotId != nil && !isCopied ? 0.55 : 1)))
-                .zIndex(isCopied ? 1 : 0)
-            }
+            ForEach(slots) { slot in slotCell(slot) }
+            newSlotTile
         }
         .coordinateSpace(name: Self.gridSpace)
         .overlay(alignment: .topLeading) { swapOverlay }
@@ -274,15 +274,98 @@ struct SlotsScreen: View {
         ))
     }
 
+    @ViewBuilder private func slotCell(_ slot: SlotRecord) -> some View {
+        let isCopied = copiedSlotId == slot.id
+        let hiddenBySwap = swapAnim.map { $0.landed == slot.id || $0.other == slot.id } ?? false
+        let hasContent = slot.clipContent() != nil
+        let removable = model.canRemove(slot)
+        Button { tap(slot) } label: {
+            cardView(slot, copied: isCopied, handle: isEditing, cross: isEditing && (hasContent || removable))
+        }
+        .buttonStyle(SlotCardButtonStyle())
+        // Lápiz (modo normal): abre el editor sin pasar por el menú.
+        .overlay(alignment: .topTrailing) {
+            if !isEditing && hasContent && !isCopied {
+                Button { editSlot = .init(slotId: slot.id) } label: {
+                    Color.clear.frame(width: 48, height: 48).contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityHidden(true)
+            }
+        }
+        // Cruz (modo Editar): vacía el slot, o lo elimina si ya está vacío y pasa del quinto.
+        .overlay(alignment: .topLeading) {
+            if isEditing && (hasContent || removable) {
+                Button { delete(slot.id) } label: {
+                    Color.clear.frame(width: 48, height: 48).contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(hasContent ? "Vaciar slot" : "Eliminar slot")
+            }
+        }
+        .contextMenu { if !isEditing { menu(for: slot) } }
+        .accessibilityAction(named: "Editar") { if hasContent { editSlot = .init(slotId: slot.id) } }
+        .accessibilityAction(named: hasContent ? "Vaciar" : "Eliminar") { delete(slot.id) }
+        .onGeometryChange(for: CGRect.self) { $0.frame(in: .named(Self.gridSpace)) } action: { cardFrames[slot.id] = $0 }
+        .onDrag {
+            draggingId = slot.id
+            dragCursor = nil
+            dragGrab = nil
+            let provider = NSItemProvider()
+            // Solo sirve dentro de Slots: en otra app no suelta nada.
+            provider.registerDataRepresentation(forTypeIdentifier: UTType.data.identifier, visibility: .ownProcess) { done in
+                done(Data(slot.id.uuidString.utf8), nil)
+                return nil
+            }
+            return provider
+        } preview: {
+            // La card que se mueve la dibuja Slots, no el sistema.
+            Color.clear.frame(width: 1, height: 1)
+        }
+        .slotRowSpan(SlotCardView.rowSpan(for: slot))
+        .scaleEffect(isCopied ? 0.97 : (newSlotId == slot.id ? 0.9 : 1))
+        .shadow(color: Color(slotsHex: 0xE2470F).opacity(isCopied ? 0.35 : 0), radius: 15, y: 14)
+        .opacity(hiddenBySwap || newSlotId == slot.id ? 0
+                 : (isDragActive && draggingId == slot.id ? 0.35 : (copiedSlotId != nil && !isCopied ? 0.55 : 1)))
+        .zIndex(isCopied ? 1 : 0)
+    }
+
+    /// Card punteada al final de la grilla, igual que en el Mac: crea un slot al final o recibe uno arrastrado.
+    private var newSlotTile: some View {
+        let isTarget = dropTargetId == Self.newTileId && draggingId != nil
+        return Button { newSlot = .init(atEnd: true) } label: {
+            VStack(spacing: SlotsSpace.s) {
+                Image(systemName: "plus")
+                    .font(.system(size: 18, weight: .medium))
+                Text(isTarget ? "Soltá para mover al final" : "Nuevo slot")
+                    .slotsText(15)
+                    .multilineTextAlignment(.center)
+            }
+            .foregroundStyle(isTarget ? SlotsColor.naranja : SlotsColor.textoSecundario)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay {
+                RoundedRectangle(cornerRadius: SlotsRadius.card, style: .continuous)
+                    .strokeBorder(isTarget ? SlotsColor.naranja : SlotsColor.bordePunteado,
+                                  style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
+            }
+            .contentShape(RoundedRectangle(cornerRadius: SlotsRadius.card, style: .continuous))
+        }
+        .buttonStyle(SlotCardButtonStyle())
+        .accessibilityLabel("Nuevo slot")
+        .onGeometryChange(for: CGRect.self) { $0.frame(in: .named(Self.gridSpace)) } action: { cardFrames[Self.newTileId] = $0 }
+    }
+
     private static let gridSpace = "slotsGrid"
 
+    /// Solo cuentan las cards de la biblioteca que se ve: al cambiar de biblioteca quedan marcos viejos.
     private func cardId(at point: CGPoint) -> UUID? {
-        cardFrames.first(where: { $0.value.contains(point) })?.key
+        let visible = Set(slots.map(\.id)).union([Self.newTileId])
+        return cardFrames.first(where: { visible.contains($0.key) && $0.value.contains(point) })?.key
     }
 
     private func dragUpdated(_ location: CGPoint) {
-        guard let source = draggingId, let frame = cardFrames[source] else { return }
-        if dragGrab == nil {
+        guard let source = draggingId else { return }
+        if dragGrab == nil, let frame = cardFrames[source] {
             dragGrab = CGPoint(
                 x: min(max(location.x - frame.minX, 0), frame.width),
                 y: min(max(location.y - frame.minY, 0), frame.height)
@@ -305,18 +388,42 @@ struct SlotsScreen: View {
         }
     }
 
-    /// Suelta: intercambia los contenidos y anima. La card soltada aterriza desde donde la dejó el dedo;
-    /// la desplazada vuela hasta el lugar de origen un instante después.
+    /// Suelta sobre la grilla. Misma biblioteca: intercambia (o manda al final si es «Nuevo slot»).
+    /// Otra biblioteca: el slot pasa a la posición donde lo soltaste.
     private func dropped(at location: CGPoint) -> Bool {
         defer {
             draggingId = nil
             dropTargetId = nil
             dragCursor = nil
             dragGrab = nil
+            slotHoverPill(nil)
         }
-        guard let source = draggingId, let target = cardId(at: location), target != source,
-              let sourceFrame = cardFrames[source], let targetFrame = cardFrames[target] else { return false }
+        guard let source = draggingId, let sourceSlot = store.slot(id: source) else { return false }
+        let target = cardId(at: location)
+        let activeId = store.workspace.activeLibraryId
+        let sameLibrary = sourceSlot.libraryId == activeId
+
+        if target == Self.newTileId {
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.85)) {
+                if sameLibrary { model.moveToEnd(slotId: source) } else { model.move(slotId: source, toLibraryId: activeId) }
+            }
+            return true
+        }
+        guard let target, target != source, let targetSlot = store.slot(id: target) else {
+            // Soltó en un hueco de otra biblioteca: va al final de esa biblioteca.
+            if !sameLibrary {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.85)) { model.move(slotId: source, toLibraryId: activeId) }
+                return true
+            }
+            return false
+        }
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        guard sameLibrary else {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.85)) { model.transfer(slotId: source, onto: targetSlot.id) }
+            return true
+        }
+        guard let sourceFrame = cardFrames[source], let targetFrame = cardFrames[target] else { return false }
         let grab = dragGrab ?? CGPoint(x: sourceFrame.width / 2, y: sourceFrame.height / 2)
         // Cada slot conserva su id y cambia de posición: el soltado queda donde estaba el otro.
         model.swap(source, target)
@@ -337,6 +444,31 @@ struct SlotsScreen: View {
             swapAnim = nil
         }
         return true
+    }
+
+    /// Arrastrando un slot sobre una pill: a los 0,6 s se muestra esa biblioteca para soltarlo ahí.
+    private func slotHoverPill(_ id: UUID?) {
+        hoverTask?.cancel()
+        hoverPill = id
+        guard let id, id != store.workspace.activeLibraryId else { return }
+        hoverTask = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(600))
+            guard !Task.isCancelled else { return }
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            withAnimation(.easeInOut(duration: 0.2)) { store.setActiveLibrary(id: id) }
+        }
+    }
+
+    private func slotDroppedOnPill(_ libraryId: UUID) {
+        defer {
+            draggingId = nil
+            dropTargetId = nil
+            dragCursor = nil
+            slotHoverPill(nil)
+        }
+        guard let source = draggingId, let slot = store.slot(id: source), slot.libraryId != libraryId else { return }
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        withAnimation(.easeOut(duration: 0.2)) { model.move(slotId: source, toLibraryId: libraryId) }
     }
 
     @ViewBuilder private var swapOverlay: some View {
@@ -367,10 +499,11 @@ struct SlotsScreen: View {
     }
 
     @ViewBuilder private func menu(for slot: SlotRecord) -> some View {
-        if let content = slot.clipContent() {
+        if slot.clipContent() != nil {
             Button("Editar", systemImage: "pencil") {
                 editSlot = .init(slotId: slot.id)
             }
+            Button("Renombrar", systemImage: "textformat") { beginRename(slot) }
             Menu("Color de fondo", systemImage: "paintpalette") {
                 backgroundButton("Predeterminado (Piedra)", hex: nil, slot: slot)
                 backgroundButton("Degradé naranja (marca)", hex: SlotsPalette.brandGradientAsset, slot: slot)
@@ -379,7 +512,7 @@ struct SlotsScreen: View {
                 }
             }
             if clipboardAvailable {
-                Button("Reemplazar", systemImage: "arrow.left.arrow.right") { replace(slot) }
+                Button("Reemplazar con el portapapeles", systemImage: "arrow.left.arrow.right") { replace(slot) }
             }
             let others = model.libraries.filter { $0.id != slot.libraryId }
             if others.count == 1, let other = others.first {
@@ -395,6 +528,7 @@ struct SlotsScreen: View {
             Button("Vaciar slot", systemImage: "trash", role: .destructive) { delete(slot.id) }
         } else {
             Button("Agregar contenido", systemImage: "plus") { newSlot = .init(slotId: slot.id) }
+            Button("Renombrar", systemImage: "textformat") { beginRename(slot) }
             if clipboardAvailable {
                 Button("Pegar portapapeles", systemImage: "doc.on.clipboard") { replace(slot) }
             }
@@ -403,6 +537,11 @@ struct SlotsScreen: View {
                 Button("Eliminar slot", systemImage: "trash", role: .destructive) { delete(slot.id) }
             }
         }
+    }
+
+    private func beginRename(_ slot: SlotRecord) {
+        slotRenameText = SlotCardText.customTitle(slot) ?? (slot.clipContent() == nil ? "" : SlotCardText.title(slot))
+        renamingSlot = slot
     }
 
     private func backgroundButton(_ name: String, hex: String?, slot: SlotRecord) -> some View {

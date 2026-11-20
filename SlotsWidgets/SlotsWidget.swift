@@ -29,6 +29,8 @@ struct SlotsEntry: TimelineEntry {
     var page: Int = 0
     /// Slot recién copiado desde el widget: se dibuja con ✓ unos segundos.
     var copiedId: UUID?
+    /// Hacia dónde se pasó la última página: 1 adelante, -1 atrás.
+    var direction = 1
 }
 
 /// Página que se está viendo, por biblioteca y tamaño. Un widget no scrollea: se cambia con las flechas.
@@ -38,6 +40,8 @@ enum WidgetPaging {
     static func key(library: UUID?, family: String) -> String { "widget.page.\(library?.uuidString ?? "-").\(family)" }
     static func page(for key: String) -> Int { defaults?.integer(forKey: key) ?? 0 }
     static func set(_ page: Int, for key: String) { defaults?.set(page, forKey: key) }
+    static var direction: Int { defaults?.integer(forKey: "widget.page.direction") == -1 ? -1 : 1 }
+    static func setDirection(_ value: Int) { defaults?.set(value, forKey: "widget.page.direction") }
 }
 
 /// Flechas de página del widget.
@@ -55,6 +59,7 @@ struct WidgetPageIntent: AppIntent {
     }
 
     func perform() async throws -> some IntentResult {
+        WidgetPaging.setDirection(page >= WidgetPaging.page(for: key) ? 1 : -1)
         WidgetPaging.set(max(page, 0), for: key)
         WidgetCenter.shared.reloadTimelines(ofKind: SlotsWidget.kind)
         return .result()
@@ -96,7 +101,7 @@ struct SlotsProvider: AppIntentTimelineProvider {
             copied.copiedId = id
             var after = current
             after = SlotsEntry(date: Date(timeIntervalSince1970: stamp + 2), libraryId: after.libraryId,
-                               libraryName: after.libraryName, slots: after.slots, page: after.page, copiedId: nil)
+                               libraryName: after.libraryName, slots: after.slots, page: after.page, copiedId: nil, direction: after.direction)
             return Timeline(entries: [copied, after], policy: .never)
         }
         return Timeline(entries: [current], policy: .never)
@@ -106,6 +111,7 @@ struct SlotsProvider: AppIntentTimelineProvider {
     private func paged(_ entry: SlotsEntry, family: WidgetFamily) -> SlotsEntry {
         var entry = entry
         let pages = max(1, Int((Double(entry.slots.count) / Double(SlotsWidgetView.limit(for: family))).rounded(.up)))
+        entry.direction = WidgetPaging.direction
         entry.page = min(WidgetPaging.page(for: WidgetPaging.key(library: entry.libraryId, family: "\(family)")), pages - 1)
         return entry
     }
@@ -169,7 +175,6 @@ struct SlotsWidgetView: View {
     }
 
     /// Alto fijo de cada card: lo que sobra queda abajo, no se reparte.
-    private let cardHeight: CGFloat = 56
 
     var body: some View {
         switch family {
@@ -178,7 +183,26 @@ struct SlotsWidgetView: View {
         }
     }
 
+    private var columnCount: Int { family == .systemMedium || family == .systemLarge ? 2 : 1 }
+
+    /// Alto de cada card para que una página llena toque el borde inferior igual que la cabecera el superior.
+    /// En una página incompleta las cards mantienen el mismo alto y el sobrante queda abajo.
+    private func cardHeight(in height: CGFloat) -> CGFloat {
+        let rows = CGFloat(max(1, Int((Double(limit) / Double(columnCount)).rounded(.up))))
+        let available = height - Self.headerHeight - 8
+        return max(32, (available - 8 * (rows - 1)) / rows)
+    }
+
+    private static let headerHeight: CGFloat = 22
+
     private var home: some View {
+        GeometryReader { proxy in
+            homeContent(cardHeight: cardHeight(in: proxy.size.height))
+                .frame(width: proxy.size.width, height: proxy.size.height, alignment: .top)
+        }
+    }
+
+    private func homeContent(cardHeight: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 6) {
                 Text(entry.libraryName)
@@ -191,6 +215,7 @@ struct SlotsWidgetView: View {
                     pageButton("chevron.right", target: page + 1, enabled: page < pageCount - 1)
                 }
             }
+            .frame(height: Self.headerHeight)
             if entry.slots.isEmpty {
                 Spacer()
                 Text("Guardá tu primer slot en Slots")
@@ -198,7 +223,7 @@ struct SlotsWidgetView: View {
                     .foregroundStyle(Color(slotsHex: 0x111111))
                 Spacer()
             } else {
-                let columns = family == .systemMedium || family == .systemLarge
+                let columns = columnCount == 2
                     ? [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)]
                     : [GridItem(.flexible())]
                 LazyVGrid(columns: columns, spacing: 8) {
@@ -222,6 +247,8 @@ struct SlotsWidgetView: View {
                         .buttonStyle(.plain)
                     }
                 }
+                .id(page)
+                .transition(.push(from: entry.direction >= 0 ? .trailing : .leading))
                 Spacer(minLength: 0)
             }
         }

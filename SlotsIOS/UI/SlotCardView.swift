@@ -5,8 +5,10 @@ struct SlotCardView: View {
     let slot: SlotRecord
     /// Recién copiada: naranja con «Copiado ✓».
     var isCopied = false
-    /// Modo Editar: muestra el asa en lugar de la flecha.
+    /// Modo Editar: muestra el asa en lugar del lápiz.
     var showsHandle = false
+    /// Modo Editar: cruz a la izquierda para vaciar (o eliminar) el slot.
+    var showsCross = false
     /// Destino de un arrastre: borde naranja punteado.
     var isDropTarget = false
 
@@ -46,6 +48,14 @@ struct SlotCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top) {
+                if showsCross && !isCopied {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(SlotsColor.tinta)
+                        .frame(width: 28, height: 28)
+                        .background(usesLightContent ? Color.white.opacity(0.9) : SlotsColor.botonSecundario, in: Circle())
+                        .overlay { Circle().strokeBorder(SlotsColor.linea, lineWidth: isEmpty ? 1 : 0) }
+                }
                 Text(isEmpty ? "Slot \(slot.order)" : "\(SlotCardText.kindLabel(slot))\n\(SlotCardText.detail(slot))")
                     .slotsText(12, lineHeight: 1.2)
                     .foregroundStyle(secondary)
@@ -62,11 +72,12 @@ struct SlotCardView: View {
                         .font(.system(size: 9, weight: .bold))
                         .foregroundStyle(SlotsColor.tinta)
                         .frame(width: 28, height: 28)
-                        .background(.white.opacity(0.9), in: Circle())
+                        .background(usesLightContent ? Color.white.opacity(0.9) : SlotsColor.botonSecundario, in: Circle())
                         .overlay { Circle().strokeBorder(SlotsColor.linea, lineWidth: isEmpty ? 1 : 0) }
                 } else if !isEmpty {
-                    Image(systemName: "arrow.up.right")
-                        .font(.system(size: 12, weight: .regular))
+                    // Lápiz: abre el editor sin pasar por el menú. El toque lo recibe un botón aparte.
+                    Image(systemName: "pencil")
+                        .font(.system(size: 12, weight: .medium))
                         .foregroundStyle(primary)
                         .padding(.top, 2)
                 }
