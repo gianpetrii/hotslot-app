@@ -167,7 +167,7 @@ Material de Dante en `dante-revision/` (no se commitea): Ajustes v2, Tutorial v5
 
 | Estado | Pri | Tarea |
 |--------|-----|-------|
-| [ ] | P1 | **Landing: descarga directa del último DMG.** Hoy «Beta Mac» y «Descargar beta» van a la página de GitHub. Se puede: GitHub sirve `/releases/latest/download/<archivo>`, pero el DMG lleva la versión en el nombre (`Slots-1.2.0.dmg`). Plan: que `scripts/release-direct.sh` suba además una copia `Slots.dmg` en cada release, apuntar los dos links de `docs/index.html` a `https://github.com/gianpetrii/hotslot-app/releases/latest/download/Slots.dmg`, y subir `Slots.dmg` a la 1.2.0 ya publicada. Las descargas se siguen contando en GitHub. Hacerlo antes de la próxima release |
+| [x] | P1 | **Landing: descarga directa del último DMG.** Cada release sube además `Slots.dmg` (nombre fijo) y la landing apunta a `releases/latest/download/Slots.dmg`. Hecho con la 1.3.0 |
 | [~] | P1 | **Feedback de copiado igual al de iOS:** hecho en el panel (título «Copiado», tilde, resplandor naranja, otras cards apagadas, aparece en 80 ms; el cierre del panel no cambió). Falta llevarlo a las cards de la barra del notch y que Gianluca lo valide |
 | [~] | P1 | **Tutorial de primera vez (v5 de Dante):** hecho en `HotSlot/UI/Tutorial/` — bienvenida, pop-up y recorrido de 8 pasos sobre un panel de muestra en memoria (no toca los datos del usuario); flag `tutorialVisto`; aparece tras el onboarding y se repite desde Ajustes › General › Ayuda. Falta validarlo en pantalla (blur, tiempos, teclado). Paquete: `dante-revision/tutorial` |
 | [ ] | P1 | **Animación de llegada de un slot en el notch** (pop + halo naranja): funciona en el panel, no se ve en el notch. Hay un cambio sin commitear en `NotchShelfView.swift` que no lo arregló |

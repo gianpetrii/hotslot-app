@@ -128,6 +128,13 @@ if [[ "$DID_NOTARIZE" -eq 1 && -f "$DMG" ]]; then
   echo "→ DMG listo (app dentro ya notarizada y stapleada)"
 fi
 
+# Copia con nombre fijo: la landing descarga siempre el último DMG desde
+# https://github.com/gianpetrii/hotslot-app/releases/latest/download/Slots.dmg
+DMG_LATEST="$EXPORT_DIR/${APP_PRODUCT_NAME}.dmg"
+if [[ -f "$DMG" ]]; then
+  cp -f "$DMG" "$DMG_LATEST"
+fi
+
 if command -v shasum >/dev/null; then
   if [[ -f "$DMG" ]]; then
     shasum -a 256 "$DMG" | tee "$EXPORT_DIR/SHA256.txt"
