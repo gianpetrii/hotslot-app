@@ -15,6 +15,7 @@
 ### Notch
 
 - La barra se abre después de dejar el mouse sobre el notch (0,3 s por defecto; en Ajustes › Barra del notch se elige Rápido, Normal o Lento). Arrastrar un archivo la sigue abriendo al instante.
+- Mientras esperás que se abra, un sombreado cálido rodea el notch y va creciendo hasta que aparece la barra.
 - La barra cuelga del borde superior de la pantalla: un cuello del ancho del notch sube hasta arriba y se abre en curva debajo de la barra de menú, así no tapa los menús de las apps.
 
 ### Panel

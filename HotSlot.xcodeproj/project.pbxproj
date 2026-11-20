@@ -38,6 +38,7 @@
 		46D1ED282C7A266DAB17B65B /* RichTextStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D898BA6E058E622CFC3A9A3 /* RichTextStore.swift */; };
 		48FF3AE212D43762C2E8D8DC /* DevelopmentAppInstall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C10887751663046E3AD0188 /* DevelopmentAppInstall.swift */; };
 		49C78F83358BF7303078E667 /* FileClip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F78009613A3AD51F468256 /* FileClip.swift */; };
+		4A5A7B0E6B2B33EBCA5A4462 /* NotchHoverGlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6EC3D3E2333667DF451CACC /* NotchHoverGlow.swift */; };
 		4B9572F6AA1ECE0D715425CC /* RenameLibraryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB997A5ED34633E84820B74 /* RenameLibraryFormView.swift */; };
 		4E6D2FEDBE82D87BFE0FC36D /* NotchNotice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6B29BEA4868030AF4ADA383 /* NotchNotice.swift */; };
 		51661401F91CFF3E1F9E5C79 /* LemonLicenseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893CB5382B7CBEF716185C1F /* LemonLicenseService.swift */; };
@@ -215,6 +216,7 @@
 		E40CD0B60757E63BD68A2371 /* NotchShelfController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchShelfController.swift; sourceTree = "<group>"; };
 		E49192713FE49EA8C0DC9E8D /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		E6611E81B03FD128CF983626 /* WorkspaceDatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceDatabaseTests.swift; sourceTree = "<group>"; };
+		E6EC3D3E2333667DF451CACC /* NotchHoverGlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchHoverGlow.swift; sourceTree = "<group>"; };
 		E9978112D3F44AE2BCE41F5E /* ClipItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipItem.swift; sourceTree = "<group>"; };
 		EBD50D3AD7653F5FCEE0C092 /* PanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelController.swift; sourceTree = "<group>"; };
 		F0053E366473B0BCE5341CE9 /* SlotsPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsPalette.swift; sourceTree = "<group>"; };
@@ -461,6 +463,7 @@
 			isa = PBXGroup;
 			children = (
 				7A353926A94FA40C6B263C97 /* NotchGlassShape.swift */,
+				E6EC3D3E2333667DF451CACC /* NotchHoverGlow.swift */,
 				F6B29BEA4868030AF4ADA383 /* NotchNotice.swift */,
 				E40CD0B60757E63BD68A2371 /* NotchShelfController.swift */,
 				74BC4D986E08A1EDDC991937 /* NotchShelfMetrics.swift */,
@@ -745,6 +748,7 @@
 				F5876299FFE1C74613AB4747 /* MenuBarHint.swift in Sources */,
 				601143B29971E9F1B4963725 /* NewLibraryFormView.swift in Sources */,
 				1CDBB1FB0335639D0E8DB02F /* NotchGlassShape.swift in Sources */,
+				4A5A7B0E6B2B33EBCA5A4462 /* NotchHoverGlow.swift in Sources */,
 				4E6D2FEDBE82D87BFE0FC36D /* NotchNotice.swift in Sources */,
 				1C5BFE8EC5F7FDF09AFCA4AE /* NotchShelfController.swift in Sources */,
 				FFBFB1C9C580218BDE90C2AB /* NotchShelfMetrics.swift in Sources */,

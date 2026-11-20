@@ -34,6 +34,9 @@ final class NotchShelfController {
     private var hoverDelay = AppSettings.load().notchHoverDelay
     /// Espera de intención: se cancela si el mouse sale de la zona antes de tiempo.
     private var intentWork: DispatchWorkItem?
+    /// Resplandor alrededor del notch mientras corre la espera.
+    private var glowPanel: NSPanel?
+    private let glowModel = NotchGlowModel()
     private var settingObserver: NSObjectProtocol?
 
     init(appState: AppState, panelController: PanelController) {
@@ -232,16 +235,71 @@ final class NotchShelfController {
         let work = DispatchWorkItem { [weak self] in
             guard let self else { return }
             self.intentWork = nil
-            guard !self.isOpen, !self.isSuppressed, self.pointerIsInTriggerZone() else { return }
+            guard !self.isOpen, !self.isSuppressed, self.pointerIsInTriggerZone() else { self.hideGlow(); return }
+            self.glowPanel?.orderOut(nil)
+            self.glowModel.progress = 0
             self.show()
         }
         intentWork = work
+        showGlow(duration: hoverDelay)
         DispatchQueue.main.asyncAfter(deadline: .now() + hoverDelay, execute: work)
     }
 
     private func cancelIntent() {
+        guard intentWork != nil else { return }
         intentWork?.cancel()
         intentWork = nil
+        hideGlow()
+    }
+
+    // MARK: Resplandor de espera
+
+    private func showGlow(duration: TimeInterval) {
+        guard let screen = anchorScreen() else { return }
+        glowModel.neckWidth = appState.notchNeckWidth
+        glowModel.neckHeight = appState.notchNeckHeight
+        glowModel.progress = 0
+
+        let panel = glowPanel ?? makeGlowPanel()
+        glowPanel = panel
+        let width = glowModel.neckWidth + NotchHoverGlowView.margin * 2
+        let height = glowModel.neckHeight + NotchHoverGlowView.margin
+        panel.setFrame(
+            NSRect(x: screen.frame.midX - width / 2, y: screen.frame.maxY - height, width: width, height: height),
+            display: true
+        )
+        panel.alphaValue = 1
+        panel.orderFrontRegardless()
+        withAnimation(.easeIn(duration: duration)) { glowModel.progress = 1 }
+    }
+
+    private func hideGlow() {
+        withAnimation(.easeOut(duration: 0.12)) { glowModel.progress = 0 }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+            guard let self, self.glowModel.progress == 0, self.intentWork == nil else { return }
+            self.glowPanel?.orderOut(nil)
+        }
+    }
+
+    private func makeGlowPanel() -> NSPanel {
+        let panel = ShelfPanel(
+            contentRect: .zero,
+            styleMask: [.borderless, .nonactivatingPanel],
+            backing: .buffered,
+            defer: false
+        )
+        panel.isOpaque = false
+        panel.backgroundColor = .clear
+        panel.hasShadow = false
+        panel.level = NSWindow.Level(rawValue: NSWindow.Level.statusBar.rawValue + 1)
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary, .ignoresCycle]
+        panel.hidesOnDeactivate = false
+        panel.ignoresMouseEvents = true
+        let hosting = NSHostingView(rootView: NotchHoverGlowView(model: glowModel))
+        hosting.sizingOptions = []
+        hosting.safeAreaRegions = []
+        panel.contentView = hosting
+        return panel
     }
 
     private func setPointerInside(_ inside: Bool) {
@@ -380,6 +438,16 @@ final class NotchShelfController {
     #if DEBUG
     /// Solo para revisar el diseño sin permiso de grabación de pantalla.
     private func debugSnapshotIfRequested() {
+        if let glowPath = UserDefaults.standard.string(forKey: "slotsGlowSnap") {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in self?.showGlow(duration: 0.2) }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.6) { [weak self] in
+                guard let view = self?.glowPanel?.contentView,
+                      let rep = view.bitmapImageRepForCachingDisplay(in: view.bounds) else { return }
+                view.cacheDisplay(in: view.bounds, to: rep)
+                try? rep.representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: glowPath))
+            }
+            return
+        }
         guard let path = UserDefaults.standard.string(forKey: "slotsNotchSnap") else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
             self?.show()
