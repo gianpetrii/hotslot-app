@@ -56,10 +56,13 @@ struct SlotCardView: View {
                         .background(usesLightContent ? Color.white.opacity(0.9) : SlotsColor.botonSecundario, in: Circle())
                         .overlay { Circle().strokeBorder(SlotsColor.linea, lineWidth: isEmpty ? 1 : 0) }
                 }
-                Text(isEmpty ? "Slot \(slot.order)" : "\(SlotCardText.kindLabel(slot))\n\(SlotCardText.detail(slot))")
-                    .slotsText(12, lineHeight: 1.2)
-                    .foregroundStyle(secondary)
-                    .lineLimit(2)
+                // En modo Editar no se repite el tipo y el detalle: ya se ven en la vista normal.
+                if isEmpty || !showsHandle {
+                    Text(isEmpty ? "Slot \(slot.order)" : "\(SlotCardText.kindLabel(slot))\n\(SlotCardText.detail(slot))")
+                        .slotsText(12, lineHeight: 1.2)
+                        .foregroundStyle(secondary)
+                        .lineLimit(2)
+                }
                 Spacer(minLength: SlotsSpace.s)
                 if isCopied {
                     Image(systemName: "checkmark")

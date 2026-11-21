@@ -92,6 +92,7 @@
 		7F361AF5971568F22F3E3133 /* SlotsIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4119C07A2A5CD6EA69966 /* SlotsIntents.swift */; };
 		7FE019D6F44FF4F2C604C0C1 /* SlotClipboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7694F1C3336660276030FD67 /* SlotClipboard.swift */; };
 		805CCA61CD5B75157300D857 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E49B638E43A951450D6B0EC /* Assets.xcassets */; };
+		819C0EFD34636B846FC6AC3B /* RenameSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B88BB1F7FCAD29A2A2798D /* RenameSheet.swift */; };
 		81F6F26B31F98E6784CE3628 /* SlotShortcutBadges.swift in Sources */ = {isa = PBXBuildFile; fileRef = D70A90D118E367AF3930724F /* SlotShortcutBadges.swift */; };
 		88E93B74A7628FDEC691592B /* EmptyLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D0BD4FF88CA860EBA2562C /* EmptyLibraryView.swift */; };
 		8A1E4F5E452F9201228BA817 /* PanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD50D3AD7653F5FCEE0C092 /* PanelController.swift */; };
@@ -333,6 +334,7 @@
 		E8C1319726E784661D6EB74D /* WorkspaceDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceDatabase.swift; sourceTree = "<group>"; };
 		EBD50D3AD7653F5FCEE0C092 /* PanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelController.swift; sourceTree = "<group>"; };
 		F3B4D0B6EDEEE5D11496E08B /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
+		F4B88BB1F7FCAD29A2A2798D /* RenameSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenameSheet.swift; sourceTree = "<group>"; };
 		F5C2958641416FFA9829EAD4 /* RenameSlotFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenameSlotFormView.swift; sourceTree = "<group>"; };
 		F694AB71C18F22C86D117ACC /* HotkeyName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyName.swift; sourceTree = "<group>"; };
 		F6B29BEA4868030AF4ADA383 /* NotchNotice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchNotice.swift; sourceTree = "<group>"; };
@@ -562,6 +564,7 @@
 				9967662EA8DF15C9FDAD5D4D /* LoadingView.swift */,
 				F6FA7A8FB4C24128881C7EF8 /* NewLibrarySheet.swift */,
 				6FC802583C33070EF060FEB1 /* NewSlotSheet.swift */,
+				F4B88BB1F7FCAD29A2A2798D /* RenameSheet.swift */,
 				9F6956A65F3E000FBB04DE13 /* SettingsSheet.swift */,
 				7860174C55426F53F4005D22 /* SheetComponents.swift */,
 				97810321A8C39A8076F3BA4F /* SlotCardText.swift */,
@@ -997,6 +1000,7 @@
 				FFCAC1302C03AC62C9964CB2 /* LoadingView.swift in Sources */,
 				BBD37161D8BF269573970BDA /* NewLibrarySheet.swift in Sources */,
 				DA4D16FD86CA79F6DB3DCDE9 /* NewSlotSheet.swift in Sources */,
+				819C0EFD34636B846FC6AC3B /* RenameSheet.swift in Sources */,
 				7BA249E552FEA1653792D3B5 /* RootView.swift in Sources */,
 				E3030FD8ABF2C4C8E80C578E /* SettingsSheet.swift in Sources */,
 				B02A7EDBDB72EA5C89364914 /* SheetComponents.swift in Sources */,

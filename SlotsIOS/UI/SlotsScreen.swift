@@ -21,14 +21,12 @@ struct SlotsScreen: View {
     @State private var cardFrames: [UUID: CGRect] = [:]
     @State private var dragCursor: CGPoint?
     @State private var dragGrab: CGPoint?
-    @State private var dragLastUpdate = Date()
     @State private var swapAnim: SwapAnim?
     // Arrastrar un slot sobre una pill de biblioteca: a los 0,6 s cambia a esa biblioteca.
     @State private var hoverPill: UUID?
     @State private var hoverTask: Task<Void, Never>?
     // Renombrar un slot desde el menú.
-    @State private var renamingSlot: SlotRecord?
-    @State private var slotRenameText = ""
+    @State private var renameRequest: RenameRequest?
     @AppStorage("confirmLibraryDelete") private var confirmLibraryDelete = true
     @State private var newSlot: NewSlotSheet.Request?
     @State private var editSlot: EditSlotSheet.Request?
@@ -41,8 +39,6 @@ struct SlotsScreen: View {
     @State private var undoTask: Task<Void, Never>?
 
     // Bibliotecas
-    @State private var renaming: Library?
-    @State private var renameText = ""
     @State private var deleting: Library?
     @State private var clipboardAvailable = false
 
@@ -129,38 +125,21 @@ struct SlotsScreen: View {
         }
         .sheet(isPresented: $showNewLibrary) { NewLibrarySheet() }
         .sheet(isPresented: $showSettings) { SettingsSheet() }
-        .alert("Renombrar biblioteca", isPresented: .init(get: { renaming != nil }, set: { if !$0 { renaming = nil } })) {
-            TextField("Nombre", text: $renameText)
-            Button("Cancelar", role: .cancel) {}
-            Button("Guardar") {
-                if let renaming, !model.isLibraryNameTaken(renameText, excluding: renaming.id) {
-                    store.renameLibrary(id: renaming.id, name: renameText)
-                }
+        .sheet(item: $renameRequest) { request in renameSheet(for: request) }
+        .sheet(item: $deleting) { library in
+            ConfirmDeleteSheet(
+                title: "¿Eliminar «\(library.name)»?",
+                message: "Se borran también todos sus slots, en todos tus dispositivos.",
+                confirmTitle: "Eliminar biblioteca"
+            ) {
+                withAnimation(.easeInOut(duration: 0.15)) { _ = store.deleteLibrary(id: library.id) }
             }
         }
-        .alert("Renombrar slot", isPresented: .init(get: { renamingSlot != nil }, set: { if !$0 { renamingSlot = nil } })) {
-            TextField("Nombre", text: $slotRenameText)
-            Button("Cancelar", role: .cancel) {}
-            Button("Guardar") {
-                if let renamingSlot {
-                    let name = slotRenameText.trimmingCharacters(in: .whitespacesAndNewlines)
-                    if !name.isEmpty { store.updateSlot(id: renamingSlot.id) { $0.title = name } }
-                }
-            }
-        }
-        .confirmationDialog(
-            deleting.map { "¿Eliminar «\($0.name)»?" } ?? "",
-            isPresented: .init(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
-            titleVisibility: .visible
-        ) {
-            Button("Eliminar biblioteca", role: .destructive) {
-                if let deleting {
-                    withAnimation(.easeInOut(duration: 0.15)) { _ = store.deleteLibrary(id: deleting.id) }
-                }
-            }
-            Button("Cancelar", role: .cancel) {}
-        } message: {
-            Text("Se borran también todos sus slots, en todos tus dispositivos.")
+        .onOpenURL { url in
+            // Widget: abre en la biblioteca configurada.
+            guard url.scheme == "hotslot", url.host == "library", let id = UUID(uuidString: url.lastPathComponent),
+                  store.workspace.libraries.contains(where: { $0.id == id }) else { return }
+            withAnimation(.easeInOut(duration: 0.15)) { store.setActiveLibrary(id: id) }
         }
         .onAppear { clipboardAvailable = ClipboardReader.hasContent }
         // Los widgets muestran los slots: se refrescan cuando cambian (acá o desde iCloud).
@@ -180,6 +159,10 @@ struct SlotsScreen: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
                 .accessibilityAddTraits(.isHeader)
+                .contentShape(Rectangle())
+                // Tocar el título renombra la biblioteca.
+                .onTapGesture { if !isEditing, let library = activeLibrary { renameRequest = .library(library) } }
+                .accessibilityAction(named: "Renombrar biblioteca") { if let library = activeLibrary { renameRequest = .library(library) } }
             Spacer(minLength: SlotsSpace.s)
             Button { newSlot = .init() } label: {
                 Image(systemName: "plus")
@@ -221,10 +204,7 @@ struct SlotsScreen: View {
                 withAnimation(.easeInOut(duration: 0.15)) { store.setActiveLibrary(id: id) }
             },
             onAdd: { showNewLibrary = true },
-            onRename: { library in
-                renameText = library.name
-                renaming = library
-            },
+            onRename: { renameRequest = .library($0) },
             onDelete: { library in
                 if confirmLibraryDelete {
                     deleting = library
@@ -233,7 +213,6 @@ struct SlotsScreen: View {
                 }
             },
             highlightedId: hoverPill,
-            slotDragActive: draggingId != nil,
             onSlotHover: { slotHoverPill($0) },
             onSlotDrop: { slotDroppedOnPill($0) },
             onMove: { id, index in
@@ -254,8 +233,6 @@ struct SlotsScreen: View {
         )
     }
 
-    private var isDragActive: Bool { draggingId != nil && dragCursor != nil && Date().timeIntervalSince(dragLastUpdate) < 1.5 }
-
     /// Id con el que la card «Nuevo slot» participa de los arrastres.
     private static let newTileId = UUID(uuidString: "00000000-0000-0000-0000-0000000000AA")!
 
@@ -266,8 +243,7 @@ struct SlotsScreen: View {
         }
         .coordinateSpace(name: Self.gridSpace)
         .overlay(alignment: .topLeading) { swapOverlay }
-        .overlay(alignment: .topLeading) { dragFloat }
-        .onDrop(of: [.data], delegate: GridDropDelegate(
+        .onDrop(of: [.slotsSlotDrag], delegate: GridDropDelegate(
             onUpdate: { location in dragUpdated(location) },
             onExit: { dropTargetId = nil },
             onDrop: { location in dropped(at: location) }
@@ -313,31 +289,34 @@ struct SlotsScreen: View {
             dragGrab = nil
             let provider = NSItemProvider()
             // Solo sirve dentro de Slots: en otra app no suelta nada.
-            provider.registerDataRepresentation(forTypeIdentifier: UTType.data.identifier, visibility: .ownProcess) { done in
+            provider.registerDataRepresentation(forTypeIdentifier: UTType.slotsSlotDrag.identifier, visibility: .ownProcess) { done in
                 done(Data(slot.id.uuidString.utf8), nil)
                 return nil
             }
             return provider
         } preview: {
-            // La card que se mueve la dibuja Slots, no el sistema.
-            Color.clear.frame(width: 1, height: 1)
+            // La card levantada la dibuja el sistema: sigue al dedo en toda la pantalla, también sobre las bibliotecas.
+            let frame = cardFrames[slot.id]
+            cardView(slot)
+                .frame(width: frame?.width ?? 170, height: frame?.height ?? 166)
+                .clipShape(RoundedRectangle(cornerRadius: SlotsRadius.card, style: .continuous))
         }
         .slotRowSpan(SlotCardView.rowSpan(for: slot))
         .scaleEffect(isCopied ? 0.97 : (newSlotId == slot.id ? 0.9 : 1))
         .shadow(color: Color(slotsHex: 0xE2470F).opacity(isCopied ? 0.35 : 0), radius: 15, y: 14)
         .opacity(hiddenBySwap || newSlotId == slot.id ? 0
-                 : (isDragActive && draggingId == slot.id ? 0.35 : (copiedSlotId != nil && !isCopied ? 0.55 : 1)))
+                 : (copiedSlotId != nil && !isCopied ? 0.55 : 1))
         .zIndex(isCopied ? 1 : 0)
     }
 
     /// Card punteada al final de la grilla, igual que en el Mac: crea un slot al final o recibe uno arrastrado.
     private var newSlotTile: some View {
         let isTarget = dropTargetId == Self.newTileId && draggingId != nil
-        return Button { newSlot = .init(atEnd: true) } label: {
+        return Button { createSlotAtEnd() } label: {
             VStack(spacing: SlotsSpace.s) {
                 Image(systemName: "plus")
                     .font(.system(size: 18, weight: .medium))
-                Text(isTarget ? "Soltá para mover al final" : "Nuevo slot")
+                Text(isTarget ? "Soltá para crear el slot" : "Nuevo slot")
                     .slotsText(15)
                     .multilineTextAlignment(.center)
             }
@@ -353,6 +332,15 @@ struct SlotsScreen: View {
         .buttonStyle(SlotCardButtonStyle())
         .accessibilityLabel("Nuevo slot")
         .onGeometryChange(for: CGRect.self) { $0.frame(in: .named(Self.gridSpace)) } action: { cardFrames[Self.newTileId] = $0 }
+    }
+
+    /// Igual que el Mac: agrega un slot vacío al final y pide su nombre.
+    private func createSlotAtEnd() {
+        guard let library = activeLibrary,
+              let order = store.addSlot(toLibraryId: library.id),
+              let record = store.slots(for: library.id).first(where: { $0.order == order }) else { return }
+        highlightNew(record.id)
+        renameRequest = .slot(record, isNew: true)
     }
 
     private static let gridSpace = "slotsGrid"
@@ -372,20 +360,8 @@ struct SlotsScreen: View {
             )
         }
         dragCursor = location
-        dragLastUpdate = Date()
         let target = cardId(at: location)
         dropTargetId = target == source ? nil : target
-    }
-
-    @ViewBuilder private var dragFloat: some View {
-        if isDragActive, let id = draggingId, let cursor = dragCursor, let grab = dragGrab,
-           let frame = cardFrames[id], let slot = store.slot(id: id) {
-            cardView(slot)
-                .frame(width: frame.width, height: frame.height)
-                .shadow(color: .black.opacity(0.22), radius: 14, y: 6)
-                .offset(x: cursor.x - grab.x, y: cursor.y - grab.y)
-                .allowsHitTesting(false)
-        }
     }
 
     /// Suelta sobre la grilla. Misma biblioteca: intercambia (o manda al final si es «Nuevo slot»).
@@ -539,9 +515,32 @@ struct SlotsScreen: View {
         }
     }
 
-    private func beginRename(_ slot: SlotRecord) {
-        slotRenameText = SlotCardText.customTitle(slot) ?? (slot.clipContent() == nil ? "" : SlotCardText.title(slot))
-        renamingSlot = slot
+    private func beginRename(_ slot: SlotRecord) { renameRequest = .slot(slot, isNew: false) }
+
+    @ViewBuilder private func renameSheet(for request: RenameRequest) -> some View {
+        switch request {
+        case .library(let library):
+            RenameSheet(
+                title: "Renombrar biblioteca",
+                label: "Nombre",
+                initialName: library.name,
+                error: { model.isLibraryNameTaken($0, excluding: library.id) ? "Ya tenés una biblioteca con ese nombre." : nil },
+                onSave: { store.renameLibrary(id: library.id, name: $0) }
+            )
+        case .slot(let slot, let isNew):
+            RenameSheet(
+                title: isNew ? "Nuevo slot" : "Renombrar slot",
+                label: "Nombre del slot",
+                initialName: isNew ? "" : (SlotCardText.customTitle(slot) ?? (slot.clipContent() == nil ? "" : SlotCardText.title(slot))),
+                onSave: { name in store.updateSlot(id: slot.id) { $0.title = name } },
+                onCancel: {
+                    // Un slot nuevo sin nombre ni contenido se descarta, como Esc en el Mac.
+                    if isNew, let current = store.slot(id: slot.id), current.clipContent() == nil {
+                        withAnimation(.easeOut(duration: 0.2)) { _ = store.removeSlot(libraryId: current.libraryId, order: current.order) }
+                    }
+                }
+            )
+        }
     }
 
     private func backgroundButton(_ name: String, hex: String?, slot: SlotRecord) -> some View {

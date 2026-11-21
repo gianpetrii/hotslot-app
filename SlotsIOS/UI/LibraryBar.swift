@@ -13,7 +13,6 @@ struct LibraryBar: View {
     /// Pill resaltada porque un slot arrastrado está encima.
     var highlightedId: UUID?
     /// Hay un slot arrastrándose: las pills lo reciben en vez de reordenarse.
-    var slotDragActive = false
     var onSlotHover: (UUID?) -> Void = { _ in }
     var onSlotDrop: (UUID) -> Void = { _ in }
     /// Mantener y arrastrar una pill la reordena. `index` cuenta sin la biblioteca movida.
@@ -45,6 +44,7 @@ struct LibraryBar: View {
                 withAnimation { proxy.scrollTo(id, anchor: .center) }
             }
         }
+        .scrollClipDisabled()
         .padding(.top, 20)
         .padding(.bottom, 6)
         .background {
@@ -81,21 +81,19 @@ struct LibraryBar: View {
         .buttonStyle(.plain)
         .contentShape(.dragPreview, Capsule())
         .contentShape(.contextMenuPreview, Capsule())
-        .opacity(draggingId == library.id ? 0.4 : 1)
         .onDrag {
             draggingId = library.id
             let provider = NSItemProvider()
-            provider.registerDataRepresentation(forTypeIdentifier: UTType.data.identifier, visibility: .ownProcess) { done in
+            provider.registerDataRepresentation(forTypeIdentifier: UTType.slotsLibraryDrag.identifier, visibility: .ownProcess) { done in
                 done(Data(library.id.uuidString.utf8), nil)
                 return nil
             }
             return provider
         }
-        .onDrop(of: [.data], delegate: LibraryDropDelegate(
+        .onDrop(of: [.slotsSlotDrag, .slotsLibraryDrag], delegate: LibraryDropDelegate(
             target: library,
             libraries: libraries,
             draggingId: $draggingId,
-            slotDragActive: slotDragActive,
             onMove: onMove,
             onSlotHover: onSlotHover,
             onSlotDrop: onSlotDrop
@@ -119,16 +117,15 @@ private struct LibraryDropDelegate: DropDelegate {
     let target: Library
     let libraries: [Library]
     @Binding var draggingId: UUID?
-    let slotDragActive: Bool
     let onMove: (UUID, Int) -> Void
     let onSlotHover: (UUID?) -> Void
     let onSlotDrop: (UUID) -> Void
 
     /// Una pill arrastrándose manda sobre un slot: solo se reordena entre pills.
-    private var isSlotDrag: Bool { draggingId == nil && slotDragActive }
+    private func isSlotDrag(_ info: DropInfo) -> Bool { !info.hasItemsConforming(to: [.slotsLibraryDrag]) }
 
     func dropEntered(info: DropInfo) {
-        if isSlotDrag {
+        if isSlotDrag(info) {
             onSlotHover(target.id)
             return
         }
@@ -139,13 +136,13 @@ private struct LibraryDropDelegate: DropDelegate {
     }
 
     func dropExited(info: DropInfo) {
-        if isSlotDrag { onSlotHover(nil) }
+        if isSlotDrag(info) { onSlotHover(nil) }
     }
 
     func dropUpdated(info: DropInfo) -> DropProposal? { DropProposal(operation: .move) }
 
     func performDrop(info: DropInfo) -> Bool {
-        if isSlotDrag {
+        if isSlotDrag(info) {
             onSlotDrop(target.id)
             return true
         }

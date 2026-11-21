@@ -131,6 +131,11 @@ targets:
         # Avisos silenciosos de CloudKit para sincronizar en segundo plano.
         UIBackgroundModes:
           - remote-notification
+        # Los widgets abren la app en una biblioteca: hotslot://library/<id>.
+        CFBundleURLTypes:
+          - CFBundleURLName: com.hotslot.app
+            CFBundleURLSchemes:
+              - hotslot
     entitlements:
       path: SlotsIOS/Resources/Slots.entitlements
       properties:

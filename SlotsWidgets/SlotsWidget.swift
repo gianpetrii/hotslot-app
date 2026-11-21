@@ -177,10 +177,14 @@ struct SlotsWidgetView: View {
     /// Alto fijo de cada card: lo que sobra queda abajo, no se reparte.
 
     var body: some View {
-        switch family {
-        case .accessoryRectangular: lockScreen
-        default: home
+        Group {
+            switch family {
+            case .accessoryRectangular: lockScreen
+            default: home
+            }
         }
+        // Tocar fuera de un slot o de las flechas abre Slots en la biblioteca del widget.
+        .widgetURL(entry.libraryId.flatMap { URL(string: "hotslot://library/\($0.uuidString)") })
     }
 
     private var columnCount: Int { family == .systemMedium || family == .systemLarge ? 2 : 1 }
@@ -236,19 +240,20 @@ struct SlotsWidgetView: View {
                                 Text(isCopied ? "Copiado" : slot.title)
                             }
                                 .font(.custom("InterTight-Medium", fixedSize: 15))
-                                .foregroundStyle(isCopied || light ? Color.white : Color(slotsHex: 0x111111))
+                                .foregroundStyle(light ? Color.white : Color(slotsHex: 0x111111))
                                 .lineLimit(2)
                                 .minimumScaleFactor(0.8)
                                 .frame(maxWidth: .infinity, alignment: .bottomLeading)
                                 .padding(10)
                                 .frame(height: cardHeight, alignment: .bottomLeading)
-                                .background { cardBackground(isCopied ? SlotsPalette.brandGradientAsset : slot.backgroundHex) }
+                                .background { cardBackground(slot.backgroundHex) }
+                                .scaleEffect(isCopied ? 0.97 : 1)
                         }
                         .buttonStyle(.plain)
                     }
                 }
                 .id(page)
-                .transition(.push(from: entry.direction >= 0 ? .trailing : .leading))
+                .transition(.opacity)
                 Spacer(minLength: 0)
             }
         }

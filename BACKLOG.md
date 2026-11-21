@@ -305,4 +305,6 @@ Falta testear en dispositivo:
 - Nuevo slot con imagen de Fotos y con archivo; hex como Color.
 - VoiceOver y «Reducir movimiento».
 - iOS 18 real (Xcode solo trae simuladores de iOS 26 y 27).
+- Revisar los widgets chico y grande (el mediano ya se vio bien); el toque fuera de un slot abre la app en la biblioteca del widget (esquema `hotslot://`).
+- Menú contextual de slots y pills: es nativo de iOS, no se puede estilizar; las hojas de renombrar y eliminar sí siguen el estilo de la app.
 - Tests del Mac después de los últimos cambios.
