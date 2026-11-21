@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.3.2] — 2026-11-21
+
+### Primer arranque
+
+- Se eliminó el onboarding anterior: ahora todo es el tutorial nuevo. Después del recorrido, si hace falta, pide el permiso de Accesibilidad (para pegar en otras apps) y pregunta si querés compartir uso anónimo, con el mismo estilo.
+- «Cómo usar Slots», en el menú del ícono y en Ajustes, abre el tutorial nuevo.
+
+### Mantenimiento
+
+- Limpieza de código sin uso (vistas, constantes y funciones que quedaron de versiones anteriores).
+
 ## [1.3.1] — 2026-11-20
 
 ### Notch
