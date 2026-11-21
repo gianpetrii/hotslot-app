@@ -1,76 +1,11 @@
 import AppKit
 import SwiftUI
 
-/// Mismo flujo en onboarding y Ajustes → Permisos: diálogo del sistema primero, Ajustes como respaldo.
-struct AccessibilityGrantSection: View {
-    enum Style {
-        case settingsForm
-        case onboarding
-    }
-
-    @Environment(AppState.self) private var appState
-    @Binding var isTrusted: Bool
-    var style: Style = .settingsForm
-
-    var body: some View {
-        switch style {
-        case .settingsForm:
-            settingsBody
-        case .onboarding:
-            onboardingBody
-        }
-    }
-
-    private var settingsBody: some View {
-        Group {
-            if isTrusted {
-                SettingsPillButton(title: "Administrar en Ajustes del Sistema") {
-                    appState.suppressSettingsAutoClose()
-                    AccessibilityPermission.openSettings()
-                }
-            } else {
-                SettingsPillButton(title: primaryButtonTitle, kind: .primary) {
-                    requestAccessibilityFromUI()
-                }
-                SettingsPillButton(title: "Abrir panel de Accesibilidad en Ajustes…") {
-                    appState.suppressSettingsAutoClose()
-                    AccessibilityPermission.openSettings()
-                }
-            }
-        }
-    }
-
-    private var primaryButtonTitle: String {
-        if DevelopmentAppInstall.runsFromDerivedData {
-            return "Copiar a Aplicaciones y pedir permiso…"
-        }
-        return "Permitir Accesibilidad (diálogo del sistema)"
-    }
-
-    private var onboardingBody: some View {
-        VStack(spacing: 14) {
-            if isTrusted {
-                Label("Accesibilidad concedida", systemImage: "checkmark.circle.fill")
-                    .font(HotSlotTypography.rowSecondary)
-                    .foregroundStyle(.secondary)
-            } else {
-                OnboardingAccessibilityButton(title: primaryButtonTitle, emphasized: true) {
-                    requestAccessibilityFromUI()
-                }
-                OnboardingAccessibilityButton(title: "Abrir Accesibilidad en Ajustes…", emphasized: false) {
-                    AccessibilityPermission.openSettings()
-                }
-                Text(AccessibilityPermissionCopy.promptFirst)
-                    .font(HotSlotTypography.rowSecondary)
-                    .foregroundStyle(.tertiary)
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: 340)
-            }
-        }
-        .padding(.top, 8)
-    }
-
-    private func requestAccessibilityFromUI() {
+/// Pide el permiso de Accesibilidad: diálogo del sistema primero, Ajustes como respaldo.
+/// Lo usan Ajustes › Permisos y el paso de permiso del tutorial de primera vez.
+enum AccessibilityGrantFlow {
+    @MainActor
+    static func request(appState: AppState, onResult: @escaping (Bool) -> Void) {
         appState.suppressSettingsAutoClose()
         DispatchQueue.main.async {
             if DevelopmentAppInstall.runsFromDerivedData {
@@ -87,8 +22,9 @@ struct AccessibilityGrantSection: View {
             AccessibilityPermission.requestAccessForPaste(focusWindow: appState.accessibilityPresentingWindow)
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                isTrusted = AccessibilityPermission.isTrusted
-                guard !isTrusted else { return }
+                let trusted = AccessibilityPermission.isTrusted
+                onResult(trusted)
+                guard !trusted else { return }
                 if AccessibilityPermission.surfaceSystemPrompt(over: appState.accessibilityPresentingWindow) {
                     appState.showToast("En el aviso, tocá «Abrir Ajustes del Sistema» y activá Slots.")
                 } else {
@@ -100,36 +36,40 @@ struct AccessibilityGrantSection: View {
     }
 }
 
+/// Botones de Ajustes › Permisos.
+struct AccessibilityGrantSection: View {
+    @Environment(AppState.self) private var appState
+    @Binding var isTrusted: Bool
+
+    var body: some View {
+        Group {
+            if isTrusted {
+                SettingsPillButton(title: "Administrar en Ajustes del Sistema") {
+                    appState.suppressSettingsAutoClose()
+                    AccessibilityPermission.openSettings()
+                }
+            } else {
+                SettingsPillButton(title: primaryButtonTitle, kind: .primary) {
+                    AccessibilityGrantFlow.request(appState: appState) { isTrusted = $0 }
+                }
+                SettingsPillButton(title: "Abrir panel de Accesibilidad en Ajustes…") {
+                    appState.suppressSettingsAutoClose()
+                    AccessibilityPermission.openSettings()
+                }
+            }
+        }
+    }
+
+    private var primaryButtonTitle: String {
+        if DevelopmentAppInstall.runsFromDerivedData {
+            return "Copiar a Aplicaciones y pedir permiso…"
+        }
+        return "Permitir Accesibilidad (diálogo del sistema)"
+    }
+}
+
 enum AccessibilityPermissionCopy {
     static let promptFirst = """
     macOS muestra un aviso del sistema la primera vez. Si ya lo cerraste, se abre Accesibilidad en Ajustes para que actives \(BrandDisplay.name). La app no puede activarlo sola.
     """
-}
-
-private struct OnboardingAccessibilityButton: View {
-    let title: String
-    var emphasized: Bool
-    let action: () -> Void
-    @State private var isHovering = false
-
-    var body: some View {
-        Button(action: action) {
-            Text(title)
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(emphasized ? Color.primary : Color.secondary)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 7)
-                .background {
-                    RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
-                        .fill(Color.primary.opacity(emphasized ? (isHovering ? 0.14 : 0.1) : (isHovering ? 0.1 : 0.06)))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
-                                .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5)
-                        }
-                }
-        }
-        .buttonStyle(.plain)
-        .onHover { isHovering = $0 }
-        .animation(.easeOut(duration: 0.12), value: isHovering)
-    }
 }

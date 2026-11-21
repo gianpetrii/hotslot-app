@@ -4,6 +4,7 @@ import SwiftUI
 /// Medidas y tiempos del handoff de Dante (`05-flujos/tutorial`).
 struct TutorialView: View {
     @Bindable var model: TutorialModel
+    @Environment(AppState.self) private var appState
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var appeared = false
@@ -32,7 +33,14 @@ struct TutorialView: View {
         }
         .ignoresSafeArea()
         .animation(.easeInOut(duration: 0.4), value: isWelcome)
+        .animation(.easeInOut(duration: 0.3), value: model.phase)
+        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+            if model.phase == .permission { model.permissionGranted = AccessibilityPermission.isTrusted }
+        }
         .onAppear {
+            model.requestPermission = {
+                AccessibilityGrantFlow.request(appState: appState) { model.permissionGranted = $0 }
+            }
             withAnimation(.easeOut(duration: 0.6)) { appeared = true }
             if !reduceMotion {
                 withAnimation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true)) { pulse = true }
@@ -44,7 +52,13 @@ struct TutorialView: View {
         }
     }
 
-    private var isWelcome: Bool { model.phase == .welcome || model.phase == .popup }
+    /// Bienvenida, pop-up y pasos de configuración comparten el panel de vidrio con el logo.
+    private var isWelcome: Bool {
+        switch model.phase {
+        case .welcome, .popup, .permission, .privacy: return true
+        default: return false
+        }
+    }
 
     /// El panel de muestra ocupa el mismo lugar que el panel real.
     private func panelOrigin(in screen: CGSize) -> CGPoint {
@@ -57,7 +71,7 @@ struct TutorialView: View {
     // MARK: - Bienvenida y pop-up
 
     private func welcome(origin: CGPoint) -> some View {
-        let popup = model.phase == .popup
+        let popup = model.phase != .welcome
         return ZStack(alignment: .topLeading) {
             PanelChrome { Color.clear }
                 .frame(width: panelSize.width, height: panelSize.height)
@@ -83,10 +97,17 @@ struct TutorialView: View {
             .animation(.easeOut(duration: 0.45), value: popup)
 
             if popup {
-                popupCard
-                    .frame(width: panelSize.width, height: panelSize.height)
-                    .offset(x: origin.x, y: origin.y + 54)
-                    .transition(.opacity.combined(with: .offset(y: 12)).combined(with: .scale(scale: 0.97)))
+                Group {
+                    switch model.phase {
+                    case .permission: permissionCard
+                    case .privacy: privacyCard
+                    default: popupCard
+                    }
+                }
+                .id(model.phase)
+                .frame(width: panelSize.width, height: panelSize.height)
+                .offset(x: origin.x, y: origin.y + 54)
+                .transition(.opacity.combined(with: .offset(y: 12)).combined(with: .scale(scale: 0.97)))
             }
         }
     }
@@ -159,6 +180,152 @@ struct TutorialView: View {
                 .fill(Color.white)
                 .shadow(color: Color(slotsHex: 0x28190A, opacity: 0.28), radius: 40, y: 30)
         )
+    }
+
+    // MARK: Pasos de configuración (después del recorrido)
+
+    private func setupCard<Content: View>(
+        icon: String,
+        eyebrow: String,
+        title: String,
+        text: String,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(width: 48, height: 48)
+                .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(SlotsColor.tinta))
+            Text(eyebrow)
+                .font(SettingsStyle.medium(12))
+                .foregroundStyle(SlotsColor.textoSecundario)
+            Text(title)
+                .font(SettingsStyle.medium(30))
+                .tracking(-1.05)
+                .foregroundStyle(SlotsColor.tinta)
+                .fixedSize(horizontal: false, vertical: true)
+            Text(text)
+                .font(SettingsStyle.regular(15))
+                .foregroundStyle(SlotsColor.textoTerciario)
+                .lineSpacing(3)
+                .fixedSize(horizontal: false, vertical: true)
+            content()
+        }
+        .padding(28)
+        .frame(width: 440)
+        .background(
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .fill(Color.white)
+                .shadow(color: Color(slotsHex: 0x28190A, opacity: 0.28), radius: 40, y: 30)
+        )
+    }
+
+    private func primaryPill(_ title: String, key: String? = "↩", arrow: Bool = false, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                Text(title)
+                    .font(SettingsStyle.medium(16))
+                    .foregroundStyle(.white)
+                Spacer()
+                if let key { keyBadge(key, dark: true) }
+                if arrow {
+                    Text("›")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(.white)
+                        .frame(width: 38, height: 38)
+                        .background(Circle().fill(SlotsColor.naranja))
+                }
+            }
+            .padding(.leading, 20)
+            .padding(.trailing, arrow ? 7 : 14)
+            .frame(height: 52)
+            .background(Capsule(style: .continuous).fill(SlotsColor.tinta))
+            .contentShape(Capsule())
+        }
+        .buttonStyle(TutorialPressStyle(scale: 0.97))
+    }
+
+    private func secondaryPill(_ title: String, key: String? = "Esc", action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack {
+                Text(title)
+                    .font(SettingsStyle.medium(16))
+                    .foregroundStyle(SlotsColor.tinta)
+                Spacer()
+                if let key { keyBadge(key, dark: false) }
+            }
+            .padding(.leading, 20)
+            .padding(.trailing, 14)
+            .frame(height: 52)
+            .background(Capsule(style: .continuous).fill(SlotsColor.teclaFondo))
+            .contentShape(Capsule())
+        }
+        .buttonStyle(TutorialPressStyle(scale: 0.97))
+    }
+
+    /// Accesibilidad: sin este permiso no se puede pegar en otras apps.
+    private var permissionCard: some View {
+        setupCard(
+            icon: "lock.open",
+            eyebrow: "Un permiso y listo",
+            title: "Para pegar en cualquier app",
+            text: "macOS te pide habilitar Accesibilidad. Slots solo la usa para pegar lo que elegís en la app que tenés abierta."
+        ) {
+            VStack(spacing: 8) {
+                if model.permissionGranted {
+                    HStack(spacing: 8) {
+                        Circle().fill(SlotsColor.naranja).frame(width: 8, height: 8)
+                        Text("Permiso concedido")
+                            .font(SettingsStyle.medium(14))
+                            .foregroundStyle(SlotsColor.tinta)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 2)
+                    primaryPill("Seguir") { model.close() }
+                } else {
+                    primaryPill("Permitir Accesibilidad", arrow: true) { model.requestPermission?() }
+                    secondaryPill("Ahora no") { model.close() }
+                }
+            }
+            .padding(.top, 4)
+
+            Text("Podés darlo después en Ajustes › Permisos.")
+                .font(SettingsStyle.regular(12))
+                .foregroundStyle(SlotsColor.textoSecundario)
+                .frame(maxWidth: .infinity)
+        }
+    }
+
+    /// Uso anónimo: apagado por defecto; se cambia cuando quieras en Ajustes.
+    private var privacyCard: some View {
+        setupCard(
+            icon: "chart.bar",
+            eyebrow: "Opcional",
+            title: "Ayudanos a mejorar",
+            text: "Si querés, compartí datos de uso anónimos: qué funciones se usan y con qué frecuencia. Nunca enviamos lo que copiás, nombres de archivos, bibliotecas o slots, ni quién sos."
+        ) {
+            HStack {
+                Text("Compartir uso anónimo")
+                    .font(SettingsStyle.medium(15))
+                    .foregroundStyle(SlotsColor.tinta)
+                Spacer()
+                SettingsSwitch(isOn: $model.shareUsage)
+            }
+            .padding(.horizontal, 16)
+            .frame(height: 56)
+            .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(SlotsColor.teclaFondo))
+            .padding(.top, 4)
+
+            primaryPill("Listo") { model.close() }
+
+            Text("Está apagado y lo cambiás cuando quieras en Ajustes › General › Privacidad.")
+                .font(SettingsStyle.regular(12))
+                .foregroundStyle(SlotsColor.textoSecundario)
+                .multilineTextAlignment(.center)
+                .lineSpacing(2)
+                .frame(maxWidth: .infinity)
+        }
     }
 
     private func keyBadge(_ text: String, dark: Bool) -> some View {

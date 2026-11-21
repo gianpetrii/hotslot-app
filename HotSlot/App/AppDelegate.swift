@@ -10,7 +10,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     var notchShelf: NotchShelfController?
     var appState: AppState?
     let settingsWindowController = SettingsWindowController()
-    let onboardingWindowController = OnboardingWindowController()
     let tutorialWindowController = TutorialWindowController()
     private var updaterController: SPUStandardUpdaterController?
     private var shouldReopenPanelAfterUtility = false
@@ -54,7 +53,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let shelf = NotchShelfController(appState: state, panelController: panel)
         shelf.isBlocked = { [weak self] in
             guard let self else { return false }
-            return self.settingsWindowController.isVisible || self.onboardingWindowController.isVisible
+            return self.settingsWindowController.isVisible || self.tutorialWindowController.isVisible
         }
         shelf.start()
         self.notchShelf = shelf
@@ -72,31 +71,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         state.openTutorial = { [weak self] in
             self?.presentTutorial()
-        }
-        state.openOnboarding = { [weak self] in
-            guard let self, let state = self.appState else { return }
-            self.presentUtilityWindow(hidePanelFirst: true) { reopen in
-                self.onboardingWindowController.show(appState: state) { openPanel in
-                    // La primera vez, después del onboarding viene el tutorial (que termina abriendo el panel).
-                    if !AppSettings.load().tutorialVisto {
-                        self.presentTutorial()
-                        return
-                    }
-                    NSApp.setActivationPolicy(.accessory)
-                    self.statusBarController?.refreshVisibility()
-                    guard openPanel else {
-                        reopen()
-                        return
-                    }
-                    if self.shouldReopenPanelAfterUtility {
-                        reopen()
-                    } else {
-                        state.focusTracker.captureForUpcomingPaste()
-                        self.panelController?.show()
-                        state.isPanelVisible = true
-                    }
-                }
-            }
         }
         state.bootstrap(panelController: panel)
         applyLaunchAtLoginSetting()
@@ -157,8 +131,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @MainActor
     private func continueMainFlow(onboardingPending: Bool, userOpened: Bool) {
         if onboardingPending {
+            // Primer arranque: bienvenida, recorrido y los pasos de permiso y privacidad, todo en el tutorial.
             DispatchQueue.main.async { [weak self] in
-                self?.appState?.openOnboarding?()
+                self?.presentTutorial()
             }
         } else if userOpened {
             DispatchQueue.main.async { [weak self] in
@@ -205,12 +180,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @MainActor
     func presentTutorial() {
         guard let state = appState, !tutorialWindowController.isVisible else { return }
+        // Si el panel está abierto, se cierra primero: el tutorial cubre la pantalla.
+        if panelController?.isVisible == true {
+            panelController?.hide(animated: false)
+            state.isPanelVisible = false
+        }
         let start = { [weak self] in
             guard let self else { return }
             self.tutorialWindowController.show(appState: state) { [weak self] in
                 guard let self else { return }
                 var settings = AppSettings.load()
                 settings.tutorialVisto = true
+                settings.hasCompletedOnboarding = true
+                settings.hasSeenMenuBarHint = true
                 settings.save()
                 NSApp.setActivationPolicy(.accessory)
                 self.statusBarController?.refreshVisibility()

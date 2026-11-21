@@ -13,6 +13,7 @@ final class TutorialWindowController: NSObject {
     private var model: TutorialModel?
     private var keyMonitor: Any?
     private var onClose: (() -> Void)?
+    private weak var appStateRef: AppState?
 
     var isVisible: Bool { window?.isVisible == true }
 
@@ -21,6 +22,7 @@ final class TutorialWindowController: NSObject {
     func show(appState: AppState, onClose: @escaping () -> Void) {
         guard window == nil else { return }
         self.onClose = onClose
+        appStateRef = appState
 
         guard let screen = WindowPlacement.screenForMouse() ?? NSScreen.main else {
             onClose()
@@ -54,6 +56,8 @@ final class TutorialWindowController: NSObject {
         tutorialWindow.setFrame(screen.frame, display: true)
 
         window = tutorialWindow
+        // El aviso de Accesibilidad del sistema se muestra por delante de esta ventana.
+        appState.accessibilityPresentingWindow = tutorialWindow
         NSApp.activate(ignoringOtherApps: true)
         tutorialWindow.makeKeyAndOrderFront(nil)
 
@@ -68,7 +72,12 @@ final class TutorialWindowController: NSObject {
         MainActor.assumeIsolated {
             switch event.keyCode {
             case 36, 76, 124: // return, enter, →
-                if model.phase == .closing { model.close() } else { model.next() }
+                switch model.phase {
+                case .closing, .privacy: model.close()
+                case .permission:
+                    if model.permissionGranted { model.close() } else { model.requestPermission?() }
+                default: model.next()
+                }
             case 123: // ←
                 model.back()
             case 53: // esc
@@ -86,6 +95,7 @@ final class TutorialWindowController: NSObject {
         if let keyMonitor { NSEvent.removeMonitor(keyMonitor) }
         keyMonitor = nil
         model = nil
+        MainActor.assumeIsolated { appStateRef?.accessibilityPresentingWindow = nil }
 
         NSAnimationContext.runAnimationGroup({ context in
             context.duration = 0.3

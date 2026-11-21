@@ -144,6 +144,6 @@ enum SampleDataFixture {
         UsageEventLog.shared.clear()
         UsageEventLog.shared.record("fixture_empezar_de_cero", screen: "mac")
 
-        appState.openOnboarding?()
+        appState.openTutorial?()
     }
 }

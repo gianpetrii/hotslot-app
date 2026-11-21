@@ -40,8 +40,6 @@ enum HotSlotDesign {
     /// Altura fija de la fila del título en cards (evita saltos al editar / lápiz).
     static let slotTitleRowHeight: CGFloat = 46
     static let shortcutBadgeWidthRegular: CGFloat = 62
-    static let onboardingWidth: CGFloat = 520
-    static let onboardingHeight: CGFloat = 600
 
     static let rowExpandAnimation = Animation.spring(response: 0.32, dampingFraction: 0.92)
     static let titleEditAnimation = Animation.easeInOut(duration: 0.22)

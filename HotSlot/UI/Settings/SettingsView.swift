@@ -381,7 +381,7 @@ struct SettingsView: View {
                         }
                         SettingsRow(title: accessibilityTrusted ? "Permiso concedido" : "Cómo darlo") {
                             VStack(alignment: .trailing, spacing: 8) {
-                                AccessibilityGrantSection(isTrusted: $accessibilityTrusted, style: .settingsForm)
+                                AccessibilityGrantSection(isTrusted: $accessibilityTrusted)
                             }
                         }
                     }

@@ -31,6 +31,9 @@ enum TutorialPhase: Hashable {
     case popup
     case step(Int)
     case closing
+    /// Después del recorrido: pasos de configuración, solo si hacen falta.
+    case permission
+    case privacy
 }
 
 /// Estado del tutorial de primera vez. Todo vive acá, en memoria: nunca toca los slots ni el historial del usuario.
@@ -39,8 +42,17 @@ enum TutorialPhase: Hashable {
 final class TutorialModel {
     var phase: TutorialPhase = .welcome
 
-    /// Cierra el tutorial (al terminar, al saltear o con «Manos a la obra»).
+    /// Cierra el tutorial del todo (después del último paso que corresponda).
     var onClose: (() -> Void)?
+
+    /// Accesibilidad: hace falta para pegar en otras apps. Se pide una sola vez.
+    var permissionGranted = AccessibilityPermission.isTrusted
+    private let needsPermission = !AccessibilityPermission.isTrusted
+    /// Uso anónimo (opt-in): se pregunta una sola vez, apagado por defecto.
+    private let needsPrivacy = Telemetry.isConfigured && !AppSettings.load().hasAnsweredAnalyticsPrompt
+    var shareUsage = false
+    /// La vista lo completa: dispara el pedido del sistema (así Enter hace lo mismo que el botón).
+    var requestPermission: (() -> Void)?
 
     let steps: [TutorialStep]
 
@@ -123,7 +135,28 @@ final class TutorialModel {
         }
     }
 
+    /// Termina el recorrido (al final, al saltear o con «Manos a la obra»): sigue con la configuración que falte.
     func close() {
+        switch phase {
+        case .permission:
+            if needsPrivacy { phase = .privacy } else { finish() }
+        case .privacy:
+            finish()
+        default:
+            if needsPermission { phase = .permission }
+            else if needsPrivacy { phase = .privacy }
+            else { finish() }
+        }
+    }
+
+    func finish() {
+        if needsPrivacy, phase == .privacy {
+            var settings = AppSettings.load()
+            settings.analyticsEnabled = shareUsage
+            settings.hasAnsweredAnalyticsPrompt = true
+            settings.save()
+            Telemetry.consentChanged()
+        }
         onClose?()
     }
 

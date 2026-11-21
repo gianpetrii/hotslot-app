@@ -56,7 +56,6 @@ final class AppState {
     var isPanelVisible = false
     var panelBodyRevealed = false
     var openSettings: (() -> Void)?
-    var openOnboarding: (() -> Void)?
     /// Tutorial de primera vez (también desde Ajustes › Ayuda).
     var openTutorial: (() -> Void)?
     /// Pestaña a abrir la próxima vez que se muestren Ajustes (p. ej. tras el tour).
@@ -72,7 +71,7 @@ final class AppState {
     /// Sube para pedir a los editores inline que cierren (`inlineEditShouldSave`).
     var inlineEditSession = 0
     var inlineEditShouldSave = true
-    /// Ventana delante de la cual mostrar el aviso de Accesibilidad (onboarding / ajustes).
+    /// Ventana delante de la cual mostrar el aviso de Accesibilidad (tutorial / ajustes).
     weak var accessibilityPresentingWindow: NSWindow?
     /// Ajustes se cierra al perder el foco; mientras dura un aviso del sistema o una página externa no.
     var settingsAutoCloseSuppressedUntil = Date.distantPast
