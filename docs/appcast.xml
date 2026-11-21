@@ -3,6 +3,14 @@
     <channel>
         <title>Slots</title>
         <item>
+            <title>1.3.2</title>
+            <pubDate>Sat, 21 Nov 2026 18:00:00 -0300</pubDate>
+            <sparkle:version>38</sparkle:version>
+            <sparkle:shortVersionString>1.3.2</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/gianpetrii/hotslot-app/releases/download/v1.3.2/Slots-1.3.2.dmg" length="5759257" type="application/octet-stream" sparkle:edSignature="sVh5jqsGw2gOZWmpX1Uc4CJ0+RgkVLpQGF3BHM8l21DPSNEiN9GFcficB/KS9zf2//2HrYaeCz6Fk5gwlbUCAQ=="/>
+        </item>
+        <item>
             <title>1.3.1</title>
             <pubDate>Fri, 20 Nov 2026 09:25:00 -0300</pubDate>
             <sparkle:version>37</sparkle:version>
