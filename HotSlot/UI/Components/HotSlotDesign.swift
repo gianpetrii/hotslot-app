@@ -41,7 +41,6 @@ enum HotSlotDesign {
     static let slotTitleRowHeight: CGFloat = 46
     static let shortcutBadgeWidthRegular: CGFloat = 62
 
-    static let rowExpandAnimation = Animation.spring(response: 0.32, dampingFraction: 0.92)
     static let titleEditAnimation = Animation.easeInOut(duration: 0.22)
 
     static let openDuration: TimeInterval = 0.16
@@ -110,12 +109,6 @@ extension View {
     func slotsHoverLift(_ isActive: Bool, scales: Bool = false) -> some View {
         modifier(SlotsHoverLift(isActive: isActive, scales: scales))
     }
-}
-
-/// Tipografía alineada al Clipboard de macOS (SF Pro).
-enum HotSlotTypography {
-    static let searchField = Font.system(size: 15, weight: .regular)
-    static let rowSecondary = Font.system(size: 11, weight: .regular)
 }
 
 /// Contenedor del panel con material nativo.

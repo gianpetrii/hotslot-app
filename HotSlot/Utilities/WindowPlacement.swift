@@ -57,12 +57,4 @@ enum WindowPlacement {
         }, completionHandler: completion)
     }
 
-    static func fadeOut(_ window: NSWindow, duration: TimeInterval = 0.18, completion: @escaping () -> Void) {
-        NSAnimationContext.runAnimationGroup({ context in
-            context.duration = duration
-            context.timingFunction = CAMediaTimingFunction(name: .easeIn)
-            context.allowsImplicitAnimation = false
-            window.animator().alphaValue = 0
-        }, completionHandler: completion)
-    }
 }
