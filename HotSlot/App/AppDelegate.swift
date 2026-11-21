@@ -11,6 +11,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     var appState: AppState?
     let settingsWindowController = SettingsWindowController()
     let tutorialWindowController = TutorialWindowController()
+    let accountWindowController = AccountWindowController()
     private var updaterController: SPUStandardUpdaterController?
     private var shouldReopenPanelAfterUtility = false
     private var shouldPresentPanelAfterLaunch = false
@@ -35,6 +36,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         migrateHotkeysIfNeeded()
         NSApp.appearance = NSAppearance(named: .aqua)
         let state = AppState()
+        state.account.start()
         let panel = PanelController(appState: state)
         let developerActions = StatusBarDeveloperActions()
         developerActions.appState = state
@@ -71,6 +73,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         state.openTutorial = { [weak self] in
             self?.presentTutorial()
+        }
+        state.openAccount = { [weak self] in
+            guard let self, let state = self.appState else { return }
+            self.accountWindowController.show(appState: state, isFirstRun: false)
         }
         state.bootstrap(panelController: panel)
         applyLaunchAtLoginSetting()
@@ -190,6 +196,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self.tutorialWindowController.show(appState: state) { [weak self] in
                 guard let self else { return }
                 var settings = AppSettings.load()
+                let wasFirstRun = !settings.tutorialVisto
                 settings.tutorialVisto = true
                 settings.hasCompletedOnboarding = true
                 settings.hasSeenMenuBarHint = true
@@ -201,6 +208,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 state.focusTracker.captureForUpcomingPaste()
                 self.panelController?.show()
                 state.isPanelVisible = true
+                // Solo la primera vez: se ofrece crear la cuenta, sin obligar (se puede cerrar con «Ahora no»).
+                if wasFirstRun, !state.account.isSignedIn {
+                    self.accountWindowController.show(appState: state, isFirstRun: true)
+                }
             }
         }
         if settingsWindowController.isVisible {

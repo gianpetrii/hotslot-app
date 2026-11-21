@@ -12,12 +12,14 @@ enum SettingsTab: Int {
     case hotkeys = 0
     case general = 2
     case permissions = 3
+    case account = 4
 
     var title: String {
         switch self {
         case .general: "General"
         case .hotkeys: "Atajos"
         case .permissions: "Permisos"
+        case .account: "Cuenta"
         }
     }
 }
@@ -58,6 +60,9 @@ final class AppState {
     var openSettings: (() -> Void)?
     /// Tutorial de primera vez (también desde Ajustes › Ayuda).
     var openTutorial: (() -> Void)?
+    /// Cuenta de Slots (Firebase Auth) y la pantalla para iniciar sesión.
+    let account = AccountService()
+    var openAccount: (() -> Void)?
     /// Pestaña a abrir la próxima vez que se muestren Ajustes (p. ej. tras el tour).
     var pendingSettingsTab: SettingsTab?
     /// Versión nueva encontrada en segundo plano. Sparkle no la muestra sola en apps de barra de menú.

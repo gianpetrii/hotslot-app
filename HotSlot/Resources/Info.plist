@@ -71,5 +71,17 @@
 			<dict/>
 		</dict>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- Google Sign-In vuelve a la app por este esquema (REVERSED_CLIENT_ID de GoogleService-Info.plist). -->
+				<string>com.googleusercontent.apps.795096193381-tk4amkdlo7jja1p28vgt4jb03juvm0f1</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

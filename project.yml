@@ -16,6 +16,12 @@ packages:
   TelemetryDeck:
     url: https://github.com/TelemetryDeck/SwiftSDK
     from: 2.14.0
+  Firebase:
+    url: https://github.com/firebase/firebase-ios-sdk
+    from: 12.0.0
+  GoogleSignIn:
+    url: https://github.com/google/GoogleSignIn-iOS
+    from: 9.0.0
 
 settings:
   base:
@@ -52,12 +58,21 @@ targets:
         com.apple.developer.icloud-services:
           - CloudKit
         com.apple.developer.aps-environment: development
+        com.apple.developer.applesignin:
+          - Default
+        # Firebase Auth guarda la sesión en el llavero de datos protegidos: sin este grupo falla con -34018.
+        keychain-access-groups:
+          - $(AppIdentifierPrefix)com.hotslot.app
     dependencies:
       - package: KeyboardShortcuts
       - package: Sparkle
         product: Sparkle
       - package: TelemetryDeck
         product: TelemetryDeck
+      - package: Firebase
+        product: FirebaseAuth
+      - package: GoogleSignIn
+        product: GoogleSignIn
     preBuildScripts:
       - name: Strip Quarantine (Resources)
         basedOnDependencyAnalysis: false

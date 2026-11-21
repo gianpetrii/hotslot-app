@@ -20,6 +20,12 @@ struct SettingsView: View {
     @State private var licensed = Entitlements.hasFullAccess
 
     @State private var showClearHistoryConfirmation = false
+    @State private var showSignOutConfirmation = false
+    @State private var showDeleteAccountConfirmation = false
+    @State private var accountBusy = false
+
+    /// La pestaña Cuenta solo aparece si Firebase está configurado.
+    private static var visibleTabs: [SettingsTab] { [.general, .hotkeys, .permissions, .account] }
 
     var body: some View {
         HStack(alignment: .top, spacing: 24) {
@@ -39,6 +45,8 @@ struct SettingsView: View {
                         HotkeysSettingsView()
                     case .permissions:
                         permissionsTab
+                    case .account:
+                        accountTab
                     }
                 }
                 .id("tab-\(selectedTab.rawValue)")
@@ -81,7 +89,7 @@ struct SettingsView: View {
     private var sidebar: some View {
         VStack(alignment: .leading, spacing: 6) {
             Spacer().frame(height: 6)
-            ForEach([SettingsTab.general, .hotkeys, .permissions], id: \.self) { tab in
+            ForEach(Self.visibleTabs, id: \.self) { tab in
                 SettingsSidebarItem(
                     title: tab.title,
                     isSelected: selectedTab == tab,
@@ -363,6 +371,109 @@ struct SettingsView: View {
                 proxy.scrollTo("settings-license", anchor: .top)
             }
         }
+    }
+
+    // MARK: Cuenta
+
+    private var accountTab: some View {
+        let account = appState.account
+        return ScrollView {
+            VStack(alignment: .leading, spacing: 27) {
+                SettingsSection {
+                    SettingsCard {
+                        if let profile = account.profile {
+                            SettingsRow(title: profile.email ?? "Cuenta de Slots", detail: "Conectada con \(profile.provider.title)") {
+                                SettingsPillButton(title: "Cerrar sesión") { showSignOutConfirmation = true }
+                            }
+                        } else {
+                            SettingsRow(
+                                title: "Sin sesión iniciada",
+                                detail: "Iniciá sesión para tener tu cuenta de Slots. Más adelante vas a poder guardar tu licencia ahí y sincronizar con el iPhone."
+                            ) {
+                                SettingsPillButton(title: "Iniciar sesión", kind: .primary) {
+                                    appState.suppressSettingsAutoClose(for: 600)
+                                    appState.openAccount?()
+                                }
+                                .disabled(!account.isConfigured)
+                            }
+                        }
+                        SettingsRow(
+                            title: "Sincronización",
+                            detail: "Próximamente. Vas a necesitar una cuenta.",
+                            disabled: true
+                        ) {
+                            SettingsSwitch(isOn: .constant(false))
+                        }
+                    }
+                }
+
+                if account.profile != nil {
+                    SettingsSection("Zona de cuidado") {
+                        SettingsCard {
+                            SettingsRow(
+                                title: "Eliminar cuenta",
+                                detail: "Borra tu cuenta y sus datos en la nube. No borra los slots de esta Mac.",
+                                destructive: true
+                            ) {
+                                SettingsPillButton(title: accountBusy ? "Eliminando…" : "Eliminar") {
+                                    showDeleteAccountConfirmation = true
+                                }
+                                .disabled(accountBusy)
+                            }
+                        }
+                    }
+                }
+            }
+            .padding(.bottom, 8)
+        }
+        .scrollIndicators(.hidden)
+        .confirmationDialog("¿Cerrar sesión?", isPresented: $showSignOutConfirmation, titleVisibility: .visible) {
+            Button("Cerrar sesión") { appState.account.signOut() }
+            Button("Cancelar", role: .cancel) {}
+        } message: {
+            Text("Tus slots siguen en esta Mac.")
+        }
+        .confirmationDialog("¿Eliminar tu cuenta?", isPresented: $showDeleteAccountConfirmation, titleVisibility: .visible) {
+            Button("Eliminar cuenta", role: .destructive) { deleteAccount() }
+            Button("Cancelar", role: .cancel) {}
+        } message: {
+            Text("Se borra tu cuenta y sus datos en la nube. No se puede deshacer. Tus slots en esta Mac no se tocan.")
+        }
+    }
+
+    private func deleteAccount() {
+        guard let profile = appState.account.profile else { return }
+        var password: String?
+        if profile.provider == .email {
+            password = Self.askPassword()
+            guard password != nil else { return }
+        }
+        accountBusy = true
+        appState.suppressSettingsAutoClose(for: 600)
+        Task {
+            defer { accountBusy = false }
+            do {
+                try await appState.account.deleteAccount(password: password, presenting: NSApp.keyWindow)
+                appState.showToast("Cuenta eliminada")
+            } catch let failure as AccountService.Failure {
+                if !failure.message.isEmpty { appState.showToast(failure.message) }
+            } catch {
+                appState.showToast("No se pudo eliminar la cuenta. Probá de nuevo.")
+            }
+        }
+    }
+
+    /// Para confirmar la identidad de una cuenta con email, Firebase pide la contraseña.
+    private static func askPassword() -> String? {
+        let alert = NSAlert()
+        alert.messageText = "Confirmá tu contraseña"
+        alert.informativeText = "Por seguridad, escribí tu contraseña para eliminar la cuenta."
+        let field = NSSecureTextField(frame: NSRect(x: 0, y: 0, width: 260, height: 24))
+        alert.accessoryView = field
+        alert.addButton(withTitle: "Eliminar cuenta")
+        alert.addButton(withTitle: "Cancelar")
+        alert.window.initialFirstResponder = field
+        return alert.runModal() == .alertFirstButtonReturn ? field.stringValue : nil
     }
 
     private var permissionsTab: some View {
