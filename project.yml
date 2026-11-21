@@ -131,6 +131,16 @@ targets:
         # Avisos silenciosos de CloudKit para sincronizar en segundo plano.
         UIBackgroundModes:
           - remote-notification
+        # Tipos de arrastre internos (slot y biblioteca): iOS pide declararlos.
+        UTExportedTypeDeclarations:
+          - UTTypeIdentifier: com.hotslot.app.slot-drag
+            UTTypeDescription: Slot de Slots
+            UTTypeConformsTo:
+              - public.data
+          - UTTypeIdentifier: com.hotslot.app.library-drag
+            UTTypeDescription: Biblioteca de Slots
+            UTTypeConformsTo:
+              - public.data
         # Los widgets abren la app en una biblioteca: hotslot://library/<id>.
         CFBundleURLTypes:
           - CFBundleURLName: com.hotslot.app

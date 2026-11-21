@@ -316,7 +316,7 @@ struct SlotsScreen: View {
             VStack(spacing: SlotsSpace.s) {
                 Image(systemName: "plus")
                     .font(.system(size: 18, weight: .medium))
-                Text(isTarget ? "Soltá para crear el slot" : "Nuevo slot")
+                Text(isTarget ? "Soltá para mover al final" : "Nuevo slot")
                     .slotsText(15)
                     .multilineTextAlignment(.center)
             }

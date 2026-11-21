@@ -19,11 +19,18 @@ struct Library: Codable, Identifiable, Equatable, Sendable {
     var updatedAt: Date
 
     static func defaults(now: Date = Date()) -> [Library] {
-        [
+        #if os(iOS)
+        // iPhone: sin bibliotecas de ejemplo. Hace falta una para guardar slots; la persona la renombra o crea las suyas.
+        return [
+            Library(id: UUID(uuidString: "A1000000-0000-4000-8000-000000000001")!, name: "Mis slots", order: 0, createdAt: now, updatedAt: now),
+        ]
+        #else
+        return [
             Library(id: UUID(uuidString: "A1000000-0000-4000-8000-000000000001")!, name: "Trabajo", order: 0, createdAt: now, updatedAt: now),
             Library(id: UUID(uuidString: "A1000000-0000-4000-8000-000000000002")!, name: "Personal", order: 1, createdAt: now, updatedAt: now),
             Library(id: UUID(uuidString: "A1000000-0000-4000-8000-000000000003")!, name: "Clientes", order: 2, createdAt: now, updatedAt: now),
         ]
+        #endif
     }
 }
 

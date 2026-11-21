@@ -66,6 +66,16 @@ struct WidgetPageIntent: AppIntent {
     }
 }
 
+/// Intención vacía: absorbe el toque en una flecha apagada.
+struct WidgetNoopIntent: AppIntent {
+    static let title: LocalizedStringResource = "Sin acción"
+    static let isDiscoverable = false
+
+    init() {}
+
+    func perform() async throws -> some IntentResult { .result() }
+}
+
 struct SlotsProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> SlotsEntry { Self.sample }
 
@@ -139,7 +149,7 @@ struct SlotsProvider: AppIntentTimelineProvider {
 
 /// Widget de inicio y de pantalla de bloqueo con los slots de una biblioteca. Tocar uno lo copia.
 struct SlotsWidget: Widget {
-    static let kind = "com.hotslot.app.ios.widget.slots"
+    nonisolated static let kind = "com.hotslot.app.ios.widget.slots"
 
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: Self.kind, intent: SelectLibraryIntent.self, provider: SlotsProvider()) { entry in
@@ -215,6 +225,11 @@ struct SlotsWidgetView: View {
                     .lineLimit(1)
                 Spacer(minLength: 0)
                 if pageCount > 1 {
+                    // El número de página cambia con cada toque: confirma que la flecha respondió.
+                    Text("\(page + 1)/\(pageCount)")
+                        .font(.custom("InterTight-Medium", fixedSize: 12))
+                        .foregroundStyle(Color(slotsHex: 0x5E5A56))
+                        .contentTransition(.numericText())
                     pageButton("chevron.left", target: page - 1, enabled: page > 0)
                     pageButton("chevron.right", target: page + 1, enabled: page < pageCount - 1)
                 }
@@ -253,22 +268,28 @@ struct SlotsWidgetView: View {
                     }
                 }
                 .id(page)
-                .transition(.opacity)
+                .transition(.push(from: entry.direction >= 0 ? .trailing : .leading))
                 Spacer(minLength: 0)
             }
         }
     }
 
+    /// Flecha de página. Sin página de ese lado se ve apagada y el toque no hace nada (tampoco abre la app).
+    @ViewBuilder
     private func pageButton(_ symbol: String, target: Int, enabled: Bool) -> some View {
-        Button(intent: WidgetPageIntent(key: pageKey, page: target)) {
-            Image(systemName: symbol)
-                .font(.system(size: 11, weight: .bold))
-                .foregroundStyle(Color(slotsHex: 0x111111).opacity(enabled ? 1 : 0.25))
-                .frame(width: 26, height: 22)
-                .background(.white, in: Capsule())
+        let label = Image(systemName: symbol)
+            .font(.system(size: 11, weight: .bold))
+            .foregroundStyle(Color(slotsHex: 0x111111).opacity(enabled ? 1 : 0.25))
+            .frame(width: 26, height: 22)
+            .background(.white, in: Capsule())
+        if enabled {
+            Button(intent: WidgetPageIntent(key: pageKey, page: target)) { label }
+                .buttonStyle(.plain)
+        } else {
+            // Un botón que no hace nada: así el toque no cae en el enlace que abre la app.
+            Button(intent: WidgetNoopIntent()) { label }
+                .buttonStyle(.plain)
         }
-        .buttonStyle(.plain)
-        .disabled(!enabled)
     }
 
     @ViewBuilder

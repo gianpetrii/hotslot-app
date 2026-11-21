@@ -56,8 +56,8 @@ struct SlotCardView: View {
                         .background(usesLightContent ? Color.white.opacity(0.9) : SlotsColor.botonSecundario, in: Circle())
                         .overlay { Circle().strokeBorder(SlotsColor.linea, lineWidth: isEmpty ? 1 : 0) }
                 }
-                // En modo Editar no se repite el tipo y el detalle: ya se ven en la vista normal.
-                if isEmpty || !showsHandle {
+                // En modo Editar no se repite el tipo y el detalle (ni el número de un slot vacío): ya se ven en la vista normal.
+                if !showsHandle {
                     Text(isEmpty ? "Slot \(slot.order)" : "\(SlotCardText.kindLabel(slot))\n\(SlotCardText.detail(slot))")
                         .slotsText(12, lineHeight: 1.2)
                         .foregroundStyle(secondary)

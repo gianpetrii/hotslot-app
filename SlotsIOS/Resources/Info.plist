@@ -53,5 +53,28 @@
 	</array>
 	<key>UIUserInterfaceStyle</key>
 	<string>Light</string>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Slot de Slots</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.hotslot.app.slot-drag</string>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Biblioteca de Slots</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.hotslot.app.library-drag</string>
+		</dict>
+	</array>
 </dict>
 </plist>
