@@ -851,11 +851,6 @@ private struct SlotCardView: View {
         return SlotsPalette.isBrandGradient(backgroundHex) || isImageContent
     }
 
-    private var colorSwatch: Color? {
-        guard case .text(let string) = slot.content else { return nil }
-        return SlotCardCopy.colorFromHex(string.trimmingCharacters(in: .whitespacesAndNewlines))
-    }
-
     private var isDarkCard: Bool {
         guard case .text(let string) = slot.content else { return false }
         return SlotCardCopy.isHexColor(string.trimmingCharacters(in: .whitespacesAndNewlines))

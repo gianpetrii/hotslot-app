@@ -120,11 +120,6 @@ struct OnboardingView: View {
                 onboardingShortcutsSummary
             } else if item.demo == .privacy {
                 privacyBlock
-            } else if item.demo == .menuBar {
-                menuBarBlock
-            } else {
-                onboardingDemo(for: item.demo)
-                    .padding(.horizontal, 4)
             }
 
             if item.hint != nil, item.demo != .accessibility {
@@ -168,24 +163,6 @@ struct OnboardingView: View {
                 .font(SlotsFont.textoUI)
                 .foregroundStyle(SlotsColor.textoTerciario)
         }
-    }
-
-    private var menuBarBlock: some View {
-        VStack(spacing: 14) {
-            Image(systemName: "menubar.rectangle")
-                .font(.system(size: 32, weight: .medium))
-                .foregroundStyle(.secondary)
-                .frame(width: 64, height: 64)
-                .background {
-                    RoundedRectangle(cornerRadius: HotSlotDesign.cardCornerRadius, style: .continuous)
-                        .fill(Color.primary.opacity(0.07))
-                }
-
-            OnboardingChromeButton(title: "Cómo mantener \(BrandDisplay.name) visible", emphasized: true) {
-                MenuBarGuide.present()
-            }
-        }
-        .padding(.top, 16)
     }
 
     /// Apagado por defecto: solo se enciende si la persona lo elige acá.

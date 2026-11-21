@@ -32,13 +32,6 @@ enum SlotCardCopy {
         }
     }
 
-    /// Texto inicial al renombrar (lo que ve el usuario en la card, en una línea).
-    static func editableTitle(for slot: Slot) -> String {
-        displayTitle(for: slot)
-            .replacingOccurrences(of: "\n", with: " ")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-
     static func slotLabelDisplay(for slot: Slot) -> String {
         let label = slot.label.trimmingCharacters(in: .whitespacesAndNewlines)
         if !label.isEmpty, label != "Slot \(slot.index)" {
@@ -103,11 +96,6 @@ enum SlotCardCopy {
         return label.isEmpty ? unnamedTitle(for: slot) : label
     }
 
-    static func emptySubhint(slotIndex: Int) -> String? {
-        guard slotIndex == 5 else { return nil }
-        return "o guardá con ⌘⌃W"
-    }
-
     static func emptyHint(slotIndex: Int) -> String {
         // Del 6 en adelante no hay atajo para guardar.
         guard slotIndex <= SlotStore.slotCount else { return "Soltá algo acá" }
@@ -129,11 +117,4 @@ enum SlotCardCopy {
         return trimmed.hasPrefix("#") ? trimmed.uppercased() : "#\(trimmed.uppercased())"
     }
 
-    static func colorFromHex(_ string: String) -> Color? {
-        guard isHexColor(string) else { return nil }
-        var hex = string.trimmingCharacters(in: .whitespacesAndNewlines)
-        if hex.hasPrefix("#") { hex.removeFirst() }
-        guard let value = UInt32(hex, radix: 16) else { return nil }
-        return Color(slotsHex: value)
-    }
 }

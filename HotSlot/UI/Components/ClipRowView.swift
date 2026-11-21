@@ -9,7 +9,6 @@ struct ClipRowView: View {
     let item: ClipItem
     var layout: ClipRowLayout = .standard
     var isKeyboardHighlighted: Bool = false
-    var isDemo: Bool = false
     let onPaste: () -> Void
     let onTogglePin: () -> Void
     @State private var isHovering = false
@@ -56,12 +55,11 @@ struct ClipRowView: View {
                         .contentShape(Rectangle())
                 }
                 .frame(maxWidth: .infinity, alignment: .topLeading)
-                .modifier(ClipRowInteractionModifier(isDemo: isDemo, item: item, onPaste: onPaste))
+                .modifier(ClipRowInteractionModifier(item: item, onPaste: onPaste))
             }
 
             if item.isPinned || isHovering {
                 PinButton(isPinned: item.isPinned, action: onTogglePin)
-                    .allowsHitTesting(!isDemo)
                     .padding(.top, 6)
                     .padding(.trailing, 4)
                     .transition(.asymmetric(
@@ -109,7 +107,6 @@ struct ClipRowView: View {
                 }
                 .buttonStyle(.plain)
                 .help(item.isPinned ? "Desfijar" : "Fijar arriba")
-                .allowsHitTesting(!isDemo)
                 .padding(.top, 4)
                 .padding(.trailing, 2)
                 .transition(.scale(scale: 0.88).combined(with: .opacity))
@@ -131,9 +128,8 @@ struct ClipRowView: View {
         .slotsHoverLift(isHovering && !copyFlash)
         // El arrastre cubre toda la fila, no solo el texto: antes, apretar sobre el margen no arrastraba.
         .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .modifier(ClipRowInteractionModifier(isDemo: isDemo, item: item, onPaste: onPaste, handlesTap: false))
+        .modifier(ClipRowInteractionModifier(item: item, onPaste: onPaste, handlesTap: false))
         .onTapGesture {
-            guard !isDemo else { return }
             var transaction = Transaction()
             transaction.disablesAnimations = true
             withTransaction(transaction) { copyFlash = true }
@@ -369,42 +365,37 @@ struct ClipRowView: View {
 }
 
 private struct ClipRowInteractionModifier: ViewModifier {
-    let isDemo: Bool
     let item: ClipItem
     let onPaste: () -> Void
     var handlesTap: Bool = true
     @State private var copyFlash = false
 
     func body(content: Content) -> some View {
-        if isDemo {
-            content
-        } else {
-            let row = content
-                .draggable(PanelDragPayload.historyItem(id: item.id)) {
-                    Text(item.content.previewText)
-                        .font(.system(size: 12, weight: .medium))
-                        .lineLimit(2)
-                        .padding(8)
-                        .frame(maxWidth: 180, alignment: .leading)
-                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-                }
-            if handlesTap {
-                row
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(SlotsColor.papel)
-                            .opacity(copyFlash ? 1 : 0)
-                            .allowsHitTesting(false)
-                    }
-                    .onTapGesture {
-                        var transaction = Transaction()
-                        transaction.disablesAnimations = true
-                        withTransaction(transaction) { copyFlash = true }
-                        onPaste()
-                    }
-            } else {
-                row
+        let row = content
+            .draggable(PanelDragPayload.historyItem(id: item.id)) {
+                Text(item.content.previewText)
+                    .font(.system(size: 12, weight: .medium))
+                    .lineLimit(2)
+                    .padding(8)
+                    .frame(maxWidth: 180, alignment: .leading)
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
             }
+        if handlesTap {
+            row
+                .overlay {
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(SlotsColor.papel)
+                        .opacity(copyFlash ? 1 : 0)
+                        .allowsHitTesting(false)
+                }
+                .onTapGesture {
+                    var transaction = Transaction()
+                    transaction.disablesAnimations = true
+                    withTransaction(transaction) { copyFlash = true }
+                    onPaste()
+                }
+        } else {
+            row
         }
     }
 }

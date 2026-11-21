@@ -23,9 +23,7 @@ enum SlotsColor {
     static let cardOscura = Color(slotsHex: 0x1C1C1C)
     static let textoSecundario = Color(slotsHex: 0x5E5A56)
     static let textoTerciario = Color(slotsHex: 0x3A3734)
-    static let textoSobreOscuro = Color(slotsHex: 0xB9B4AE)
     static let teclaFondo = Color(slotsHex: 0xF1EDE8)
-    static let linea = Color(slotsHex: 0xE6E3DF)
     static let vidrioTinte = Color(slotsHex: 0xF6F1EB, opacity: 0.58)
 }
 

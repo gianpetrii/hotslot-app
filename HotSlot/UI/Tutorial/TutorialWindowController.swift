@@ -57,44 +57,10 @@ final class TutorialWindowController: NSObject {
         NSApp.activate(ignoringOtherApps: true)
         tutorialWindow.makeKeyAndOrderFront(nil)
 
-        #if DEBUG
-        if let dir = UserDefaults.standard.string(forKey: "slotsTutorialSnapDir") {
-            runSnapshots(into: dir)
-        }
-        #endif
-
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             self?.handle(event) ?? event
         }
     }
-
-    #if DEBUG
-    /// Solo para revisar el diseño sin permiso de grabación de pantalla: guarda un PNG por pantalla del tutorial.
-    @MainActor
-    private func runSnapshots(into dir: String) {
-        try? FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
-        var shot = 0
-        func capture() {
-            guard let view = window?.contentView, let model else { return }
-            guard let rep = view.bitmapImageRepForCachingDisplay(in: view.bounds) else { return }
-            view.cacheDisplay(in: view.bounds, to: rep)
-            if let data = rep.representation(using: .png, properties: [:]) {
-                try? data.write(to: URL(fileURLWithPath: dir).appendingPathComponent(String(format: "%02d-%@.png", shot, "\(model.phase)".replacingOccurrences(of: " ", with: ""))))
-            }
-            shot += 1
-        }
-        func tick(_ delay: Double, _ action: @escaping () -> Void) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: action)
-        }
-        tick(0.9) { capture() }                // bienvenida
-        tick(2.6) { capture() }                // pop-up
-        tick(3.0) { self.model?.next() }
-        for step in 0..<9 {
-            tick(3.9 + Double(step) * 0.9) { capture(); self.model?.next() }
-        }
-        tick(13.5) { capture() }
-    }
-    #endif
 
     /// Enter y → avanzan, ← vuelve, Esc salta.
     private func handle(_ event: NSEvent) -> NSEvent? {

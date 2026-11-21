@@ -38,8 +38,6 @@ enum TutorialPhase: Hashable {
 @MainActor
 final class TutorialModel {
     var phase: TutorialPhase = .welcome
-    /// Marcos de los elementos, relativos a la esquina superior izquierda del panel de muestra.
-    var frames: [TutorialTarget: CGRect] = [:]
 
     /// Cierra el tutorial (al terminar, al saltear o con «Manos a la obra»).
     var onClose: (() -> Void)?

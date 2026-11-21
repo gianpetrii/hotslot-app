@@ -6,7 +6,6 @@ import SwiftUI
 enum HotSlotDesign {
     static let panelWidth: CGFloat = 1060
     static let panelHeight: CGFloat = 664
-    static let panelFooterHeight: CGFloat = SlotsRadius.controlAlto
     /// Pista bajo el panel (handoff: fuera de la tarjeta de vidrio).
     static let panelHintOutsideGap: CGFloat = 12
     static let panelHintOutsideHeight: CGFloat = 22
@@ -21,45 +20,25 @@ enum HotSlotDesign {
     static let historyColumnWidth: CGFloat = 330
     /// Altura aproximada de cabecera (animación de apertura); el layout usa tamaño intrínseco + `panelSectionGap`.
     static let panelHeaderHeight: CGFloat = 112
-    /// Referencia para demos; el panel usa `maxHeight: .infinity` entre secciones.
-    static var panelBodyHeight: CGFloat {
-        panelHeight
-            - panelHeaderHeight
-            - panelFooterHeight
-            - panelSectionGap * 2
-    }
     /// Alineación óptica entre grilla e historial (misma línea superior de columna).
     static let panelColumnTopInset: CGFloat = 2
     static let panelSearchFieldWidth: CGFloat = 300
     static let cornerRadius: CGFloat = SlotsRadius.ventana
     static let cardCornerRadius: CGFloat = SlotsRadius.card
-    static let rowCornerRadius: CGFloat = 10
     static let horizontalPadding: CGFloat = SlotsSpace.paddingPanel
-    static let sectionSpacing: CGFloat = 10
-    static let thumbnailSize: CGFloat = 44
     static let thumbnailCornerRadius: CGFloat = 8
     static let rowHeight: CGFloat = 52
     static let imageRowPreviewWidth: CGFloat = 128
     static let imageRowPreviewHeight: CGFloat = 76
-    static let imageRowPreviewHeightExpanded: CGFloat = 148
     static let imageRowPreviewMaxExpandedHeight: CGFloat = 240
     static let textRowPreviewHeight: CGFloat = 48
     static let textRowPreviewHeightExpanded: CGFloat = 176
     static let hoverExpandDelay: TimeInterval = 0.42
-    static let slotPeekWidth: CGFloat = 268
-    static let slotPeekImageHeight: CGFloat = 168
-    static let slotPeekMaxTextHeight: CGFloat = 220
-    static let slotPeekHideDelay: TimeInterval = 0.18
-    static let slotOverlayControlSize: CGFloat = 22
     /// Altura visual compartida: «Slot N», atajo y cruz en la card.
     static let slotHeaderChipHeight: CGFloat = 20
     static let slotHeaderChipMinWidth: CGFloat = 28
     /// Altura fija de la fila del título en cards (evita saltos al editar / lápiz).
     static let slotTitleRowHeight: CGFloat = 46
-    static let slotOverlayIconSize: CGFloat = 10
-    static let slotOverlayCornerRadius: CGFloat = 6
-    /// Ancho fijo del badge de atajo (evita que el popover se mueva al grabar/borrar).
-    static let shortcutBadgeWidthCompact: CGFloat = 54
     static let shortcutBadgeWidthRegular: CGFloat = 62
     static let onboardingWidth: CGFloat = 520
     static let onboardingHeight: CGFloat = 600
@@ -71,14 +50,8 @@ enum HotSlotDesign {
     static let closeDuration: TimeInterval = 0.16
     static let springTiming = CAMediaTimingFunction(controlPoints: 0.22, 1.0, 0.36, 1.0)
     static let closeTiming = CAMediaTimingFunction(controlPoints: 0.4, 0.0, 0.6, 1.0)
-    /// Expandir a la derecha (cuadrado → barra de búsqueda).
-    static let openRightTiming = CAMediaTimingFunction(controlPoints: 0.16, 1.18, 0.28, 1.0)
-    /// Expandir hacia abajo (barra → panel completo).
-    static let openDownTiming = CAMediaTimingFunction(controlPoints: 0.2, 1.08, 0.32, 1.0)
     static let openRightDuration: TimeInterval = 0.08
-    static let openDownDuration: TimeInterval = 0.18
 
-    static let openScaleInset: CGFloat = 20
     static let closeScaleInset: CGFloat = 14
     static let openSlideOffset: CGFloat = 28
     static let closeSlideOffset: CGFloat = 16
@@ -144,10 +117,7 @@ extension View {
 /// Tipografía alineada al Clipboard de macOS (SF Pro).
 enum HotSlotTypography {
     static let searchField = Font.system(size: 15, weight: .regular)
-    static let sectionTitle = Font.system(size: 11, weight: .semibold)
-    static let rowPrimary = Font.system(size: 13, weight: .regular)
     static let rowSecondary = Font.system(size: 11, weight: .regular)
-    static let slotShortcut = Font.system(size: 9, weight: .medium)
 }
 
 /// Contenedor del panel con material nativo.
@@ -184,45 +154,6 @@ struct PanelChrome<Content: View>: View {
         }
         .frame(width: HotSlotDesign.panelWidth, height: HotSlotDesign.panelHeight, alignment: .topLeading)
         .contentShape(shape)
-    }
-}
-
-/// Título de sección discreto.
-struct SectionHeader: View {
-    let title: String
-
-    var body: some View {
-        Text(title.uppercased())
-            .font(SlotsFont.etiqueta)
-            .foregroundStyle(SlotsColor.textoSecundario)
-            .tracking(0.6)
-            .padding(.horizontal, HotSlotDesign.horizontalPadding)
-    }
-}
-
-/// Botón circular de acción en filas (estilo Clipboard).
-struct RowActionButton: View {
-    let systemImage: String
-    let action: () -> Void
-    @State private var isHovering = false
-
-    var body: some View {
-        Button(action: action) {
-            Image(systemName: systemImage)
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(.secondary)
-                .frame(width: 28, height: 28)
-                .background {
-                    Circle()
-                        .fill(Color.primary.opacity(isHovering ? 0.1 : 0.06))
-                        .overlay {
-                            Circle()
-                                .strokeBorder(Color.white.opacity(0.08), lineWidth: 0.5)
-                        }
-                }
-        }
-        .buttonStyle(.plain)
-        .onHover { isHovering = $0 }
     }
 }
 

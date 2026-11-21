@@ -60,16 +60,6 @@ enum ClipContent: Codable, Equatable, Sendable {
         }
     }
 
-    var imageURL: URL? {
-        guard case .image(let fileName) = self else { return nil }
-        return AppSupportDirectory.images.appendingPathComponent(fileName)
-    }
-
-    var isText: Bool {
-        if case .text = self { return true }
-        return false
-    }
-
     func matchesSearch(_ query: String) -> Bool {
         let q = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !q.isEmpty else { return true }

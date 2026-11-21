@@ -124,9 +124,6 @@ final class PasteService {
         return paste(content: content, targetApp: focusTracker.pasteDestination(), slotIndex: index)
     }
 
-    func pasteFromHistory(item: ClipItem, focusTracker: FocusTracker) -> PasteResult {
-        paste(content: item.content, targetApp: focusTracker.pasteDestination())
-    }
 }
 
 enum HIDKeystroke {

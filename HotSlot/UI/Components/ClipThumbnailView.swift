@@ -92,39 +92,4 @@ struct ClipThumbnailView: View {
         }
     }
 
-    private var rowPreviewWidth: CGFloat? {
-        switch style {
-        case .row: return HotSlotDesign.imageRowPreviewWidth
-        case .peek: return HotSlotDesign.slotPeekWidth
-        case .slot: return nil
-        }
-    }
-
-    private var rowPreviewHeight: CGFloat? {
-        switch style {
-        case .row: return HotSlotDesign.imageRowPreviewHeight
-        case .peek: return HotSlotDesign.slotPeekImageHeight
-        case .slot: return nil
-        }
-    }
-}
-
-/// Ícono de documento para clips de texto (sin renderizar el texto como imagen).
-struct TextClipIcon: View {
-    var size: CGFloat = HotSlotDesign.thumbnailSize
-
-    var body: some View {
-        Image(systemName: "doc.text")
-            .font(.system(size: size * 0.4, weight: .regular))
-            .foregroundStyle(.secondary)
-            .frame(width: size, height: size)
-            .background {
-                RoundedRectangle(cornerRadius: HotSlotDesign.thumbnailCornerRadius, style: .continuous)
-                    .fill(Color.primary.opacity(0.05))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: HotSlotDesign.thumbnailCornerRadius, style: .continuous)
-                            .strokeBorder(Color.black.opacity(0.08), lineWidth: 0.5)
-                    }
-            }
-    }
 }

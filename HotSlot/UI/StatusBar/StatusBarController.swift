@@ -196,7 +196,7 @@ final class StatusBarController {
     }
 
     @objc private func openTour() {
-        appState.openOnboarding?()
+        appState.openTutorial?()
     }
 
     @objc private func checkForUpdates() {

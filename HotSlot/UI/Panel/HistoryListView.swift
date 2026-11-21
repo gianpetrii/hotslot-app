@@ -7,7 +7,6 @@ struct HistoryListView: View {
     let isSearching: Bool
     let onPaste: (ClipItem) -> Void
     @Binding var keyboardHighlightIndex: Int?
-    var isDemo: Bool = false
 
     private let listAnimation = Animation.spring(response: 0.34, dampingFraction: 0.82)
     /// Margen para que la sombra del hover no se corte en el borde de la lista.
@@ -54,7 +53,6 @@ struct HistoryListView: View {
                                     item: item,
                                     layout: .panelHandoff(isFirst: offset == 0),
                                     isKeyboardHighlighted: keyboardHighlightIndex == offset,
-                                    isDemo: isDemo,
                                     onPaste: { onPaste(item) },
                                     onTogglePin: {
                                         withAnimation(listAnimation) {
@@ -66,7 +64,6 @@ struct HistoryListView: View {
                                 .padding(.vertical, 2)
                                 .id(item.id)
                                 .modifier(HistoryRowChromeModifier(
-                                    isDemo: isDemo,
                                     item: item,
                                     isSearching: isSearching,
                                     historyStore: historyStore,
@@ -125,7 +122,6 @@ struct HistoryListView: View {
 }
 
 private struct HistoryRowChromeModifier: ViewModifier {
-    let isDemo: Bool
     let item: ClipItem
     let isSearching: Bool
     @Bindable var historyStore: HistoryStore
@@ -134,32 +130,28 @@ private struct HistoryRowChromeModifier: ViewModifier {
     private let listAnimation = Animation.spring(response: 0.34, dampingFraction: 0.82)
 
     func body(content: Content) -> some View {
-        if isDemo {
-            content
-        } else {
-            content
-                .contextMenu {
-                    Button(item.isPinned ? "Desfijar" : "Fijar arriba") {
-                        withAnimation(listAnimation) {
-                            historyStore.togglePin(id: item.id)
-                        }
-                    }
-                    Button(AppSettings.load().clickItemAction == .copyToClipboard ? "Copiar" : "Pegar", action: onPaste)
-                    Button("Eliminar", role: .destructive) {
-                        withAnimation(listAnimation) {
-                            historyStore.remove(id: item.id)
-                        }
+        content
+            .contextMenu {
+                Button(item.isPinned ? "Desfijar" : "Fijar arriba") {
+                    withAnimation(listAnimation) {
+                        historyStore.togglePin(id: item.id)
                     }
                 }
-                .onDrop(of: [UTType.hotslotPanelDrag], isTargeted: nil) { providers in
-                    guard !isSearching else { return false }
-                    return HistoryListView.acceptHistoryDrop(providers) { sourceID in
-                        withAnimation(listAnimation) {
-                            historyStore.moveItem(id: sourceID, before: item.id)
-                        }
+                Button(AppSettings.load().clickItemAction == .copyToClipboard ? "Copiar" : "Pegar", action: onPaste)
+                Button("Eliminar", role: .destructive) {
+                    withAnimation(listAnimation) {
+                        historyStore.remove(id: item.id)
                     }
                 }
-        }
+            }
+            .onDrop(of: [UTType.hotslotPanelDrag], isTargeted: nil) { providers in
+                guard !isSearching else { return false }
+                return HistoryListView.acceptHistoryDrop(providers) { sourceID in
+                    withAnimation(listAnimation) {
+                        historyStore.moveItem(id: sourceID, before: item.id)
+                    }
+                }
+            }
     }
 }
 

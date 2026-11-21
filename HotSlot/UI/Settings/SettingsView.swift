@@ -68,11 +68,6 @@ struct SettingsView: View {
                 .allowsHitTesting(false)
         }
         .environment(\.colorScheme, .light)
-        #if DEBUG
-        .onReceive(NotificationCenter.default.publisher(for: .init("slotsSnapTab"))) { _ in
-            if let pending = appState.pendingSettingsTab { selectedTab = pending; appState.pendingSettingsTab = nil }
-        }
-        #endif
         .onAppear {
             confirmLibraryDelete = AppSettings.load().confirmLibraryDelete
             clickItemAction = AppSettings.load().clickItemAction

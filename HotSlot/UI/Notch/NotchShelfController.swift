@@ -80,9 +80,6 @@ final class NotchShelfController {
         shelf.setFrame(shelfFrame(on: screen, open: false), display: false)
         shelf.alphaValue = 0
         shelfPanel = shelf
-        #if DEBUG
-        debugSnapshotIfRequested()
-        #endif
 
         globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved) { [weak self] _ in
             Task { @MainActor in self?.mouseMoved() }
@@ -434,32 +431,6 @@ final class NotchShelfController {
             }
         })
     }
-
-    #if DEBUG
-    /// Solo para revisar el diseño sin permiso de grabación de pantalla.
-    private func debugSnapshotIfRequested() {
-        if let glowPath = UserDefaults.standard.string(forKey: "slotsGlowSnap") {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in self?.showGlow(duration: 0.2) }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.6) { [weak self] in
-                guard let view = self?.glowPanel?.contentView,
-                      let rep = view.bitmapImageRepForCachingDisplay(in: view.bounds) else { return }
-                view.cacheDisplay(in: view.bounds, to: rep)
-                try? rep.representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: glowPath))
-            }
-            return
-        }
-        guard let path = UserDefaults.standard.string(forKey: "slotsNotchSnap") else { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            self?.show()
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
-            guard let view = self?.shelfPanel?.contentView,
-                  let rep = view.bitmapImageRepForCachingDisplay(in: view.bounds) else { return }
-            view.cacheDisplay(in: view.bounds, to: rep)
-            try? rep.representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: path))
-        }
-    }
-    #endif
 
     /// Alto de la barra de menú y ancho del notch de esta pantalla: de ahí sale el cuello de la barra.
     private func updateNeck(for screen: NSScreen) {

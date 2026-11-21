@@ -9,11 +9,6 @@ enum AccessibilityPermission {
     /// Último intento (visible en Ajustes → Permisos para depuración).
     private(set) static var lastDiagnostic: String = ""
 
-    /// Evita que el tour se oculte al resignar foco mientras macOS muestra el aviso TCC.
-    static var isAccessibilityPromptInFlight: Bool {
-        Date() < promptGraceUntil || isSystemPromptOnScreen
-    }
-
     private static var promptGraceUntil = Date.distantPast
 
     static var isTrusted: Bool {
@@ -127,31 +122,8 @@ enum AccessibilityPermission {
     }
 }
 
-/// Lectura AX del foco: selección actual y si ese foco acepta pegar.
+/// Lectura AX del foco: selección actual.
 enum AccessibilityFocus {
-    private static let blockedRoles: Set<String> = [
-        "AXOutline",
-        "AXTable",
-        "AXList",
-        "AXImage",
-        "AXButton",
-        "AXPopUpButton",
-        "AXCheckBox",
-        "AXRadioButton",
-        "AXMenu",
-        "AXMenuBar",
-        "AXMenuItem",
-        "AXToolbar",
-        "AXTabGroup",
-        "AXSplitter",
-        "AXSlider",
-        "AXStaticText",
-        "AXLink",
-        "AXDisclosureTriangle",
-        "AXProgressIndicator",
-        "AXBusyIndicator",
-    ]
-
     static func selectedText(in app: NSRunningApplication? = nil) -> String? {
         guard AccessibilityPermission.isTrusted else { return nil }
         guard var node = focusedElement(in: app) else { return nil }
@@ -164,13 +136,6 @@ enum AccessibilityFocus {
             node = parent
         }
         return nil
-    }
-
-    static func canAcceptPaste(in app: NSRunningApplication) -> Bool {
-        guard AccessibilityPermission.isTrusted else { return true }
-        guard let node = focusedElement(in: app) else { return true }
-        let role = stringValue(node, kAXRoleAttribute) ?? ""
-        return !blockedRoles.contains(role)
     }
 
     private static func focusedElement(in app: NSRunningApplication?) -> AXUIElement? {

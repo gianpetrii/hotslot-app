@@ -10,7 +10,6 @@
 		003A2BE4D6462A153F7A0CEF /* WindowPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EA47E2008017DE5FF000B6 /* WindowPlacement.swift */; };
 		019623A7A6E5EB1500424F3E /* Entitlements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E95D5C5C8ED642326A14E21 /* Entitlements.swift */; };
 		028AFCE7E42D780057C6E8FD /* PasteboardRichTextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71C0DE85941092439A8BE875 /* PasteboardRichTextTests.swift */; };
-		0406A938ED357E36FF7439CC /* PanelToggleShortcutPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01FDA6C53C0892B195D5FD13 /* PanelToggleShortcutPopover.swift */; };
 		06F67C3631616988E770F6FB /* FocusTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8525EE734D2017094138ADBD /* FocusTracker.swift */; };
 		088DC064FEA5470DEF668AA9 /* DeleteLibraryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAA0E362F8D30646F3F7C48 /* DeleteLibraryFormView.swift */; };
 		08D0E8E6C96B62B6C9AD4C03 /* SettingsKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E8758086DB3AE754601A7 /* SettingsKit.swift */; };
@@ -19,7 +18,6 @@
 		103821409FF76F48C7399C4C /* TutorialModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A95CF8A8ADAAF5A1DEACD3D5 /* TutorialModel.swift */; };
 		12C677E12D06E670A5FA29DA /* ClipboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB823AC3606502B337159418 /* ClipboardService.swift */; };
 		15E13B782F856BE19618FD98 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858AB04884B62F4C91EF2DF9 /* AppState.swift */; };
-		18006E349309415F307A5D15 /* SlotPeekView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DECF19C0558E479917409747 /* SlotPeekView.swift */; };
 		1831E0CCBA952305EFEE0AF7 /* SlotsWorkspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8791B78D4ECD0F3FCA7B987 /* SlotsWorkspace.swift */; };
 		1B17E199882E6BF6729D5C9F /* ShortcutConflict.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0D7BCF8AAD91BA51ABE18E6 /* ShortcutConflict.swift */; };
 		1BEBD40631434B777BF77F74 /* BackdropController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8108F534EC224E3BA83D449B /* BackdropController.swift */; };
@@ -62,7 +60,6 @@
 		7C70678EEE4AD2EEFE68A29F /* PanelModalOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC816C077BA5FF7063ABC6F /* PanelModalOverlay.swift */; };
 		7D09BF2DF35F201E3F7FFD36 /* VisualEffectBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345006B5580B09DB4988D950 /* VisualEffectBackground.swift */; };
 		8050B51FEBAEB5B66FDE5DF5 /* SlotsTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19FC870A2B9262688DDFDF1B /* SlotsTheme.swift */; };
-		81F6F26B31F98E6784CE3628 /* SlotShortcutBadges.swift in Sources */ = {isa = PBXBuildFile; fileRef = D70A90D118E367AF3930724F /* SlotShortcutBadges.swift */; };
 		828285DAB8290A808F7BA17A /* LibraryWorkspaceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87CBD757296379230AE7AC7A /* LibraryWorkspaceStore.swift */; };
 		85E9FDAE7D5B83834AB1BAFE /* TutorialWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E057144EE56C9766A59F210 /* TutorialWindowController.swift */; };
 		8A1E4F5E452F9201228BA817 /* PanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD50D3AD7653F5FCEE0C092 /* PanelController.swift */; };
@@ -70,7 +67,6 @@
 		8FF03433C9CE0E0D64619F77 /* HistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5705E3CE6DEACE6C0251D749 /* HistoryListView.swift */; };
 		91351D337157BD655C397576 /* InterTight-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CFB47B1DB3239FAF3E7E19E6 /* InterTight-SemiBold.ttf */; };
 		9570DF8FCE70BA5E0E073256 /* SlotShortcutEditorPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9DFD560300A4A9E50B68A52 /* SlotShortcutEditorPopover.swift */; };
-		95DD54393C0079F7466465F7 /* PanelSearchHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D9721B8E7B78F14E68B6D5 /* PanelSearchHeader.swift */; };
 		95E7E65FE86C2DE8D9E63B69 /* WorkspaceEntities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B4A39DBE858EBA6C607B55 /* WorkspaceEntities.swift */; };
 		95FEEB80A71D1446BFDBCD27 /* InterTight-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6F80607680DE710540140313 /* InterTight-Medium.ttf */; };
 		98F6E095AE516BDCB9DEB19E /* ClipItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9978112D3F44AE2BCE41F5E /* ClipItem.swift */; };
@@ -83,9 +79,7 @@
 		B7A96F91F33FE780998A9FD9 /* HistoryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904BC54DEB4EA0FB71573C0A /* HistoryStoreTests.swift */; };
 		BD04365FFD34914E8C1E1402 /* TutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B480F80A63259C6A6F1FA3 /* TutorialView.swift */; };
 		BE931C778F5553DF67F0481B /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49192713FE49EA8C0DC9E8D /* EmptyStateView.swift */; };
-		BF910DD20209DE85A5D2976D /* onboarding-demo.png in Resources */ = {isa = PBXBuildFile; fileRef = 27819786F66292E2771CA28D /* onboarding-demo.png */; };
 		C4701F22F4DF19F9D5457B39 /* PasteboardHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00C6BACA1F9F56E6F6098EF7 /* PasteboardHelper.swift */; };
-		C647F72E936F2AB4EA222FCB /* RenameSlotFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C2958641416FFA9829EAD4 /* RenameSlotFormView.swift */; };
 		C849A14A7263DAE9DD9E6797 /* WindowInteractionViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB3B1E51A97B17A7772E768 /* WindowInteractionViews.swift */; };
 		C892DEF7905F0C9D07D2EAB4 /* HotkeysSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C232CD058B6607F39574953 /* HotkeysSettingsView.swift */; };
 		CBA4F163FFFA6AB36342AEAA /* LaunchSplashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830BEFF3258CA1569A340731 /* LaunchSplashController.swift */; };
@@ -125,7 +119,6 @@
 
 /* Begin PBXFileReference section */
 		00C6BACA1F9F56E6F6098EF7 /* PasteboardHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardHelper.swift; sourceTree = "<group>"; };
-		01FDA6C53C0892B195D5FD13 /* PanelToggleShortcutPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelToggleShortcutPopover.swift; sourceTree = "<group>"; };
 		05B3E4B4A9B27D5894373219 /* ShortcutRecorderPopoverLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderPopoverLayout.swift; sourceTree = "<group>"; };
 		099675B8BFE15486169F4C0B /* SlotStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotStoreTests.swift; sourceTree = "<group>"; };
 		0E95D5C5C8ED642326A14E21 /* Entitlements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entitlements.swift; sourceTree = "<group>"; };
@@ -136,7 +129,6 @@
 		20B797933714326535479FA7 /* InterTight-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InterTight-Regular.ttf"; sourceTree = "<group>"; };
 		23A64BAFFA5139B4A87269AD /* PanelFloatingLibraryTrash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelFloatingLibraryTrash.swift; sourceTree = "<group>"; };
 		23F78009613A3AD51F468256 /* FileClip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileClip.swift; sourceTree = "<group>"; };
-		27819786F66292E2771CA28D /* onboarding-demo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "onboarding-demo.png"; sourceTree = "<group>"; };
 		279A89FD0850AFC9891FEE6D /* MenuBarGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarGuide.swift; sourceTree = "<group>"; };
 		2CAA0E362F8D30646F3F7C48 /* DeleteLibraryFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteLibraryFormView.swift; sourceTree = "<group>"; };
 		2DCFDD565B98C8B5733679A0 /* PanelLibraryBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelLibraryBar.swift; sourceTree = "<group>"; };
@@ -205,13 +197,10 @@
 		D1A146B669DE65CF68ECF5A0 /* HotSlot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HotSlot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D22F605BFD20A8EF2DA9C242 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		D4B5F0EEAA83D6809073C8CE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		D70A90D118E367AF3930724F /* SlotShortcutBadges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotShortcutBadges.swift; sourceTree = "<group>"; };
 		D9DFD560300A4A9E50B68A52 /* SlotShortcutEditorPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotShortcutEditorPopover.swift; sourceTree = "<group>"; };
 		DA7465C8DDE3F479100918D6 /* HotSlotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HotSlotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DECF19C0558E479917409747 /* SlotPeekView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotPeekView.swift; sourceTree = "<group>"; };
 		E0D7BCF8AAD91BA51ABE18E6 /* ShortcutConflict.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutConflict.swift; sourceTree = "<group>"; };
 		E2013A4CBF10BC877FFB0ABA /* DeveloperMenuActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperMenuActions.swift; sourceTree = "<group>"; };
-		E2D9721B8E7B78F14E68B6D5 /* PanelSearchHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelSearchHeader.swift; sourceTree = "<group>"; };
 		E337777E4CDCB5C2D945FE7B /* ClipItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipItemTests.swift; sourceTree = "<group>"; };
 		E40CD0B60757E63BD68A2371 /* NotchShelfController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchShelfController.swift; sourceTree = "<group>"; };
 		E49192713FE49EA8C0DC9E8D /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
@@ -221,7 +210,6 @@
 		EBD50D3AD7653F5FCEE0C092 /* PanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelController.swift; sourceTree = "<group>"; };
 		F0053E366473B0BCE5341CE9 /* SlotsPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsPalette.swift; sourceTree = "<group>"; };
 		F3B4D0B6EDEEE5D11496E08B /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
-		F5C2958641416FFA9829EAD4 /* RenameSlotFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenameSlotFormView.swift; sourceTree = "<group>"; };
 		F694AB71C18F22C86D117ACC /* HotkeyName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyName.swift; sourceTree = "<group>"; };
 		F6B29BEA4868030AF4ADA383 /* NotchNotice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchNotice.swift; sourceTree = "<group>"; };
 		F7773DBEB2E5A96B5FE72436 /* Slots.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Slots.entitlements; sourceTree = "<group>"; };
@@ -268,11 +256,8 @@
 				9C245D2B39A6052D9B218842 /* ClipThumbnailView.swift */,
 				C349BC8D5A0BB79D81326F87 /* FileClipViews.swift */,
 				8BB751CC74D313DB9ADAC577 /* HotSlotDesign.swift */,
-				E2D9721B8E7B78F14E68B6D5 /* PanelSearchHeader.swift */,
-				01FDA6C53C0892B195D5FD13 /* PanelToggleShortcutPopover.swift */,
 				644A9655A112A4CEB512EA84 /* ShortcutBadge.swift */,
 				05B3E4B4A9B27D5894373219 /* ShortcutRecorderPopoverLayout.swift */,
-				D70A90D118E367AF3930724F /* SlotShortcutBadges.swift */,
 				D9DFD560300A4A9E50B68A52 /* SlotShortcutEditorPopover.swift */,
 				F3B4D0B6EDEEE5D11496E08B /* ToastView.swift */,
 				345006B5580B09DB4988D950 /* VisualEffectBackground.swift */,
@@ -408,7 +393,6 @@
 			children = (
 				B880BD3AB5B57E6D542F8B5F /* Assets.xcassets */,
 				D4B5F0EEAA83D6809073C8CE /* Info.plist */,
-				27819786F66292E2771CA28D /* onboarding-demo.png */,
 				F7773DBEB2E5A96B5FE72436 /* Slots.entitlements */,
 				F26BDB29C229E2B9CAFCA297 /* Fonts */,
 			);
@@ -431,11 +415,9 @@
 				4BC816C077BA5FF7063ABC6F /* PanelModalOverlay.swift */,
 				A911DBA98261441FF883EE51 /* PanelView.swift */,
 				FAB997A5ED34633E84820B74 /* RenameLibraryFormView.swift */,
-				F5C2958641416FFA9829EAD4 /* RenameSlotFormView.swift */,
 				7F7D2094D67542CF6B99B29B /* SaveClipboardSlotPickerSheet.swift */,
 				5D886AD42BBF26566EF79845 /* SlotCardCopy.swift */,
 				0F806ECE71FCC38E52033D0F /* SlotGridView.swift */,
-				DECF19C0558E479917409747 /* SlotPeekView.swift */,
 			);
 			path = Panel;
 			sourceTree = "<group>";
@@ -646,7 +628,6 @@
 				95FEEB80A71D1446BFDBCD27 /* InterTight-Medium.ttf in Resources */,
 				E899C89CE016CCA5D19AD507 /* InterTight-Regular.ttf in Resources */,
 				91351D337157BD655C397576 /* InterTight-SemiBold.ttf in Resources */,
-				BF910DD20209DE85A5D2976D /* onboarding-demo.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -762,13 +743,10 @@
 				F956A4D89D12BE17B6D6BB23 /* PanelHeaderBlock.swift in Sources */,
 				9973A44BCB5E1A715BC15A84 /* PanelLibraryBar.swift in Sources */,
 				7C70678EEE4AD2EEFE68A29F /* PanelModalOverlay.swift in Sources */,
-				95DD54393C0079F7466465F7 /* PanelSearchHeader.swift in Sources */,
-				0406A938ED357E36FF7439CC /* PanelToggleShortcutPopover.swift in Sources */,
 				2666AEEE1C23121AC660B2AC /* PanelView.swift in Sources */,
 				7BF8D66985DA3B637EC97587 /* PasteService.swift in Sources */,
 				C4701F22F4DF19F9D5457B39 /* PasteboardHelper.swift in Sources */,
 				4B9572F6AA1ECE0D715425CC /* RenameLibraryFormView.swift in Sources */,
-				C647F72E936F2AB4EA222FCB /* RenameSlotFormView.swift in Sources */,
 				46D1ED282C7A266DAB17B65B /* RichTextStore.swift in Sources */,
 				E9D59B6C31AEA7D35793C698 /* SampleDataFixture.swift in Sources */,
 				67A7DB765E43FE0A8431F019 /* SaveClipboardSlotPickerSheet.swift in Sources */,
@@ -781,8 +759,6 @@
 				8AD33E79675CC9C6D12CAE99 /* Slot.swift in Sources */,
 				D810C7327C80F74198279734 /* SlotCardCopy.swift in Sources */,
 				F3DF1B41ADC0380D87AF4D07 /* SlotGridView.swift in Sources */,
-				18006E349309415F307A5D15 /* SlotPeekView.swift in Sources */,
-				81F6F26B31F98E6784CE3628 /* SlotShortcutBadges.swift in Sources */,
 				9570DF8FCE70BA5E0E073256 /* SlotShortcutEditorPopover.swift in Sources */,
 				5F03F3682880EE8CB86A7501 /* SlotStore.swift in Sources */,
 				5F54E5810EE5E19A94501C02 /* SlotsPalette.swift in Sources */,

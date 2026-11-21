@@ -385,10 +385,6 @@ final class AppState {
         }
     }
 
-    func firstEmptySlotIndex() -> Int? {
-        (1 ... SlotStore.slotCount).first { slotStore.content(at: $0) == nil }
-    }
-
     /// «Guardar portapapeles»: usa el primer slot vacío; si están todos ocupados, crea uno al final.
     func saveClipboardFromPanel() {
         guard let content = clipboardService.currentContent() else {

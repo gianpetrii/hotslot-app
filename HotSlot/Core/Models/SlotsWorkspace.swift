@@ -107,44 +107,6 @@ struct SlotRecord: Codable, Identifiable, Equatable, Sendable {
     }
 }
 
-/// Historial del sistema (Mac).
-struct HistoryRecord: Codable, Identifiable, Equatable, Sendable {
-    var id: UUID
-    var sourceApp: String?
-    var sourceBundleID: String?
-    var copiedAt: Date
-    var kind: SlotKind
-    var textPayload: String?
-    var imageFileName: String?
-    var filePath: String? = nil
-    var fileBookmark: Data? = nil
-    var preview: String
-
-    func clipItem() -> ClipItem? {
-        let content: ClipContent?
-        switch kind {
-        case .image:
-            guard let imageFileName else { return nil }
-            content = .image(fileName: imageFileName)
-        case .file:
-            guard let filePath else { return nil }
-            content = .file(path: filePath, bookmark: fileBookmark)
-        default:
-            guard let textPayload else { return nil }
-            content = .text(textPayload)
-        }
-        guard let content else { return nil }
-        return ClipItem(
-            id: id,
-            content: content,
-            createdAt: copiedAt,
-            sourceAppName: sourceApp,
-            sourceAppBundleID: sourceBundleID,
-            isPinned: false
-        )
-    }
-}
-
 struct SlotsWorkspace: Codable, Equatable, Sendable {
     var libraries: [Library]
     var slots: [SlotRecord]
