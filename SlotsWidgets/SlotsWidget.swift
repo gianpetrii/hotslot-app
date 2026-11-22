@@ -226,10 +226,13 @@ struct SlotsWidgetView: View {
                 Spacer(minLength: 0)
                 if pageCount > 1 {
                     // El número de página cambia con cada toque: confirma que la flecha respondió.
-                    Text("\(page + 1)/\(pageCount)")
-                        .font(.custom("InterTight-Medium", fixedSize: 12))
-                        .foregroundStyle(Color(slotsHex: 0x5E5A56))
-                        .contentTransition(.numericText())
+                    // En el widget chico no entra: el nombre de la biblioteca necesita el lugar.
+                    if family != .systemSmall {
+                        Text("\(page + 1)/\(pageCount)")
+                            .font(.custom("InterTight-Medium", fixedSize: 12))
+                            .foregroundStyle(Color(slotsHex: 0x5E5A56))
+                            .contentTransition(.numericText())
+                    }
                     pageButton("chevron.left", target: page - 1, enabled: page > 0)
                     pageButton("chevron.right", target: page + 1, enabled: page < pageCount - 1)
                 }

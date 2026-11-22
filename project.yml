@@ -131,6 +131,7 @@ targets:
         # Avisos silenciosos de CloudKit para sincronizar en segundo plano.
         UIBackgroundModes:
           - remote-notification
+        NSCameraUsageDescription: Slots usa la cámara solo cuando elegís «Tomar foto» para guardar una imagen como slot.
         # Tipos de arrastre internos (slot y biblioteca): iOS pide declararlos.
         UTExportedTypeDeclarations:
           - UTTypeIdentifier: com.hotslot.app.slot-drag

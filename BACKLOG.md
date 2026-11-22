@@ -295,6 +295,8 @@ Fuente: [portapapeles / Magnific — Flaticon](https://www.flaticon.es/icono-gra
 
 Implementar a futuro: telemetría, licencia/compra universal (StoreKit 2), teclado personalizado, botones «Nuevo slot» y «Pegar portapapeles» en el widget, contenido de archivos entre dispositivos (hoy solo viaja el nombre).
 
+Onboarding de iPhone (pendiente de diseñar): incluir un paso para evitar el aviso «Permitir pegar» de iOS. Idea acordada: la primera vez que la persona usa un botón que lee el portapapeles («Usar», «Guardar como slot», «Pegar portapapeles», «Reemplazar con el portapapeles»), mostrar una tarjeta propia que explique el aviso y la lleve a Ajustes (`UIApplication.openSettingsURLString`) para elegir «Pegar desde otras apps › Permitir». No hay API para leer ese ajuste ni para cambiarlo desde la app; la fila de Ajustes puede aparecer solo después de la primera lectura. Sin cambiar el diseño de los botones.
+
 Falta testear en dispositivo:
 
 - Sync Mac ↔ iPhone en ambos sentidos (texto, imagen y archivo «Solo en otro dispositivo»), con el Mac instalado desde el DMG (Producción).
@@ -304,7 +306,9 @@ Falta testear en dispositivo:
 - Color de fondo desde el menú, «Vaciar slot» y «Eliminar slot», «Editar» con cambio a imagen.
 - Nuevo slot con imagen de Fotos y con archivo; hex como Color.
 - VoiceOver y «Reducir movimiento».
-- iOS 18 real (Xcode solo trae simuladores de iOS 26 y 27).
+- iOS 18 real (Xcode solo trae simuladores de iOS 26 y 27): baja prioridad, pocos usuarios siguen en esa versión. Hay un iPhone con iOS 18.6 en el equipo.
+- Sync: las primeras pruebas con texto funcionaron; falta una tanda exhaustiva (imágenes, archivos, borrados, bibliotecas, dos dispositivos a la vez, tiempos de llegada).
+- «Tomar foto» en Nuevo slot: probar en un iPhone real (el simulador no tiene cámara) y el permiso de cámara.
 - Revisar los widgets chico y grande (el mediano ya se vio bien); el toque fuera de un slot abre la app en la biblioteca del widget (esquema `hotslot://`).
 - Menú contextual de slots y pills: es nativo de iOS, no se puede estilizar; las hojas de renombrar y eliminar sí siguen el estilo de la app.
 - Tests del Mac después de los últimos cambios.

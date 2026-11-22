@@ -35,6 +35,8 @@
 	<false/>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Slots usa la cámara solo cuando elegís «Tomar foto» para guardar una imagen como slot.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>InterTight-Regular.ttf</string>

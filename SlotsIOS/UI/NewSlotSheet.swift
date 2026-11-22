@@ -15,12 +15,11 @@ struct NewSlotSheet: View {
     }
 
     enum Kind: String, CaseIterable, Identifiable {
-        case text = "Texto", link = "Link", image = "Imagen", file = "Archivo"
+        case text = "Texto", image = "Imagen", file = "Archivo"
         var id: String { rawValue }
         var icon: String {
             switch self {
             case .text: return "text.alignleft"
-            case .link: return "link"
             case .image: return "photo"
             case .file: return "doc"
             }
@@ -45,20 +44,20 @@ struct NewSlotSheet: View {
     @State private var photoItem: PhotosPickerItem?
     @State private var showPhotos = false
     @State private var showFiles = false
+    @State private var showCamera = false
     @State private var showNewLibrary = false
     @FocusState private var focus: Field?
 
     private enum Field { case content, name }
+
+    /// El simulador y algunos equipos no tienen cámara: en ese caso no se ofrece «Tomar foto».
+    private var cameraAvailable: Bool { UIImagePickerController.isSourceTypeAvailable(.camera) }
 
     private var content: ClipContent? {
         switch kind {
         case .text:
             let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
             return trimmed.isEmpty ? nil : .text(trimmed)
-        case .link:
-            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !trimmed.isEmpty else { return nil }
-            return .text(trimmed.lowercased().hasPrefix("http") ? trimmed : "https://\(trimmed)")
         case .image:
             if case .image = attachment { return attachment }
             return nil
@@ -118,6 +117,16 @@ struct NewSlotSheet: View {
         .sheet(isPresented: $showNewLibrary) {
             NewLibrarySheet { libraryId = $0 }
         }
+        .fullScreenCover(isPresented: $showCamera) {
+            CameraPicker { image in
+                if let jpeg = image.jpegData(compressionQuality: 0.92),
+                   let saved = SlotFiles.saveImage(data: jpeg, type: .jpeg) {
+                    kind = .image
+                    attachment = saved
+                }
+            }
+            .ignoresSafeArea()
+        }
         .slotsSheetStyle()
     }
 
@@ -133,18 +142,18 @@ struct NewSlotSheet: View {
                 .focused($focus, equals: .content)
                 .padding(SlotsSpace.m)
                 .background(.white, in: RoundedRectangle(cornerRadius: SlotsRadius.card, style: .continuous))
-        case .link:
-            SheetTextField(placeholder: "https://", text: $text, isFocused: focus == .content, keyboard: .URL)
-                .focused($focus, equals: .content)
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
         case .image:
             if case .image(let fileName) = attachment {
                 imagePreview(fileName)
             } else {
-                HStack(spacing: SlotsSpace.s) {
-                    pickButton("Elegir de Fotos", icon: "photo.on.rectangle") { showPhotos = true }
-                    pickButton("Archivos", icon: "folder") { showFiles = true }
+                VStack(spacing: SlotsSpace.s) {
+                    if cameraAvailable {
+                        pickButton("Tomar foto", icon: "camera") { showCamera = true }
+                    }
+                    HStack(spacing: SlotsSpace.s) {
+                        pickButton("Elegir de Fotos", icon: "photo.on.rectangle") { showPhotos = true }
+                        pickButton("Archivos", icon: "folder") { showFiles = true }
+                    }
                 }
             }
         case .file:
@@ -177,6 +186,7 @@ struct NewSlotSheet: View {
         .clipShape(RoundedRectangle(cornerRadius: SlotsRadius.card, style: .continuous))
         .overlay(alignment: .topTrailing) {
             Menu {
+                if cameraAvailable { Button("Tomar foto", systemImage: "camera") { showCamera = true } }
                 Button("Elegir de Fotos", systemImage: "photo.on.rectangle") { showPhotos = true }
                 Button("Archivos", systemImage: "folder") { showFiles = true }
             } label: {
@@ -230,7 +240,7 @@ struct NewSlotSheet: View {
         let isSelected = option == kind
         return Button {
             kind = option
-            if option == .text || option == .link { focus = .content }
+            if option == .text { focus = .content }
         } label: {
             VStack(spacing: SlotsSpace.s) {
                 Image(systemName: option.icon).font(.system(size: 16, weight: .medium))
@@ -252,7 +262,7 @@ struct NewSlotSheet: View {
         guard let content else { return "" }
         switch content {
         case .text(let string):
-            if kind == .link, let host = URL(string: string)?.host {
+            if string.lowercased().hasPrefix("http"), !string.contains(where: \.isWhitespace), let host = URL(string: string)?.host {
                 return host.hasPrefix("www.") ? String(host.dropFirst(4)) : host
             }
             if let hex = SlotCardText.hexColor(string) { return hex }
@@ -278,8 +288,7 @@ struct NewSlotSheet: View {
         }
         switch pasted {
         case .text(let string):
-            let isLink = string.lowercased().hasPrefix("http") && !string.contains(where: \.isWhitespace)
-            kind = isLink ? .link : .text
+            kind = .text
             text = string
         case .image:
             kind = .image
@@ -320,5 +329,34 @@ struct NewSlotSheet: View {
         guard let id = model.saveNewSlot(content: content, title: title, libraryId: libraryId, intoSlotId: request.slotId, atEnd: request.atEnd) else { return }
         onSaved(id, libraryId)
         dismiss()
+    }
+}
+
+/// Cámara del sistema para «Tomar foto».
+struct CameraPicker: UIViewControllerRepresentable {
+    let onPicked: (UIImage) -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = context.coordinator
+        return picker
+    }
+
+    func updateUIViewController(_ controller: UIImagePickerController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+
+    final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let parent: CameraPicker
+        init(_ parent: CameraPicker) { self.parent = parent }
+
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+            if let image = info[.originalImage] as? UIImage { parent.onPicked(image) }
+            parent.dismiss()
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) { parent.dismiss() }
     }
 }
