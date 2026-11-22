@@ -54,10 +54,7 @@ final class AccountWindowController: NSObject {
         appState.accessibilityPresentingWindow = nil
         NSApp.activate(ignoringOtherApps: true)
         accountWindow.makeKeyAndOrderFront(nil)
-        NSAnimationContext.runAnimationGroup { context in
-            context.duration = 0.25
-            accountWindow.animator().alphaValue = 1
-        }
+        WindowPlacement.fadeIn(accountWindow)
     }
 
     @MainActor
@@ -68,7 +65,8 @@ final class AccountWindowController: NSObject {
     private func dismiss() {
         guard let window else { return }
         NSAnimationContext.runAnimationGroup({ context in
-            context.duration = 0.3
+            context.duration = 0.18
+            context.timingFunction = CAMediaTimingFunction(name: .easeIn)
             window.animator().alphaValue = 0
         }, completionHandler: { [weak self] in
             window.orderOut(nil)
@@ -88,7 +86,6 @@ extension AccountWindowController: NSWindowDelegate {}
 
 private struct AccountWindowContent: View {
     @Bindable var model: AccountFlowModel
-    @State private var appeared = false
 
     var body: some View {
         ZStack {
@@ -96,11 +93,7 @@ private struct AccountWindowContent: View {
                 .opacity(0.6)
             Color(slotsHex: 0x1C140E, opacity: 0.30)
             AccountCardView(model: model)
-                .scaleEffect(appeared ? 1 : 0.97)
-                .offset(y: appeared ? 0 : 12)
-                .opacity(appeared ? 1 : 0)
         }
-        .onAppear { withAnimation(.easeOut(duration: 0.4)) { appeared = true } }
         .ignoresSafeArea()
         .environment(\.colorScheme, .light)
     }

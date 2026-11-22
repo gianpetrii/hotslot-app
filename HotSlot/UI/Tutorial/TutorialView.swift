@@ -615,13 +615,16 @@ struct TutorialView: View {
     }
 }
 
-/// Presión de un botón: se achica un poco en 120 ms.
+/// Clic de la app: se achica rápido al apretar y vuelve con un resorte (el mismo pulso del «+» de bibliotecas y de las cards del notch).
 struct TutorialPressStyle: ButtonStyle {
-    var scale: CGFloat = 0.97
+    var scale: CGFloat = 0.95
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? scale : 1)
-            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+            .animation(
+                configuration.isPressed ? .easeOut(duration: 0.07) : .spring(response: 0.3, dampingFraction: 0.6),
+                value: configuration.isPressed
+            )
     }
 }

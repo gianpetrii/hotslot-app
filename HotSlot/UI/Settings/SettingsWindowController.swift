@@ -27,6 +27,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     /// Se cerró para dar paso al tutorial: no hay que reabrir el panel detrás.
     private(set) var closedByFocusLoss = false
     private var afterDismiss: (() -> Void)?
+    private var clickMonitors: [Any] = []
     /// Misma posición para Ajustes, Licencia, etc. mientras el panel siga en esa pantalla.
     private var lockedPlacementFrame: NSRect?
 
@@ -74,6 +75,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             appState.accessibilityPresentingWindow = window
             appState.isSettingsWindowVisible = true
         }
+        installClickMonitors()
 
         let screen = panelAnchorFrame.flatMap { WindowPlacement.screenContaining($0) }
             ?? WindowPlacement.screenForMouse()
@@ -153,6 +155,40 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         _ = windowShouldClose(window)
     }
 
+    /// Trae Ajustes al frente (por ejemplo, al cerrarse la pantalla de cuenta) para que Esc y el clic afuera sigan funcionando.
+    func bringToFront() {
+        guard let window, window.isVisible, !isAnimating else { return }
+        NSApp.activate(ignoringOtherApps: true)
+        window.makeKeyAndOrderFront(nil)
+    }
+
+    /// Un clic fuera de Ajustes la cierra, aunque en ese momento no sea la ventana activa.
+    private func installClickMonitors() {
+        guard clickMonitors.isEmpty else { return }
+        let mask: NSEvent.EventTypeMask = [.leftMouseDown, .rightMouseDown]
+        if let global = NSEvent.addGlobalMonitorForEvents(matching: mask, handler: { [weak self] event in
+            MainActor.assumeIsolated { self?.handleOutsideClick(in: event.window) }
+        }) { clickMonitors.append(global) }
+        if let local = NSEvent.addLocalMonitorForEvents(matching: mask, handler: { [weak self] event in
+            MainActor.assumeIsolated { self?.handleOutsideClick(in: event.window) }
+            return event
+        }) { clickMonitors.append(local) }
+    }
+
+    private func removeClickMonitors() {
+        clickMonitors.forEach { NSEvent.removeMonitor($0) }
+        clickMonitors.removeAll()
+    }
+
+    @MainActor
+    private func handleOutsideClick(in clickedWindow: NSWindow?) {
+        guard let window, window.isVisible, !isAnimating, clickedWindow !== window else { return }
+        if window.attachedSheet != nil || clickedWindow?.sheetParent === window { return }
+        if NSApp.modalWindow != nil { return }
+        if let until = appState?.settingsAutoCloseSuppressedUntil, until > Date() { return }
+        _ = windowShouldClose(window)
+    }
+
     /// Clic afuera o en otra app: se cierra solo, salvo mientras hay una hoja, un aviso del sistema o una página externa.
     func windowDidResignKey(_ notification: Notification) {
         guard let window = notification.object as? NSWindow, window === self.window else { return }
@@ -183,6 +219,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     }
 
     private func finishDismiss(_ sender: NSWindow) {
+        removeClickMonitors()
         sender.orderOut(nil)
         sender.alphaValue = 1
         isAnimating = false

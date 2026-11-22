@@ -76,7 +76,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         state.openAccount = { [weak self] in
             guard let self, let state = self.appState else { return }
-            self.accountWindowController.show(appState: state, isFirstRun: false)
+            self.accountWindowController.show(appState: state, isFirstRun: false) { [weak self] in
+                self?.settingsWindowController.bringToFront()
+            }
         }
         state.bootstrap(panelController: panel)
         applyLaunchAtLoginSetting()

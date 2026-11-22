@@ -65,7 +65,7 @@ struct AccountCardView: View {
                     .background(Capsule(style: .continuous).fill(Color.black))
                     .contentShape(Capsule())
                 }
-                .buttonStyle(TutorialPressStyle(scale: 0.97))
+                .buttonStyle(TutorialPressStyle(scale: 0.95))
                 .modifier(PillHover())
 
                 Button { model.signInWithGoogle() } label: {
@@ -81,7 +81,7 @@ struct AccountCardView: View {
                     .overlay(Capsule(style: .continuous).strokeBorder(Color(slotsHex: 0xE0DAD3), lineWidth: 1))
                     .contentShape(Capsule())
                 }
-                .buttonStyle(TutorialPressStyle(scale: 0.97))
+                .buttonStyle(TutorialPressStyle(scale: 0.95))
                 .modifier(PillHover())
 
                 Button { model.go(.email) } label: {
@@ -93,7 +93,7 @@ struct AccountCardView: View {
                         .background(Capsule(style: .continuous).fill(SlotsColor.teclaFondo))
                         .contentShape(Capsule())
                 }
-                .buttonStyle(TutorialPressStyle(scale: 0.97))
+                .buttonStyle(TutorialPressStyle(scale: 0.95))
                 .modifier(PillHover())
             }
             .padding(.top, 4)
@@ -101,7 +101,7 @@ struct AccountCardView: View {
             errorLine
 
             Button("Ahora no") { model.onFinish() }
-                .buttonStyle(.plain)
+                .buttonStyle(TutorialPressStyle(scale: 0.92))
                 .font(SettingsStyle.medium(14))
                 .foregroundStyle(SlotsColor.tinta)
                 .modifier(TextHover())
@@ -146,7 +146,7 @@ struct AccountCardView: View {
                     Button("Olvidé mi contraseña") { model.go(.reset) }
                 }
             }
-            .buttonStyle(.plain)
+            .buttonStyle(TutorialPressStyle(scale: 0.92))
             .font(SettingsStyle.medium(13))
             .foregroundStyle(SlotsColor.textoSecundario)
             .modifier(TextHover())
@@ -277,7 +277,7 @@ struct AccountCardView: View {
                 .background(Capsule(style: .continuous).fill(SlotsColor.tinta))
                 .contentShape(Capsule())
         }
-        .buttonStyle(TutorialPressStyle(scale: 0.97))
+        .buttonStyle(TutorialPressStyle(scale: 0.95))
         .modifier(PillHover())
     }
 
