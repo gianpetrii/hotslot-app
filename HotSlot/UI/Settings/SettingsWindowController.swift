@@ -155,6 +155,11 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         _ = windowShouldClose(window)
     }
 
+    /// Mientras otra ventana (el navegador de Google) tiene que quedar arriba, Ajustes deja de flotar.
+    func setFloating(_ floating: Bool) {
+        window?.level = floating ? NSWindow.Level(rawValue: NSWindow.Level.floating.rawValue + 2) : .normal
+    }
+
     /// Trae Ajustes al frente (por ejemplo, al cerrarse la pantalla de cuenta) para que Esc y el clic afuera sigan funcionando.
     func bringToFront() {
         guard let window, window.isVisible, !isAnimating else { return }

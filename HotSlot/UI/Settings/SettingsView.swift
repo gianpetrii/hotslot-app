@@ -442,19 +442,26 @@ struct SettingsView: View {
 
     private func deleteAccount() {
         guard let profile = appState.account.profile else { return }
-        var password: String?
-        if profile.provider == .email {
-            password = Self.askPassword()
-            guard password != nil else { return }
-        }
         accountBusy = true
         appState.suppressSettingsAutoClose(for: 600)
         Task {
             defer {
                 accountBusy = false
+                appState.setSettingsFloating?(true)
                 appState.releaseSettingsAutoClose()
             }
             do {
+                var password: String?
+                if profile.provider == .email {
+                    // Firebase pide la contraseña para confirmar: se pide con la tarjeta de la app.
+                    password = await withCheckedContinuation { continuation in
+                        guard let ask = appState.askDeletePassword else { continuation.resume(returning: nil); return }
+                        ask { continuation.resume(returning: $0) }
+                    }
+                    guard password != nil else { return }
+                }
+                // Google abre el navegador: Ajustes se baja para que el navegador quede primero.
+                if profile.provider == .google { appState.setSettingsFloating?(false) }
                 try await appState.account.deleteAccount(password: password, presenting: NSApp.keyWindow)
                 appState.showToast("Cuenta eliminada")
             } catch let failure as AccountService.Failure {
@@ -463,19 +470,6 @@ struct SettingsView: View {
                 appState.showToast("No se pudo eliminar la cuenta. Probá de nuevo.")
             }
         }
-    }
-
-    /// Para confirmar la identidad de una cuenta con email, Firebase pide la contraseña.
-    private static func askPassword() -> String? {
-        let alert = NSAlert()
-        alert.messageText = "Confirmá tu contraseña"
-        alert.informativeText = "Por seguridad, escribí tu contraseña para eliminar la cuenta."
-        let field = NSSecureTextField(frame: NSRect(x: 0, y: 0, width: 260, height: 24))
-        alert.accessoryView = field
-        alert.addButton(withTitle: "Eliminar cuenta")
-        alert.addButton(withTitle: "Cancelar")
-        alert.window.initialFirstResponder = field
-        return alert.runModal() == .alertFirstButtonReturn ? field.stringValue : nil
     }
 
     private var permissionsTab: some View {

@@ -63,6 +63,10 @@ final class AppState {
     /// Cuenta de Slots (Firebase Auth) y la pantalla para iniciar sesión.
     let account = AccountService()
     var openAccount: (() -> Void)?
+    /// Pide la contraseña para eliminar la cuenta, con la tarjeta de la app (nil si se cancela).
+    var askDeletePassword: ((@escaping (String?) -> Void) -> Void)?
+    /// Ajustes flota sobre las demás ventanas; mientras Google usa el navegador se baja para no taparlo.
+    var setSettingsFloating: ((Bool) -> Void)?
     /// Pestaña a abrir la próxima vez que se muestren Ajustes (p. ej. tras el tour).
     var pendingSettingsTab: SettingsTab?
     /// Versión nueva encontrada en segundo plano. Sparkle no la muestra sola en apps de barra de menú.

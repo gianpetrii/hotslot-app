@@ -19,8 +19,17 @@ final class AccountWindowController: NSObject {
 
     var isVisible: Bool { window?.isVisible == true }
 
+    /// - Parameters:
+    ///   - deleteCompletion: si se pasa, muestra la confirmación de contraseña para eliminar la cuenta.
+    ///   - onBrowserFlow: avisa cuando Google abre o cierra el navegador (Ajustes deja de flotar mientras tanto).
     @MainActor
-    func show(appState: AppState, isFirstRun: Bool, onClose: @escaping () -> Void = {}) {
+    func show(
+        appState: AppState,
+        isFirstRun: Bool,
+        deleteCompletion: ((String?) -> Void)? = nil,
+        onBrowserFlow: @escaping (Bool) -> Void = { _ in },
+        onClose: @escaping () -> Void = {}
+    ) {
         guard window == nil, appState.account.isConfigured else { onClose(); return }
         self.onClose = onClose
         appStateRef = appState
@@ -28,6 +37,10 @@ final class AccountWindowController: NSObject {
 
         let model = AccountFlowModel(account: appState.account, isFirstRun: isFirstRun)
         model.onFinish = { [weak self] in self?.dismiss() }
+        if let deleteCompletion {
+            model.deleteCompletion = deleteCompletion
+            model.screen = .confirmDelete
+        }
         self.model = model
 
         let accountWindow = AccountWindow(contentRect: screen.frame, styleMask: [.borderless], backing: .buffered, defer: false)
@@ -40,6 +53,19 @@ final class AccountWindowController: NSObject {
         accountWindow.animationBehavior = .none
         accountWindow.delegate = self
         model.presentingWindow = { [weak accountWindow] in accountWindow }
+        // Google abre el navegador: esta ventana se vuelve transparente e intocable para que el navegador quede primero,
+        // y al volver recupera el frente.
+        model.onBrowserFlow = { [weak accountWindow] active in
+            guard let accountWindow else { return }
+            onBrowserFlow(active)
+            accountWindow.ignoresMouseEvents = active
+            accountWindow.level = active ? .normal : NSWindow.Level(rawValue: NSWindow.Level.floating.rawValue + 4)
+            accountWindow.alphaValue = active ? 0 : 1
+            if !active {
+                NSApp.activate(ignoringOtherApps: true)
+                accountWindow.makeKeyAndOrderFront(nil)
+            }
+        }
 
         let root = AccountWindowContent(model: model)
         let hosting = NSHostingController(rootView: root)

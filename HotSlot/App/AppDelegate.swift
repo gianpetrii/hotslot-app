@@ -76,9 +76,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         state.openAccount = { [weak self] in
             guard let self, let state = self.appState else { return }
-            self.accountWindowController.show(appState: state, isFirstRun: false) { [weak self] in
-                self?.settingsWindowController.bringToFront()
-            }
+            self.accountWindowController.show(
+                appState: state,
+                isFirstRun: false,
+                onBrowserFlow: { [weak self] active in self?.settingsWindowController.setFloating(!active) },
+                onClose: { [weak self] in self?.settingsWindowController.bringToFront() }
+            )
+        }
+        state.askDeletePassword = { [weak self] completion in
+            guard let self, let state = self.appState else { completion(nil); return }
+            self.accountWindowController.show(
+                appState: state,
+                isFirstRun: false,
+                deleteCompletion: completion,
+                onClose: { [weak self] in self?.settingsWindowController.bringToFront() }
+            )
+        }
+        state.setSettingsFloating = { [weak self] floating in
+            self?.settingsWindowController.setFloating(floating)
         }
         state.bootstrap(panelController: panel)
         applyLaunchAtLoginSetting()

@@ -16,6 +16,7 @@ struct AccountCardView: View {
             case .reset: resetForm
             case .resetSent: resetSent
             case .done: done
+            case .confirmDelete: confirmDelete
             }
         }
         .id(model.screen)
@@ -70,7 +71,9 @@ struct AccountCardView: View {
 
                 Button { model.signInWithGoogle() } label: {
                     HStack(spacing: 10) {
-                        GoogleMark()
+                        Image("GoogleG")
+                            .resizable()
+                            .frame(width: 18, height: 18)
                         Text("Continuar con Google")
                             .font(SettingsStyle.medium(16))
                             .foregroundStyle(SlotsColor.tinta)
@@ -101,7 +104,7 @@ struct AccountCardView: View {
             errorLine
 
             Button("Ahora no") { model.onFinish() }
-                .buttonStyle(TutorialPressStyle(scale: 0.92))
+                .buttonStyle(TextLinkPressStyle())
                 .font(SettingsStyle.medium(14))
                 .foregroundStyle(SlotsColor.tinta)
                 .modifier(TextHover())
@@ -146,10 +149,12 @@ struct AccountCardView: View {
                     Button("Olvidé mi contraseña") { model.go(.reset) }
                 }
             }
-            .buttonStyle(TutorialPressStyle(scale: 0.92))
+            .buttonStyle(TextLinkPressStyle())
             .font(SettingsStyle.medium(13))
             .foregroundStyle(SlotsColor.textoSecundario)
             .modifier(TextHover())
+            // El fondo del clic suma 12 pt a cada lado: se compensa para que el texto quede alineado con los campos.
+            .padding(.horizontal, -12)
             .padding(.top, 2)
         }
         .onAppear { focus = .email }
@@ -221,6 +226,32 @@ struct AccountCardView: View {
         }
     }
 
+    // MARK: Eliminar cuenta: confirmar contraseña
+
+    private var confirmDelete: some View {
+        Group {
+            eyebrow("Eliminar cuenta")
+            title("Confirmá tu contraseña")
+            bodyText("Por seguridad, escribí tu contraseña para eliminar tu cuenta. No se puede deshacer y tus slots en esta Mac no se tocan.")
+            field("Contraseña", text: $model.password, secure: true, focus: .password)
+                .padding(.top, 4)
+            errorLine
+            Button { model.confirmDelete() } label: {
+                Text("Eliminar cuenta")
+                    .font(SettingsStyle.medium(16))
+                    .foregroundStyle(SlotsColor.oxido)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
+                    .background(Capsule(style: .continuous).fill(SlotsColor.teclaFondo))
+                    .contentShape(Capsule())
+            }
+            .buttonStyle(TutorialPressStyle(scale: 0.95))
+            .modifier(PillHover())
+            primaryButton("Cancelar") { model.back() }
+        }
+        .onAppear { focus = .password }
+    }
+
     // MARK: Piezas
 
     private var backButton: some View {
@@ -283,7 +314,7 @@ struct AccountCardView: View {
 
     private func field(_ placeholder: String, text: Binding<String>, secure: Bool, focus target: Field) -> some View {
         Group {
-            if secure {
+            if secure && !model.showPassword {
                 SecureField("", text: text, prompt: Text(placeholder).foregroundStyle(SlotsColor.textoSecundario.opacity(0.6)))
             } else {
                 TextField("", text: text, prompt: Text(placeholder).foregroundStyle(SlotsColor.textoSecundario.opacity(0.6)))
@@ -294,8 +325,26 @@ struct AccountCardView: View {
         .foregroundStyle(SlotsColor.tinta)
         .focused($focus, equals: target)
         .onSubmit { target == .email && model.screen == .email ? (focus = .password) : submitFromKeyboard() }
-        .padding(.horizontal, 16)
+        .padding(.leading, 16)
+        .padding(.trailing, secure ? 6 : 16)
         .frame(height: 52)
+        .overlay(alignment: .trailing) {
+            if secure {
+                Button {
+                    model.showPassword.toggle()
+                    focus = target
+                } label: {
+                    Image(systemName: model.showPassword ? "eye.slash" : "eye")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(SlotsColor.textoSecundario)
+                        .frame(width: 40, height: 40)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(TutorialPressStyle(scale: 0.88))
+                .padding(.trailing, 6)
+                .help(model.showPassword ? "Ocultar contraseña" : "Mostrar contraseña")
+            }
+        }
         .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(focus == target ? Color.white : SettingsStyle.campo))
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
@@ -310,17 +359,37 @@ struct AccountCardView: View {
     }
 
     private func submitFromKeyboard() {
-        if model.screen == .reset { model.sendReset() } else { model.submitEmail() }
+        switch model.screen {
+        case .reset: model.sendReset()
+        case .confirmDelete: model.confirmDelete()
+        default: model.submitEmail()
+        }
     }
 }
 
-/// Elevación al pasar el mouse: la misma sombra cálida y el 2 % de zoom del resto de la app.
+/// Clic en un texto: aparece una pastilla de fondo y se achica, así se nota aunque no tenga forma de botón.
+private struct TextLinkPressStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(Capsule(style: .continuous).fill(SlotsColor.tinta.opacity(configuration.isPressed ? 0.12 : 0)))
+            .scaleEffect(configuration.isPressed ? 0.94 : 1)
+            .animation(
+                configuration.isPressed ? .easeOut(duration: 0.07) : .spring(response: 0.3, dampingFraction: 0.6),
+                value: configuration.isPressed
+            )
+            .contentShape(Capsule())
+    }
+}
+
+/// Al pasar el mouse: solo la sombra cálida del resto de la app (sin zoom).
 private struct PillHover: ViewModifier {
     @State private var hovering = false
 
     func body(content: Content) -> some View {
         content
-            .slotsHoverLift(hovering, scales: true)
+            .slotsHoverLift(hovering, scales: false)
             .onHover { hovering = $0 }
             .animation(.spring(response: 0.28, dampingFraction: 0.86), value: hovering)
     }
@@ -335,19 +404,5 @@ private struct TextHover: ViewModifier {
             .opacity(hovering ? 1 : 0.75)
             .onHover { hovering = $0 }
             .animation(.easeOut(duration: 0.14), value: hovering)
-    }
-}
-
-/// Marca «G» de Google. Para publicar conviene reemplazarla por el recurso oficial de la guía de marca de Google.
-private struct GoogleMark: View {
-    var body: some View {
-        Text("G")
-            .font(.system(size: 18, weight: .bold, design: .rounded))
-            .foregroundStyle(
-                LinearGradient(
-                    colors: [Color(slotsHex: 0x4285F4), Color(slotsHex: 0x34A853), Color(slotsHex: 0xFBBC05), Color(slotsHex: 0xEA4335)],
-                    startPoint: .topTrailing, endPoint: .bottomLeading
-                )
-            )
     }
 }

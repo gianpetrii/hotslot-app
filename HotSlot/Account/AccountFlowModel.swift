@@ -6,6 +6,8 @@ import SwiftUI
 final class AccountFlowModel {
     enum Screen: Equatable {
         case options, email, reset, resetSent, done
+        /// Pide la contraseña para eliminar la cuenta (cuentas con email).
+        case confirmDelete
     }
 
     enum EmailMode {
@@ -18,6 +20,11 @@ final class AccountFlowModel {
     var password = ""
     var errorMessage: String?
     var isBusy = false
+    var showPassword = false
+    /// Respuesta de la confirmación para eliminar la cuenta: la contraseña, o nil si se cancela.
+    var deleteCompletion: ((String?) -> Void)?
+    /// Google abre el navegador: la ventana se retira mientras tanto para que no tape nada.
+    var onBrowserFlow: (Bool) -> Void = { _ in }
 
     /// Primer arranque: muestra «Último paso · opcional».
     let isFirstRun: Bool
@@ -39,6 +46,10 @@ final class AccountFlowModel {
     func back() {
         switch screen {
         case .options, .done: onFinish()
+        case .confirmDelete:
+            deleteCompletion?(nil)
+            deleteCompletion = nil
+            onFinish()
         case .email: go(.options)
         case .reset, .resetSent: go(.email)
         }
@@ -51,7 +62,18 @@ final class AccountFlowModel {
     }
 
     func signInWithGoogle() {
-        run { try await self.account.signInWithGoogle(presenting: self.presentingWindow()) }
+        run(opensBrowser: true) { try await self.account.signInWithGoogle(presenting: self.presentingWindow()) }
+    }
+
+    func confirmDelete() {
+        guard !password.isEmpty else {
+            errorMessage = "Escribí tu contraseña."
+            return
+        }
+        deleteCompletion?(password)
+        deleteCompletion = nil
+        password = ""
+        onFinish()
     }
 
     func submitEmail() {
@@ -95,12 +117,16 @@ final class AccountFlowModel {
     }
 
     /// Cancelar Apple o Google no muestra error: vuelve a las opciones como estaba.
-    private func run(_ work: @escaping () async throws -> Void) {
+    private func run(opensBrowser: Bool = false, _ work: @escaping () async throws -> Void) {
         guard !isBusy else { return }
         isBusy = true
         errorMessage = nil
+        if opensBrowser { onBrowserFlow(true) }
         Task {
-            defer { isBusy = false }
+            defer {
+                isBusy = false
+                if opensBrowser { onBrowserFlow(false) }
+            }
             do {
                 try await work()
                 password = ""
