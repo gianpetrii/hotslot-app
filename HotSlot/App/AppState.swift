@@ -85,6 +85,11 @@ final class AppState {
         settingsAutoCloseSuppressedUntil = Date().addingTimeInterval(seconds)
     }
 
+    /// Termina la pausa: Ajustes vuelve a cerrarse al hacer clic afuera.
+    func releaseSettingsAutoClose() {
+        settingsAutoCloseSuppressedUntil = .distantPast
+    }
+
     /// Slot recién creado que espera nombre o contenido: ⌘V lo llena y Esc lo descarta.
     var pendingNewSlot: Int?
     /// La grilla hace scroll hasta este slot.

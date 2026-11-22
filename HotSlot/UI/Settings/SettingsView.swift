@@ -391,7 +391,6 @@ struct SettingsView: View {
                                 detail: "Iniciá sesión para tener tu cuenta de Slots. Más adelante vas a poder guardar tu licencia ahí y sincronizar con el iPhone."
                             ) {
                                 SettingsPillButton(title: "Iniciar sesión", kind: .primary) {
-                                    appState.suppressSettingsAutoClose(for: 600)
                                     appState.openAccount?()
                                 }
                                 .disabled(!account.isConfigured)
@@ -451,7 +450,10 @@ struct SettingsView: View {
         accountBusy = true
         appState.suppressSettingsAutoClose(for: 600)
         Task {
-            defer { accountBusy = false }
+            defer {
+                accountBusy = false
+                appState.releaseSettingsAutoClose()
+            }
             do {
                 try await appState.account.deleteAccount(password: password, presenting: NSApp.keyWindow)
                 appState.showToast("Cuenta eliminada")

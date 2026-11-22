@@ -15,6 +15,7 @@ final class AccountWindowController: NSObject {
     private var window: NSWindow?
     private var model: AccountFlowModel?
     private var onClose: (() -> Void)?
+    private weak var appStateRef: AppState?
 
     var isVisible: Bool { window?.isVisible == true }
 
@@ -22,6 +23,7 @@ final class AccountWindowController: NSObject {
     func show(appState: AppState, isFirstRun: Bool, onClose: @escaping () -> Void = {}) {
         guard window == nil, appState.account.isConfigured else { onClose(); return }
         self.onClose = onClose
+        appStateRef = appState
         guard let screen = WindowPlacement.screenForMouse() ?? NSScreen.main else { onClose(); return }
 
         let model = AccountFlowModel(account: appState.account, isFirstRun: isFirstRun)
@@ -73,6 +75,8 @@ final class AccountWindowController: NSObject {
             window.contentViewController = nil
             self?.window = nil
             self?.model = nil
+            // Ajustes vuelve a cerrarse con un clic afuera (la pausa era solo para Apple y Google).
+            MainActor.assumeIsolated { self?.appStateRef?.releaseSettingsAutoClose() }
             let done = self?.onClose
             self?.onClose = nil
             done?()
@@ -84,6 +88,7 @@ extension AccountWindowController: NSWindowDelegate {}
 
 private struct AccountWindowContent: View {
     @Bindable var model: AccountFlowModel
+    @State private var appeared = false
 
     var body: some View {
         ZStack {
@@ -91,7 +96,11 @@ private struct AccountWindowContent: View {
                 .opacity(0.6)
             Color(slotsHex: 0x1C140E, opacity: 0.30)
             AccountCardView(model: model)
+                .scaleEffect(appeared ? 1 : 0.97)
+                .offset(y: appeared ? 0 : 12)
+                .opacity(appeared ? 1 : 0)
         }
+        .onAppear { withAnimation(.easeOut(duration: 0.4)) { appeared = true } }
         .ignoresSafeArea()
         .environment(\.colorScheme, .light)
     }

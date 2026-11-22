@@ -1,10 +1,10 @@
-import AuthenticationServices
 import SwiftUI
 
 /// Tarjeta de inicio de sesión (diseño de Dante, `05-flujos/cuenta`): 440 de ancho, radio 28, botones de 52.
 struct AccountCardView: View {
     @Bindable var model: AccountFlowModel
     @FocusState private var focus: Field?
+    @State private var hoveredField: Field?
 
     private enum Field { case email, password }
 
@@ -50,9 +50,23 @@ struct AccountCardView: View {
             bodyText("Así vas a poder guardar tu licencia en tu cuenta y, cuando llegue la sincronización, tener tus slots también en el iPhone.")
 
             VStack(spacing: 8) {
-                AppleSignInButton { model.signInWithApple() }
+                Button { model.signInWithApple() } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "applelogo")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundStyle(.white)
+                            .offset(y: -1)
+                        Text("Continuar con Apple")
+                            .font(SettingsStyle.medium(16))
+                            .foregroundStyle(.white)
+                    }
+                    .frame(maxWidth: .infinity)
                     .frame(height: 52)
-                    .clipShape(Capsule())
+                    .background(Capsule(style: .continuous).fill(Color.black))
+                    .contentShape(Capsule())
+                }
+                .buttonStyle(TutorialPressStyle(scale: 0.97))
+                .modifier(PillHover())
 
                 Button { model.signInWithGoogle() } label: {
                     HStack(spacing: 10) {
@@ -68,6 +82,7 @@ struct AccountCardView: View {
                     .contentShape(Capsule())
                 }
                 .buttonStyle(TutorialPressStyle(scale: 0.97))
+                .modifier(PillHover())
 
                 Button { model.go(.email) } label: {
                     Text("Continuar con email")
@@ -79,6 +94,7 @@ struct AccountCardView: View {
                         .contentShape(Capsule())
                 }
                 .buttonStyle(TutorialPressStyle(scale: 0.97))
+                .modifier(PillHover())
             }
             .padding(.top, 4)
 
@@ -88,6 +104,7 @@ struct AccountCardView: View {
                 .buttonStyle(.plain)
                 .font(SettingsStyle.medium(14))
                 .foregroundStyle(SlotsColor.tinta)
+                .modifier(TextHover())
                 .frame(maxWidth: .infinity)
                 .padding(.top, 4)
 
@@ -132,6 +149,7 @@ struct AccountCardView: View {
             .buttonStyle(.plain)
             .font(SettingsStyle.medium(13))
             .foregroundStyle(SlotsColor.textoSecundario)
+            .modifier(TextHover())
             .padding(.top, 2)
         }
         .onAppear { focus = .email }
@@ -213,7 +231,8 @@ struct AccountCardView: View {
                 .frame(width: 36, height: 36)
                 .background(Circle().fill(SlotsColor.teclaFondo))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(TutorialPressStyle(scale: 0.92))
+        .modifier(PillHover())
     }
 
     private func eyebrow(_ text: String) -> some View {
@@ -259,6 +278,7 @@ struct AccountCardView: View {
                 .contentShape(Capsule())
         }
         .buttonStyle(TutorialPressStyle(scale: 0.97))
+        .modifier(PillHover())
     }
 
     private func field(_ placeholder: String, text: Binding<String>, secure: Bool, focus target: Field) -> some View {
@@ -279,8 +299,14 @@ struct AccountCardView: View {
         .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(focus == target ? Color.white : SettingsStyle.campo))
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .strokeBorder(focus == target ? SlotsColor.naranja : SettingsStyle.borde, lineWidth: focus == target ? 2 : 1)
+                .strokeBorder(
+                    focus == target ? SlotsColor.naranja : (hoveredField == target ? Color(slotsHex: 0xCFC8C0) : SettingsStyle.borde),
+                    lineWidth: focus == target ? 2 : 1
+                )
         )
+        .onHover { hoveredField = $0 ? target : (hoveredField == target ? nil : hoveredField) }
+        .animation(.easeOut(duration: 0.14), value: focus)
+        .animation(.easeOut(duration: 0.14), value: hoveredField)
     }
 
     private func submitFromKeyboard() {
@@ -288,28 +314,27 @@ struct AccountCardView: View {
     }
 }
 
-/// Botón oficial «Continuar con Apple» (estilo negro), con el mismo alto y forma de píldora del diseño.
-struct AppleSignInButton: NSViewRepresentable {
-    let action: () -> Void
+/// Elevación al pasar el mouse: la misma sombra cálida y el 2 % de zoom del resto de la app.
+private struct PillHover: ViewModifier {
+    @State private var hovering = false
 
-    func makeNSView(context: Context) -> ASAuthorizationAppleIDButton {
-        let button = ASAuthorizationAppleIDButton(type: .continue, style: .black)
-        button.cornerRadius = 26
-        button.target = context.coordinator
-        button.action = #selector(Coordinator.tapped)
-        return button
+    func body(content: Content) -> some View {
+        content
+            .slotsHoverLift(hovering, scales: true)
+            .onHover { hovering = $0 }
+            .animation(.spring(response: 0.28, dampingFraction: 0.86), value: hovering)
     }
+}
 
-    func updateNSView(_ nsView: ASAuthorizationAppleIDButton, context: Context) {
-        context.coordinator.action = action
-    }
+/// Texto que se aclara al pasar el mouse.
+private struct TextHover: ViewModifier {
+    @State private var hovering = false
 
-    func makeCoordinator() -> Coordinator { Coordinator(action: action) }
-
-    final class Coordinator: NSObject {
-        var action: () -> Void
-        init(action: @escaping () -> Void) { self.action = action }
-        @objc func tapped() { action() }
+    func body(content: Content) -> some View {
+        content
+            .opacity(hovering ? 1 : 0.75)
+            .onHover { hovering = $0 }
+            .animation(.easeOut(duration: 0.14), value: hovering)
     }
 }
 
