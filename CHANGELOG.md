@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.4.0] — 2026-11-22
+
+### Cuenta
+
+- Se puede crear una cuenta de Slots con Apple, con Google o con email y contraseña (Firebase Auth). Se ofrece una sola vez después del tutorial y es opcional: «Ahora no» la cierra y la app se usa igual.
+- Ajustes › Cuenta: ver con qué proveedor entraste, cerrar sesión y eliminar la cuenta (pide volver a identificarte; con Apple revoca el permiso). Eliminar la cuenta no borra los slots de la Mac.
+- La cuenta guarda solo email, proveedor e identificador. No toca slots, historial ni licencia.
+- Ver u ocultar la contraseña, restablecerla por mail, y efectos de hover y de clic como el resto de la app.
+
+### Interfaz
+
+- Las confirmaciones (cerrar sesión, eliminar cuenta, vaciar historial, restaurar atajos) usan la tarjeta de la app en vez del diálogo gris del sistema.
+- Esc y el clic afuera hacen lo mismo en todas las tarjetas: volver o cancelar. En Ajustes, Esc vuelve al panel y un segundo Esc lo cierra (antes el panel no recibía el teclado al volver de Ajustes).
+- Ajustes se cierra con un clic afuera aunque no sea la ventana activa.
+
 ## [1.3.2] — 2026-11-21
 
 ### Primer arranque

@@ -268,9 +268,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self.panelController?.show()
             self.appState?.isPanelVisible = true
             // Al volver a modo menú la app pierde el foco; sin esto Esc no llega al panel reabierto.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
-                NSApp.activate(ignoringOtherApps: true)
-                self?.panelController?.window?.makeKeyAndOrderFront(nil)
+            // macOS 14+ solo cede el foco tras unos instantes: se reintenta hasta que el panel quede activo y reciba Esc.
+            for delay in [0.05, 0.15, 0.3, 0.6] {
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+                    NSApp.activate()
+                    NSRunningApplication.current.activate(options: [.activateAllWindows])
+                    self?.panelController?.window?.makeKeyAndOrderFront(nil)
+                }
             }
         }
 
