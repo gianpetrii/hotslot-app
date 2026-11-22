@@ -45,6 +45,12 @@ final class AccountService: NSObject {
 
     var isSignedIn: Bool { profile != nil }
 
+    /// Sign in with Apple no se puede firmar en el DMG (perfil Developer ID): el botón solo aparece si la app lo trae.
+    var isAppleSignInAvailable: Bool {
+        guard let task = SecTaskCreateFromSelf(nil) else { return false }
+        return SecTaskCopyValueForEntitlement(task, "com.apple.developer.applesignin" as CFString, nil) != nil
+    }
+
     /// Se llama una vez al arrancar la app.
     func start() {
         guard !isConfigured else { return }

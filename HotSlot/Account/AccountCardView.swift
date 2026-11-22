@@ -53,6 +53,7 @@ struct AccountCardView: View {
             bodyText("Así vas a poder guardar tu licencia en tu cuenta y, cuando llegue la sincronización, tener tus slots también en el iPhone.")
 
             VStack(spacing: 8) {
+                if model.account.isAppleSignInAvailable {
                 Button { model.signInWithApple() } label: {
                     HStack(spacing: 10) {
                         Image(systemName: "applelogo")
@@ -70,6 +71,7 @@ struct AccountCardView: View {
                 }
                 .buttonStyle(TutorialPressStyle(scale: 0.95))
                 .modifier(PillHover())
+                }
 
                 Button { model.signInWithGoogle() } label: {
                     HStack(spacing: 10) {

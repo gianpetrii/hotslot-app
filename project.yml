@@ -50,19 +50,12 @@ targets:
         ENABLE_APP_SANDBOX: NO
         COMBINE_HIDPI_IMAGES: YES
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
-    entitlements:
-      path: HotSlot/Resources/Slots.entitlements
-      properties:
-        com.apple.developer.icloud-container-identifiers:
-          - iCloud.com.hotslot.app
-        com.apple.developer.icloud-services:
-          - CloudKit
-        com.apple.developer.aps-environment: development
-        com.apple.developer.applesignin:
-          - Default
-        # Firebase Auth guarda la sesión en el llavero de datos protegidos: sin este grupo falla con -34018.
-        keychain-access-groups:
-          - $(AppIdentifierPrefix)com.hotslot.app
+        # Permisos en archivos propios (no generados): el de Release (DMG) no lleva Sign in with Apple.
+        CODE_SIGN_ENTITLEMENTS: HotSlot/Resources/Slots.entitlements
+      configs:
+        # Sign in with Apple no está disponible para perfiles Developer ID (el DMG): solo el build de desarrollo lo lleva.
+        Debug:
+          CODE_SIGN_ENTITLEMENTS: HotSlot/Resources/Slots-Debug.entitlements
     dependencies:
       - package: KeyboardShortcuts
       - package: Sparkle
