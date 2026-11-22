@@ -19,9 +19,6 @@ struct SettingsView: View {
     @State private var licenseKeyInput = AppSettings.load().licenseKey ?? ""
     @State private var licensed = Entitlements.hasFullAccess
 
-    @State private var showClearHistoryConfirmation = false
-    @State private var showSignOutConfirmation = false
-    @State private var showDeleteAccountConfirmation = false
     @State private var accountBusy = false
 
     /// La pestaña Cuenta solo aparece si Firebase está configurado.
@@ -231,7 +228,12 @@ struct SettingsView: View {
                             }
                             SettingsRow(title: "Vaciar historial", destructive: true) {
                                 SettingsPillButton(title: "Vaciar") {
-                                    showClearHistoryConfirmation = true
+                                    appState.confirm?(AppConfirmation(
+                                        title: "¿Vaciar el historial?",
+                                        message: "Se borran los ítems del historial. Los slots no se tocan.",
+                                        confirmTitle: "Vaciar historial",
+                                        destructive: true
+                                    ) { appState.historyStore.clear() })
                                 }
                             }
                         }
@@ -308,18 +310,6 @@ struct SettingsView: View {
                 .padding(.bottom, 8)
             }
             .scrollIndicators(.hidden)
-            .confirmationDialog(
-                "¿Vaciar el historial?",
-                isPresented: $showClearHistoryConfirmation,
-                titleVisibility: .visible
-            ) {
-                Button("Vaciar historial", role: .destructive) {
-                    appState.historyStore.clear()
-                }
-                Button("Cancelar", role: .cancel) {}
-            } message: {
-                Text("Se borran los ítems del historial. Los slots no se tocan.")
-            }
             .onAppear { scrollToLicenseIfNeeded(using: proxy) }
             .onChange(of: selectedTab) { _, tab in
                 guard tab == .general else { return }
@@ -383,7 +373,13 @@ struct SettingsView: View {
                     SettingsCard {
                         if let profile = account.profile {
                             SettingsRow(title: profile.email ?? "Cuenta de Slots", detail: "Conectada con \(profile.provider.title)") {
-                                SettingsPillButton(title: "Cerrar sesión") { showSignOutConfirmation = true }
+                                SettingsPillButton(title: "Cerrar sesión") {
+                                    appState.confirm?(AppConfirmation(
+                                        title: "¿Cerrar sesión?",
+                                        message: "Tus slots siguen en esta Mac.",
+                                        confirmTitle: "Cerrar sesión"
+                                    ) { appState.account.signOut() })
+                                }
                             }
                         } else {
                             SettingsRow(
@@ -415,7 +411,7 @@ struct SettingsView: View {
                                 destructive: true
                             ) {
                                 SettingsPillButton(title: accountBusy ? "Eliminando…" : "Eliminar") {
-                                    showDeleteAccountConfirmation = true
+                                    requestDeleteAccount()
                                 }
                                 .disabled(accountBusy)
                             }
@@ -426,17 +422,20 @@ struct SettingsView: View {
             .padding(.bottom, 8)
         }
         .scrollIndicators(.hidden)
-        .confirmationDialog("¿Cerrar sesión?", isPresented: $showSignOutConfirmation, titleVisibility: .visible) {
-            Button("Cerrar sesión") { appState.account.signOut() }
-            Button("Cancelar", role: .cancel) {}
-        } message: {
-            Text("Tus slots siguen en esta Mac.")
-        }
-        .confirmationDialog("¿Eliminar tu cuenta?", isPresented: $showDeleteAccountConfirmation, titleVisibility: .visible) {
-            Button("Eliminar cuenta", role: .destructive) { deleteAccount() }
-            Button("Cancelar", role: .cancel) {}
-        } message: {
-            Text("Se borra tu cuenta y sus datos en la nube. No se puede deshacer. Tus slots en esta Mac no se tocan.")
+    }
+
+    /// Con email se pide directo la contraseña (esa tarjeta ya avisa que no se puede deshacer); con Apple o Google se confirma primero.
+    private func requestDeleteAccount() {
+        guard let profile = appState.account.profile else { return }
+        if profile.provider == .email {
+            deleteAccount()
+        } else {
+            appState.confirm?(AppConfirmation(
+                title: "¿Eliminar tu cuenta?",
+                message: "Se borra tu cuenta y sus datos en la nube. No se puede deshacer. Tus slots en esta Mac no se tocan.",
+                confirmTitle: "Eliminar cuenta",
+                destructive: true
+            ) { deleteAccount() })
         }
     }
 

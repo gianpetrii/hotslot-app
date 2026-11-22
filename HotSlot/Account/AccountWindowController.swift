@@ -27,6 +27,7 @@ final class AccountWindowController: NSObject {
         appState: AppState,
         isFirstRun: Bool,
         deleteCompletion: ((String?) -> Void)? = nil,
+        confirmation: AppConfirmation? = nil,
         onBrowserFlow: @escaping (Bool) -> Void = { _ in },
         onClose: @escaping () -> Void = {}
     ) {
@@ -37,6 +38,10 @@ final class AccountWindowController: NSObject {
 
         let model = AccountFlowModel(account: appState.account, isFirstRun: isFirstRun)
         model.onFinish = { [weak self] in self?.dismiss() }
+        if let confirmation {
+            model.confirmation = confirmation
+            model.screen = .confirm
+        }
         if let deleteCompletion {
             model.deleteCompletion = deleteCompletion
             model.screen = .confirmDelete
@@ -98,12 +103,15 @@ final class AccountWindowController: NSObject {
             window.orderOut(nil)
             window.contentViewController = nil
             self?.window = nil
+            let pending = self?.model?.afterClose
             self?.model = nil
             // Ajustes vuelve a cerrarse con un clic afuera (la pausa era solo para Apple y Google).
             MainActor.assumeIsolated { self?.appStateRef?.releaseSettingsAutoClose() }
             let done = self?.onClose
             self?.onClose = nil
             done?()
+            // La acción confirmada corre con la ventana ya cerrada (puede abrir otra).
+            pending?()
         })
     }
 }
@@ -118,6 +126,9 @@ private struct AccountWindowContent: View {
             VisualEffectBackground(material: .hudWindow, blendingMode: .behindWindow, cornerRadius: 0)
                 .opacity(0.6)
             Color(slotsHex: 0x1C140E, opacity: 0.30)
+                .contentShape(Rectangle())
+                // Un clic fuera de la tarjeta equivale a «Ahora no» o a la flecha de volver (según la pantalla).
+                .onTapGesture { if !model.isBusy { model.back() } }
             AccountCardView(model: model)
         }
         .ignoresSafeArea()

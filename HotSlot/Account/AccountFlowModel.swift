@@ -1,6 +1,16 @@
 import AppKit
 import SwiftUI
 
+/// Confirmación con el estilo de la app (reemplaza los diálogos grises del sistema).
+struct AppConfirmation {
+    let title: String
+    let message: String
+    let confirmTitle: String
+    /// Acciones que borran: el botón va como secundario en rojizo y «Cancelar» queda como principal.
+    var destructive = false
+    let action: () -> Void
+}
+
 /// Estado de las pantallas de inicio de sesión (opciones, email, restablecer, listo).
 @MainActor @Observable
 final class AccountFlowModel {
@@ -8,6 +18,8 @@ final class AccountFlowModel {
         case options, email, reset, resetSent, done
         /// Pide la contraseña para eliminar la cuenta (cuentas con email).
         case confirmDelete
+        /// Confirmación genérica (cerrar sesión, vaciar historial, restaurar atajos…).
+        case confirm
     }
 
     enum EmailMode {
@@ -21,6 +33,9 @@ final class AccountFlowModel {
     var errorMessage: String?
     var isBusy = false
     var showPassword = false
+    var confirmation: AppConfirmation?
+    /// Se ejecuta cuando la ventana ya se cerró (así la acción puede abrir otra sin chocar con esta).
+    var afterClose: (() -> Void)?
     /// Respuesta de la confirmación para eliminar la cuenta: la contraseña, o nil si se cancela.
     var deleteCompletion: ((String?) -> Void)?
     /// Google abre el navegador: la ventana se retira mientras tanto para que no tape nada.
@@ -46,6 +61,8 @@ final class AccountFlowModel {
     func back() {
         switch screen {
         case .options, .done: onFinish()
+        case .confirm:
+            onFinish()
         case .confirmDelete:
             deleteCompletion?(nil)
             deleteCompletion = nil
@@ -63,6 +80,11 @@ final class AccountFlowModel {
 
     func signInWithGoogle() {
         run(opensBrowser: true) { try await self.account.signInWithGoogle(presenting: self.presentingWindow()) }
+    }
+
+    func performConfirmation() {
+        afterClose = confirmation?.action
+        onFinish()
     }
 
     func confirmDelete() {

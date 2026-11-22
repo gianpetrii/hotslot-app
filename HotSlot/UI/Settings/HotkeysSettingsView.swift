@@ -2,7 +2,7 @@ import KeyboardShortcuts
 import SwiftUI
 
 struct HotkeysSettingsView: View {
-    @State private var showResetConfirmation = false
+    @Environment(AppState.self) private var appState
     @State private var issues: [ShortcutConflict.Issue] = []
 
     var body: some View {
@@ -29,7 +29,15 @@ struct HotkeysSettingsView: View {
                     }
                     SettingsRow(title: "Restaurar atajos", destructive: true) {
                         SettingsPillButton(title: "Restaurar") {
-                            showResetConfirmation = true
+                            appState.confirm?(AppConfirmation(
+                                title: "¿Restaurar todos los atajos?",
+                                message: "Se aplicarán los atajos por defecto (⌘⇧V, pegar ⌘⇧A S D Q W, guardar ⌘⌃ iguales).",
+                                confirmTitle: "Restaurar",
+                                destructive: true
+                            ) {
+                                KeyboardShortcuts.Name.resetAllToDefaults()
+                                refreshIssues()
+                            })
                         }
                     }
                 }
@@ -49,19 +57,6 @@ struct HotkeysSettingsView: View {
             )
         ) { _ in
             refreshIssues()
-        }
-        .confirmationDialog(
-            "¿Restaurar todos los atajos?",
-            isPresented: $showResetConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button("Restaurar", role: .destructive) {
-                KeyboardShortcuts.Name.resetAllToDefaults()
-                refreshIssues()
-            }
-            Button("Cancelar", role: .cancel) {}
-        } message: {
-            Text("Se aplicarán los atajos por defecto (⌘⇧V, pegar ⌘⇧A S D Q W, guardar ⌘⌃ iguales).")
         }
     }
 

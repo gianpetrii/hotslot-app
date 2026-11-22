@@ -92,6 +92,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 onClose: { [weak self] in self?.settingsWindowController.bringToFront() }
             )
         }
+        state.confirm = { [weak self] confirmation in
+            guard let self, let state = self.appState else { return }
+            self.accountWindowController.show(
+                appState: state,
+                isFirstRun: false,
+                confirmation: confirmation,
+                onClose: { [weak self] in self?.settingsWindowController.bringToFront() }
+            )
+        }
         state.setSettingsFloating = { [weak self] floating in
             self?.settingsWindowController.setFloating(floating)
         }

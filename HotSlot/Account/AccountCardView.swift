@@ -5,6 +5,7 @@ struct AccountCardView: View {
     @Bindable var model: AccountFlowModel
     @FocusState private var focus: Field?
     @State private var hoveredField: Field?
+    @State private var flashingDismiss = false
 
     private enum Field { case email, password }
 
@@ -17,6 +18,7 @@ struct AccountCardView: View {
             case .resetSent: resetSent
             case .done: done
             case .confirmDelete: confirmDelete
+            case .confirm: confirmCard
             }
         }
         .id(model.screen)
@@ -103,8 +105,12 @@ struct AccountCardView: View {
 
             errorLine
 
-            Button("Ahora no") { model.onFinish() }
-                .buttonStyle(TextLinkPressStyle())
+            Button("Ahora no") {
+                // El clic se ve un instante antes de que la tarjeta se vaya.
+                flashingDismiss = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.16) { model.onFinish() }
+            }
+                .buttonStyle(TextLinkPressStyle(forced: flashingDismiss))
                 .font(SettingsStyle.medium(14))
                 .foregroundStyle(SlotsColor.tinta)
                 .modifier(TextHover())
@@ -252,6 +258,47 @@ struct AccountCardView: View {
         .onAppear { focus = .password }
     }
 
+    // MARK: Confirmación genérica
+
+    private var confirmCard: some View {
+        let confirmation = model.confirmation
+        let destructive = confirmation?.destructive ?? false
+        return Group {
+            title(confirmation?.title ?? "")
+            bodyText(confirmation?.message ?? "")
+            VStack(spacing: 8) {
+                if destructive {
+                    Button { model.performConfirmation() } label: {
+                        Text(confirmation?.confirmTitle ?? "Aceptar")
+                            .font(SettingsStyle.medium(16))
+                            .foregroundStyle(SlotsColor.oxido)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 52)
+                            .background(Capsule(style: .continuous).fill(SlotsColor.teclaFondo))
+                            .contentShape(Capsule())
+                    }
+                    .buttonStyle(TutorialPressStyle(scale: 0.95))
+                    .modifier(PillHover())
+                    primaryButton("Cancelar") { model.back() }
+                } else {
+                    primaryButton(confirmation?.confirmTitle ?? "Aceptar") { model.performConfirmation() }
+                    Button { model.back() } label: {
+                        Text("Cancelar")
+                            .font(SettingsStyle.medium(16))
+                            .foregroundStyle(SlotsColor.tinta)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 52)
+                            .background(Capsule(style: .continuous).fill(SlotsColor.teclaFondo))
+                            .contentShape(Capsule())
+                    }
+                    .buttonStyle(TutorialPressStyle(scale: 0.95))
+                    .modifier(PillHover())
+                }
+            }
+            .padding(.top, 4)
+        }
+    }
+
     // MARK: Piezas
 
     private var backButton: some View {
@@ -369,15 +416,18 @@ struct AccountCardView: View {
 
 /// Clic en un texto: aparece una pastilla de fondo y se achica, así se nota aunque no tenga forma de botón.
 private struct TextLinkPressStyle: ButtonStyle {
+    var forced = false
+
     func makeBody(configuration: Configuration) -> some View {
-        configuration.label
+        let pressed = configuration.isPressed || forced
+        return configuration.label
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(Capsule(style: .continuous).fill(SlotsColor.tinta.opacity(configuration.isPressed ? 0.12 : 0)))
-            .scaleEffect(configuration.isPressed ? 0.94 : 1)
+            .background(Capsule(style: .continuous).fill(SlotsColor.tinta.opacity(pressed ? 0.16 : 0)))
+            .scaleEffect(pressed ? 0.9 : 1)
             .animation(
-                configuration.isPressed ? .easeOut(duration: 0.07) : .spring(response: 0.3, dampingFraction: 0.6),
-                value: configuration.isPressed
+                pressed ? .easeOut(duration: 0.07) : .spring(response: 0.3, dampingFraction: 0.6),
+                value: pressed
             )
             .contentShape(Capsule())
     }

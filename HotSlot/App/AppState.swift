@@ -64,6 +64,8 @@ final class AppState {
     let account = AccountService()
     var openAccount: (() -> Void)?
     /// Pide la contraseña para eliminar la cuenta, con la tarjeta de la app (nil si se cancela).
+    /// Confirmación con la tarjeta de la app (en vez del diálogo gris del sistema).
+    var confirm: ((AppConfirmation) -> Void)?
     var askDeletePassword: ((@escaping (String?) -> Void) -> Void)?
     /// Ajustes flota sobre las demás ventanas; mientras Google usa el navegador se baja para no taparlo.
     var setSettingsFloating: ((Bool) -> Void)?
