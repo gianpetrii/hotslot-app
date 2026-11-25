@@ -4,10 +4,17 @@ import SwiftUI
 struct RootView: View {
     @State private var isLoading = true
     @State private var isLeaving = false
+    /// La bienvenida se ve una sola vez; después se puede repetir desde Ajustes.
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
     var body: some View {
         ZStack {
             SlotsScreen()
+            if !hasCompletedOnboarding && !isLoading {
+                OnboardingView { withAnimation(.easeOut(duration: 0.25)) { hasCompletedOnboarding = true } }
+                    .transition(.opacity)
+                    .zIndex(2)
+            }
             if isLoading {
                 LoadingView(isLeaving: isLeaving)
                     .transition(.opacity)

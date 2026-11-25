@@ -75,6 +75,7 @@
 		666961C01803DCEA644EF356 /* ShortcutBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644A9655A112A4CEB512EA84 /* ShortcutBadge.swift */; };
 		67A7DB765E43FE0A8431F019 /* SaveClipboardSlotPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F7D2094D67542CF6B99B29B /* SaveClipboardSlotPickerSheet.swift */; };
 		688238C85BD20C4B7E921E1A /* SharedAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 38328734E27DB5D9D5B79090 /* SharedAssets.xcassets */; };
+		6C253C587DE2878997441C7E /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDA3FBC60372A0053B464C3 /* OnboardingView.swift */; };
 		6D6DA5397C868548D19A305D /* ClipItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E337777E4CDCB5C2D945FE7B /* ClipItemTests.swift */; };
 		709457F1F7152675FEE4A77B /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841CFFDFFFAA50088B8764E1 /* StatusBarController.swift */; };
 		74695771CEBCEED13F7F3906 /* UsageEventLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67CCD20A269221ECF634E755 /* UsageEventLog.swift */; };
@@ -307,6 +308,7 @@
 		B3D1AD1C80A5B5AE2DEBD405 /* SlotsPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotsPalette.swift; sourceTree = "<group>"; };
 		B880BD3AB5B57E6D542F8B5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BD36EA0DCFD93B6DFACE95B8 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		BDDA3FBC60372A0053B464C3 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		C349BC8D5A0BB79D81326F87 /* FileClipViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileClipViews.swift; sourceTree = "<group>"; };
 		C4FA6C1C45A715C8AE60E90F /* SlotGridLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotGridLayout.swift; sourceTree = "<group>"; };
 		C6CB06B4FA082A4DB7CFCB8D /* ClipItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipItem.swift; sourceTree = "<group>"; };
@@ -564,6 +566,7 @@
 				9967662EA8DF15C9FDAD5D4D /* LoadingView.swift */,
 				F6FA7A8FB4C24128881C7EF8 /* NewLibrarySheet.swift */,
 				6FC802583C33070EF060FEB1 /* NewSlotSheet.swift */,
+				BDDA3FBC60372A0053B464C3 /* OnboardingView.swift */,
 				F4B88BB1F7FCAD29A2A2798D /* RenameSheet.swift */,
 				9F6956A65F3E000FBB04DE13 /* SettingsSheet.swift */,
 				7860174C55426F53F4005D22 /* SheetComponents.swift */,
@@ -1000,6 +1003,7 @@
 				FFCAC1302C03AC62C9964CB2 /* LoadingView.swift in Sources */,
 				BBD37161D8BF269573970BDA /* NewLibrarySheet.swift in Sources */,
 				DA4D16FD86CA79F6DB3DCDE9 /* NewSlotSheet.swift in Sources */,
+				6C253C587DE2878997441C7E /* OnboardingView.swift in Sources */,
 				819C0EFD34636B846FC6AC3B /* RenameSheet.swift in Sources */,
 				7BA249E552FEA1653792D3B5 /* RootView.swift in Sources */,
 				E3030FD8ABF2C4C8E80C578E /* SettingsSheet.swift in Sources */,

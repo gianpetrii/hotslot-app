@@ -4,6 +4,7 @@ import SwiftUI
 struct SettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("confirmLibraryDelete") private var confirmLibraryDelete = true
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = true
 
     private var version: String {
         let info = Bundle.main.infoDictionary
@@ -61,6 +62,16 @@ struct SettingsSheet: View {
                         "Tocá el widget para elegir la biblioteca. Tocar un slot lo copia sin abrir la app.",
                     ]
                 )
+
+                Button {
+                    hasCompletedOnboarding = false
+                    dismiss()
+                } label: {
+                    Label("Ver la bienvenida otra vez", systemImage: "play.circle")
+                        .slotsText(15)
+                        .foregroundStyle(SlotsColor.tinta)
+                }
+                .buttonStyle(.plain)
 
                 Toggle(isOn: $confirmLibraryDelete) {
                     Text("Confirmar antes de eliminar una biblioteca")
