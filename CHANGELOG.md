@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1] — 2026-11-25
+
+### Tutorial
+
+- Explica que los atajos vienen de fábrica pero se pueden cambiar: el de cada slot (clic en el atajo de la card) y el que abre el panel (Ajustes › Atajos).
+- Paso nuevo sobre la barra del notch: cómo se abre, qué muestra y que se puede ajustar o apagar. El recorrido pasa a tener 9 pasos.
+
 ## [1.4.0] — 2026-11-22
 
 ### Cuenta
