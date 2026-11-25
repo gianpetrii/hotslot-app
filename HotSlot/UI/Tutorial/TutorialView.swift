@@ -122,7 +122,7 @@ struct TutorialView: View {
                 .tracking(-1.05)
                 .foregroundStyle(SlotsColor.tinta)
                 .fixedSize(horizontal: false, vertical: true)
-            Text("Un recorrido de 8 pasos con slots de ejemplo. Al terminar los sacamos y tu panel queda vacío para empezar.")
+            Text("Un recorrido de \(model.stepCount) pasos con slots de ejemplo. Al terminar los sacamos y tu panel queda vacío para empezar.")
                 .font(SettingsStyle.regular(15))
                 .foregroundStyle(SlotsColor.textoTerciario)
                 .lineSpacing(3)
@@ -345,7 +345,7 @@ struct TutorialView: View {
     @ViewBuilder
     private func tourLayers(origin: CGPoint, screen: CGSize) -> some View {
         let step = currentStep
-        let hole = holeRect(origin: origin, step: step)
+        let hole = holeRect(origin: origin, step: step, screen: screen)
 
         ZStack(alignment: .topLeading) {
             // Fondo desenfocado: el panel de muestra entero.
@@ -367,18 +367,20 @@ struct TutorialView: View {
                         .allowsHitTesting(false)
                 }
 
+                // El aviso queda por encima del desenfoque, pero por debajo del globo (si no, lo pisaría).
+                examplesNotice(origin: origin)
+
                 balloon(step: step, hole: hole, screen: screen)
                     .id(model.phase)
                     .transition(.opacity)
             }
 
             if model.phase == .closing {
+                examplesNotice(origin: origin)
                 closingCard
                     .frame(width: screen.width, height: screen.height)
                     .transition(.opacity.combined(with: .scale(scale: 0.98)))
             }
-
-            examplesNotice(origin: origin)
         }
         .animation(.easeInOut(duration: 0.3), value: model.phase)
     }
@@ -425,7 +427,12 @@ struct TutorialView: View {
         return panelFrames[target]
     }
 
-    private func holeRect(origin: CGPoint, step: TutorialStep?) -> CGRect? {
+    private func holeRect(origin: CGPoint, step: TutorialStep?, screen: CGSize) -> CGRect? {
+        if let step, step.target == .notch {
+            // El notch está arriba de todo, centrado: el hueco lo rodea y el globo baja debajo.
+            let width = appState.notchNeckWidth, height = appState.notchNeckHeight
+            return CGRect(x: screen.width / 2 - width / 2 - 8, y: -8, width: width + 16, height: height + 16)
+        }
         guard let step, let frame = absolute(step.target, origin: origin) else { return nil }
         return frame.insetBy(dx: -8, dy: -8)
     }
@@ -590,7 +597,7 @@ struct TutorialView: View {
             TutorialRichText(tokens: [
                 .text("Sacamos los slots de ejemplo: tu panel queda vacío y listo para llenar. Cuando guardes o pegues algo, te avisamos arriba, junto al notch. Abrí el panel cuando quieras con "),
                 .keys(model.togglePanelKeys),
-                .text("."),
+                .text(". Podés cambiarlo en Ajustes › Atajos."),
             ], fontSize: 15)
             Button { model.close() } label: {
                 Text("Empezar a usar Slots")

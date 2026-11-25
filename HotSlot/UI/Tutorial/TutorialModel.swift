@@ -4,6 +4,8 @@ import SwiftUI
 /// Elementos del panel de muestra que el recorrido puede resaltar.
 enum TutorialTarget: Hashable {
     case title, grid, slot1, slot2, history, search, pills, saveButton, settingsButton
+    /// El notch (o el centro de la barra de menú): está fuera del panel, se ubica con la pantalla.
+    case notch
 }
 
 /// Recortes de texto: palabras sueltas o teclas (cada carácter va en su propia tecla).
@@ -70,7 +72,7 @@ final class TutorialModel {
                 text: [
                     .text("Seleccioná algo y apretá "), .keys(save1),
                     .text(" para guardarlo en el slot 1. Con "), .keys(paste1),
-                    .text(" lo pegás donde estés. A · S · D · Q · W son los slots 1 a 5."),
+                    .text(" lo pegás donde estés. A · S · D · Q · W son los slots 1 a 5. Son los atajos de fábrica: hacé clic en el atajo de cualquier slot para cambiarlo."),
                 ],
                 holeRadius: 28
             ),
@@ -103,8 +105,13 @@ final class TutorialModel {
                 holeRadius: 32
             ),
             TutorialStep(
+                target: .notch, side: .below, title: "La barra del notch",
+                text: [.text("Pasá el mouse por el notch (o por el centro de la barra de menú) y, después de un instante, baja una barra con tus slots y bibliotecas. Un clic en un slot lo copia, sin abrir el panel. Se puede apagar o ajustar desde Ajustes.")],
+                holeRadius: 20
+            ),
+            TutorialStep(
                 target: .settingsButton, side: .below, title: "Tus ajustes",
-                text: [.text("Cambiá tus atajos, revisá los permisos y volvé a ver este recorrido cuando quieras.")],
+                text: [.text("Cambiá tus atajos, incluido el que abre el panel, revisá los permisos y volvé a ver este recorrido cuando quieras.")],
                 holeRadius: 32
             ),
         ]
