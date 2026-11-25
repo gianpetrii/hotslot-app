@@ -4,21 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta property="og:title" content="Slots · Tu portapapeles, ahora con memoria">
-<meta property="og:description" content="Guardá una vez lo que mandás todos los días y pegalo con un atajo. Para Mac y iPhone. Anotate en la lista de espera.">
+<meta property="og:description" content="Guardá una vez lo que mandás todos los días y pegalo con un atajo. Descargalo gratis para Mac.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="favicon.svg">
 <meta name="theme-color" content="#F2F2F0">
-<title>Slots</title>
-<meta name="description" content="Slots: tu portapapeles, ahora con memoria. Para Mac y iPhone. Anotate en la lista de espera.">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="alternate icon" href="favicon.svg">
-<meta name="claude:viewport-fit-sides" content="cover">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Slots</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-1 -4 32 32'%3E%3Cstyle%3E.c%7Bfill:%23111%7D@media (prefers-color-scheme:dark)%7B.c%7Bfill:%23F2F2F0%7D%7D%3C/style%3E%3Crect class='c' x='0' y='0' width='13' height='24' rx='3.5'/%3E%3Crect class='c' x='16' y='0' width='14' height='10.5' rx='3.5'/%3E%3Crect x='16' y='13.5' width='14' height='10.5' rx='3.5' fill='%23E2501D'/%3E%3C/svg%3E">
+<meta name="description" content="Slots: tu portapapeles, ahora con memoria. Guardá una vez lo que mandás todos los días y pegalo con un atajo. Descargalo para Mac.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap">
-</head>
-<body>
 <style>
 /* Layout: una sola columna editorial a 1160px; titulares gigantes y apretados, cards de slot como único objeto con borde. Manual de marca Slots. */
 :root{
@@ -47,7 +45,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 a{color:inherit}
 h1,h2,h3{font-weight:500;letter-spacing:-.04em;line-height:.98;margin:0;text-wrap:balance}
-h1{font-size:clamp(48px,9vw,112px)}
+h1{font-size:clamp(46px,8vw,96px)}
 h2{font-size:clamp(38px,6vw,72px)}
 h3{font-size:24px;letter-spacing:-.03em;line-height:1.1}
 p{margin:0}
@@ -77,55 +75,239 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px
 .btn[disabled]{opacity:.55;cursor:default;transform:none}
 
 /* hero */
-.hero{padding-block:56px 40px;display:grid;gap:40px;grid-template-columns:minmax(0,1fr)}
+.hero{padding-block:36px 40px;display:grid;gap:32px;grid-template-columns:minmax(0,1fr)}
 .hero>*,.hero-row>*{min-width:0}
 @media (max-width:480px){h1{font-size:clamp(36px,11.2vw,56px)}}
-.hero-top{display:grid;gap:28px}
+.hero-top{display:grid;gap:20px}
 .hero h1 .n{color:var(--naranja)}
 .hero-row{display:grid;gap:28px;align-items:end}
-@media (min-width:920px){.hero-row{grid-template-columns:1fr 440px}}
-.quick{display:flex;gap:8px;background:var(--card);border-radius:999px;padding:6px;box-shadow:var(--sombra);max-width:480px}
-.quick input{flex:1;min-width:0;border:0;background:transparent;font:400 17px var(--f);color:var(--tinta);padding:0 16px;height:48px;outline:none}
-.quick input::placeholder{color:var(--mute)}
+@media (min-width:920px){
+  .hero{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);column-gap:48px;row-gap:28px;align-items:end;padding-block:28px 40px}
+  .hero>div:last-child{grid-column:1/-1}
+  .hero h1{font-size:clamp(46px,4.6vw,68px)}
+  .hero-top{gap:14px}
+  .hero-row .fine,.hero-row .hero-ios{margin-top:8px}
+  .hero-row{gap:18px}
+  .hero-row .lead{max-width:40ch}
+  /* La Mac entra entera en la primera pantalla, con el panel abierto */
+  .mac{width:min(100%,max(640px,calc((100svh - 390px) * 1.6)));margin-inline:auto}
+  .hero-lead{max-width:52ch}
+  .mac-modos{margin-top:12px}
+}
 .fine{font-size:14px;color:var(--mute);margin-top:12px}
-.estado{font-size:15px;margin-top:12px;min-height:1.5em}
-.estado.ok{color:var(--tinta)} .estado.error{color:var(--oxido)}
 
-/* pantalla (video en loop) */
-.pantalla{position:relative;border-radius:28px;overflow:hidden;aspect-ratio:16/9.4;max-width:100%;background:
-  radial-gradient(120% 90% at 85% 15%,#F07A3E 0%,rgba(240,122,62,0) 55%),
-  radial-gradient(90% 80% at 10% 100%,#7A2E12 0%,rgba(122,46,18,0) 60%),
-  linear-gradient(135deg,#E2501D 0%,#A8431A 55%,#3B1B0E 100%);box-shadow:var(--sombra)}
-.pantalla video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.barra{position:absolute;top:0;left:0;right:0;height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:12px;color:rgba(255,255,255,.85);background:rgba(0,0,0,.08)}
 .isla{position:absolute;top:0;left:50%;transform:translateX(-50%);height:30px;min-width:150px;background:#000;color:#fff;border-radius:0 0 18px 18px;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 16px;font-size:13px;font-weight:500;transition:min-width .45s cubic-bezier(.3,1.4,.5,1),height .45s cubic-bezier(.3,1.4,.5,1),border-radius .45s;z-index:3;white-space:nowrap;overflow:hidden}
 .isla .in{display:flex;align-items:center;gap:10px;opacity:0;transition:opacity .2s}
 .isla.on{min-width:260px;height:46px;border-radius:0 0 24px 24px}
 .isla.on .in{opacity:1}
 .isla .num{width:24px;height:24px;border-radius:7px;background:#E2501D;display:grid;place-items:center;font-size:12px;color:#fff}
 .isla .ok{color:#F5A27D}
-.panel{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);width:min(82%,760px);background:var(--vidrio);backdrop-filter:blur(26px) saturate(1.3);-webkit-backdrop-filter:blur(26px) saturate(1.3);border-radius:clamp(16px,2.6vw,32px);padding:clamp(12px,2.4vw,28px);box-shadow:0 30px 60px -20px rgba(40,10,0,.45);display:grid;gap:clamp(8px,1.4vw,16px)}
-.panel-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
-.panel-head b{font-weight:500;font-size:clamp(20px,3.6vw,44px);letter-spacing:-.04em;line-height:1}
-.panel-head span{font-size:clamp(10px,1.1vw,13px);color:var(--mute)}
-.panel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(4px,.8vw,8px)}
-.ps{background:var(--card);border-radius:clamp(8px,1.4vw,16px);padding:clamp(6px,1.2vw,14px);display:grid;gap:clamp(2px,.6vw,10px);min-height:clamp(54px,9vw,110px);align-content:space-between;transition:transform .35s cubic-bezier(.3,1.4,.5,1),background .3s}
-.ps small{font-size:clamp(8px,.9vw,11px);color:var(--mute);display:flex;justify-content:space-between;gap:4px}
-.ps strong{font-weight:500;font-size:clamp(11px,1.7vw,20px);letter-spacing:-.03em;line-height:1.05}
-.ps.osc{background:var(--card-osc);color:#F2F2F0}
-.ps.osc small{color:var(--sobre-osc)}
-.ps.img{background:linear-gradient(160deg,#FFD9C2,#E2501D 70%,#A8431A);color:#fff}
-.ps.img small{color:rgba(255,255,255,.85)}
-.ps.vacio{background:transparent;border:1.5px dashed color-mix(in srgb,var(--tinta) 28%,transparent)}
-.ps.vacio strong{color:var(--mute);font-size:clamp(9px,1.1vw,13px)}
-.ps.pulse{transform:scale(1.04);background:var(--naranja);color:#fff}
-.ps.pulse small{color:rgba(255,255,255,.85)}
-.cursor{position:absolute;width:18px;height:18px;z-index:4;transition:left .8s cubic-bezier(.6,0,.2,1),top .8s cubic-bezier(.6,0,.2,1);pointer-events:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
-.pantalla-pie{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--mute);margin-top:12px}
-@media (max-width:560px){.pantalla{aspect-ratio:1/1.02}.panel{top:57%;width:88%}.panel-grid{grid-template-columns:repeat(2,1fr)}.ps:nth-child(n+5){display:none}.barra span:last-child{display:none}}
+/* hero: escena de la Mac con la app actual (1.4), según capturas reales */
+.hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px}
+.hero-meta{font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums}
+.hero-ios{font-size:15px;color:var(--mute);margin-top:14px}
+.hero-ios a{color:var(--tinta);text-decoration-color:var(--naranja);text-underline-offset:3px;cursor:pointer}
+.mac{position:relative;border-radius:clamp(14px,2.2cqw,26px);overflow:hidden;aspect-ratio:16/10;max-width:100%;container-type:inline-size;background:
+  radial-gradient(110% 90% at 88% 8%,#F49A62 0%,rgba(244,154,98,0) 52%),
+  radial-gradient(90% 80% at 6% 100%,#6E2A10 0%,rgba(110,42,16,0) 62%),
+  linear-gradient(135deg,#E2501D 0%,#B8481B 52%,#3B1B0E 100%);box-shadow:var(--sombra)}
+.mac video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.m-menu{position:absolute;inset:0 0 auto;height:max(16px,2.3cqw);display:flex;align-items:center;justify-content:space-between;padding:0 1.4cqw;font-size:max(8px,1.05cqw);font-weight:500;color:rgba(255,255,255,.92);background:rgba(40,14,4,.16);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:3}
+.m-menu .izq,.m-menu .der{display:flex;gap:1.3cqw;align-items:center}
+.m-menu .izq span:not(:first-child){font-weight:400;opacity:.85}
+.m-menu svg{width:max(10px,1.3cqw);height:auto;display:block}
+@container (max-width:520px){.m-menu .izq span:nth-child(n+3),.m-menu .der .hora-larga{display:none}}
+/* el notch físico y el aviso negro que sale de él */
+.m-notch{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:6;background:#000;color:#fff;width:10.6cqw;height:max(16px,2.3cqw);border-radius:0 0 1.1cqw 1.1cqw;overflow:hidden;transition:width .5s cubic-bezier(.3,1.25,.5,1),height .5s cubic-bezier(.3,1.25,.5,1),border-radius .4s}
+.m-notch .aviso{position:absolute;inset:auto 0 0;height:max(22px,3.2cqw);display:flex;align-items:center;justify-content:center;gap:.8cqw;font-size:max(9px,1.15cqw);font-weight:500;white-space:nowrap;opacity:0;transition:opacity .2s}
+.m-notch .num{width:max(14px,1.9cqw);height:max(14px,1.9cqw);border-radius:.55cqw;background:#E2501D;display:grid;place-items:center;font-size:max(8px,1cqw);flex:none}
+.m-notch .ok{color:#F5A27D}
+.m-notch.aviso-on{width:max(170px,30cqw);height:max(34px,5.4cqw);border-radius:0 0 max(12px,2cqw) max(12px,2cqw)}
+@container (max-width:520px){.m-notch .aviso{font-size:9px;height:20px;gap:5px}.m-notch .num{width:13px;height:13px;font-size:7.5px;border-radius:4px}}
+.m-notch.aviso-on .aviso{opacity:1;transition-delay:.12s}
+/* ventana de fondo (Mail) */
+.m-app{position:absolute;left:6%;top:12%;width:58%;height:78%;background:#FBFAF8;border-radius:1.1cqw;box-shadow:0 24px 50px -20px rgba(40,10,0,.55);overflow:hidden;color:#111;display:flex;flex-direction:column;z-index:1}
+.m-app-top{height:max(16px,2.6cqw);display:flex;align-items:center;gap:.45cqw;padding:0 1cqw;border-bottom:1px solid #E6E2DD;font-size:max(7px,1cqw);color:#5E5A56;flex:none}
+.m-app-top i{width:max(5px,.8cqw);height:max(5px,.8cqw);border-radius:50%;background:#DDD8D2}
+.m-app-top span{margin-left:.5cqw}
+.m-app-campos{padding:.9cqw 1.5cqw 0;font-size:max(7px,1.05cqw);color:#5E5A56;display:grid;gap:.45cqw}
+.m-app-campos div{border-bottom:1px solid #EDE9E4;padding-bottom:.45cqw}
+.m-app-campos b{color:#111;font-weight:500}
+.m-texto{padding:1.3cqw 1.5cqw;font-size:max(8px,1.3cqw);line-height:1.55;white-space:pre-wrap}
+.m-texto .sel{background:rgba(226,80,29,.22);border-radius:3px}
+.m-texto .nuevo{background:rgba(226,80,29,.16);border-radius:3px;transition:background 1.2s}
+.m-texto .link{color:#A8431A;text-decoration:underline;text-underline-offset:2px}
+.m-texto .caret{display:inline-block;width:1.5px;height:1.1em;background:#111;vertical-align:-.18em;animation:parpadeo 1s steps(1) infinite}
+@keyframes parpadeo{50%{opacity:0}}
+
+/* tres apps de fondo: se turnan en el loop */
+.m-app,.m-chat,.m-ai{transition:opacity .45s ease,transform .45s ease}
+.m-escena-off{opacity:0;transform:translateY(1.2cqw) scale(.98);pointer-events:none}
+/* chat */
+.m-chat{position:absolute;left:8%;top:11%;width:46%;height:80%;background:#EFEAE3;border-radius:1.1cqw;box-shadow:0 24px 50px -20px rgba(40,10,0,.55);overflow:hidden;color:#111;display:flex;flex-direction:column;z-index:1}
+.mc-top{display:flex;align-items:center;gap:.9cqw;padding:.9cqw 1.3cqw;background:#F8F6F3;border-bottom:1px solid #E2DCD4;flex:none}
+.mc-av{width:max(16px,2.6cqw);height:max(16px,2.6cqw);border-radius:50%;background:#111;color:#F2F2F0;display:grid;place-items:center;font-size:max(7px,1cqw);font-weight:600;flex:none}
+.mc-top b{display:block;font-weight:500;font-size:max(8px,1.15cqw)}
+.mc-top small{display:block;font-size:max(7px,.9cqw);color:#6B6762}
+.mc-cuerpo{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:.7cqw;padding:1.2cqw 1.3cqw}
+.mc-b{max-width:72%;padding:.6cqw .9cqw;border-radius:1cqw;font-size:max(8px,1.15cqw);line-height:1.35;background:#fff;align-self:flex-start;box-shadow:0 1px 1px rgba(0,0,0,.06)}
+.mc-b i{display:block;font-style:normal;text-align:right;font-size:max(6px,.8cqw);color:#8A857F;margin-top:.2cqw}
+.mc-b.yo{align-self:flex-end;background:#FCE1D3}
+.mc-img{align-self:flex-end;background:#FCE1D3;padding:.4cqw;border-radius:1cqw;width:38%;opacity:0;transform:translateY(1cqw) scale(.94);transition:opacity .35s,transform .45s cubic-bezier(.3,1.3,.5,1)}
+.mc-img.on{opacity:1;transform:none}
+.mc-flyer{aspect-ratio:4/5;border-radius:.7cqw;background:#111;color:#F2F2F0;display:grid;place-items:center;text-align:center;font-weight:600;font-size:max(9px,1.8cqw);letter-spacing:-.04em;line-height:.9;background-image:radial-gradient(60% 40% at 70% 20%,rgba(226,80,29,.55),rgba(226,80,29,0) 70%)}
+.mc-flyer em{display:block;font-style:normal;color:#E2501D;font-size:max(6px,.8cqw);letter-spacing:.06em;font-weight:500;margin-top:.5cqw}
+.mc-img i{display:block;font-style:normal;text-align:right;font-size:max(6px,.8cqw);color:#8A857F;margin-top:.2cqw}
+.mc-input{margin:0 1.3cqw 1.1cqw;min-height:max(18px,2.8cqw);border-radius:max(9px,1.4cqw);background:#fff;display:flex;align-items:center;gap:.8cqw;padding:.5cqw .5cqw .5cqw 1.1cqw;font-size:max(8px,1.1cqw);color:#8A857F;flex:none}
+.mc-input.lleno{color:#111}
+.mc-input span:first-child{flex:1;min-width:0}
+.mc-enviar{width:max(14px,2cqw);height:max(14px,2cqw);border-radius:50%;background:#111;display:grid;place-items:center;flex:none}
+.mc-enviar svg{width:60%;height:60%;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.mc-env{opacity:0;transform:translateY(1cqw) scale(.96);transition:opacity .3s,transform .45s cubic-bezier(.3,1.3,.5,1);transform-origin:100% 100%}
+.mc-env.on{opacity:1;transform:none}
+.mc-env u{color:#A8431A;text-underline-offset:2px}
+.mc-prev{display:block;margin-top:.5cqw;padding:.5cqw .7cqw;border-radius:.6cqw;background:rgba(255,255,255,.65);border-left:3px solid #E2501D}
+.mc-prev b{display:block;font-weight:500}
+.mc-prev small{display:block;color:#8A857F;font-size:max(6px,.85cqw)}
+.ai-logo{width:86%;height:auto;display:block}
+/* programa de diseño */
+.m-ai{position:absolute;left:5%;top:10%;width:66%;height:82%;background:#323232;border-radius:1.1cqw;box-shadow:0 24px 50px -20px rgba(20,5,0,.7);overflow:hidden;color:#DDD;display:grid;grid-template-columns:3.4cqw minmax(0,1fr) 16cqw;grid-template-rows:max(14px,2.3cqw) minmax(0,1fr);z-index:1;font-size:max(7px,.95cqw)}
+.ai-top{grid-column:1/-1;display:flex;align-items:center;gap:.45cqw;padding:0 1cqw;background:#2A2A2A;border-bottom:1px solid #1E1E1E;color:#9A9A9A}
+.ai-top i{width:max(5px,.75cqw);height:max(5px,.75cqw);border-radius:50%;background:#555}
+.ai-top span{margin-left:.6cqw}
+.ai-herr{background:#2A2A2A;display:grid;align-content:start;justify-items:center;gap:.7cqw;padding-top:1cqw}
+.ai-herr span{width:1.5cqw;height:1.5cqw;border-radius:.3cqw;background:#4A4A4A}
+.ai-herr span:first-child{background:#7A7A7A}
+.ai-mesa{background:#454545;display:grid;place-items:center;min-width:0}
+.ai-hoja{width:74%;aspect-ratio:16/10;display:grid;place-items:center;background:#fff;position:relative;box-shadow:0 4px 18px rgba(0,0,0,.35)}
+.ai-hoja .t{position:absolute;left:9%;top:8%;font-size:max(10px,2.6cqw);font-weight:600;letter-spacing:-.05em;line-height:.88;color:#111}
+.ai-hoja .t small{display:block;font-size:max(6px,.8cqw);letter-spacing:.06em;font-weight:500;margin-top:.6cqw;color:#5E5A56}
+.ai-forma{position:absolute;right:10%;bottom:9%;width:56%;aspect-ratio:1;border-radius:50%;background:#C9C9C9;transition:background .5s ease}
+.ai-sel{position:absolute;right:calc(10% - 3px);bottom:calc(9% - 3px);width:calc(56% + 6px);aspect-ratio:1;border:1px solid #2D7FF9;pointer-events:none}
+.ai-sel::before,.ai-sel::after{content:"";position:absolute;width:5px;height:5px;background:#fff;border:1px solid #2D7FF9;left:-3px;top:-3px;box-shadow:calc(100% * 0) 0 0}
+.ai-sel::after{left:auto;right:-3px;top:auto;bottom:-3px}
+.ai-pan{background:#2E2E2E;border-left:1px solid #1E1E1E;padding:1cqw;display:grid;align-content:start;gap:.8cqw}
+.ai-pan h6{margin:0;font-size:max(7px,.95cqw);font-weight:500;color:#BDBDBD;text-transform:none}
+.ai-color{display:flex;align-items:center;gap:.7cqw}
+.ai-muestra{width:2.6cqw;height:2.6cqw;border-radius:.3cqw;background:#C9C9C9;border:1px solid #555;transition:background .5s ease}
+.ai-hex{flex:1;height:max(14px,2.1cqw);border-radius:.3cqw;background:#1F1F1F;border:1px solid #444;display:flex;align-items:center;padding:0 .6cqw;font-variant-numeric:tabular-nums;color:#E6E6E6;min-width:0;transition:border-color .2s,box-shadow .2s}
+.ai-hex.foco{border-color:#2D7FF9;box-shadow:0 0 0 1px #2D7FF9}
+.ai-hex b{font-weight:400;color:#8A8A8A;margin-right:.3cqw}
+.ai-barras{display:grid;gap:.5cqw}
+.ai-barras span{height:.5cqw;border-radius:.3cqw;background:linear-gradient(90deg,#3A3A3A,#888)}
+.ai-barras span:nth-child(2){background:linear-gradient(90deg,#3A3A3A,#C9C9C9)}
+.ai-capas{display:grid;gap:.4cqw;margin-top:.4cqw}
+.ai-capas div{height:max(10px,1.5cqw);border-radius:.25cqw;background:#3A3A3A;display:flex;align-items:center;padding:0 .5cqw;color:#AAA}
+.ai-capas div.on{background:#2D5DA8;color:#fff}
+@container (max-width:520px){.ai-pan{padding:.8cqw}.ai-capas{display:none}.mc-img{width:24%}.mc-cuerpo{gap:4px;padding:6px 8px;overflow:hidden}.mc-b{font-size:7.5px;padding:3px 6px}.mc-prev{display:none}.mc-b i,.mc-img i{display:none}.mc-input{margin:0 8px 6px}}
+
+/* ===== Panel de Slots: dibujado a 1060 × 664, igual que la app, y escalado ===== */
+.m-panel-caja{position:absolute;left:0;top:0;width:1060px;height:690px;transform-origin:0 0;z-index:4;opacity:0;pointer-events:none;transition:opacity .3s ease}
+.m-panel-caja.on{opacity:1}
+.m-panel{position:relative;width:1060px;height:664px;border-radius:32px;padding:30px 30px 26px;box-sizing:border-box;background:linear-gradient(100deg,rgba(214,214,214,.78) 0%,rgba(220,218,216,.76) 55%,rgba(238,222,212,.62) 100%);backdrop-filter:blur(40px) saturate(1.4);-webkit-backdrop-filter:blur(40px) saturate(1.4);border:1px solid rgba(255,255,255,.7);box-shadow:0 40px 90px rgba(60,25,8,.35),inset 0 1px 0 rgba(255,255,255,.8);display:grid;grid-template-rows:56px 1fr 48px;gap:22px;color:#111;font-family:var(--f);transform:scale(.97);transition:transform .45s cubic-bezier(.3,1.2,.5,1)}
+.m-panel-caja.on .m-panel{transform:scale(1)}
+.m-panel *{box-sizing:border-box}
+.mp-head{display:flex;align-items:center;gap:12px}
+.mp-head h4{margin:0;font-size:64px;font-weight:400;letter-spacing:-.035em;line-height:1;flex:1}
+.mp-buscar{width:300px;height:48px;border-radius:999px;background:rgba(255,255,255,.55);box-shadow:inset 0 0 0 1px rgba(255,255,255,.7);display:flex;align-items:center;gap:10px;padding:0 10px 0 6px;font-size:14px;color:#6B6762}
+.mp-lupa{width:36px;height:36px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none}
+.mp-lupa svg{width:16px;height:16px;fill:none;stroke:#111;stroke-width:2;stroke-linecap:round}
+.mp-buscar kbd{margin-left:auto;background:rgba(17,17,17,.07);color:#5E5A56;font-size:11px;padding:3px 7px;border-radius:7px}
+.mp-ico{width:48px;height:48px;border-radius:50%;background:rgba(17,17,17,.07);display:grid;place-items:center;flex:none}
+.mp-ico svg{width:20px;height:20px;fill:none;stroke:#111;stroke-width:1.8;stroke-linecap:round}
+.mp-cuerpo{display:grid;grid-template-columns:minmax(0,1fr) 10px 300px;gap:14px;min-height:0}
+.mp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:154px 196px 110px;gap:12px;min-height:0;overflow:hidden}
+.mp-riel{width:5px;border-radius:3px;background:rgba(17,17,17,.06);justify-self:center;position:relative}
+.mp-riel::after{content:"";position:absolute;left:0;right:0;top:8%;height:58%;border-radius:3px;background:rgba(17,17,17,.3)}
+.mp-s{border-radius:20px;padding:16px 16px 16px;display:flex;flex-direction:column;min-width:0;position:relative;overflow:hidden;transition:transform .18s ease,box-shadow .2s}
+.mp-s .et{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:#5E5A56;min-height:22px}
+.mp-s .et span:first-child{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-s .chip{font-size:12px;font-weight:500;padding:3px 7px;border-radius:7px;background:rgba(17,17,17,.06);color:#5E5A56;white-space:nowrap;margin-left:auto}
+.mp-s .prev{margin:auto 0 0;font-size:15px;line-height:1.15;letter-spacing:-.01em;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.mp-s h5{margin:10px 0 0;font-size:27px;font-weight:400;line-height:1;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-s.are{background:#E7DED2}
+.mp-s.tin{background:#1C1C1C;color:#fff}.mp-s.tin .et{color:rgba(255,255,255,.65)}.mp-s.tin .chip{background:rgba(255,255,255,.14);color:#fff}
+.mp-s.nar{background:#D9582D;color:#fff}.mp-s.nar .et{color:rgba(255,255,255,.85)}.mp-s.nar .chip{background:rgba(255,255,255,.88);color:#3A3734}
+.mp-s.bla{background:#F4F2EF}
+.mp-s.img{grid-row:span 2;color:#fff;background:
+  radial-gradient(80% 45% at 70% 38%,rgba(255,196,150,.75),rgba(255,196,150,0) 70%),
+  linear-gradient(180deg,#B9B2AA 0%,#C99B78 26%,#B8652E 52%,#5A2A14 78%,#120B08 100%)}
+.mp-s.img .et{color:rgba(255,255,255,.8)}.mp-s.img .chip{background:rgba(255,255,255,.75);color:#3A3734}
+.mp-s .pdf{width:58px;height:42px;border-radius:4px;margin-top:14px;background:linear-gradient(160deg,#2B2622,#1A1614);position:relative;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.mp-s .pdf::before{content:"";position:absolute;left:8px;top:9px;width:26px;height:20px;border-radius:2px;background:linear-gradient(135deg,#F2E6DA,#E2501D)}
+.mp-s .pdf::after{content:"";position:absolute;right:7px;top:10px;width:12px;height:3px;border-radius:2px;background:#F2F2F0;box-shadow:0 6px 0 #F2F2F0,0 12px 0 rgba(242,242,240,.6)}
+.mp-s .arch{font-size:15px;margin-top:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-s .peso{font-size:12px;color:#5E5A56;margin-top:2px}
+.mp-s.swatch .prev{display:flex;align-items:center;gap:8px}
+.mp-s.nuevo{background:rgba(255,255,255,.22);border:1.5px dashed rgba(17,17,17,.28);flex-direction:row;justify-content:space-between;align-items:flex-start}
+.mp-s.nuevo .mas{width:40px;height:40px;border-radius:50%;border:1.5px solid rgba(17,17,17,.7);display:grid;place-items:center;font-size:22px;line-height:1}
+.mp-s.press{transform:scale(.97);box-shadow:0 0 0 3px #fff,0 0 0 5px #E2501D}
+.mp-s.hover{transform:translateY(-2px)}
+.mp-hist{display:grid;align-content:start;gap:10px;min-height:0;overflow:hidden;position:relative;padding-right:14px}
+.mp-hist::after{content:"";position:absolute;right:2px;top:46px;width:5px;height:34px;border-radius:3px;background:rgba(17,17,17,.3)}
+.mp-hist .tit{display:flex;justify-content:space-between;align-items:baseline;font-size:21px;letter-spacing:-.02em;margin:2px 0 4px}
+.mp-hist .tit span{font-size:13px;color:#6B6762}
+.mp-h{background:rgba(255,255,255,.72);border-radius:16px;padding:10px 14px 11px;display:grid;gap:3px;position:relative}
+.mp-h small{font-size:12px;color:#6B6762}
+.mp-h p{margin:0;font-size:14px;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mp-h .pin{position:absolute;right:14px;top:14px;width:12px;height:14px;fill:none;stroke:#E2501D;stroke-width:1.6}
+.mp-pie{display:flex;align-items:center;gap:8px}
+.mp-pill{height:48px;padding:0 8px 0 20px;border-radius:999px;background:rgba(255,255,255,.8);display:flex;align-items:center;gap:10px;font-size:16px}
+.mp-pill em{font-style:normal;width:26px;height:26px;border-radius:50%;background:rgba(17,17,17,.07);display:grid;place-items:center;font-size:12px}
+.mp-pill.on{background:#111;color:#fff}.mp-pill.on em{background:#E2501D;color:#fff}
+.mp-pill.mas{width:48px;padding:0;justify-content:center;font-size:20px}
+.mp-guardar{margin-left:auto;height:48px;padding:0 8px 0 22px;border-radius:999px;background:#111;color:#fff;display:flex;align-items:center;gap:16px;font-size:16px}
+.mp-guardar span{width:32px;height:32px;border-radius:50%;background:#2E2C2A;display:grid;place-items:center;font-size:16px}
+.mp-ayuda{height:26px;display:flex;align-items:flex-end;justify-content:center;font-size:12px;color:rgba(255,255,255,.8);font-family:var(--f)}
+
+/* ===== Barra del notch: dibujada a 1530 × 380, igual que la app, y escalada ===== */
+.m-barra-caja{position:absolute;left:0;top:0;width:1530px;height:380px;transform-origin:0 0;z-index:5;pointer-events:none}
+.m-barra{width:1530px;height:380px;border-radius:56px;padding:44px 40px 40px 52px;box-sizing:border-box;background:linear-gradient(180deg,rgba(248,246,243,.94),rgba(236,234,231,.9));backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:2px solid rgba(255,255,255,.85);box-shadow:0 30px 70px rgba(40,15,5,.35);display:grid;grid-template-columns:minmax(0,1fr) 64px;grid-template-rows:176px 96px;gap:26px 22px;font-family:var(--f);color:#111;transform-origin:50% 0;opacity:0;transform:translateY(-14px) scale(.9);transition:opacity .28s ease,transform .5s cubic-bezier(.3,1.25,.5,1)}
+.m-barra-caja.on .m-barra{opacity:1;transform:none}
+.m-barra *{box-sizing:border-box}
+.mb-fila{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px;min-width:0}
+.mb-s{border-radius:38px;padding:22px 24px 24px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;min-width:0;overflow:hidden;transition:transform .22s cubic-bezier(.3,1.4,.5,1),box-shadow .2s}
+.mb-s .chip{position:absolute;right:20px;top:20px;font-size:24px;padding:6px 12px;border-radius:12px;background:rgba(255,255,255,.8);color:#5E5A56;white-space:nowrap}
+.mb-s .prev{font-size:24px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:22px}
+.mb-s b{font-weight:400;font-size:31px;line-height:1.05;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mb-s.img{color:#fff;background:radial-gradient(70% 60% at 70% 30%,rgba(255,190,140,.8),rgba(255,190,140,0) 70%),linear-gradient(180deg,#B3AAA2 0%,#C68A62 35%,#8A4220 70%,#2A120A 100%)}
+.mb-s.are{background:#E7DED2}.mb-s.are .chip{background:rgba(255,255,255,.65)}
+.mb-s.tin{background:#1C1C1C;color:#fff}.mb-s.tin .chip{background:rgba(255,255,255,.88);color:#3A3734}
+.mb-s.nar{background:#D9582D;color:#fff}.mb-s.nar .chip{background:rgba(255,255,255,.88);color:#3A3734}
+.mb-s.bla{background:#F4F2EF}.mb-s.bla .chip{background:rgba(17,17,17,.06)}
+.mb-s.hover{transform:translateY(-6px) scale(1.03);box-shadow:0 0 0 4px #fff,0 18px 30px -12px rgba(0,0,0,.35)}
+.mb-pag{display:grid;grid-template-rows:64px 1fr 64px;justify-items:center;align-items:center;font-size:24px;color:#5E5A56}
+.mb-pag span{width:64px;height:64px;border-radius:50%;display:grid;place-items:center}
+.mb-pag span svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.mb-pag .arr{color:#C9C5C0}
+.mb-pag .abj{background:#fff;color:#111;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.mb-pie{grid-column:1/-1;display:flex;align-items:center;gap:20px}
+.mb-pill{height:96px;padding:0 18px 0 40px;border-radius:999px;background:#fff;display:flex;align-items:center;gap:20px;font-size:32px}
+.mb-pill em{font-style:normal;width:56px;height:56px;border-radius:50%;background:#ECEAE7;display:grid;place-items:center;font-size:24px}
+.mb-pill.on{background:#111;color:#fff}.mb-pill.on em{background:#D9582D;color:#fff}
+.mb-btn{width:96px;height:96px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:36px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.mb-btn:first-of-type{margin-left:auto}
+.mb-btn svg{width:34px;height:34px;fill:none;stroke:#111;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* teclas que se aprietan */
+.m-teclas{position:absolute;left:50%;bottom:2.2cqw;transform:translate(-50%,8px);display:flex;gap:.6cqw;z-index:7;opacity:0;transition:opacity .25s,transform .25s}
+.m-teclas.on{opacity:1;transform:translate(-50%,0)}
+.m-teclas span{min-width:max(24px,4cqw);height:max(24px,4cqw);padding:0 .9cqw;border-radius:.9cqw;background:rgba(20,19,18,.82);color:#fff;display:grid;place-items:center;font-size:max(11px,1.8cqw);font-weight:500;box-shadow:inset 0 -2px 0 rgba(255,255,255,.12),0 8px 20px -8px rgba(0,0,0,.5);backdrop-filter:blur(8px)}
+.m-cursor{position:absolute;width:max(12px,1.7cqw);height:auto;z-index:8;left:80%;top:80%;transition:left .85s cubic-bezier(.6,0,.2,1),top .85s cubic-bezier(.6,0,.2,1),transform .15s;pointer-events:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+.m-cursor.click{transform:scale(.82)}
+@media (max-width:380px){.logo-txt{display:none}.idioma button{min-width:30px;padding:0 6px}.tema{width:34px;height:34px}.nav-links .btn.chico{padding:0 12px}}
+.mac-modos{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:14px}
+.mac-modos span{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px 0 6px;border-radius:999px;background:var(--card);color:var(--mute);font-size:14px;font-weight:500;box-shadow:inset 0 0 0 1px var(--linea);transition:background .3s,color .3s,box-shadow .3s}
+.mac-modos b{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--tecla);color:var(--tinta);font-size:12px;font-weight:500;transition:background .3s,color .3s}
+.mac-modos kbd{background:var(--tecla)}
+.mac-modos span.on{background:var(--tinta);color:var(--papel);box-shadow:none}
+.mac-modos span.on b{background:var(--naranja);color:#fff}
+.mac-modos span.on kbd{background:color-mix(in srgb,var(--papel) 18%,transparent);color:var(--papel)}
+@media (max-width:480px){.mac-modos span{font-size:12px;height:32px;padding:0 10px 0 4px}.mac-modos b{width:22px;height:22px}}
+.mac-pie{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--mute);margin-top:12px}
 
 /* secciones */
-section.bloque{padding-block:88px}
+section.bloque{padding-block:88px;scroll-margin-top:72px}
 .sec-head{display:grid;gap:18px;margin-bottom:40px}
 @media (min-width:920px){.sec-head{grid-template-columns:1fr 1fr;align-items:end}.sec-head .lead{justify-self:end}}
 
@@ -201,6 +383,14 @@ section.bloque{padding-block:88px}
 @media (max-width:919px){.np.ver,.np:hover{height:146px}}
 .np.ver .np-pill,.np:hover .np-pill{opacity:0}
 .np.ver .np-todo,.np:hover .np-todo{opacity:1;transition-delay:.15s}
+.np.ver,.np:hover{background:linear-gradient(180deg,#F8F6F3,#ECEAE7);color:#111;box-shadow:0 14px 30px -10px rgba(40,15,5,.45)}
+.np.ver .np-s,.np:hover .np-s{background:#F4F2EF;color:#111;box-shadow:inset 0 0 0 1px rgba(17,17,17,.05)}
+.np.ver .np-s small,.np:hover .np-s small{color:#5E5A56}
+.np.ver .np-s.osc,.np:hover .np-s.osc{background:#1C1C1C;color:#fff}.np.ver .np-s.osc small,.np:hover .np-s.osc small{color:rgba(255,255,255,.7)}
+.np.ver .np-s.col,.np:hover .np-s.col{background:#D9582D;color:#fff}.np.ver .np-s.col small,.np:hover .np-s.col small{color:rgba(255,255,255,.85)}
+.np.ver .np-s.img,.np:hover .np-s.img{background:linear-gradient(180deg,#B3AAA2,#C68A62 35%,#8A4220 70%,#2A120A);color:#fff}
+.np.ver .np-s.are,.np:hover .np-s.are{background:#E7DED2}
+.np.ver .np-pie,.np:hover .np-pie{color:#5E5A56}
 .np-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
 .np-s{background:#1C1C1C;border-radius:12px;padding:8px;min-height:92px;display:flex;flex-direction:column;justify-content:space-between;min-width:0}
 .np-s small{font-size:10px;color:#B9B4AE;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -295,6 +485,48 @@ section.bloque{padding-block:88px}
 .tel-libs button:focus-visible{outline:2px solid #E2501D;outline-offset:2px}
 .tel-libs em{font-style:normal;opacity:.6}
 .dedo{position:absolute;left:70%;top:85%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(17,17,17,.18);border:2px solid rgba(255,255,255,.9);box-shadow:0 4px 14px rgba(0,0,0,.25);pointer-events:none;z-index:5;opacity:0;transition:left .7s cubic-bezier(.6,0,.2,1),top .7s cubic-bezier(.6,0,.2,1),opacity .3s,transform .2s}
+/* iPhone: escena animada (Slots → WhatsApp) */
+.tel-pant{padding:0!important;display:block!important}
+#tel-pant .tel-isla{z-index:6}
+#tel-pant .dedo{z-index:7}
+.tel-app{position:absolute;inset:0;display:flex;flex-direction:column;padding:56px 14px 14px;transition:transform .5s cubic-bezier(.3,1,.4,1),opacity .35s ease;background:#F2F2F0}
+.tel-off{opacity:0;pointer-events:none;transform:translateX(24%)}
+.tel-slots.tel-off{transform:translateX(-24%)}
+.tel-grid .tc{cursor:default}
+.tel-grid{grid-auto-rows:minmax(0,1fr)}
+.tel-libs span{height:34px;padding:0 13px;border-radius:999px;background:#fff;font-size:13px;font-weight:500;display:inline-flex;align-items:center;gap:6px}
+.tel-libs span.on{background:#111;color:#F2F2F0}
+.tel-libs em{font-style:normal;color:#E2501D}
+.tel-wa{background:#EFEAE3;padding:48px 0 0}
+.tw-top{display:flex;align-items:center;gap:10px;padding:8px 14px 10px;background:#F8F6F3;border-bottom:1px solid #E2DCD4}
+.tw-top .atras{font-size:26px;line-height:1;color:#111;margin-right:-2px}
+.tw-av{width:34px;height:34px;border-radius:50%;background:#111;color:#F2F2F0;display:grid;place-items:center;font-size:12px;font-weight:600;flex:none}
+.tw-top b{display:block;font-weight:500;font-size:15px}
+.tw-top small{display:block;font-size:11px;color:#6B6762;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tw-cuerpo{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:7px;padding:10px 12px;overflow:hidden;min-height:0}
+.tw-b{max-width:78%;padding:7px 10px 5px;border-radius:14px;font-size:14px;line-height:1.3;background:#fff;align-self:flex-start;box-shadow:0 1px 1px rgba(0,0,0,.06)}
+.tw-b em{display:block;font-style:normal;font-size:11px;font-weight:600;color:#A8431A;margin-bottom:1px}
+.tw-b i{display:block;font-style:normal;text-align:right;font-size:10px;color:#8A857F;margin-top:2px}
+.tw-b.yo{align-self:flex-end;background:#FCE1D3}
+.tw-b u{color:#A8431A;text-underline-offset:2px;word-break:break-all}
+.tw-prev{display:block;margin:6px 0 2px;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,.7);border-left:3px solid #E2501D;font-size:12px}
+.tw-prev b{display:block;font-weight:500}
+.tw-prev small{color:#8A857F}
+.tw-nuevo{display:none}
+.tw-nuevo.on{display:block;animation:twEntra .45s cubic-bezier(.3,1.3,.5,1)}
+@keyframes twEntra{from{opacity:0;transform:translateY(10px) scale(.95)}to{opacity:1;transform:none}}
+.tw-img{width:52%;padding:4px;background:#FCE1D3}
+.tw-flyer{aspect-ratio:4/5;border-radius:10px;background:#111;color:#F2F2F0;display:grid;place-items:center;text-align:center;font-weight:600;font-size:26px;letter-spacing:-.04em;line-height:.9;background-image:radial-gradient(60% 40% at 70% 20%,rgba(226,80,29,.55),rgba(226,80,29,0) 70%)}
+.tw-flyer small{display:block;color:#E2501D;font-size:10px;letter-spacing:.08em;font-weight:500;margin-top:6px}
+.tw-img i{padding-right:4px}
+.tw-barra{position:relative;display:flex;align-items:center;gap:8px;padding:8px 10px 22px;background:#F8F6F3;border-top:1px solid #E2DCD4}
+.tw-mas{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:22px;color:#111;flex:none}
+.tw-campo{flex:1;height:34px;border-radius:17px;background:#fff;border:1px solid #E2DCD4;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#8A857F}
+.tw-pegar{position:absolute;left:58px;bottom:68px;background:#1C1C1C;color:#fff;font-size:14px;padding:8px 14px;border-radius:10px;opacity:0;transform:translateY(6px) scale(.9);transition:opacity .2s,transform .3s cubic-bezier(.3,1.4,.5,1);pointer-events:none}
+.tw-pegar::after{content:"";position:absolute;left:22px;bottom:-5px;width:10px;height:10px;background:#1C1C1C;transform:rotate(45deg);border-radius:2px}
+.tw-pegar.on{opacity:1;transform:none}
+.dedo.mantener{transform:scale(.72);background:rgba(226,80,29,.35);transition:left .7s cubic-bezier(.6,0,.2,1),top .7s cubic-bezier(.6,0,.2,1),opacity .3s,transform .5s}
+
 .dedo.ver{opacity:1}
 .dedo.toque{transform:scale(.72);background:rgba(226,80,29,.45)}
 
@@ -336,10 +568,6 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .listo p{color:var(--mute)}
 
 /* idioma */
-html{background:var(--papel)}
-body{transition:opacity .22s ease}
-html.cambiando-idioma body{opacity:0}
-@media (prefers-reduced-motion:reduce){body{transition:none}}
 .idioma{display:inline-flex;padding:3px;border-radius:999px;box-shadow:inset 0 0 0 1.5px var(--linea)}
 .idioma button{all:unset;cursor:pointer;height:32px;min-width:38px;padding:0 8px;box-sizing:border-box;border-radius:999px;font:500 13px/32px var(--f);letter-spacing:.04em;text-align:center;color:var(--mute);transition:background .15s,color .15s}
 .idioma button[aria-pressed="true"]{background:var(--tinta);color:var(--papel)}
@@ -369,6 +597,41 @@ dialog#modal::backdrop{background:rgba(17,12,8,.45);backdrop-filter:blur(6px);-w
 #modal-cuerpo .listo{padding:24px 28px 32px!important;background:transparent!important}
 html.con-modal{overflow:hidden}
 
+/* descarga */
+.descarga{background:#141312;color:#F2F2F0;border-radius:var(--r-win);padding:clamp(28px,5vw,64px);display:grid;gap:40px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:920px){.descarga{grid-template-columns:1fr 1fr;gap:56px 64px;align-items:center}}
+.descarga h2{color:#F2F2F0}
+.descarga .lead{color:#B9B4AE;margin-top:20px}
+.desc-eyebrow{color:#B9B4AE}
+.desc-cta{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:28px}
+.btn.grande{height:56px;padding:0 28px;font-size:17px}
+.btn.grande svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.desc-meta{font-size:14px;color:#8F8983;font-variant-numeric:tabular-nums}
+.desc-movil{display:none;margin-top:20px;font-size:15px;color:#F5A27D;max-width:40ch}
+@media (hover:none) and (pointer:coarse){.desc-movil{display:block}}
+.dmg{background:#ECE9E5;color:#111;border-radius:16px;overflow:hidden;box-shadow:0 30px 60px -24px rgba(0,0,0,.6);max-width:520px;width:100%;justify-self:center}
+.dmg-top{height:34px;display:flex;align-items:center;gap:7px;padding:0 12px;background:#E2DED9;border-bottom:1px solid #D3CEC8;font-size:13px;font-weight:500;color:#5E5A56}
+.dmg-top i{width:11px;height:11px;border-radius:50%;background:#C9C3BC}
+.dmg-top span{margin:0 auto;padding-right:50px}
+.dmg-cuerpo{position:relative;display:flex;align-items:center;justify-content:space-around;padding:clamp(28px,6vw,48px) 16px}
+.dmg-item{display:grid;justify-items:center;gap:8px;font-size:13px;font-weight:500;z-index:1}
+.dmg-icono{width:clamp(64px,14vw,92px);aspect-ratio:1;max-width:100%;display:grid;place-items:center}
+.dmg-icono.app{background:#1C1C1C;border-radius:22%;box-shadow:0 8px 18px -6px rgba(0,0,0,.45)}
+.dmg-icono.app svg{width:58%}
+.dmg-icono.carpeta svg{width:100%}
+.dmg-flecha{width:clamp(48px,14vw,90px);fill:none;stroke:#A8A29C;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:6 7}
+.dmg-fantasma{position:absolute;left:calc(25% - clamp(32px,7vw,46px));top:50%;width:clamp(64px,14vw,92px);aspect-ratio:1;margin-top:calc(clamp(64px,14vw,92px) / -2 - 10px);background:#1C1C1C;border-radius:22%;display:grid;place-items:center;opacity:0;animation:arrastre 3.6s cubic-bezier(.6,0,.3,1) infinite .8s;z-index:2}
+.dmg-fantasma svg{width:58%}
+@keyframes arrastre{0%{opacity:0;transform:translateX(0) scale(1)}12%{opacity:.85;transform:translateX(0) scale(1.04)}62%{opacity:.85;transform:translateX(calc(var(--dmg-dx,260px))) scale(1.04)}75%{opacity:0;transform:translateX(calc(var(--dmg-dx,260px))) scale(.6)}100%{opacity:0}}
+.instalar{list-style:none;margin:0;padding:0;display:grid;gap:0;grid-template-columns:minmax(0,1fr);counter-reset:paso;border-top:1px solid #2E2B28}
+@media (min-width:920px){.instalar{grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;border-top:0}}
+.instalar li{counter-increment:paso;display:grid;gap:6px;padding:18px 0;border-bottom:1px solid #2E2B28;align-content:start}
+@media (min-width:920px){.instalar li{border-bottom:0;border-top:1px solid #2E2B28}}
+.instalar li::before{content:counter(paso);font-size:14px;font-weight:500;color:#EE5A26;font-variant-numeric:tabular-nums}
+.instalar b{font-weight:500;font-size:19px;letter-spacing:-.02em}
+.instalar span{color:#B9B4AE;font-size:15px}
+.instalar kbd{background:#2A2826;color:#F2F2F0}
+
 /* faq */
 .faq{display:grid;gap:0;border-top:1px solid var(--linea)}
 details{border-bottom:1px solid var(--linea);padding-block:20px}
@@ -377,6 +640,10 @@ summary::-webkit-details-marker{display:none}
 summary::after{content:"+";display:inline-block;color:var(--naranja);font-weight:400;font-size:28px;line-height:.8;transition:transform .2s}
 details[open] summary::after{transform:rotate(45deg)}
 details p{color:var(--mute);margin-top:12px;max-width:62ch}
+
+.pie-der{display:flex;flex-wrap:wrap;gap:8px 20px}
+.pie-der a{color:inherit;text-underline-offset:3px}
+.faq a{color:var(--tinta);text-decoration-color:var(--naranja);text-underline-offset:3px}
 
 /* pie */
 footer{padding-block:72px 48px}
@@ -391,16 +658,15 @@ footer{padding-block:72px 48px}
   <div class="wrap">
     <a class="logo" href="#top" aria-label="Slots, inicio">
       <svg viewBox="0 0 30 24" aria-hidden="true"><rect class="c" x="0" y="0" width="13" height="24" rx="3.5"/><rect class="c" x="16" y="0" width="14" height="10.5" rx="3.5"/><rect class="o" x="16" y="13.5" width="14" height="10.5" rx="3.5"/></svg>
-      Slots
+      <span class="logo-txt">Slots</span>
     </a>
     <div class="nav-links">
       <a href="#probalo">Probalo</a>
-      <a href="#como">Cómo funciona</a>
+      <a href="#iphone">iPhone</a>
       <a href="#preguntas">Preguntas</a>
       <div class="idioma" id="idioma" role="group" aria-label="Idioma"><button type="button" data-lang="es" aria-pressed="true">ES</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>
       <button class="tema" id="tema" type="button" aria-label="Modo noche"><svg class="luna" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><svg class="sol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg></button>
-      <a class="btn chico" href="#lista" data-abrir-lista>Anotarme</a>
-      <a class="btn chico fantasma" id="nav-beta" href="https://github.com/gianpetrii/hotslot-app/releases/latest/download/Slots.dmg">Beta Mac</a>
+      <a class="btn chico" href="#descargar" data-ir="descargar">Descargar</a>
     </div>
   </div>
 </nav>
@@ -408,44 +674,170 @@ footer{padding-block:72px 48px}
 <main id="top">
   <header class="wrap hero">
     <div class="hero-top">
-      <p class="eyebrow"><span class="dot"></span>Para Mac y iPhone · Lista de espera abierta</p>
+      <p class="eyebrow"><span class="dot"></span>Para Mac y iPhone</p>
       <h1>Tu portapapeles,<br>ahora con <span class="n">memoria.</span></h1>
+      <p class="lead hero-lead">Guardá una vez lo que mandás todos los días: un link, una respuesta, un flyer, un color. Después lo pegás con un atajo, sin abrir nada.</p>
     </div>
     <div class="hero-row">
-      <p class="lead">Guardá una vez lo que mandás todos los días: un link, una respuesta, un flyer, un color. Después lo pegás con un atajo, sin abrir nada.</p>
       <div>
-        <form class="quick" id="form-rapido" novalidate>
-          <label for="email-rapido" class="sr" hidden>Tu mail</label>
-          <input id="email-rapido" name="email" type="email" autocomplete="email" placeholder="tu@mail.com" aria-label="Tu mail" required>
-          <button class="btn acento" type="submit">Anotarme</button>
-        </form>
-        <p class="estado" id="estado-rapido" aria-live="polite"></p>
-        <p class="fine">Los anotados entran primero y tienen precio de preventa. Te escribimos solo cuando esté lista.</p>
+        <div class="hero-cta">
+          <a class="btn acento grande btn-dmg" href="#descargar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>
+            <span class="btn-dmg-txt">Descargar para Mac</span>
+          </a>
+          <p class="hero-meta dmg-meta"></p>
+        </div>
+        <p class="fine">Probala gratis. Si te sirve, la licencia cuesta USD 10, un solo pago.</p>
+        <p class="hero-ios">¿Usás iPhone? <a href="#iphone" class="link-ios" data-abrir-lista>Recibí el link para iPhone</a></p>
       </div>
     </div>
 
     <div>
-      <div class="pantalla" id="pantalla" role="img" aria-label="Animación: se guarda un link en un slot, aparece el aviso en el notch y después se pega con un atajo.">
-        <div class="barra"><span>Slots</span><span>lun 10:49</span></div>
-        <div class="isla" id="isla-hero"><div class="in" id="isla-hero-in"></div></div>
-        <div class="panel" id="panel-hero">
-          <div class="panel-head"><b>Trabajo</b><span>Clic para pegar · Esc para cerrar</span></div>
-          <div class="panel-grid">
-            <div class="ps osc" data-n="1"><small><span>Slot 1</span><span>⌘⇧A</span></small><strong>Mi portfolio</strong></div>
-            <div class="ps" data-n="2"><small><span>Slot 2</span><span>⌘⇧S</span></small><strong>Presupuesto base</strong></div>
-            <div class="ps img" data-n="3"><small><span>Slot 3</span><span>⌘⇧D</span></small><strong>Flyer otoño</strong></div>
-            <div class="ps" data-n="4"><small><span>Slot 4</span><span>⌘⇧Q</span></small><strong>Link de Meet</strong></div>
-            <div class="ps" data-n="5" style="background:#E2501D;color:#fff"><small style="color:rgba(255,255,255,.85)"><span>Slot 5</span><span>⌘⇧W</span></small><strong>#E2501D</strong></div>
-            <div class="ps vacio" data-n="6"><small><span>Historial</span><span></span></small><strong>Arrastrá a un slot</strong></div>
+      <div class="mac" id="mac" role="img" aria-label="Animación de Slots en una Mac, con tres formas de usarlo: en Mail, desde el panel (⌘⇧V), un clic copia los precios de la colección y ⌘V los pega; en Illustrator, desde la barra del notch, un clic copia el naranja de marca y ⌘V lo pega en el logo; en WhatsApp, el atajo ⇧⌘A pega el portfolio directo.">
+        <div class="m-menu"><div class="izq"><span>Mail</span><span>Archivo</span><span>Edición</span><span>Ver</span></div><div class="der"><svg viewBox="0 0 30 24" aria-hidden="true"><rect x="0" y="0" width="13" height="24" rx="3.5" fill="#fff"/><rect x="16" y="0" width="14" height="10.5" rx="3.5" fill="#fff"/><rect x="16" y="13.5" width="14" height="10.5" rx="3.5" fill="#fff" opacity=".55"/></svg><span class="hora-larga">lun 24 nov</span><span>10:49</span></div></div>
+
+        <div class="m-app">
+          <div class="m-app-top"><i></i><i></i><i></i><span>Nuevo mensaje</span></div>
+          <div class="m-app-campos">
+            <div>Para: <b>Lucía · Tienda Norte</b></div>
+            <div>Asunto: <b>Colección Otoño 2026</b></div>
+          </div>
+          <div class="m-texto" id="m-texto"></div>
+        </div>
+
+        <div class="m-chat m-escena-off" id="m-chat">
+          <div class="mc-top"><span class="mc-av">CM</span><div><b>Caro Méndez</b><small>en línea</small></div></div>
+          <div class="mc-cuerpo">
+            <div class="mc-b">¡Hola! Vi tus trabajos en Instagram. ¿Tenés algo más para ver?<i>10:52</i></div>
+            <div class="mc-b yo mc-env" id="mc-env"><span>¡Hola! Te dejo mi portfolio para que lo chusmes:</span> <u>behance.net/estudio-norte</u><span class="mc-prev"><b>Estudio Norte · Portfolio</b><small>behance.net</small></span><i>10:53</i></div>
+          </div>
+          <div class="mc-input" id="mc-input"><span id="mc-input-t">Escribí un mensaje</span><span class="mc-enviar" id="mc-enviar"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></div>
+        </div>
+
+        <div class="m-ai m-escena-off" id="m-ai">
+          <div class="ai-top"><i></i><i></i><i></i><span>logo-slots.ai · 100 %</span></div>
+          <div class="ai-herr"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="ai-mesa"><div class="ai-hoja">
+            <svg class="ai-logo" viewBox="0 0 330 140" aria-hidden="true">
+              <rect x="10" y="10" width="54" height="120" rx="15" fill="#111"/>
+              <rect x="74" y="10" width="58" height="54" rx="15" fill="#111"/>
+              <rect id="ai-forma" x="74" y="76" width="58" height="54" rx="15" fill="#C9C9C9" style="transition:fill .5s ease"/>
+              <rect x="70" y="72" width="66" height="62" fill="none" stroke="#2D7FF9" stroke-width="1.5"/>
+              <rect x="67" y="69" width="6" height="6" fill="#fff" stroke="#2D7FF9" stroke-width="1.2"/><rect x="133" y="131" width="6" height="6" fill="#fff" stroke="#2D7FF9" stroke-width="1.2"/>
+              <text x="150" y="100" font-family="Inter Tight, Helvetica, Arial, sans-serif" font-size="70" font-weight="500" letter-spacing="-3" fill="#111">Slots</text>
+            </svg>
+          </div></div>
+          <div class="ai-pan">
+            <h6>Color</h6>
+            <div class="ai-color"><span class="ai-muestra" id="ai-muestra"></span><span class="ai-hex" id="ai-hex"><b>#</b><span id="ai-hex-v">C9C9C9</span></span></div>
+            <div class="ai-barras"><span></span><span></span><span></span></div>
+            <h6>Capas</h6>
+            <div class="ai-capas"><div>Slots</div><div>Card alta</div><div>Card arriba</div><div class="on">Card abajo</div></div>
           </div>
         </div>
-        <svg class="cursor" id="cursor" viewBox="0 0 18 18" style="left:70%;top:80%" aria-hidden="true"><path d="M2 1l13 7.5-6 1.4L6.3 16z" fill="#fff" stroke="#111" stroke-width="1.2" stroke-linejoin="round"/></svg>
+
+        <div class="m-panel-caja" id="m-panel-caja">
+          <div class="m-panel">
+            <div class="mp-head">
+              <h4>Trabajo</h4>
+              <div class="mp-buscar"><span class="mp-lupa"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></svg></span><span>Buscar en slots e historial</span><kbd>⌘F</kbd></div>
+              <div class="mp-ico"><svg viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></svg></div>
+              <div class="mp-ico"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></div>
+            </div>
+            <div class="mp-cuerpo">
+              <div class="mp-grid">
+                <div class="mp-s img" data-s="1"><div class="et"><span>behance.net</span><span class="chip">⇧⌘A</span></div><p class="prev">¡Hola! Te dejo mi portfolio para que lo chusmes: behance.net/estudio-norte</p><h5>Portfolio</h5></div>
+                <div class="mp-s are" data-s="2"><div class="et"><span>Texto · 34 palabras</span><span class="chip">⇧⌘S</span></div><p class="prev">¡Gracias por escribir! Estos son los precios de la colección Otoño 2026…</p><h5>Precios</h5></div>
+                <div class="mp-s tin" data-s="3"><div class="et"><span>Texto · 13 palabras</span><span class="chip">⇧⌘D</span></div><p class="prev">Hacemos envíos a todo el país. Llegan en 3 a 5 días hábiles.</p><h5>Envíos</h5></div>
+                <div class="mp-s nar swatch" data-s="4"><div class="et"><span>Color</span><span class="chip">⇧⌘Q</span></div><p class="prev">#E2501D</p><h5>Naranja</h5></div>
+                <div class="mp-s bla" data-s="5"><div class="et"><span>Archivo PDF</span><span class="chip">⇧⌘W</span></div><div class="pdf"></div><p class="arch">Propuesta Estudio Norte.pdf</p><p class="peso">PDF · 2,4 MB</p><h5>Propuesta</h5></div>
+                <div class="mp-s nuevo"><span class="mas">+</span><span class="chip">⌘N</span></div>
+              </div>
+              <div class="mp-riel"></div>
+              <div class="mp-hist">
+                <div class="tit">Historial <span>Arrastrá a un slot</span></div>
+                <div class="mp-h"><small>Safari · hace 2 min</small><p>behance.net/estudio-norte/expo-2026</p><svg class="pin" viewBox="0 0 12 14"><path d="M3 1h6M4 1v5L2 8h8L8 6V1M6 8v5"/></svg></div>
+                <div class="mp-h"><small>Notas · hace 9 min</small><p>Hola Lucía, te paso el presupuesto con los cambios que hablamos.</p></div>
+                <div class="mp-h"><small>Figma · hace 21 min</small><p>#A8431A</p></div>
+                <div class="mp-h"><small>Mail · hace 1 h</small><p>Gracias por escribir, te respondo en el día.</p></div>
+                <div class="mp-h"><small>WhatsApp · hace 2 h</small><p>Te mando la dirección: Echeverría 752</p></div>
+              </div>
+            </div>
+            <div class="mp-pie">
+              <div class="mp-pill on">Trabajo <em>5</em></div>
+              <div class="mp-pill">Personal <em>3</em></div>
+              <div class="mp-pill">Clientes <em>4</em></div>
+              <div class="mp-pill mas">+</div>
+              <div class="mp-guardar">Guardar portapapeles <span>›</span></div>
+            </div>
+          </div>
+          <div class="mp-ayuda">Clic para copiar · ⌘V para pegar · Esc para cerrar</div>
+        </div>
+
+        <div class="m-barra-caja" id="m-barra-caja">
+          <div class="m-barra">
+            <div class="mb-fila">
+              <div class="mb-s img" id="mb-1"><span class="chip">⇧⌘A</span><span class="prev">behance.net/estudio-norte</span><b>Portfolio</b></div>
+              <div class="mb-s are"><span class="chip">⇧⌘S</span><span class="prev">¡Gracias por escribir! Estos…</span><b>Precios</b></div>
+              <div class="mb-s tin"><span class="chip">⇧⌘D</span><span class="prev">Hacemos envíos a todo el…</span><b>Envíos</b></div>
+              <div class="mb-s nar" id="mb-4"><span class="chip">⇧⌘Q</span><span class="prev">#E2501D</span><b>Naranja</b></div>
+              <div class="mb-s bla"><span class="chip">⇧⌘W</span><span class="prev">Propuesta Estudio Norte.pdf</span><b>Propuesta</b></div>
+            </div>
+            <div class="mb-pag"><span class="arr"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></span>1/2<span class="abj"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></div>
+            <div class="mb-pie">
+              <div class="mb-pill on">Trabajo <em>5</em></div>
+              <div class="mb-pill">Personal <em>3</em></div>
+              <div class="mb-pill">Clientes <em>4</em></div>
+              <div class="mb-btn">+</div>
+              <div class="mb-btn"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-6 6M10 20H4v-6M4 20l6-6"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-notch" id="m-notch"><div class="aviso" id="m-aviso"></div></div>
+        <div class="m-teclas" id="m-teclas"></div>
+        <svg class="m-cursor" id="m-cursor" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 1l13 7.5-6 1.4L6.3 16z" fill="#fff" stroke="#111" stroke-width="1.2" stroke-linejoin="round"/></svg>
       </div>
-      <div class="pantalla-pie"><span>Panel abierto con <kbd>⌘⇧V</kbd> sobre cualquier app</span><span>El vidrio toma el color de lo que tenés atrás</span></div>
+      <div class="mac-modos" id="mac-modos" aria-hidden="true">
+        <span data-m="mail"><b>1</b>Desde el panel <kbd>⌘⇧V</kbd></span>
+        <span data-m="ai"><b>2</b>Desde la barra del notch</span>
+        <span data-m="chat"><b>3</b>Con un atajo <kbd>⇧⌘A</kbd></span>
+      </div>
     </div>
   </header>
 
-  <section class="bloque" id="probalo" aria-labelledby="t-probalo">
+  <section class="bloque" id="iphone" aria-labelledby="t-ios" style="padding-top:40px">
+    <div class="wrap ios">
+      <div class="ios-txt">
+        <p class="eyebrow"><span class="dot"></span>iPhone · Sincronizado con tu Mac</p>
+        <h2 id="t-ios">Tocás la card.<br>Ya está copiado.</h2>
+        <p class="lead">En el iPhone tus slots están en una grilla: un toque los copia y los pegás en WhatsApp, Instagram o donde estés. Y se sincronizan con tu Mac: lo que guardás en uno aparece en el otro.</p>
+        <div class="hero-cta"><a class="btn link-ios" href="#lista" data-abrir-lista>Recibí el link para iPhone</a></div>
+      </div>
+      <div class="telefono" role="img" aria-label="Animación de Slots en iPhone: tocás el slot del flyer y se copia, abrís WhatsApp y lo pegás en el grupo; después hacés lo mismo con el link de la reunión.">
+        <div class="tel-pant" id="tel-pant">
+          <div class="tel-isla" id="tel-isla"><span class="in" id="tel-isla-in"></span></div>
+          <div class="tel-app tel-slots" id="tel-slots">
+            <div class="tel-head"><b>Trabajo</b><span><i>+</i><i>✎</i></span></div>
+            <div class="tel-grid" id="tel-grid"></div>
+            <div class="tel-libs"><span class="on">Trabajo <em>6</em></span><span>Personal</span><span>Clientes</span></div>
+          </div>
+          <div class="tel-app tel-wa tel-off" id="tel-wa">
+            <div class="tw-top"><span class="atras">‹</span><span class="tw-av">EN</span><div><b>Expo · Estudio Norte</b><small>Tomás, Lucía, vos</small></div></div>
+            <div class="tw-cuerpo">
+              <div class="tw-b"><em>Tomás</em>¿Alguien tiene el flyer final? Lo quiero subir hoy.<i>10:52</i></div>
+              <div class="tw-b yo tw-img tw-nuevo" id="tw-img"><div class="tw-flyer"><span>EXPO<br>DISEÑO<small>28 · NOV</small></span></div><i>10:53</i></div>
+              <div class="tw-b tw-nuevo" id="tw-pide"><em>Lucía</em>¡Genial! ¿Y el link para la reunión del jueves?<i>10:54</i></div>
+              <div class="tw-b yo tw-nuevo" id="tw-link"><u>meet.google.com/xpe-qwrt-mzk</u><span class="tw-prev"><b>Google Meet</b><small>meet.google.com</small></span><i>10:54</i></div>
+            </div>
+            <div class="tw-barra"><span class="tw-mas">+</span><span class="tw-campo" id="tw-campo">Mensaje</span><span class="tw-pegar" id="tw-pegar">Pegar</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque" id="probalo" aria-labelledby="t-probalo" style="padding-top:24px">
     <div class="wrap">
       <div class="sec-head">
         <h2 id="t-probalo">Probalo acá.<br>Sin instalar nada.</h2>
@@ -458,8 +850,8 @@ footer{padding-block:72px 48px}
             <div class="isla" id="isla-demo"><div class="in" id="isla-demo-in"></div></div>
           </div>
           <div class="campos">
-            <div><span>Para:</span><b>Martina · Estudio Norte</b></div>
-            <div><span>Asunto:</span><b>Propuesta de identidad</b></div>
+            <div><span>Para:</span><b>Lucía · Estudio Norte</b></div>
+            <div><span>Asunto:</span><b>Presupuesto y reunión</b></div>
           </div>
           <label for="doc" hidden>Texto del mensaje</label>
           <textarea id="doc" spellcheck="false"></textarea>
@@ -483,25 +875,25 @@ footer{padding-block:72px 48px}
     <div class="wrap">
       <div class="sec-head">
         <h2 id="t-como">Tres gestos.<br>Nada que abrir.</h2>
-        <p class="lead">Las teclas A, S, D, Q y W quedan bajo la mano izquierda. Si preferís otras, las grabás en Ajustes.</p>
+        <p class="lead">Las teclas A, S, D, Q y W quedan bajo la mano izquierda. Si preferís otras, las cambiás desde el panel o en Ajustes.</p>
       </div>
       <div class="pasos">
         <div class="teclado" aria-hidden="true">
           <div class="np-pantalla" id="np-pantalla">
             <div class="np" id="np">
               <div class="np-pill">
-                <span class="np-num">1</span><span class="np-nom">Mi portfolio</span>
+                <span class="np-num">2</span><span class="np-nom">Precios</span>
                 <span class="np-ok np-guardado">Guardado ✓</span><span class="np-ok np-pegado">Pegado</span>
               </div>
               <div class="np-todo">
                 <div class="np-grid">
-                  <div class="np-s osc"><small>1 · ⌘⇧A</small><b>Mi portfolio</b></div>
-                  <div class="np-s"><small>2 · ⌘⇧S</small><b>Presupuesto base</b></div>
-                  <div class="np-s img"><small>3 · ⌘⇧D</small><b>Flyer otoño</b></div>
-                  <div class="np-s"><small>4 · ⌘⇧Q</small><b>Link de Meet</b></div>
-                  <div class="np-s col"><small>5 · ⌘⇧W</small><b>#E2501D</b></div>
+                  <div class="np-s img"><small>1 · ⇧⌘A</small><b>Portfolio</b></div>
+                  <div class="np-s are"><small>2 · ⇧⌘S</small><b>Precios</b></div>
+                  <div class="np-s osc"><small>3 · ⇧⌘D</small><b>Envíos</b></div>
+                  <div class="np-s col"><small>4 · ⇧⌘Q</small><b>Naranja</b></div>
+                  <div class="np-s"><small>5 · ⇧⌘W</small><b>Propuesta</b></div>
                 </div>
-                <div class="np-pie"><span>Trabajo</span><span>Abrir panel ⌘⇧V</span></div>
+                <div class="np-pie"><span>Trabajo · Personal · Clientes</span><span>Abrir panel ⌘⇧V</span></div>
               </div>
             </div>
           </div>
@@ -527,7 +919,7 @@ footer{padding-block:72px 48px}
           <article class="paso" data-paso="2">
             <span class="nro">3 · Mirá todo</span>
             <h3>Pasás el mouse por el notch y ves tus slots.</h3>
-            <p>Un aviso mínimo sale del notch para confirmar cada guardado y cada pegado. Si querés el panel completo, lo abrís con un atajo.</p>
+            <p>La barra del notch muestra tus slots y tus bibliotecas. Cada vez que guardás o pegás, un aviso breve te lo confirma. El panel completo se abre con un atajo.</p>
             <div class="combo"><kbd>⌘</kbd><kbd>⇧</kbd>+<kbd>V</kbd></div>
           </article>
         </div>
@@ -540,7 +932,7 @@ footer{padding-block:72px 48px}
       <div class="atajos-txt">
         <p class="eyebrow">Ajustes › Atajos</p>
         <h2 id="t-atajos">Tus atajos.<br>Tus reglas.</h2>
-        <p class="lead">Cambiá cualquier atajo por la combinación que te quede cómoda. Si macOS u otra función ya la usa, Slots te avisa antes de guardarla.</p>
+        <p class="lead">Cambiá cualquier atajo por la combinación que te quede cómoda: desde Ajustes o pasando el mouse por un slot y tocando su atajo. Si macOS u otra función ya la usa, Slots te avisa.</p>
         <p class="lead chico">Probalo: tocá un atajo, elegí las teclas y después una letra. Probá con <kbd>⌘</kbd> + <kbd>Q</kbd> para ver qué pasa.</p>
       </div>
       <div class="ajustes" id="ajustes">
@@ -561,34 +953,57 @@ footer{padding-block:72px 48px}
     </div>
   </section>
 
-  <section class="bloque" aria-labelledby="t-ios" style="padding-top:24px">
-    <div class="wrap ios">
-      <div class="ios-txt">
-        <p class="eyebrow">iPhone</p>
-        <h2 id="t-ios">Tocás la card.<br>Ya está copiado.</h2>
-        <p class="lead">Tus respuestas, tus links y tus flyers en una grilla. Un toque los copia; mantenés presionado para ordenarlos. Probá en el teléfono de al lado.</p>
-      </div>
-      <div class="telefono">
-        <div class="tel-pant">
-          <div class="tel-isla" id="tel-isla"><span class="in" id="tel-isla-in"></span></div>
-          <div class="tel-head"><b id="tel-titulo">Trabajo</b><span><i>+</i><i>✎</i></span></div>
-          <div class="tel-grid" id="tel-grid"></div>
-          <div class="tel-libs" id="tel-libs"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <section class="bloque" aria-labelledby="t-fn" style="padding-top:24px">
     <div class="wrap">
       <div class="sec-head"><h2 id="t-fn">Lo que trae.</h2></div>
       <div class="funcs">
-        <div class="fn"><h3>Bibliotecas</h3><p>Trabajo, Personal y Clientes, cada una con sus slots. Cambiás de biblioteca y los mismos atajos pegan otras cosas.</p></div>
+        <div class="fn"><h3>Slots sin límite</h3><p>Guardá todos los que quieras en cada biblioteca. Los primeros cinco tienen atajo; el resto, a un clic.</p></div>
+        <div class="fn"><h3>Bibliotecas</h3><p>Trabajo, Personal y Clientes, o las que armes. Cambiás de biblioteca y los mismos atajos pegan otras cosas.</p></div>
         <div class="fn"><h3>Historial</h3><p>Lo último que copiaste, con la app de donde salió. Si algo te sirve, lo arrastrás a un slot.</p></div>
-        <div class="fn"><h3>Aviso en el notch</h3><p>Una píldora negra confirma y desaparece. En Macs sin notch sale desde la barra de menú.</p></div>
-        <div class="fn"><h3>Cualquier cosa</h3><p>Guarda lo que copiás, con su formato.</p><div class="tipos"><span>Texto</span><span>Link</span><span>Imagen</span><span>Color</span><span>Archivo</span></div></div>
-        <div class="fn"><h3>Tus atajos</h3><p>Todos se pueden regrabar. Si otra app usa uno, Slots te avisa.</p></div>
-        <div class="fn"><h3>Queda en tu equipo</h3><p>Sin cuenta y sin nube. Lo que guardás vive en tu Mac o en tu iPhone.</p></div>
+        <div class="fn"><h3>Barra del notch</h3><p>Pasá el mouse por el notch y ves tus slots y bibliotecas. También se abre si arrastrás un archivo hacia ahí.</p></div>
+        <div class="fn"><h3>Mac y iPhone</h3><p>Lo que guardás en la Mac aparece en el iPhone y al revés, con tu cuenta de Slots.</p><div class="tipos"><span>Texto</span><span>Link</span><span>Imagen</span><span>Color</span><span>Archivo</span></div></div>
+        <div class="fn"><h3>Privado</h3><p>El historial se queda en tu Mac. Tus slots viajan al iPhone solo si activás la sincronización.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque" id="descargar" aria-labelledby="t-descargar" style="padding-top:24px">
+    <div class="wrap">
+      <div class="descarga">
+        <div class="desc-txt">
+          <p class="eyebrow desc-eyebrow"><span class="dot"></span>Slots para Mac</p>
+          <h2 id="t-descargar">Bajala.<br>Probala hoy.</h2>
+          <p class="lead">Probala gratis con todo. Cuando termine la prueba, la licencia cuesta USD 10, un solo pago y sin suscripción. Si no la comprás, seguís usando el slot 1.</p>
+          <div class="desc-cta">
+            <a class="btn acento grande btn-dmg" id="btn-dmg" href="#descargar">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>
+              <span class="btn-dmg-txt">Descargar para Mac</span>
+            </a>
+            <p class="desc-meta dmg-meta"></p>
+          </div>
+          <p class="desc-movil">Estás en un celular: abrí esta página en tu Mac para descargarla.</p>
+        </div>
+        <div class="dmg" aria-hidden="true">
+          <div class="dmg-top"><i></i><i></i><i></i><span>Slots</span></div>
+          <div class="dmg-cuerpo">
+            <div class="dmg-item">
+              <div class="dmg-icono app"><svg viewBox="0 0 30 24"><rect x="0" y="0" width="13" height="24" rx="3.5" fill="#F2F2F0"/><rect x="16" y="0" width="14" height="10.5" rx="3.5" fill="#F2F2F0"/><rect x="16" y="13.5" width="14" height="10.5" rx="3.5" fill="#E2501D"/></svg></div>
+              <span>Slots</span>
+            </div>
+            <svg class="dmg-flecha" viewBox="0 0 80 24"><path d="M2 12h70m0 0-9-8m9 8-9 8"/></svg>
+            <div class="dmg-item">
+              <div class="dmg-icono carpeta"><svg viewBox="0 0 48 40"><path d="M4 8a4 4 0 0 1 4-4h10l4 4h18a4 4 0 0 1 4 4v20a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z" fill="#5AA3F0"/><path d="M4 14h40v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z" fill="#6DB3F8"/><path d="M18 27l6-9 6 9m-10-3h8" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span>Aplicaciones</span>
+            </div>
+            <div class="dmg-fantasma"><svg viewBox="0 0 30 24"><rect x="0" y="0" width="13" height="24" rx="3.5" fill="#F2F2F0"/><rect x="16" y="0" width="14" height="10.5" rx="3.5" fill="#F2F2F0"/><rect x="16" y="13.5" width="14" height="10.5" rx="3.5" fill="#E2501D"/></svg></div>
+          </div>
+        </div>
+        <ol class="instalar">
+          <li><b>Abrí el .dmg</b><span>y arrastrá Slots a la carpeta Aplicaciones.</span></li>
+          <li><b>Abrí Slots</b><span>desde Aplicaciones. Vive en la barra de menú, junto al reloj.</span></li>
+          <li><b>Dale un permiso</b><span>Cuando macOS lo pida, tocá «Abrir Ajustes del Sistema» y activá Slots en Accesibilidad. Así puede pegar por vos.</span></li>
+          <li><b>Hacé el recorrido</b><span>Ocho pasos con slots de ejemplo. Al terminar se borran y tu panel queda listo.</span></li>
+        </ol>
       </div>
     </div>
   </section>
@@ -597,12 +1012,12 @@ footer{padding-block:72px 48px}
     <div class="wrap">
       <div class="lista">
         <div>
-          <h2 id="t-lista">Anotate en la lista.</h2>
-          <p class="lead" style="margin-top:20px">Estamos terminando Slots. Si te anotás, entrás antes que nadie y pagás menos.</p>
+          <h2 id="t-lista">Recibí el link para iPhone.</h2>
+          <p class="lead" style="margin-top:20px">Dejá tu mail y te mandamos el link para bajar Slots en el iPhone, junto con las novedades grandes.</p>
           <ul class="beneficios">
-            <li>Acceso a la beta antes del lanzamiento</li>
-            <li>Precio de preventa, solo para la lista</li>
-            <li>Un mes gratis para probarla completa</li>
+            <li>El link para bajarla en el iPhone</li>
+            <li>Las novedades grandes de Slots, sin spam</li>
+            <li>Te das de baja cuando quieras</li>
           </ul>
         </div>
         <div id="caja-lista">
@@ -634,16 +1049,15 @@ footer{padding-block:72px 48px}
               <label for="uso">¿Qué es lo que más copiás y pegás? <span class="opt">(opcional)</span></label>
               <textarea id="uso" name="uso" placeholder="Mi alias de pago, el link del portfolio, la respuesta de envíos…"></textarea>
             </div>
-            <button class="btn acento" type="submit" id="btn-full">Anotarme en la lista</button>
+            <button class="btn acento" type="submit" id="btn-full">Mandame el link</button>
             <p class="estado" id="estado-full" aria-live="polite" style="margin-top:0"></p>
           </form>
           <div class="full listo" id="listo" hidden style="background:var(--card);color:var(--tinta);border-radius:24px;padding:32px">
-            <b>Listo, estás en la lista.</b>
-            <p id="listo-txt">Te escribimos cuando abra la beta. Mientras tanto, pasale la página a alguien que viva copiando y pegando.</p>
+            <b>Listo, te escribimos.</b>
+            <p id="listo-txt">Te mandamos el link para iPhone a tu mail. Si tenés Mac, ya podés descargarla desde acá.</p>
           </div>
         </div>
       </div>
-
     </div>
   </section>
 
@@ -651,10 +1065,13 @@ footer{padding-block:72px 48px}
     <div class="wrap">
       <div class="sec-head"><h2 id="t-faq">Preguntas.</h2></div>
       <div class="faq">
-        <details open><summary>¿Cuándo sale?</summary><p>Estamos probándola con un grupo chico. Los anotados reciben la beta primero y un aviso el día del lanzamiento.</p></details>
-        <details><summary>¿Cuánto va a costar?</summary><p>El primer mes es gratis y completo. Después pagás una sola vez, sin suscripción. La lista tiene precio de preventa.</p></details>
-        <details><summary>¿Funciona en mi Mac?</summary><p>Sí, en Macs con y sin notch. Para pegar en otras apps te pide un único permiso de Accesibilidad, que macOS exige a cualquier app que escriba por vos. Requiere macOS 15 o posterior.</p></details>
-        <details><summary>¿Qué pasa con lo que guardo?</summary><p>Queda en tu dispositivo. Slots no necesita cuenta y no sube tus slots a ningún lado.</p></details>
+        <details open><summary>¿Cuánto cuesta?</summary><p>Probala gratis con todo. Cuando termine la prueba, la licencia cuesta USD 10, un solo pago y sin suscripción. Si no la comprás, podés seguir usando el slot 1.</p></details>
+        <details><summary>¿Qué Mac necesito?</summary><p>Una Mac con macOS 15 Sequoia o posterior, con o sin notch. En las Macs sin notch, el aviso y la barra salen desde el centro de la barra de menú.</p></details>
+        <details><summary>¿Por qué pide permiso de Accesibilidad?</summary><p>Para pegar por vos en la app que tenés abierta, que es lo que hacen los atajos. Slots no usa ese permiso para nada más. Sin el permiso, un clic copia el slot y lo pegás vos con ⌘V.</p></details>
+        <details><summary>¿Necesito una cuenta?</summary><p>Para usarla en una sola Mac, no. La cuenta sirve para guardar tu licencia y para sincronizar tus slots entre la Mac y el iPhone.</p></details>
+        <details><summary>¿Qué pasa con lo que copio?</summary><p>El historial se queda en tu Mac. Tus slots salen de tu Mac solo si activás la sincronización, para llegar a tu iPhone. Si querés ayudar, podés compartir datos de uso anónimos; viene apagado.</p></details>
+        <details><summary>¿Funciona en iPhone?</summary><p>Sí. Slots tiene app para iPhone y se sincroniza con tu Mac: lo que guardás en uno aparece en el otro. <a href="#lista" data-abrir-lista>Dejá tu mail</a> y te mandamos el link.</p></details>
+        <details><summary>¿Cómo se actualiza?</summary><p>Sola. Cuando hay una versión nueva, Slots te avisa y se instala con un clic.</p></details>
       </div>
     </div>
   </section>
@@ -663,8 +1080,8 @@ footer{padding-block:72px 48px}
 <dialog id="modal" aria-labelledby="modal-t">
   <div class="modal-head">
     <div>
-      <h3 id="modal-t">Anotate en la lista.</h3>
-      <p>Entrás antes que nadie y con precio de preventa.</p>
+      <h3 id="modal-t">Te mandamos el link.</h3>
+      <p>Dejá tu mail y te mandamos el link para bajar Slots en el iPhone.</p>
     </div>
     <button type="button" class="cerrar" id="modal-cerrar" aria-label="Cerrar">×</button>
   </div>
@@ -676,7 +1093,7 @@ footer{padding-block:72px 48px}
     <p class="firma">Copiá una vez.<br><span>Pegá siempre.</span></p>
     <div class="pie">
       <a class="logo" href="#top" style="font-size:18px"><svg viewBox="0 0 30 24" aria-hidden="true"><rect class="c" x="0" y="0" width="13" height="24" rx="3.5"/><rect class="c" x="16" y="0" width="14" height="10.5" rx="3.5"/><rect class="o" x="16" y="13.5" width="14" height="10.5" rx="3.5"/></svg>Slots</a>
-      <span><a href="privacy.html">Privacidad</a> · <a id="pie-beta" href="https://github.com/gianpetrii/hotslot-app/releases/latest/download/Slots.dmg">Descargar beta</a> · © 2026 Slots · Hecho en Buenos Aires</span>
+      <span class="pie-der"><a href="https://hotslot-app-docs.vercel.app/privacy.html" target="_blank" rel="noopener">Política de privacidad</a><span>© 2026 Slots · Hecho en Buenos Aires</span></span>
     </div>
   </div>
 </footer>
@@ -686,9 +1103,16 @@ footer{padding-block:72px 48px}
    Cuando la página viva en su propio dominio, pegá acá la URL de tu formulario
    (Formspree, Tally, Loops, un webhook de Google Sheets…). Recibe un POST JSON. */
 const WAITLIST_ENDPOINT = "";
-const BETA_RELEASE_URL = "https://github.com/gianpetrii/hotslot-app/releases/latest/download/Slots.dmg";
 /* Si tenés el video de marca hosteado junto a la página, poné su ruta (ej. "slots-loop.mp4"). */
 const VIDEO_SRC = "";
+/* Descarga para Mac. Al publicar una versión nueva, cambiá el link y los datos (los saca del appcast de Sparkle).
+   Si DMG_URL queda vacío, los botones abren el formulario para que avisemos. */
+/* Siempre la última versión: cada release sube una copia con nombre fijo (Slots.dmg). */
+const DMG_URL = "https://github.com/gianpetrii/hotslot-app/releases/latest/download/Slots.dmg";
+/* Valores de respaldo: al cargar, la página los actualiza con los de la última release. */
+const DMG_INFO = { version: "1.4.0", macos: "15", tamano: "7,4 MB" };
+/* Link de Slots en el App Store. Cuando esté, pegalo acá: los botones de iPhone pasan a "Descargar en el App Store". */
+const IOS_URL = "";
 
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $ = s => document.querySelector(s);
@@ -719,6 +1143,116 @@ const DICT = {
   "Escribile a un cliente usando tus slots. Tocá uno y se pega en el mail. En la app lo hacés con un atajo, desde cualquier programa.":"Write to a client using your slots. Tap one and it lands in the email. In the app, it's one shortcut from any program.",
   "Clic copia,":"Click copies,","pega directo":"pastes instantly","Arrastrá un slot al mail":"Drag a slot into the email",
   "Modo noche":"Dark mode","Modo día":"Light mode",
+  "Para Mac y iPhone":"For Mac and iPhone","Recibí el link para iPhone":"Get the iPhone link","iPhone · Sincronizado con tu Mac":"iPhone · Synced with your Mac",
+  "En el iPhone tus slots están en una grilla: un toque los copia y los pegás en WhatsApp, Instagram o donde estés. Y se sincronizan con tu Mac: lo que guardás en uno aparece en el otro.":"On iPhone your slots live in a grid: one tap copies, then paste into WhatsApp, Instagram or wherever you are. And they sync with your Mac: what you save on one shows up on the other.",
+  "Animación de Slots en iPhone: tocás el slot del flyer y se copia, abrís WhatsApp y lo pegás en el grupo; después hacés lo mismo con el link de la reunión.":"Slots on iPhone: tap the flyer slot to copy it, open WhatsApp and paste it into the group; then do the same with the meeting link.",
+  "Tomás, Lucía, vos":"Tomás, Lucía, you","Tomás":"Tomás","Lucía":"Lucía",
+  "¿Alguien tiene el flyer final? Lo quiero subir hoy.":"Does anyone have the final flyer? I want to post it today.",
+  "¡Genial! ¿Y el link para la reunión del jueves?":"Great! And the link for Thursday's meeting?","Mensaje":"Message","Pegar":"Paste",
+  "Recibí el link para iPhone.":"Get the iPhone link.",
+  "Dejá tu mail y te mandamos el link para bajar Slots en el iPhone, junto con las novedades grandes.":"Leave your email and we'll send you the link to get Slots on iPhone, plus the big news.",
+  "El link para bajarla en el iPhone":"The link to get it on iPhone","Mandame el link":"Send me the link","Listo, te escribimos.":"Done, we'll write.",
+  "Te mandamos el link para iPhone a tu mail. Si tenés Mac, ya podés descargarla desde acá.":"We'll send the iPhone link to your email. Got a Mac? You can download it right here.",
+  "¿Funciona en iPhone?":"Does it work on iPhone?",
+  "Sí. Slots tiene app para iPhone y se sincroniza con tu Mac: lo que guardás en uno aparece en el otro.":"Yes. Slots has an iPhone app that syncs with your Mac: what you save on one shows up on the other.",
+  "y te mandamos el link.":"and we'll send you the link.",
+  "Para usarla en una sola Mac, no. La cuenta sirve para guardar tu licencia y para sincronizar tus slots entre la Mac y el iPhone.":"Not for a single Mac. An account keeps your license and syncs your slots between your Mac and iPhone.",
+  "El historial se queda en tu Mac. Tus slots salen de tu Mac solo si activás la sincronización, para llegar a tu iPhone. Si querés ayudar, podés compartir datos de uso anónimos; viene apagado.":"Your history stays on your Mac. Your slots only leave your Mac if you turn on sync, to reach your iPhone. If you want to help, you can share anonymous usage data; it's off by default.",
+  "Te mandamos el link.":"We'll send you the link.","Dejá tu mail y te mandamos el link para bajar Slots en el iPhone.":"Leave your email and we'll send you the link to get Slots on iPhone.",
+  "Mac y iPhone":"Mac and iPhone","Lo que guardás en la Mac aparece en el iPhone y al revés, con tu cuenta de Slots.":"What you save on your Mac shows up on your iPhone and the other way around, with your Slots account.",
+  "El historial se queda en tu Mac. Tus slots viajan al iPhone solo si activás la sincronización.":"Your history stays on your Mac. Your slots only travel to your iPhone if you turn on sync.",
+  "Desde el panel":"From the panel","Desde la barra del notch":"From the notch bar","Con un atajo":"With a shortcut",
+  "Animación de Slots en una Mac, con tres formas de usarlo: en Mail, desde el panel (⌘⇧V), un clic copia los precios de la colección y ⌘V los pega; en Illustrator, desde la barra del notch, un clic copia el naranja de marca y ⌘V lo pega en el logo; en WhatsApp, el atajo ⇧⌘A pega el portfolio directo.":"Slots on a Mac, three ways: in Mail, from the panel (⌘⇧V), a click copies the collection prices and ⌘V pastes them; in Illustrator, from the notch bar, a click copies the brand orange and ⌘V pastes it into the logo; in WhatsApp, the ⇧⌘A shortcut pastes the portfolio directly.",
+  "Clic para copiar · ⌘V para pegar · Esc para cerrar":"Click to copy · ⌘V to paste · Esc to close",
+  "Animación de Slots en una Mac: en Mail, ⌘⇧V abre el panel y un clic pega los precios de la colección; en Illustrator, ⇧⌘Q pega el naranja de marca en el logo de Slots; en WhatsApp, ⇧⌘A pega un mensaje con el portfolio; y al pasar el mouse por el notch se despliega la barra con tus slots.":"Slots on a Mac: in Mail, ⌘⇧V opens the panel and a click pastes the collection prices; in Illustrator, ⇧⌘Q pastes the brand orange into the Slots logo; in WhatsApp, ⇧⌘A pastes a message with the portfolio; hovering the notch drops down a bar with your slots.",
+  "Lucía · Tienda Norte":"Lucía · Tienda Norte","Colección Otoño 2026":"Autumn 2026 collection",
+  "Caro Méndez":"Caro Méndez","en línea":"online",
+  "¡Hola! Vi tus trabajos en Instagram. ¿Tenés algo más para ver?":"Hi! I saw your work on Instagram. Do you have more I can look at?",
+  "¡Hola! Te dejo mi portfolio para que lo chusmes:":"Hi! Here's my portfolio so you can take a look:",
+  "Estudio Norte · Portfolio":"Estudio Norte · Portfolio",
+  "Card alta":"Tall card","Card arriba":"Top card","Card abajo":"Bottom card",
+  "Precios":"Prices","Envíos":"Shipping","Texto · 34 palabras":"Text · 34 words","Texto · 13 palabras":"Text · 13 words",
+  "¡Hola! Te dejo mi portfolio para que lo chusmes: behance.net/estudio-norte":"Hi! Here's my portfolio so you can take a look: behance.net/estudio-norte",
+  "¡Gracias por escribir! Estos son los precios de la colección Otoño 2026…":"Thanks for writing! Here are the prices for the Autumn 2026 collection…",
+  "Hacemos envíos a todo el país. Llegan en 3 a 5 días hábiles.":"We ship nationwide. Orders arrive in 3 to 5 business days.",
+  "¡Gracias por escribir! Estos…":"Thanks for writing! Here…","Hacemos envíos a todo el…":"We ship nationwide. Orders…",
+  "Animación de Slots en una Mac: en Mail, el panel se abre con ⌘⇧V y un clic pega el link de la reunión; en un chat, ⇧⌘A pega el flyer; en un programa de diseño, ⇧⌘Q pega el naranja de marca; y al pasar el mouse por el notch se despliega la barra con tus slots.":"Slots on a Mac: in Mail, ⌘⇧V opens the panel and a click pastes the meeting link; in a chat, ⇧⌘A pastes the flyer; in a design app, ⇧⌘Q pastes the brand orange; hovering the notch drops down a bar with your slots.",
+  "Expo · Estudio Norte":"Expo · Estudio Norte","Lucía, Tomás y vos":"Lucía, Tomás and you",
+  "¿Alguien tiene el flyer final de la expo? Lo quiero subir hoy.":"Does anyone have the final expo flyer? I want to post it today.",
+  "Ahí te lo paso":"Sending it now","Escribí un mensaje":"Type a message",
+  "28 · NOV · BUENOS AIRES":"NOV 28 · BUENOS AIRES","Capas":"Layers","Título":"Title","Círculo":"Circle","Fondo":"Background",
+  "Naranja marca":"Brand orange","Reunión":"Meeting","Presupuesto":"Quote","Naranja":"Orange","Gracias":"Thanks","Propuesta":"Proposal","Propuesta Estudio Norte.pdf":"Estudio Norte proposal.pdf","Archivo PDF":"PDF file",
+  "Hola, te paso el presupuesto actualizado con los cambios…":"Hi, here's the updated quote with the changes…","Hola, te paso el presupuesto…":"Hi, here's the quote…",
+  "Gracias por escribir, te…":"Thanks for writing, I'll…","Safari · hace 2 min":"Safari · 2 min ago","Notas · hace 9 min":"Notes · 9 min ago",
+  "Figma · hace 21 min":"Figma · 21 min ago","Mail · hace 1 h":"Mail · 1 h ago","WhatsApp · hace 2 h":"WhatsApp · 2 h ago",
+  "Hola Lucía, te paso el presupuesto con los cambios que hablamos.":"Hi Lucía, here's the quote with the changes we discussed.",
+  "Te mando la dirección: Echeverría 752":"Here's the address: Echeverría 752",
+  "Clic para pegar · Arrastrá para guardar · Esc para cerrar":"Click to paste · Drag to save · Esc to close",
+  "Para Mac · iPhone muy pronto":"For Mac · iPhone very soon","Descargar":"Download",
+  "Probala gratis. Si te sirve, la licencia cuesta USD 10, un solo pago.":"Try it free. If it clicks, a license is USD 10, paid once.",
+  "¿Usás iPhone?":"On iPhone?","Avisame cuando salga":"Tell me when it's out",
+  "Animación de Slots en una Mac: se abre el panel con ⌘⇧V, un clic pega el link de la reunión en un mail, ⌘⌃W guarda un texto y, al pasar el mouse por el notch, se despliega la barra con tus slots.":"Slots on a Mac: ⌘⇧V opens the panel, a click pastes the meeting link into an email, ⌘⌃W saves a sentence, and hovering the notch drops down a bar with your slots.",
+  "Mail":"Mail","Archivo":"File","Edición":"Edit","Ver":"View","lun 24 nov":"Mon Nov 24",
+  "Para: ":"To: ","Para:":"To:","Asunto:":"Subject:","Presupuesto y reunión":"Quote and meeting",
+  "Buscar en slots e historial":"Search slots and history",
+  "Imagen · 1080 × 1350":"Image · 1080 × 1350","Texto · 36 palabras":"Text · 36 words","Texto · 8 palabras":"Text · 9 words",
+  "DISEÑO":"DESIGN","Flyer Expo":"Expo flyer","Link de la reunión":"Meeting link","Respuesta presupuesto":"Quote reply","Gracias por escribir":"Thanks for writing",
+  "hace 2 min":"2 min ago","hace 9 min":"9 min ago","hace 21 min":"21 min ago","hace 1 h":"1 h ago","Notas":"Notes",
+  "Hola Lucía, te paso el presupuesto con los cambios…":"Hi Lucía, here's the quote with the changes…",
+  "Gracias por escribir, te respondo en el día.":"Thanks for writing, I'll get back to you today.",
+  "Personal":"Personal","Clientes":"Clients","Guardar portapapeles":"Save clipboard","Abrir panel ⌘⇧V":"Open panel ⌘⇧V",
+  "Clic para pegar":"Click to paste","Arrastrá un archivo acá para guardarlo":"Drop a file here to save it",
+  "El panel se abre con":"The panel opens with","encima de cualquier app":"on top of any app",
+  "La barra del notch muestra tus slots al pasar el mouse":"Hover the notch and a bar shows your slots",
+  "iPhone · Muy pronto":"iPhone · Very soon",
+  "Slots también llega al iPhone: tus respuestas, tus links y tus flyers en una grilla. Un toque los copia y mantenés presionado para ordenarlos. Probá en el teléfono de al lado.":"Slots is coming to iPhone too: your replies, links and flyers in one grid. One tap copies; press and hold to rearrange. Try it on the phone right here.",
+  "Las teclas A, S, D, Q y W quedan bajo la mano izquierda. Si preferís otras, las cambiás desde el panel o en Ajustes.":"A, S, D, Q and W sit right under your left hand. Prefer other keys? Change them from the panel or in Settings.",
+  "La barra del notch muestra tus slots y tus bibliotecas. Cada vez que guardás o pegás, un aviso breve te lo confirma. El panel completo se abre con un atajo.":"The notch bar shows your slots and libraries. Every save and paste gets a quick confirmation. The full panel is one shortcut away.",
+  "Trabajo · Personal · Clientes":"Work · Personal · Clients",
+  "Cambiá cualquier atajo por la combinación que te quede cómoda: desde Ajustes o pasando el mouse por un slot y tocando su atajo. Si macOS u otra función ya la usa, Slots te avisa.":"Swap any shortcut for whatever combo feels right, from Settings or by hovering a slot and clicking its shortcut. If macOS or another feature already owns it, Slots tells you.",
+  "Slots sin límite":"Unlimited slots",
+  "Guardá todos los que quieras en cada biblioteca. Los primeros cinco tienen atajo; el resto, a un clic.":"Keep as many as you want in each library. The first five get a shortcut; the rest are one click away.",
+  "Trabajo, Personal y Clientes, o las que armes. Cambiás de biblioteca y los mismos atajos pegan otras cosas.":"Work, Personal and Clients, or your own. Switch libraries and the same shortcuts paste different things.",
+  "Barra del notch":"Notch bar",
+  "Pasá el mouse por el notch y ves tus slots y bibliotecas. También se abre si arrastrás un archivo hacia ahí.":"Hover the notch to see your slots and libraries. It also opens when you drag a file up there.",
+  "Guarda lo que copiás, con su formato. Clic derecho para renombrar, cambiar el color o mover un slot.":"Keeps what you copy, formatting included. Right-click to rename, recolor or move a slot.",
+  "Privado":"Private",
+  "Lo que copiás se queda en tu Mac. No hace falta cuenta y nunca enviamos tus slots ni tu historial.":"What you copy stays on your Mac. No account needed, and we never send your slots or your history.",
+  "Slots para Mac":"Slots for Mac",
+  "Probala gratis con todo. Cuando termine la prueba, la licencia cuesta USD 10, un solo pago y sin suscripción. Si no la comprás, seguís usando el slot 1.":"Try everything free. When the trial ends, a license is USD 10, paid once, no subscription. Skip it and you keep using slot 1.",
+  "Estás en un celular: abrí esta página en tu Mac para descargarla.":"You're on a phone. Open this page on your Mac to download it.",
+  "desde Aplicaciones. Vive en la barra de menú, junto al reloj.":"from Applications. It lives in the menu bar, next to the clock.",
+  "Cuando macOS lo pida, tocá «Abrir Ajustes del Sistema» y activá Slots en Accesibilidad. Así puede pegar por vos.":"When macOS asks, click “Open System Settings” and turn on Slots under Accessibility. That's how it pastes for you.",
+  "Hacé el recorrido":"Take the tour","Ocho pasos con slots de ejemplo. Al terminar se borran y tu panel queda listo.":"Eight steps with sample slots. They're cleared at the end and your panel is ready to go.",
+  "Avisame cuando salga para iPhone.":"Tell me when it hits iPhone.",
+  "Slots para iPhone está en camino. Dejá tu mail y te escribimos el día que salga.":"Slots for iPhone is on its way. Leave your email and we'll write the day it lands.",
+  "Un mail el día del lanzamiento en iPhone":"One email on iPhone launch day","Las novedades grandes de Slots, sin spam":"Big Slots news only, no spam","Te das de baja cuando quieras":"Unsubscribe anytime",
+  "Avisame":"Notify me","Listo, te avisamos.":"Done, we'll let you know.",
+  "Te escribimos cuando Slots llegue al iPhone. Mientras tanto, si tenés Mac, ya podés descargarla.":"We'll write when Slots lands on iPhone. Got a Mac? You can download it right now.",
+  "¿Cuánto cuesta?":"How much is it?",
+  "Probala gratis con todo. Cuando termine la prueba, la licencia cuesta USD 10, un solo pago y sin suscripción. Si no la comprás, podés seguir usando el slot 1.":"Try everything free. When the trial ends, a license is USD 10, paid once, no subscription. Skip it and you can keep using slot 1.",
+  "¿Qué Mac necesito?":"Which Mac do I need?",
+  "Una Mac con macOS 15 Sequoia o posterior, con o sin notch. En las Macs sin notch, el aviso y la barra salen desde el centro de la barra de menú.":"Any Mac on macOS 15 Sequoia or later, notch or no notch. Without a notch, the notice and the bar drop from the middle of the menu bar.",
+  "¿Por qué pide permiso de Accesibilidad?":"Why does it ask for Accessibility access?",
+  "Para pegar por vos en la app que tenés abierta, que es lo que hacen los atajos. Slots no usa ese permiso para nada más. Sin el permiso, un clic copia el slot y lo pegás vos con ⌘V.":"So it can paste for you into the app you're using, which is what the shortcuts do. Slots uses it for nothing else. Without it, a click copies the slot and you paste with ⌘V.",
+  "¿Necesito una cuenta?":"Do I need an account?",
+  "No. La cuenta es opcional: sirve para guardar tu licencia y, cuando llegue la sincronización, tener tus slots también en el iPhone.":"No. An account is optional: it keeps your license and, once sync arrives, puts your slots on your iPhone too.",
+  "¿Qué pasa con lo que copio?":"What happens to what I copy?",
+  "Se queda en tu Mac. Nunca enviamos lo que copiás, ni nombres de archivos, bibliotecas o slots. Si querés ayudar, podés compartir datos de uso anónimos; viene apagado.":"It stays on your Mac. We never send what you copy, or file, library or slot names. If you want to help, you can share anonymous usage data; it's off by default.",
+  "¿Cuándo sale para iPhone?":"When is it coming to iPhone?","Está en camino.":"It's on its way.","Dejá tu mail":"Leave your email","y te avisamos el día que salga.":"and we'll tell you the day it's out.",
+  "¿Cómo se actualiza?":"How does it update?","Sola. Cuando hay una versión nueva, Slots te avisa y se instala con un clic.":"On its own. When there's a new version, Slots lets you know and installs it in one click.",
+  "Avisame cuando salga.":"Tell me when it's out.","Te escribimos cuando Slots llegue al iPhone.":"We'll write when Slots lands on iPhone.",
+  "Política de privacidad":"Privacy policy",
+  "Beta para Mac":"Mac beta","Bajala.":"Grab it.","Probala hoy.":"Try it today.",
+  "Si tenés acceso a la beta, descargá Slots para tu Mac. Se instala en un minuto y no necesita cuenta.":"Got beta access? Download Slots for your Mac. It installs in a minute and needs no account.",
+  "Descargar para Mac":"Download for Mac",
+  "Estás en un celular: abrí esta página en tu Mac para descargarla. La versión para iPhone llega más adelante.":"You're on a phone. Open this page on your Mac to download it. The iPhone version comes later.",
+  "Aplicaciones":"Applications","Abrí el .dmg":"Open the .dmg","y arrastrá Slots a la carpeta Aplicaciones.":"and drag Slots into Applications.",
+  "Abrí Slots":"Open Slots","desde Aplicaciones o con Spotlight.":"from Applications or with Spotlight.",
+  "Dale un permiso":"Grant one permission",
+  "En Ajustes del Sistema › Privacidad y seguridad › Accesibilidad, activá Slots. Así puede pegar por vos.":"In System Settings › Privacy & Security › Accessibility, turn on Slots. That's how it pastes for you.",
+  "Probalo":"Try it","guarda lo seleccionado y":"saves your selection and","lo pega.":"pastes it.",
+  "¿Ya tenés acceso a la beta?":"Already have beta access?","Descargala para Mac":"Download it for Mac",
   "Ajustes › Atajos":"Settings › Shortcuts","Tus atajos.":"Your keys.","Tus reglas.":"Your rules.",
   "Cambiá cualquier atajo por la combinación que te quede cómoda. Si macOS u otra función ya la usa, Slots te avisa antes de guardarla.":"Swap any shortcut for whatever combo feels right. If macOS or another feature already owns it, Slots tells you before saving.",
   "Probalo: tocá un atajo, elegí las teclas y después una letra. Probá con":"Try it: tap a shortcut, pick your keys, then a letter. Try",
@@ -765,7 +1299,7 @@ const DICT = {
   "¿Cuánto va a costar?":"How much will it cost?",
   "El primer mes es gratis y completo. Después pagás una sola vez, sin suscripción. La lista tiene precio de preventa.":"The first month is free, with everything included. After that you pay once, no subscription. The list gets a pre-sale price.",
   "¿Funciona en mi Mac?":"Will it work on my Mac?",
-  "Sí, en Macs con y sin notch. Para pegar en otras apps te pide un único permiso de Accesibilidad, que macOS exige a cualquier app que escriba por vos.":"Yes, on Macs with or without a notch. To paste into other apps it asks for a single Accessibility permission, which macOS requires for any app that types for you. Requires macOS 15 or later.",
+  "Sí, en Macs con y sin notch. Para pegar en otras apps te pide un único permiso de Accesibilidad, que macOS exige a cualquier app que escriba por vos.":"Yes, on Macs with or without a notch. To paste into other apps it asks for a single Accessibility permission, which macOS requires for any app that types for you.",
   "¿Qué pasa con lo que guardo?":"What happens to what I save?",
   "Queda en tu dispositivo. Slots no necesita cuenta y no sube tus slots a ningún lado.":"It stays on your device. Slots doesn't need an account and doesn't upload your slots anywhere.",
   "Entrás antes que nadie y con precio de preventa.":"First in line, at pre-sale pricing.","Cerrar":"Close",
@@ -796,37 +1330,12 @@ function traducirDom(){
   document.documentElement.lang = lang;
 }
 const alCambiarIdioma = [];
-let cambioIdioma = 0;
-function ponerIdioma(nuevo, animar){
-  const aplicar = () => {
-    lang = nuevo; ls.set("slots-lang", lang);
-    document.querySelectorAll("#idioma button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
-    traducirDom();
-    alCambiarIdioma.forEach(f => f());
-    pintarTema();
-  };
-  const reducir = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!animar || reducir) { aplicar(); return; }
-  const id = ++cambioIdioma;
-  const alto = document.documentElement.scrollHeight - innerHeight;
-  const ratio = alto > 0 ? scrollY / alto : 0;
-  let listo = false;
-  const seguir = () => {
-    if (listo || id !== cambioIdioma) return;
-    listo = true;
-    aplicar();
-    const alto2 = document.documentElement.scrollHeight - innerHeight;
-    scrollTo(0, Math.max(0, ratio * alto2));
-    requestAnimationFrame(() => { if (id === cambioIdioma) raiz.classList.remove("cambiando-idioma"); });
-  };
-  const alFin = e => {
-    if (e.target !== document.body || e.propertyName !== "opacity") return;
-    document.body.removeEventListener("transitionend", alFin);
-    seguir();
-  };
-  document.body.addEventListener("transitionend", alFin);
-  raiz.classList.add("cambiando-idioma");
-  setTimeout(() => { if (!listo) { document.body.removeEventListener("transitionend", alFin); seguir(); } }, 320);
+function ponerIdioma(nuevo){
+  lang = nuevo; ls.set("slots-lang", lang);
+  document.querySelectorAll("#idioma button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  traducirDom();
+  alCambiarIdioma.forEach(f => f());
+  pintarTema();
 }
 /* ===== Día / noche ===== */
 const raiz = document.documentElement;
@@ -844,43 +1353,157 @@ $("#tema").addEventListener("click", () => {
 matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", pintarTema);
 new MutationObserver(pintarTema).observe(raiz, {attributes:true, attributeFilter:["data-theme"]});
 
-$("#idioma").addEventListener("click", e => { const b = e.target.closest("button"); if (b && b.dataset.lang !== lang) ponerIdioma(b.dataset.lang, true); });
+$("#idioma").addEventListener("click", e => { const b = e.target.closest("button"); if (b && b.dataset.lang !== lang) ponerIdioma(b.dataset.lang); });
 
-/* ===== Hero: loop animado (o video) ===== */
+/* ===== Hero: Slots 1.4 en una Mac, en tres apps (o el video, si hay) ===== */
 (function(){
-  const pant = $("#pantalla");
+  const mac = $("#mac");
   if (VIDEO_SRC){
     const v = document.createElement("video");
     Object.assign(v,{src:VIDEO_SRC,autoplay:true,muted:true,loop:true,playsInline:true});
     v.setAttribute("muted",""); v.setAttribute("playsinline","");
-    pant.innerHTML = ""; pant.appendChild(v); return;
+    mac.innerHTML = ""; mac.appendChild(v); return;
   }
-  const isla = $("#isla-hero"), inn = $("#isla-hero-in"), cur = $("#cursor");
-  const cards = [...pant.querySelectorAll(".ps")];
-  const pill = html => { inn.innerHTML = html; isla.classList.add("on"); };
-  const off = () => isla.classList.remove("on");
-  const pulse = n => { cards.forEach(c=>c.classList.toggle("pulse", c.dataset.n==n)); };
-  const mover = (x,y) => { cur.style.left = x+"%"; cur.style.top = y+"%"; };
-  const pasos = [
-    [0,   ()=>{ mover(30,62); pulse(0); off(); }],
-    [1200,()=>{ pulse(1); pill(`<span class="num">1</span>${L("Mi portfolio","My portfolio")} <span class="ok">${L("Guardado","Saved")} ✓</span>`); }],
-    [3000,()=>{ off(); pulse(0); mover(52,62); }],
-    [4000,()=>{ pulse(2); pill(`<span class="num">2</span>${L("Presupuesto base · Pegado","Base quote · Pasted")}`); }],
-    [5800,()=>{ off(); pulse(0); mover(50,8); }],
-    [6800,()=>{ pill(`<span class="num">5</span>#E2501D <span class="ok">${L("Guardado","Saved")} ✓</span>`); pulse(5); }],
-    [8600,()=>{ off(); pulse(0); mover(72,80); }],
+  const caja = $("#m-panel-caja"), barra = $("#m-barra-caja"), notch = $("#m-notch"), aviso = $("#m-aviso"), teclas = $("#m-teclas"), cur = $("#m-cursor"), texto = $("#m-texto"), menu = mac.querySelector(".m-menu");
+  const apps = { mail: mac.querySelector(".m-app"), chat: $("#m-chat"), ai: $("#m-ai") };
+  const nombreApp = menu.querySelector(".izq span");
+
+  /* El panel (1060 × 664) y la barra del notch (1530 × 380) se dibujan a tamaño real y se escalan
+     con las proporciones de una pantalla de Mac: el panel ocupa ~62 % del ancho y la barra ~44 %. */
+  function encajar(){
+    const W = mac.clientWidth, H = mac.clientHeight, chico = W < 560;
+    const kp = Math.min(W * (chico ? .9 : .64) / 1060, H * .8 / 690);
+    caja.style.transform = `scale(${kp})`;
+    caja.style.left = ((W - 1060 * kp) / 2) + "px";
+    caja.style.top = ((H - 690 * kp) / 2 + H * .035) + "px";
+    const kb = W * (chico ? .72 : .44) / 1530;
+    barra.style.transform = `scale(${kb})`;
+    barra.style.left = ((W - 1530 * kb) / 2) + "px";
+    barra.style.top = (menu.offsetHeight + 4) + "px";
+  }
+  encajar(); addEventListener("resize", encajar);
+  if ("ResizeObserver" in window) new ResizeObserver(encajar).observe(mac);
+
+  /* Qué app está al frente: cambia la ventana y el nombre en la barra de menú */
+  let appActual = "mail";
+  function mostrarApp(k){
+    appActual = k;
+    Object.entries(apps).forEach(([n, el]) => el.classList.toggle("m-escena-off", n !== k));
+    nombreApp.textContent = { mail: "Mail", chat: "WhatsApp", ai: "Illustrator" }[k];
+    document.querySelectorAll("#mac-modos span").forEach(sp => sp.classList.toggle("on", sp.dataset.m === k));
+  }
+
+  /* Mail: se pega un texto de ventas guardado en un slot */
+  let estado = 0;
+  function pintarTexto(){
+    const saludo = L("Hola Lucía,\n\n", "Hi Lucía,\n\n");
+    const precios = L("¡Gracias por escribir! Estos son los precios de la colección Otoño 2026:\n\n· Lámpara Arco — US$ 120\n· Maceta Grande — US$ 45\n· Maceta Chica — US$ 30\n\nHacemos envíos a todo el país. ¿Te armo el pedido?",
+                      "Thanks for writing! Here are the prices for the Autumn 2026 collection:\n\n· Arc lamp — US$ 120\n· Large planter — US$ 45\n· Small planter — US$ 30\n\nWe ship nationwide. Shall I put the order together?");
+    let h = esc(saludo);
+    if (estado >= 1) h += `<span class="nuevo">${esc(precios)}</span>`;
+    if (appActual === "mail") h += '<span class="caret"></span>';
+    texto.innerHTML = h;
+    if (estado >= 1) setTimeout(() => texto.querySelector(".nuevo")?.classList.remove("nuevo"), 1400);
+  }
+  pintarTexto();
+  alCambiarIdioma.push(pintarTexto);
+
+  /* Illustrator: la card de abajo del logo toma el naranja pegado */
+  function color(hex){ $("#ai-hex-v").textContent = hex; $("#ai-forma").setAttribute("fill", "#" + hex); $("#ai-muestra").style.background = "#" + hex; }
+
+  /* WhatsApp: el mensaje con el portfolio */
+  const inputVacio = () => { $("#mc-input").classList.remove("lleno"); $("#mc-input-t").textContent = L("Escribí un mensaje", "Type a message"); };
+  const inputLleno = () => { $("#mc-input").classList.add("lleno"); $("#mc-input-t").textContent = L("¡Hola! Te dejo mi portfolio para que lo chusmes: behance.net/estudio-norte", "Hi! Here's my portfolio so you can take a look: behance.net/estudio-norte"); };
+
+  const enMac = el => { const a = mac.getBoundingClientRect(), b = el.getBoundingClientRect(); return [ (b.left - a.left + b.width * .5) / a.width * 100, (b.top - a.top + b.height * .55) / a.height * 100 ]; };
+  const mover = (x, y) => { cur.style.left = x + "%"; cur.style.top = y + "%"; };
+  const moverA = el => { const [x, y] = enMac(el); mover(x, y); };
+  const clic = () => { cur.classList.add("click"); setTimeout(() => cur.classList.remove("click"), 160); };
+  const mostrarTeclas = ks => { teclas.innerHTML = ks.map(k => `<span>${k}</span>`).join(""); teclas.classList.add("on"); };
+  const sinTeclas = () => teclas.classList.remove("on");
+  const avisar = html => { aviso.innerHTML = html; notch.classList.add("aviso-on"); };
+  const sinAviso = () => notch.classList.remove("aviso-on");
+  const pegado = (n, es, en) => avisar(`<span class="num">${n}</span>${L(es, en)} · <span class="ok">${L("Pegado","Pasted")}</span>`);
+  const s2 = () => caja.querySelector('[data-s="2"]');
+
+  const copiado = (n, es, en) => avisar(`<span class="num">${n}</span>${L(es, en)} · <span class="ok">${L("Copiado","Copied")}</span>`);
+  const guion = [
+    /* 1 · Desde el panel: ⌘⇧V, clic en "Precios" (se copia), clic en el mail y ⌘V */
+    [0,     () => { mostrarApp("mail"); estado = 0; pintarTexto(); color("C9C9C9"); $("#mc-env").classList.remove("on"); inputVacio(); $("#ai-hex").classList.remove("foco");
+                    caja.classList.remove("on"); barra.classList.remove("on"); sinAviso(); sinTeclas(); mover(74, 82); $("#mb-4").classList.remove("hover"); }],
+    [700,   () => mostrarTeclas(["⌘","⇧","V"])],
+    [1300,  () => caja.classList.add("on")],
+    [1900,  () => sinTeclas()],
+    [2300,  () => moverA(s2())],
+    [3100,  () => { clic(); s2().classList.add("press"); }],
+    [3450,  () => { caja.classList.remove("on"); s2().classList.remove("press"); copiado(2, "Precios", "Prices"); }],
+    [3900,  () => moverA(texto)],
+    [4600,  () => clic()],
+    [5000,  () => mostrarTeclas(["⌘","V"])],
+    [5400,  () => { estado = 1; pintarTexto(); sinAviso(); }],
+    [6100,  () => { sinTeclas(); mover(60, 84); }],
+    /* 2 · Desde la barra del notch: clic en "Naranja" (se copia) y ⌘V en el color */
+    [6900,  () => { mostrarApp("ai"); pintarTexto(); }],
+    [7600,  () => mover(50, 1.2)],
+    [8300,  () => barra.classList.add("on")],
+    [9000,  () => moverA($("#mb-4"))],
+    [9500,  () => $("#mb-4").classList.add("hover")],
+    [10100, () => { clic(); }],
+    [10400, () => { barra.classList.remove("on"); $("#mb-4").classList.remove("hover"); copiado(4, "Naranja", "Orange"); }],
+    [10800, () => moverA($("#ai-hex"))],
+    [11600, () => { clic(); $("#ai-hex").classList.add("foco"); }],
+    [12000, () => mostrarTeclas(["⌘","V"])],
+    [12400, () => { color("E2501D"); sinAviso(); }],
+    [13100, () => sinTeclas()],
+    [13800, () => $("#ai-hex").classList.remove("foco")],
+    /* 3 · Con un atajo: ⇧⌘A pega el portfolio directo, sin abrir nada */
+    [14100, () => mostrarApp("chat")],
+    [14800, () => moverA($("#mc-input"))],
+    [15500, () => clic()],
+    [15900, () => mostrarTeclas(["⇧","⌘","A"])],
+    [16400, () => { inputLleno(); pegado(1, "Portfolio", "Portfolio"); }],
+    [17000, () => sinTeclas()],
+    [17500, () => moverA($("#mc-enviar"))],
+    [18200, () => { clic(); inputVacio(); $("#mc-env").classList.add("on"); }],
+    [19000, () => sinAviso()],
+    [20600, () => mover(76, 86)],
   ];
-  if (reduce){ pulse(1); return; }
-  function ciclo(){ pasos.forEach(([t,f])=>setTimeout(f,t)); setTimeout(ciclo, 10000); }
-  ciclo();
+  /* Punto de partida: el panel abierto sobre el mail, quieto. Es lo primero que se ve al abrir la página
+     y es adonde vuelve la escena cada vez que sale de la pantalla. */
+  let timers = [], corriendo = false, visible = 0;
+  function reposo(){
+    timers.forEach(clearTimeout); timers = []; corriendo = false;
+    guion[0][1]();
+    caja.style.transition = "none"; caja.classList.add("on"); void caja.offsetWidth; caja.style.transition = "";
+    cur.style.transition = "none"; mover(66, 78); void cur.offsetWidth; cur.style.transition = "";
+  }
+  reposo();
+  if (reduce) return;
+  function ciclo(primera){
+    timers.forEach(clearTimeout);
+    /* La primera vuelta arranca con el panel ya abierto: se saltea el ⌘⇧V del principio */
+    const pasos = primera ? guion.filter(([t]) => t >= 2300).map(([t, f]) => [t - 1900, f]) : guion;
+    timers = pasos.map(([t, f]) => setTimeout(f, t));
+    timers.push(setTimeout(() => ciclo(false), primera ? 21600 - 1900 : 21600));
+  }
+  function arrancar(){ if (corriendo) return; corriendo = true; timers = [setTimeout(() => ciclo(true), 500)]; }
+  /* Arranca cuando la Mac está casi entera a la vista, o cuando la persona baja un poco con la Mac en pantalla */
+  addEventListener("scroll", () => { if (scrollY > 60 && visible > .3) arrancar(); }, {passive:true});
+  if ("IntersectionObserver" in window){
+    new IntersectionObserver(es => es.forEach(en => {
+      visible = en.intersectionRatio;
+      if (!en.isIntersecting) reposo();
+      else if (en.intersectionRatio >= .7) arrancar();
+    }), {threshold:[0, .3, .7]}).observe(mac);
+  } else ciclo(true);
 })();
 
 /* ===== Demo en vivo ===== */
-const docInicial = () => L("Hola Martina,\n\nGracias por escribir. Te dejo mi trabajo acá: \n\n", "Hi Martina,\n\nThanks for reaching out. Here's my work: \n\n");
+const docInicial = () => L("Hola Lucía,\n\nGracias por escribir. Te paso todo para el jueves: \n\n", "Hi Lucía,\n\nThanks for writing. Here's everything for Thursday: \n\n");
 const slotsIniciales = () => [
-  {k:"A", nombre:L("Mi portfolio","My portfolio"), fuente:"Link · estudio.ar", contenido:"https://estudio.ar/portfolio", clase:"osc"},
-  {k:"S", nombre:L("Presupuesto base","Base quote"), fuente:L("Texto · 34 palabras","Text · 36 words"), contenido:L("El proyecto completo sale US$ 850 e incluye logo, paleta, tipografías y dos rondas de cambios. Si te sirve, arrancamos el lunes y en tres semanas tenés todo.","The full project is US$ 850 and includes logo, palette, typefaces and two rounds of changes. If that works for you, we start on Monday and you'll have everything in three weeks."), clase:""},
-  {k:"D", nombre:L("Link de Meet","Meet link"), fuente:"meet.google.com", contenido:"https://meet.google.com/xpe-qwrt-mzk", clase:""},
+  {k:"A", nombre:L("Link de la reunión","Meeting link"), fuente:"Link · meet.google.com", contenido:"https://meet.google.com/xpe-qwrt-mzk", clase:"osc"},
+  {k:"S", nombre:L("Respuesta presupuesto","Quote reply"), fuente:L("Texto · 36 palabras","Text · 36 words"), contenido:L("Te paso el presupuesto actualizado: el proyecto completo sale US$ 850 e incluye logo, paleta, tipografías y dos rondas de cambios. Si te sirve, arrancamos el lunes y en tres semanas tenés todo.","Here's the updated quote: the full project is US$ 850 and includes logo, palette, typefaces and two rounds of changes. If that works for you, we start on Monday and you'll have everything in three weeks."), clase:""},
+  {k:"D", nombre:L("Gracias por escribir","Thanks for writing"), fuente:L("Texto · 8 palabras","Text · 9 words"), contenido:L("Gracias por escribir, te respondo en el día.","Thanks for writing, I'll get back to you today."), clase:""},
   {k:"Q", nombre:"#E2501D", fuente:"Color", contenido:"#E2501D", clase:"color"},
   {k:"W", nombre:"", fuente:"", contenido:"", clase:"vacio"},
 ];
@@ -1023,6 +1646,48 @@ alCambiarIdioma.push(() => reiniciarDemo(false));
   }
 })();
 
+/* ===== Descarga ===== */
+(function(){
+  const btns = document.querySelectorAll(".btn-dmg");
+  function pintar(){
+    const meta = DMG_URL
+      ? [L(`Versión ${DMG_INFO.version}`, `Version ${DMG_INFO.version}`), L(`macOS ${DMG_INFO.macos} o posterior`, `macOS ${DMG_INFO.macos} or later`), DMG_INFO.tamano].filter(Boolean).join(" · ")
+      : L("La descarga se habilita muy pronto.","Downloads open very soon.");
+    btns.forEach(b => {
+      b.querySelector(".btn-dmg-txt").textContent = DMG_URL ? L("Descargar para Mac","Download for Mac") : L("Avisame cuando esté","Let me know");
+      if (DMG_URL){ b.href = DMG_URL; b.target = "_blank"; b.rel = "noopener"; }
+    });
+    document.querySelectorAll(".dmg-meta").forEach(m => m.textContent = meta);
+  }
+  btns.forEach(b => b.addEventListener("click", e => { if (!DMG_URL){ e.preventDefault(); abrirModal(""); } }));
+  /* La animación del .dmg viaja de un ícono al otro, midiendo la distancia real */
+  const medir = () => { const c = document.querySelector(".dmg-cuerpo"); if (!c) return; const it = c.querySelectorAll(".dmg-item"); const a = it[0].getBoundingClientRect(), b = it[1].getBoundingClientRect(); c.style.setProperty("--dmg-dx", (b.left - a.left) + "px"); c.querySelector(".dmg-fantasma").style.left = (a.left - c.getBoundingClientRect().left + (a.width - c.querySelector(".dmg-fantasma").offsetWidth)/2) + "px"; };
+  medir(); addEventListener("resize", medir); addEventListener("load", medir);
+  document.querySelectorAll("[data-ir]").forEach(a => a.addEventListener("click", e => { e.preventDefault(); document.getElementById(a.dataset.ir).scrollIntoView({behavior: reduce ? "auto" : "smooth", block:"start"}); }));
+  pintar(); alCambiarIdioma.push(pintar);
+  /* Versión y tamaño reales de la última release (si GitHub no responde, quedan los de respaldo) */
+  fetch("https://api.github.com/repos/gianpetrii/hotslot-app/releases/latest")
+    .then(r => r.ok ? r.json() : null)
+    .then(d => {
+      if (!d) return;
+      const asset = (d.assets || []).find(a => a.name === "Slots.dmg");
+      const version = String(d.tag_name || "").replace(/^v/, "");
+      if (version) DMG_INFO.version = version;
+      if (asset && asset.size) DMG_INFO.tamano = (asset.size / 1e6).toFixed(1).replace(".", ",") + " MB";
+      pintar();
+    })
+    .catch(() => {});
+})();
+
+/* ===== Link del iPhone ===== */
+(function(){
+  function pintar(){
+    if (!IOS_URL) return;
+    document.querySelectorAll(".link-ios").forEach(a => { a.href = IOS_URL; a.target = "_blank"; a.rel = "noopener"; a.removeAttribute("data-abrir-lista"); a.textContent = L("Descargar en el App Store","Download on the App Store"); });
+  }
+  pintar(); alCambiarIdioma.push(pintar);
+})();
+
 /* ===== Atajos personalizables ===== */
 (function(){
   const MOD = {cmd:"⌘", ctrl:"⌃", alt:"⌥", shift:"⇧"}, ORDEN = ["cmd","ctrl","alt","shift"];
@@ -1096,93 +1761,75 @@ alCambiarIdioma.push(() => reiniciarDemo(false));
   alCambiarIdioma.push(() => { pintar(); aviso(""); });
 })();
 
-/* ===== iPhone ===== */
+/* ===== iPhone: tocás un slot, se copia, y lo pegás en WhatsApp ===== */
 (function(){
-  const nombresLib = {trabajo:["Trabajo","Work"], personal:["Personal","Personal"], clientes:["Clientes","Clients"]};
-  const libs = {
-    trabajo: [
-      {n:["Mi portfolio","My portfolio"], s:"Link", c:"https://estudio.ar/portfolio", k:"osc alto"},
-      {n:["Presupuesto base","Base quote"], s:["Texto","Text"], c:["El proyecto completo sale US$ 850 e incluye dos rondas de cambios.","The full project is US$ 850 and includes two rounds of changes."], k:""},
-      {n:["Flyer otoño","Fall flyer"], s:["Imagen","Image"], c:"flyer.png", k:"img alto"},
-      {n:["Link de Meet","Meet link"], s:"meet.google.com", c:"https://meet.google.com/xpe-qwrt-mzk", k:""},
-      {n:["Alias de cobro","Payment details"], s:["Texto","Text"], c:"estudio.slots.mp", k:""},
-      {n:["Firma de mail","Email signature"], s:["Texto","Text"], c:["Dante · Diseño industrial","Dante · Industrial design"], k:"osc"},
-    ],
-    personal: [
-      {n:["Dirección de entrega","Delivery address"], s:["Texto","Text"], c:"Echeverría 752, 3° B", k:"osc alto"},
-      {n:["Wifi de casa","Home wifi"], s:["Texto","Text"], c:"casa-5g", k:""},
-      {n:["Mi mail","My email"], s:["Texto","Text"], c:"hola@estudio.ar", k:""},
-      {n:["Foto carnet","ID photo"], s:["Imagen","Image"], c:"photo.jpg", k:"img"},
-    ],
-    clientes: [
-      {n:["Respuesta de envíos","Shipping reply"], s:["Texto","Text"], c:["Hacemos envíos a todo el país. Llegan en 3 a 5 días hábiles.","We ship nationwide. Orders arrive in 3 to 5 business days."], k:"osc alto"},
-      {n:["Horarios","Opening hours"], s:["Texto","Text"], c:["Lunes a viernes de 10 a 18 h.","Monday to Friday, 10 am to 6 pm."], k:""},
-      {n:["Catálogo","Catalog"], s:["Archivo · PDF","File · PDF"], c:"Catalog-2026.pdf", k:""},
-      {n:["Medios de pago","Payment methods"], s:["Texto","Text"], c:["Transferencia, tarjeta o Mercado Pago.","Bank transfer, card or Mercado Pago."], k:""},
-      {n:["Seguimiento","Tracking"], s:"Link", c:"https://envios.ar/seguimiento", k:"img"},
-    ],
-  };
-  let actual = "trabajo", t;
-  const g = $("#tel-grid"), isla = $("#tel-isla");
-  function pintar(){
-    $("#tel-titulo").textContent = T(nombresLib[actual]);
-    g.className = "tel-grid";
-    g.innerHTML = libs[actual].map((x,i)=>`<button type="button" class="tc ${x.k}" data-i="${i}" aria-label="${L("Copiar","Copy")} ${esc(T(x.n))}"><small>${esc(T(x.s))}</small><strong>${esc(T(x.n))}</strong></button>`).join("");
-    $("#tel-libs").innerHTML = Object.keys(libs).map(n=>`<button type="button" aria-pressed="${n===actual}" data-l="${n}">${T(nombresLib[n])}${n===actual?` <em>${libs[n].length}</em>`:""}</button>`).join("");
-  }
-  alCambiarIdioma.push(pintar);
-  /* Dedo que usa la app solo, en loop, hasta que la persona toca algo */
-  const pant = document.querySelector(".tel-pant");
-  const dedo = document.createElement("div"); dedo.className = "dedo"; dedo.setAttribute("aria-hidden","true");
-  pant.appendChild(dedo);
-  let auto = !reduce, pausaT, autoT, paso = 0;
-  const guion = [
-    {l:"trabajo", i:0}, {l:"trabajo", i:3}, {l:"trabajo", i:4},
-    {lib:"clientes"}, {l:"clientes", i:0}, {l:"clientes", i:2},
-    {lib:"personal"}, {l:"personal", i:0}, {lib:"trabajo"},
+  const cards = [
+    {n:["Portfolio","Portfolio"], s:"behance.net", k:"osc alto"},
+    {n:["Precios","Prices"], s:["Texto","Text"], k:""},
+    {n:["Flyer Expo","Expo flyer"], s:["Imagen","Image"], k:"img alto"},
+    {n:["Link de la reunión","Meeting link"], s:"meet.google.com", k:""},
+    {n:["Alias de cobro","Payment details"], s:["Texto","Text"], k:""},
+    {n:["Firma de mail","Email signature"], s:["Texto","Text"], k:"osc"},
   ];
-  function apuntar(el, cb){
-    if (!el) return;
-    const r = el.getBoundingClientRect(), p = pant.getBoundingClientRect();
-    dedo.style.left = (r.left - p.left + r.width*.55) + "px";
-    dedo.style.top = (r.top - p.top + r.height*.55) + "px";
-    dedo.classList.add("ver");
-    setTimeout(()=>{ if(!auto) return; dedo.classList.add("toque"); setTimeout(()=>dedo.classList.remove("toque"),260); cb(); }, 750);
+  const pant = $("#tel-pant"), g = $("#tel-grid"), isla = $("#tel-isla"), slots = $("#tel-slots"), wa = $("#tel-wa");
+  function pintar(){
+    g.className = "tel-grid";
+    g.innerHTML = cards.map((x,i) => `<div class="tc ${x.k}" data-i="${i}"><small>${esc(T(x.s))}</small><strong>${esc(T(x.n))}</strong></div>`).join("");
   }
-  function siguiente(){
-    if (!auto) return;
-    const s = guion[paso++ % guion.length];
-    if (s.lib){ apuntar($("#tel-libs").querySelector(`[data-l="${s.lib}"]`), ()=>{ actual = s.lib; pintar(); }); }
-    else { if (actual !== s.l){ actual = s.l; pintar(); } apuntar(g.querySelector(`[data-i="${s.i}"]`), ()=>tocar(+s.i, true)); }
-    autoT = setTimeout(siguiente, s.lib ? 1700 : 2400);
-  }
-  function pausar(){
-    auto = false; clearTimeout(autoT); dedo.classList.remove("ver");
-    clearTimeout(pausaT); if (!reduce) pausaT = setTimeout(()=>{ auto = true; siguiente(); }, 8000);
-  }
-  pant.addEventListener("pointerdown", e => { if (e.isTrusted) pausar(); });
-  pant.addEventListener("keydown", pausar);
-  if ("IntersectionObserver" in window && !reduce){
-    let iniciado = false;
-    new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting && !iniciado){ iniciado = true; setTimeout(siguiente, 600); } }), {threshold:.4}).observe(pant);
-  }
-  g.addEventListener("click", e => {
-    const b = e.target.closest(".tc"); if (!b) return;
-    tocar(+b.dataset.i, false);
-  });
-  function tocar(idx, simulado){
-    const b = g.querySelector(`[data-i="${idx}"]`); if (!b) return;
-    const x = libs[actual][idx];
-    if (!simulado) copiar(T(x.c));
-    g.querySelectorAll(".tc").forEach(c=>{ c.classList.remove("copiado"); const o = libs[actual][+c.dataset.i]; if (o) c.querySelector("small").textContent = T(o.s); });
-    b.classList.add("copiado"); b.querySelector("small").textContent = L("Copiado ✓","Copied ✓");
-    g.classList.add("copiando");
-    $("#tel-isla-in").innerHTML = `${L("Copiado","Copied")} · <span class="ok">${esc(T(x.n))}</span>`; isla.classList.add("on");
-    clearTimeout(t); t = setTimeout(()=>{ isla.classList.remove("on"); g.classList.remove("copiando"); b.classList.remove("copiado"); b.querySelector("small").textContent = T(x.s); }, 1500);
-  }
-  $("#tel-libs").addEventListener("click", e => { const b = e.target.closest("button"); if (b){ actual = b.dataset.l; pintar(); } });
-  pintar();
+  pintar(); alCambiarIdioma.push(pintar);
+
+  const dedo = document.createElement("div"); dedo.className = "dedo"; dedo.setAttribute("aria-hidden","true"); pant.appendChild(dedo);
+  const a = el => { const r = el.getBoundingClientRect(), p = pant.getBoundingClientRect(); dedo.style.left = (r.left - p.left + r.width * .5) + "px"; dedo.style.top = (r.top - p.top + r.height * .5) + "px"; dedo.classList.add("ver"); };
+  const toque = () => { dedo.classList.add("toque"); setTimeout(() => dedo.classList.remove("toque"), 240); };
+  const pantalla = k => { slots.classList.toggle("tel-off", k !== "slots"); wa.classList.toggle("tel-off", k !== "wa"); };
+  const copiar = i => {
+    const c = g.querySelector(`[data-i="${i}"]`);
+    g.classList.add("copiando"); c.classList.add("copiado"); c.querySelector("small").textContent = L("Copiado ✓","Copied ✓");
+    $("#tel-isla-in").innerHTML = `${L("Copiado","Copied")} · <span class="ok">${esc(T(cards[i].n))}</span>`; isla.classList.add("on");
+  };
+  const limpiar = () => { g.classList.remove("copiando"); g.querySelectorAll(".tc").forEach((c, i) => { c.classList.remove("copiado"); c.querySelector("small").textContent = T(cards[i].s); }); isla.classList.remove("on"); };
+
+  const guion = [
+    [0,     () => { pintar(); pantalla("slots"); ["tw-img","tw-pide","tw-link"].forEach(id => $("#"+id).classList.remove("on")); $("#tw-pegar").classList.remove("on"); dedo.classList.remove("ver","mantener"); }],
+    /* el flyer */
+    [600,   () => a(g.querySelector('[data-i="2"]'))],
+    [1400,  () => { toque(); copiar(2); }],
+    [2700,  () => { limpiar(); dedo.classList.remove("ver"); pantalla("wa"); }],
+    [3400,  () => a($("#tw-campo"))],
+    [4000,  () => dedo.classList.add("mantener")],
+    [4600,  () => { dedo.classList.remove("mantener"); $("#tw-pegar").classList.add("on"); }],
+    [5000,  () => a($("#tw-pegar"))],
+    [5600,  () => { toque(); $("#tw-pegar").classList.remove("on"); $("#tw-img").classList.add("on"); }],
+    [6200,  () => dedo.classList.remove("ver")],
+    [6700,  () => $("#tw-pide").classList.add("on")],
+    /* el link de la reunión */
+    [7900,  () => pantalla("slots")],
+    [8500,  () => a(g.querySelector('[data-i="3"]'))],
+    [9300,  () => { toque(); copiar(3); }],
+    [10600, () => { limpiar(); dedo.classList.remove("ver"); pantalla("wa"); }],
+    [11300, () => a($("#tw-campo"))],
+    [11900, () => dedo.classList.add("mantener")],
+    [12500, () => { dedo.classList.remove("mantener"); $("#tw-pegar").classList.add("on"); }],
+    [12900, () => a($("#tw-pegar"))],
+    [13500, () => { toque(); $("#tw-pegar").classList.remove("on"); $("#tw-link").classList.add("on"); }],
+    [14200, () => dedo.classList.remove("ver")],
+  ];
+  /* Punto de partida: la app de Slots con la grilla. Cada vez que el teléfono entra en pantalla, arranca desde acá. */
+  let timers = [], corriendo = false;
+  function reposo(){ timers.forEach(clearTimeout); timers = []; corriendo = false; limpiar(); guion[0][1](); }
+  reposo();
+  if (reduce) return;
+  function ciclo(){ timers.forEach(clearTimeout); timers = guion.map(([t, f]) => setTimeout(f, t)); timers.push(setTimeout(ciclo, 16800)); }
+  function arrancar(){ if (corriendo) return; corriendo = true; timers = [setTimeout(ciclo, 700)]; }
+  if ("IntersectionObserver" in window){
+    new IntersectionObserver(es => es.forEach(en => {
+      if (!en.isIntersecting) reposo();
+      else if (en.intersectionRatio >= .75) arrancar();
+    }), {threshold:[0, .75]}).observe(pant);
+  } else ciclo();
 })();
+
+
 
 /* ===== Lista de espera ===== */
 const okMail = m => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(m);
@@ -1230,21 +1877,14 @@ function abrirModal(email){
   $("#modal-cuerpo").appendChild(caja);
   try{ modal.showModal(); }catch(e){ modal.setAttribute("open",""); }
   document.documentElement.classList.add("con-modal");
-  setTimeout(()=>{ const f = $("#email-full"); if (!$("#form-full").hidden) (okMail(f.value.trim()) ? $("#eq-ambos") : f).focus(); }, 50);
+  setTimeout(()=>{ const f = $("#email-full"); if (!$("#form-full").hidden) (okMail(f.value.trim()) ? $("#eq-iphone") : f).focus(); }, 50);
 }
 function cerrarModal(){ if (modal.open) modal.close(); }
 modal.addEventListener("close", () => { cajaPadre.appendChild(caja); document.documentElement.classList.remove("con-modal"); });
 modal.addEventListener("click", e => { if (e.target === modal) cerrarModal(); });
 $("#modal-cerrar").addEventListener("click", cerrarModal);
 
-$("#form-rapido").addEventListener("submit", e => {
-  e.preventDefault();
-  const email = $("#email-rapido").value.trim(), est = $("#estado-rapido");
-  if (email && !okMail(email)){ est.className = "estado error"; est.textContent = errMail(); return; }
-  est.textContent = "";
-  abrirModal(email);
-});
-document.querySelectorAll('[data-abrir-lista]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); abrirModal($("#email-rapido").value.trim()); }));
+document.querySelectorAll('[data-abrir-lista]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); $("#eq-iphone").checked = true; abrirModal(""); }));
 
 $("#form-full").addEventListener("submit", async e => {
   e.preventDefault();
@@ -1263,12 +1903,9 @@ if (ls.get("slots-anotado")){ $("#email-full").value = ls.get("slots-anotado"); 
 
 ponerIdioma(lang);
 
-document.getElementById("nav-beta")?.setAttribute("href", BETA_RELEASE_URL);
-document.getElementById("pie-beta")?.setAttribute("href", BETA_RELEASE_URL);
-
 /* Siempre abrir arriba de todo: los links del menú se desplazan sin cambiar la dirección,
    así el link que se comparte nunca lleva a una sección de abajo. */
-const SECCIONES = ["top","probalo","como","lista","preguntas"];
+const SECCIONES = ["top","probalo","como","lista","preguntas","iphone","atajos"];
 try{ history.scrollRestoration = "manual"; }catch(e){}
 document.querySelectorAll('nav a[href^="#"]:not([data-abrir-lista])').forEach(a => a.addEventListener("click", e => {
   const el = document.getElementById(a.getAttribute("href").slice(1)); if (!el) return;
@@ -1276,6 +1913,7 @@ document.querySelectorAll('nav a[href^="#"]:not([data-abrir-lista])').forEach(a 
 }));
 function arriba(){
   const h = location.hash.slice(1);
+  if (h === "descargar"){ document.getElementById("descargar").scrollIntoView({block:"start"}); return; }
   if (SECCIONES.includes(h)){ try{ history.replaceState(null, "", location.pathname + location.search); }catch(e){} }
   window.scrollTo(0, 0);
 }
