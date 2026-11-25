@@ -19,11 +19,9 @@ scripts/release.env
 .env.local
 
 # Handoff: fuera del repo (ver docs/notas/HANDOFF-README.md)
-docs/slots-handoff/
-docs/slots-handoff
-docs/slots-handoff*.zip
 # Material que manda Dante (zips y carpetas descomprimidas): solo local
-docs/dante/
+# Todo lo que intercambio con Dante (zips y entregas): pesado, queda fuera de Git
+dante/
 
 # XcodeGen (opcional regenerar)
 # HotSlot.xcodeproj

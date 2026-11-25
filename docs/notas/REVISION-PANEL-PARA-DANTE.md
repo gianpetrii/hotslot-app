@@ -4,7 +4,7 @@ Solo incluir acá lo que **Gianluca pide que Dante valide**. El resto del panel 
 
 **Descarga:** [GitHub Releases — latest](https://github.com/gianpetrii/hotslot-app/releases/latest)  
 **Instalación:** arrastrar **Slots** a **Aplicaciones** y abrir desde ahí.  
-**Referencia:** `docs/slots-handoff/02-diseno/pantallas-macos/Main.png`
+**Referencia:** `dante/entregas/2026-11-01-handoff-completo/02-diseno/pantallas-macos/Main.png`
 
 ---
 

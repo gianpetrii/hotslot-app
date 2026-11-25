@@ -14,7 +14,7 @@ except ImportError:
 ROOT = Path(__file__).resolve().parents[1]
 APP_ICON_DIR = ROOT / "HotSlot/Resources/Assets.xcassets/AppIcon.appiconset"
 MENU_ICON_DIR = ROOT / "HotSlot/Resources/Assets.xcassets/MenuBarIcon.imageset"
-HANDOFF_MENU_SOURCE = ROOT / "docs/slots-handoff/03-marca/logo/slots-icono-negro.png"
+HANDOFF_MENU_SOURCE = ROOT / "dante/entregas/2026-11-01-handoff-completo/03-marca/logo/slots-icono-negro.png"
 
 
 def _font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:

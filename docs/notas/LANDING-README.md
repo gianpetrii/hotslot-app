@@ -2,8 +2,8 @@
 
 ## Landing principal
 
-- **Fuente de diseño:** `docs/diseno/landing-dante/` (Dante). El sitio publicado usa **`docs/index.html`** (copia integrada con enlaces a beta y privacidad).
-- **Instrucciones del paquete:** `docs/diseno/landing-dante/LEEME.md` (waitlist, campañas `#tiktok`, etc.).
+- **Fuente de diseño:** `dante/entregas/2026-11-02-landing-v1/` (Dante). El sitio publicado usa **`docs/index.html`** (copia integrada con enlaces a beta y privacidad).
+- **Instrucciones del paquete:** `dante/entregas/2026-11-02-landing-v1/LEEME.md` (waitlist, campañas `#tiktok`, etc.).
 
 ## Otras páginas (mantener)
 

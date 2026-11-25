@@ -128,7 +128,7 @@ Roadmap: `BACKLOG.md`
 | `docs/notas/REVISION-PANEL-PARA-DANTE.md` | Solo ítems que Gianluca pide validar a Dante |
 | `docs/notas/HANDOFF-README.md` | Zip de diseño en Drive (no está en Git) |
 | `docs/notas/LANDING-README.md` | Deploy landing + waitlist (`docs/index.html`) |
-| `docs/diseno/landing-dante/` | Fuente Dante del sitio (sync con `index.html`) |
+| `dante/entregas/2026-11-02-landing-v1/` | Fuente Dante del sitio (sync con `index.html`) |
 | `.cursor/rules/base-rules.md` | Reglas para el agente en Cursor |
 
-El handoff completo (`slots-handoff/`) **no** va en Git; ver `docs/notas/HANDOFF-README.md`.
+El handoff completo (`dante/entregas/2026-11-01-handoff-completo/`) **no** va en Git; ver `docs/notas/HANDOFF-README.md`.

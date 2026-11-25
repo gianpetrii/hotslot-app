@@ -84,7 +84,7 @@ Objetivo: **build de prueba de usabilidad en Mac**. Alcance y acuerdos: `docs/no
 | [x] | **4** | Panel Mac handoff (header, bibliotecas, guardar portapapeles, onboarding 3, ajustes sidebar, arranque) |
 | [~] | **5** | Humo Mac, versión, DMG, guía de prueba final |
 
-## Landing web (handoff Dante · `docs/diseno/landing-dante/`)
+## Landing web (handoff Dante · `dante/entregas/2026-11-02-landing-v1/`)
 
 Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en GitHub Releases (`/releases/latest`).
 
@@ -94,7 +94,7 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 | [x] | P1 | Enlaces **Beta Mac** y **Privacidad** (`privacy.html`) en nav y pie |
 | [x] | P1 | **Cambio de idioma:** al pasar de español a inglés (y al revés) la página se funde, el texto cambia oculto y vuelve. El scroll se queda en el mismo tramo. Sin animación si el sistema la reduce |
 | [x] | P1 | **Barra del notch:** al pasar el mouse por el notch (o el centro de la barra de menú) baja una barra con los 5 slots en cuadrados iguales, con el mismo estilo del panel, y las bibliotecas debajo para cambiar de vista. Clic en slot con contenido copia o pega según Ajustes; en slot vacío guarda el portapapeles. Chip de atajo de solo lectura. Un botón redondo abre el panel completo. Se cierra sola tras cualquier clic y no se abre con el panel, Ajustes o el onboarding visibles. Sin historial, sin edición ni arrastre: eso queda en el panel. Validado por Gianluca |
-| [ ] | P1 | **Formspree / waitlist:** pegar `WAITLIST_ENDPOINT` (ver `docs/diseno/landing-dante/LEEME.md`) |
+| [ ] | P1 | **Formspree / waitlist:** pegar `WAITLIST_ENDPOINT` (ver `dante/entregas/2026-11-02-landing-v1/LEEME.md`) |
 | [ ] | P2 | **og:image** 1200×630 para compartir en redes |
 | [ ] | P2 | Validar promesas de lista (beta, preventa, mes gratis) con producto — LEEME §5 |
 | [ ] | P2 | Deploy Vercel tras push; smoke ES/EN, móvil, formulario |
@@ -152,7 +152,7 @@ Objetivo: **preventa + demo en vivo** alineada a marca Slots; la app sigue en Gi
 
 ## Tanda 1.3.0 — correcciones de Dante del 18/11 + pendientes de Gianluca
 
-Material de Dante en `dante-revision/` (no se commitea): Ajustes v2, Tutorial v5, Cuenta v1 y la nota «SLOTS correcciones 18-11».
+Material de Dante en `dante/entregas/` (no se commitea): Ajustes v2, Tutorial v5, Cuenta v1 y la nota «SLOTS correcciones 18-11».
 
 ### Hecho (sin commitear, falta que Gianluca lo valide en Xcode)
 
@@ -169,7 +169,7 @@ Material de Dante en `dante-revision/` (no se commitea): Ajustes v2, Tutorial v5
 |--------|-----|-------|
 | [x] | P1 | **Landing: descarga directa del último DMG.** Cada release sube además `Slots.dmg` (nombre fijo) y la landing apunta a `releases/latest/download/Slots.dmg`. Hecho con la 1.3.0 |
 | [~] | P1 | **Feedback de copiado igual al de iOS:** hecho en el panel (título «Copiado», tilde, resplandor naranja, otras cards apagadas, aparece en 80 ms; el cierre del panel no cambió). Falta llevarlo a las cards de la barra del notch y que Gianluca lo valide |
-| [~] | P1 | **Tutorial de primera vez (v5 de Dante):** hecho en `HotSlot/UI/Tutorial/` — bienvenida, pop-up y recorrido de 8 pasos sobre un panel de muestra en memoria (no toca los datos del usuario); flag `tutorialVisto`; aparece tras el onboarding y se repite desde Ajustes › General › Ayuda. Falta validarlo en pantalla (blur, tiempos, teclado). Paquete: `dante-revision/tutorial` |
+| [~] | P1 | **Tutorial de primera vez (v5 de Dante):** hecho en `HotSlot/UI/Tutorial/` — bienvenida, pop-up y recorrido de 8 pasos sobre un panel de muestra en memoria (no toca los datos del usuario); flag `tutorialVisto`; aparece tras el onboarding y se repite desde Ajustes › General › Ayuda. Falta validarlo en pantalla (blur, tiempos, teclado). Paquete: `dante/entregas/2026-11-18-tutorial-v5` |
 | [ ] | P1 | **Animación de llegada de un slot en el notch** (pop + halo naranja): funciona en el panel, no se ve en el notch. Hay un cambio sin commitear en `NotchShelfView.swift` que no lo arregló |
 | [ ] | P1 | **Slots de tamaño variable / filas editables** (slot 1 cuadrado para que entren 6, opción horizontal). Disruptivo: confirmar el diseño antes de empezar |
 | [ ] | P2 | **Grabador de atajos propio** con el estilo de Dante (campo de 40, borde naranja al grabar). Hoy se usa el grabador nativo de la librería. Tarea aparte, cuando Gianluca lo pida |
@@ -231,7 +231,7 @@ Probar en Mac (ideal: app en **Aplicaciones**). Marcar acá; **no** duplicar en 
 | [ ] | P2 | **Sonido al guardar** — documentar toggle “Sonidos de acciones”; opcional sonido distinto guardar vs pegar si confunden |
 | [ ] | P3 | Atajo clicable extra en barra (además del icono) — evaluar si aporta o satura la menu bar |
 | [ ] | P3 | “Slots libres” en UI tipo Dynamic Island — **no aplica en Mac**; en iPhone sería otro producto |
-| [~] | P1 | **Analytics (importante):** hecho en código, falta activarlo. (1) Landing: Vercel Web Analytics en `index`, `privacy` y `purchase` (hay que activarlo en el proyecto de Vercel y, si cambia `docs/diseno/landing-dante/`, repetir el script en la fuente). (2) Descargas: `scripts/download-stats.sh`. (3) In-app: TelemetryDeck, **opt-in** (apagado por defecto, aviso único tras el onboarding y sección «Privacidad» en Ajustes). Inactiva hasta pegar el App ID en `Telemetry.appID`. Política de privacidad actualizada. Eventos: `App.launched`, `Slot.saved`, `Slot.firstSaved`, `Slot.used` (panel, atajo o notch), `Notch.opened`, `Library.created`, `License.purchaseClicked`, `License.activated`. Nunca contenido ni nombres |
+| [~] | P1 | **Analytics (importante):** hecho en código, falta activarlo. (1) Landing: Vercel Web Analytics en `index`, `privacy` y `purchase` (hay que activarlo en el proyecto de Vercel y, si cambia `dante/entregas/2026-11-02-landing-v1/`, repetir el script en la fuente). (2) Descargas: `scripts/download-stats.sh`. (3) In-app: TelemetryDeck, **opt-in** (apagado por defecto, aviso único tras el onboarding y sección «Privacidad» en Ajustes). Inactiva hasta pegar el App ID en `Telemetry.appID`. Política de privacidad actualizada. Eventos: `App.launched`, `Slot.saved`, `Slot.firstSaved`, `Slot.used` (panel, atajo o notch), `Notch.opened`, `Library.created`, `License.purchaseClicked`, `License.activated`. Nunca contenido ni nombres |
 | [x] | P1 | **Limpieza de Ajustes:** se quitó la pestaña «Slots», la sección «Depuración», el diagnóstico de Accesibilidad y el botón de probar el aviso. Nueva sección «Barra del notch» con interruptor. Validado por Gianluca |
 | [x] | P1 | **Slots en una sola fuente (preparación de iOS):** `SlotStore` lee y escribe en el workspace; se eliminó el copiado con `slots.json`, que se migra una vez con copia de seguridad en `Backups/`. Validado por Gianluca |
 
